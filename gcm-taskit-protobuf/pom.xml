@@ -6,7 +6,6 @@
     <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
     <artifactId>protobuf-parent</artifactId>
     <version>${revision}</version>
-    <packaging>pom</packaging>
     <name>gcm :: taskit :: protobuf :: protobuf-parent</name>
 
     <properties>
@@ -37,163 +36,58 @@
     </properties>
 
     <!--
-        Default dependency information for projects that inherit from this one.
-        The dependencies in this section are not immediately resolved. Instead,
-        when a POM derived from this one declares a dependency described by a matching
-        groupId and artifactId, the version and other values from this section are used
-        for that dependency if they were not already specified.
-    -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- core protobuf taskit dependency  -->
-            <dependency>
-                <groupId>gov.hhs.aspr.ms.taskit</groupId>
-                <artifactId>protobuf</artifactId>
-                <version>${taskit-protobuf.version}</version>
-            </dependency>
-
-            <!-- gcm dependency -->
-            <dependency>
-                <groupId>gov.hhs.aspr.ms</groupId>
-                <artifactId>gcm</artifactId>
-                <version>${gcm.version}</version>
-                <!--
-                    A scope of provided means that the resulting jar file will not include this in its dependencies
-                    instead, must be provided by the project that uses this dependecy
-                 -->
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- specified solely to alleviate a dependecy version conflict -->
-            <dependency>
-                <groupId>com.google.errorprone</groupId>
-                <artifactId>error_prone_annotations</artifactId>
-                <version>2.5.1</version>
-            </dependency>
-
-            <!-- unit test dependencies -->
-            <dependency>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <!--
         This element describes all of the dependencies associated with a project.
         These dependencies are used to construct a classpath for your project during the build process.
         All projects that inherit this project (by specifing this project as their parent) will have these
         dependencies by default.
     -->
     <dependencies>
+        <!-- core protobuf taskit dependency  -->
         <dependency>
             <groupId>gov.hhs.aspr.ms.taskit</groupId>
             <artifactId>protobuf</artifactId>
+            <version>${taskit-protobuf.version}</version>
         </dependency>
+        <!-- gcm dependency -->
         <dependency>
             <groupId>gov.hhs.aspr.ms</groupId>
             <artifactId>gcm</artifactId>
+            <version>${gcm.version}</version>
+            <!--
+                    A scope of provided means that the resulting jar file will not include this in its dependencies
+                    instead, must be provided by the project that uses this dependecy
+                 -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- specified solely to alleviate a dependecy version conflict -->
+        <dependency>
+            <groupId>com.google.errorprone</groupId>
+            <artifactId>error_prone_annotations</artifactId>
+            <version>2.5.1</version>
+        </dependency>
+        <!-- unit test dependencies -->
+        <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter-engine.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit-jupiter-engine.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <!--
-        The modules (sometimes called subprojects) to build as a part of this project.
-        Each module listed is a relative path to the directory containing the module.
-        To be consistent with the way default urls are calculated from parent, it is
-        recommended to have module names match artifact ids.
-     -->
-    <modules>
-        <!--
-            proto-definitions does not inheirt from this parent pom,
-            however including it here insures that the project will be
-            built each time this or any child projects are built
-        -->
-        <module>proto-definitions</module>
-    </modules>
 
     <build>
-        <!--
-            Default plugin information to be made available for reference by projects derived from this one.
-            This plugin configuration will not be resolved or bound to the lifecycle unless referenced.
-            Any local configuration for a given plugin will override the plugin's entire definition here.
-        -->
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>kr.motd.maven</groupId>
-                    <artifactId>os-maven-plugin</artifactId>
-                    <version>${os-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>${maven-failsafe-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${maven-dependency-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.xolstice.maven.plugins</groupId>
-                    <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>${protobuf-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>${build-helper-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.google.code.maven-replacer-plugin</groupId>
-                    <artifactId>maven-replacer-plugin</artifactId>
-                    <version>${maven-replacer-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>flatten-maven-plugin</artifactId>
-                    <version>${flatten-maven-plugin.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <!--
             The plugin executions defined here will be executed for each project that inherits this project.
             The plugins here are listed in order of execution to aid in understanding when they will run.
@@ -205,6 +99,7 @@
             <plugin>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
+                <version>${os-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>detect-os</id>
@@ -216,10 +111,11 @@
                 </executions>
             </plugin>
 
-            <!-- unpacks the proto definitions and core proto definitions into the build directory (/target) -->
+            <!-- unpacks the taskit-protobuf proto definitions into the build directory (/target) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
                         <?m2e ignore?>
@@ -231,19 +127,11 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
-                                    <artifactId>proto-definitions</artifactId>
-                                    <version>${proto-definitions.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                                    <includes>**/*.proto</includes>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>gov.hhs.aspr.ms.taskit</groupId>
                                     <artifactId>protobuf</artifactId>
                                     <version>${taskit-protobuf.version}</version>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/taskit/core</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}/gov/hhs/aspr/ms/taskit/protobuf</outputDirectory>
                                     <includes>**/*.proto</includes>
                                 </artifactItem>
                             </artifactItems>
@@ -256,6 +144,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>add-proto-gen-folder-as-source</id>
@@ -276,6 +165,7 @@
             <plugin>
                 <groupId>com.google.code.maven-replacer-plugin</groupId>
                 <artifactId>maven-replacer-plugin</artifactId>
+                <version>${maven-replacer-plugin.version}</version>
                 <executions>
                     <execution>
                         <?m2e execute onConfiguration,onIncremental?>
@@ -307,6 +197,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
                 <executions>
                     <!-- enable flattening -->
                     <execution>
@@ -330,16 +221,57 @@
                 </executions>
             </plugin>
 
+            <!-- compiles proto files -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                    
+                </executions>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <protoSourceRoot>${basedir}/src/main/proto/gov/hhs/aspr/ms/gcm/taskit/protobuf</protoSourceRoot>
+                    <additionalProtoPathElements>
+                        <additionalProtoPathElement>${project.build.outputDirectory}/gov/hhs/aspr/ms/taskit/protobuf</additionalProtoPathElement>
+                    </additionalProtoPathElements>
+                </configuration>
+            </plugin>
+
             <!-- runs unit tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <includes>
                         <include>AT_*.java</include>
                     </includes>
                 </configuration>
             </plugin>
+
+            <!-- runs integration tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- jacoco coverage report generator -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -397,24 +329,11 @@
                 </executions>
             </plugin>
 
-            <!-- runs integration tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <!-- attaches the source jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -427,147 +346,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <!--
-        A listing of project-local build profiles which will modify the build process when activated.
-     -->
-    <profiles>
-        <!-- default profile, will build all individual child projects -->
-        <profile>
-            <id>all-plugins</id>
-            <activation>
-                <!-- this profile will not be active if a profile is defined on the cmd line -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>nucleus-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>stochastics-plugin-translator</module>
-                <module>partitions-plugin-translator</module>
-                <module>globalproperties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>groups-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-                <module>personproperties-plugin-translator</module>
-                <module>resources-plugin-translator</module>
-                <module>materials-plugin-translator</module>
-                <module>reports-plugin-translator</module>
-            </modules>
-        </profile>
-
-        <!-- will build the uber jar that contains all the individual child projects -->
-        <profile>
-            <id>all-jar</id>
-            <modules>
-                <module>nucleus-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>stochastics-plugin-translator</module>
-                <module>partitions-plugin-translator</module>
-                <module>globalproperties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>groups-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-                <module>personproperties-plugin-translator</module>
-                <module>resources-plugin-translator</module>
-                <module>materials-plugin-translator</module>
-                <module>reports-plugin-translator</module>
-                <module>plugin-translators-all</module>
-            </modules>
-        </profile>
-
-        <!-- each profile herein-after will build ONLY the child after which it is named -->
-        <profile>
-            <id>nucleus</id>
-            <modules>
-                <module>nucleus-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>props</id>
-            <modules>
-                <module>properties-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>stochastics</id>
-            <modules>
-                <module>stochastics-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>people</id>
-            <modules>
-                <module>people-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>partitions</id>
-            <modules>
-                <module>partitions-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>global-props</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>globalproperties-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>groups</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>groups-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>regions</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>reports</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>person-props</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>personproperties-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>resources</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-                <module>resources-plugin-translator</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>materials</id>
-            <modules>
-                <module>reports-plugin-translator</module>
-                <module>properties-plugin-translator</module>
-                <module>people-plugin-translator</module>
-                <module>regions-plugin-translator</module>
-                <module>resources-plugin-translator</module>
-                <module>materials-plugin-translator</module>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>
