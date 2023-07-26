@@ -1,14 +1,14 @@
 package lesson.plugins.model.reports;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.PersonProperty;
-import nucleus.ReportContext;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportPeriod;
 
 /**
  * A report that groups people at the end of the simulation by their shared
@@ -31,13 +31,15 @@ public final class DiseaseStateReport extends PeriodicReport {
 		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 		reportItemBuilder.addValue(reportContext.getTime());
-		
-		
-		final PersonPropertiesDataManager personPropertiesDataManager = reportContext.getDataManager(PersonPropertiesDataManager.class);
-		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
+
+		final PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
+		int vaccinatedCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED,
+				true);
 		reportItemBuilder.addValue(vaccinatedCount);
 		for (final DiseaseState diseaseState : DiseaseState.values()) {
-			final int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE, diseaseState);
+			final int count = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE,
+					diseaseState);
 			reportItemBuilder.addValue(count);
 		}
 
@@ -59,7 +61,5 @@ public final class DiseaseStateReport extends PeriodicReport {
 		}
 		return reportHeader;
 	}
-
-	
 
 }

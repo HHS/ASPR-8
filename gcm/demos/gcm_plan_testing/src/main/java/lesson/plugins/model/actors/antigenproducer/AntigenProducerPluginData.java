@@ -5,14 +5,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import lesson.plugins.model.support.ModelError;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsError;
-import plugins.materials.support.MaterialsProducerId;
 import util.errors.ContractException;
 
 /**
@@ -135,7 +135,7 @@ public final class AntigenProducerPluginData implements PluginData {
 			if (data.lastBatchAssemblyEndTime < 0) {
 				throw new ContractException(ModelError.ANTIGEN_PRODUCER_LAST_BATCH_ASSEMBLY_END_TIME);
 			}
-			
+
 		}
 
 	}
@@ -164,7 +164,7 @@ public final class AntigenProducerPluginData implements PluginData {
 			deliveryDelays.putAll(data.deliveryDelays);
 			stageAmounts.putAll(data.stageAmounts);
 			materialBatchIds.putAll(data.materialBatchIds);
-			locked = data.locked;			
+			locked = data.locked;
 		}
 
 		@Override
@@ -223,7 +223,8 @@ public final class AntigenProducerPluginData implements PluginData {
 			} else if (!deliveryDelays.equals(other.deliveryDelays)) {
 				return false;
 			}
-			if (Double.doubleToLongBits(lastBatchAssemblyEndTime) != Double.doubleToLongBits(other.lastBatchAssemblyEndTime)) {
+			if (Double.doubleToLongBits(lastBatchAssemblyEndTime) != Double
+					.doubleToLongBits(other.lastBatchAssemblyEndTime)) {
 				return false;
 			}
 			if (locked != other.locked) {
@@ -266,8 +267,6 @@ public final class AntigenProducerPluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
 
 	}
 
@@ -284,11 +283,9 @@ public final class AntigenProducerPluginData implements PluginData {
 		this.data = data;
 	}
 
-	
 	public MaterialsProducerId getMaterialsProducerId() {
 		return data.materialsProducerId;
 	}
-
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
@@ -315,7 +312,6 @@ public final class AntigenProducerPluginData implements PluginData {
 		}
 		return result;
 	}
-
 
 	public double getDeliveryAmount(MaterialId materialId) {
 
@@ -350,7 +346,6 @@ public final class AntigenProducerPluginData implements PluginData {
 		return new LinkedHashSet<>(data.materialIds);
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -358,7 +353,6 @@ public final class AntigenProducerPluginData implements PluginData {
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -378,7 +372,5 @@ public final class AntigenProducerPluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
 
 }

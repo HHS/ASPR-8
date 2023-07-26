@@ -3,11 +3,11 @@ package lesson.plugins.model.actors.vaccinator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
 import util.errors.ContractException;
 
 /**
@@ -48,8 +48,9 @@ public final class VaccinatorPluginData implements PluginData {
 		 * Sets the vaccine schedule time for the given region
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
-		 *             region id is null
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
+		 *                           the
+		 *                           region id is null
 		 */
 		public Builder setVaccinationSchedule(RegionId regionId, double time) {
 			ensureDataMutability();
@@ -62,8 +63,9 @@ public final class VaccinatorPluginData implements PluginData {
 		 * Sets the avaiable vaccine count for the the given region
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
-		 *             region id is null
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
+		 *                           the
+		 *                           region id is null
 		 */
 		public Builder setAvailableVaccines(RegionId regionId, long count) {
 			ensureDataMutability();
@@ -76,8 +78,9 @@ public final class VaccinatorPluginData implements PluginData {
 		 * Sets the infection Person Count Threshold
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
-		 *             region id is null
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
+		 *                           the
+		 *                           region id is null
 		 */
 		public Builder setInfectionPersonCountThreshold(int infectionPersonCountThreshold) {
 			ensureDataMutability();
@@ -89,8 +92,9 @@ public final class VaccinatorPluginData implements PluginData {
 		 * Sets the infected Person Count Threshold
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
-		 *             region id is null
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
+		 *                           the
+		 *                           region id is null
 		 */
 		public Builder setInfectedPersonCount(int infectedPersonCount) {
 			ensureDataMutability();
@@ -102,8 +106,9 @@ public final class VaccinatorPluginData implements PluginData {
 		 * Sets the manufactureStarted state
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID}</li> if the
-		 *             region id is null
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
+		 *                           the
+		 *                           region id is null
 		 */
 		public Builder setManufactureStarted(boolean manufactureStarted) {
 			ensureDataMutability();
@@ -222,8 +227,6 @@ public final class VaccinatorPluginData implements PluginData {
 			}
 			return true;
 		}
-		
-		
 
 	}
 
@@ -314,6 +317,5 @@ public final class VaccinatorPluginData implements PluginData {
 		}
 		return true;
 	}
-	
 
 }

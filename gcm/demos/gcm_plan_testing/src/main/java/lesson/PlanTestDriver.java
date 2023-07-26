@@ -11,6 +11,32 @@ import java.util.Optional;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanQueueData;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.SimulationState;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.GroupsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.MaterialsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.reports.PersonPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.plugins.resources.ResourcesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.actors.antigenproducer.AntigenProducer;
 import lesson.plugins.model.actors.antigenproducer.AntigenProducerPluginData;
@@ -29,32 +55,6 @@ import lesson.plugins.model.support.ModelReportLabel;
 import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.Region;
 import lesson.plugins.model.support.Resource;
-import nucleus.Experiment;
-import nucleus.ExperimentParameterData;
-import nucleus.PlanQueueData;
-import nucleus.Plugin;
-import nucleus.SimulationState;
-import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.groups.GroupsPlugin;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.materials.MaterialsPlugin;
-import plugins.materials.datamangers.MaterialsPluginData;
-import plugins.people.PeoplePlugin;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
-import plugins.personproperties.reports.PersonPropertyReportPluginData;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.reports.support.NIOReportItemHandler;
-import plugins.resources.ResourcesPlugin;
-import plugins.resources.datamanagers.ResourcesPluginData;
-import plugins.resources.support.ResourceId;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
-import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 import util.time.TimeElapser;
 
@@ -73,17 +73,16 @@ public final class PlanTestDriver {
 		Vaccinator.LOG_ACTIVE = true;
 		VaccineProducer.LOG_ACTIVE = true;
 		EXECUTE_FULL = false;
-		
-		TimeElapser timeElapser = new TimeElapser();
 
+		TimeElapser timeElapser = new TimeElapser();
 
 		if (EXECUTE_FULL) {
 			planTestDriver.executeFull();
 		} else {
 			planTestDriver.executeByParts();
 		}
-		
-		System.out.println("Elapsed milliseconds = "+timeElapser.getElapsedMilliSeconds());
+
+		System.out.println("Elapsed milliseconds = " + timeElapser.getElapsedMilliSeconds());
 
 	}
 
@@ -117,9 +116,9 @@ public final class PlanTestDriver {
 		List<Plugin> plugins = new ArrayList<>();
 		GlobalPropertiesPluginData globalPropertiesPluginData = //
 				stateCollector.get(0, GlobalPropertiesPluginData.class).get();
-		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
-																.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
-																.getGlobalPropertiesPlugin();
+		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin.builder()//
+				.setGlobalPropertiesPluginData(globalPropertiesPluginData)//
+				.getGlobalPropertiesPlugin();
 		plugins.add(globalPropertiesPlugin);
 
 		StochasticsPluginData stochasticsPluginData = stateCollector.get(0, StochasticsPluginData.class).get();
@@ -139,11 +138,13 @@ public final class PlanTestDriver {
 		plugins.add(groupsPlugin);
 
 		ResourcesPluginData resourcesPluginData = stateCollector.get(0, ResourcesPluginData.class).get();
-		Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
+		Plugin resourcesPlugin = ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData)
+				.getResourcesPlugin();
 		plugins.add(resourcesPlugin);
 
 		MaterialsPluginData materialsPluginData = stateCollector.get(0, MaterialsPluginData.class).get();
-		Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData).getMaterialsPlugin();
+		Plugin materialsPlugin = MaterialsPlugin.builder().setMaterialsPluginData(materialsPluginData)
+				.getMaterialsPlugin();
 		plugins.add(materialsPlugin);
 
 		PersonPropertiesPluginData personPropertiesPluginData = null;
@@ -152,46 +153,46 @@ public final class PlanTestDriver {
 			personPropertiesPluginData = optional1.get();
 		}
 		PersonPropertyReportPluginData personPropertyReportPluginData = null;
-		Optional<PersonPropertyReportPluginData> optional2 = stateCollector.get(0, PersonPropertyReportPluginData.class);
+		Optional<PersonPropertyReportPluginData> optional2 = stateCollector.get(0,
+				PersonPropertyReportPluginData.class);
 		if (optional2.isPresent()) {
 			personPropertyReportPluginData = optional2.get();
 		}
 		Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
-															.setPersonPropertiesPluginData(personPropertiesPluginData)//
-															.setPersonPropertyReportPluginData(personPropertyReportPluginData).getPersonPropertyPlugin();
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				.setPersonPropertyReportPluginData(personPropertyReportPluginData).getPersonPropertyPlugin();
 		plugins.add(personPropertyPlugin);
 
 		AntigenProducerPluginData antigenProducerPluginData = null;
 		Optional<AntigenProducerPluginData> optional3 = stateCollector.get(0, AntigenProducerPluginData.class);
-		if(optional3.isPresent()) {
+		if (optional3.isPresent()) {
 			antigenProducerPluginData = optional3.get();
 		}
-		
+
 		VaccineProducerPluginData vaccineProducerPluginData = null;
 		Optional<VaccineProducerPluginData> optional4 = stateCollector.get(0, VaccineProducerPluginData.class);
-		if(optional4.isPresent()) {
+		if (optional4.isPresent()) {
 			vaccineProducerPluginData = optional4.get();
 		}
-		
-		
+
 		VaccinatorPluginData vaccinatorPluginData = null;
 		Optional<VaccinatorPluginData> optional5 = stateCollector.get(0, VaccinatorPluginData.class);
-		if(optional5.isPresent()) {
+		if (optional5.isPresent()) {
 			vaccinatorPluginData = optional5.get();
 		}
-		
+
 		ContactManagerPluginData contactManagerPluginData = null;
 		Optional<ContactManagerPluginData> optional6 = stateCollector.get(0, ContactManagerPluginData.class);
-		if(optional6.isPresent()) {
+		if (optional6.isPresent()) {
 			contactManagerPluginData = optional6.get();
 		}
 
 		Plugin modelPlugin = ModelPlugin.builder()//
-										.setAntigenProducerPluginData(antigenProducerPluginData)//
-										.setVaccineProducerPluginData(vaccineProducerPluginData)//
-										.setVaccinatorPluginData(vaccinatorPluginData)//
-										.setContactManagerPluginData(contactManagerPluginData)//
-										.getModelPlugin();
+				.setAntigenProducerPluginData(antigenProducerPluginData)//
+				.setVaccineProducerPluginData(vaccineProducerPluginData)//
+				.setVaccinatorPluginData(vaccinatorPluginData)//
+				.setContactManagerPluginData(contactManagerPluginData)//
+				.getModelPlugin();
 		plugins.add(modelPlugin);
 
 		return plugins;
@@ -212,11 +213,10 @@ public final class PlanTestDriver {
 			builder.addPlugin(plugin);
 		}
 
-		Experiment experiment = builder	.setSimulationState(simulationState)//
-										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
-										.build();//
+		Experiment experiment = builder.setSimulationState(simulationState)//
+				.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
+				.build();//
 
-	
 		experiment.execute();//
 
 	}
@@ -227,31 +227,31 @@ public final class PlanTestDriver {
 		SimulationState simulationState = SimulationState.builder().build();
 		List<Plugin> plugins = getStartingPlugins();
 
-		while(true) {
-//		for (int i = 0; i < 45; i++) {						
+		while (true) {
+			// for (int i = 0; i < 45; i++) {
 			StateCollector stateCollector = executeSim(simulationState, plugins);
 			plugins = getPlugins(stateCollector);
 			simulationState = stateCollector.get(0, SimulationState.class).get();
-			
+
 			List<PlanQueueData> planQueueDatas = simulationState.getPlanQueueDatas();
 			boolean activePlanFound = false;
-			for(PlanQueueData planQueueData : planQueueDatas) {
-				
-				if(planQueueData.isActive()) {
+			for (PlanQueueData planQueueData : planQueueDatas) {
+
+				if (planQueueData.isActive()) {
 					activePlanFound = true;
 					break;
 				}
 			}
-			if(!activePlanFound) {
+			if (!activePlanFound) {
 				break;
 			}
-		}		
+		}
 	}
 
-	private final RandomGenerator randomGenerator = 
-			//RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
-	        RandomGeneratorProvider.getRandomGenerator(1713830743266777795L);
-	
+	private final RandomGenerator randomGenerator =
+			// RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
+			RandomGeneratorProvider.getRandomGenerator(1713830743266777795L);
+
 	private final Path baseOutputDirectory;
 
 	private PlanTestDriver(Path baseOutputDirectory) {
@@ -259,7 +259,7 @@ public final class PlanTestDriver {
 	}
 
 	private StateCollector executeSim(SimulationState simulationState, List<Plugin> plugins) throws IOException {
-		
+
 		Path outputDirectory = baseOutputDirectory.resolve("sub" + iterationCount++);
 		if (!Files.exists(outputDirectory)) {
 			Files.createDirectory(outputDirectory);
@@ -274,12 +274,12 @@ public final class PlanTestDriver {
 				.setRecordState(true)//
 				.setSimulationHaltTime(simulationState.getStartTime() + SIMULATION_DURATION_TIME)//
 				.build();
-		
-		Experiment experiment = builder	.setSimulationState(simulationState)//
-										.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
-										.addExperimentContextConsumer(stateCollector)//
-										.setExperimentParameterData(experimentParameterData)										
-										.build();//
+
+		Experiment experiment = builder.setSimulationState(simulationState)//
+				.addExperimentContextConsumer(getNIOReportItemHandler(outputDirectory))//
+				.addExperimentContextConsumer(stateCollector)//
+				.setExperimentParameterData(experimentParameterData)
+				.build();//
 
 		experiment.execute();//
 
@@ -290,55 +290,56 @@ public final class PlanTestDriver {
 	private Plugin getGlobalPropertiesPlugin() {
 		final GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Double.class)//
-																	.setPropertyValueMutability(false)//
-																	.setDefaultValue(0.0)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Double.class)//
+				.setPropertyValueMutability(false)//
+				.setDefaultValue(0.0)//
+				.build();
 
-		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_HOME_SIZE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_SCHOOL_SIZE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.AVERAGE_WORK_SIZE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.CHILD_POPULATION_PROPORTION, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.COMMUNITY_CONTACT_RATE, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.INFECTION_THRESHOLD, propertyDefinition,0);
+		builder.defineGlobalProperty(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_HOME_SIZE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_SCHOOL_SIZE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.AVERAGE_WORK_SIZE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.CHILD_POPULATION_PROPORTION, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.COMMUNITY_CONTACT_RATE, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.INFECTION_THRESHOLD, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.setPropertyValueMutability(false)//
-												.build();
-		builder.defineGlobalProperty(GlobalProperty.INITIAL_INFECTIONS, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.MIN_INFECTIOUS_PERIOD, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.MAX_INFECTIOUS_PERIOD, propertyDefinition,0);
-		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition,0);
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.setPropertyValueMutability(false)//
+				.build();
+		builder.defineGlobalProperty(GlobalProperty.INITIAL_INFECTIONS, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.MIN_INFECTIOUS_PERIOD, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.MAX_INFECTIOUS_PERIOD, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.POPULATION_SIZE, propertyDefinition, 0);
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Boolean.class)//
-												.setDefaultValue(false)//
-												.setPropertyValueMutability(true)//
-												.build();
-		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition,0);
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.setPropertyValueMutability(true)//
+				.build();
+		builder.defineGlobalProperty(GlobalProperty.MANUFACTURE_VACCINE, propertyDefinition, 0);
 
-		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 100_000,0);
-		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0,0);
-		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1,0);
-		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7,0);
-		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 14,0);
-		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0,0);
-		builder.setGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION, 0.235,0);
-		builder.setGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION, 0.169,0);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5,0);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0,0);
-		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0,0);
-		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.0,0);
-		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.0,0);
+		builder.setGlobalPropertyValue(GlobalProperty.POPULATION_SIZE, 100_000, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.SUSCEPTIBLE_POPULATION_PROPORTION, 1.0, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.INITIAL_INFECTIONS, 1, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.MIN_INFECTIOUS_PERIOD, 7, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.MAX_INFECTIOUS_PERIOD, 14, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.R0, 2.0, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.CHILD_POPULATION_PROPORTION, 0.235, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.SENIOR_POPULATION_PROPORTION, 0.169, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_HOME_SIZE, 2.5, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_SCHOOL_SIZE, 250.0, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.AVERAGE_WORK_SIZE, 30.0, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD, 0.0, 0);
+		builder.setGlobalPropertyValue(GlobalProperty.COMMUNITY_CONTACT_RATE, 0.0, 0);
 
 		final GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
-		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData).getGlobalPropertiesPlugin();
+		return GlobalPropertiesPlugin.builder().setGlobalPropertiesPluginData(globalPropertiesPluginData)
+				.getGlobalPropertiesPlugin();
 
 	}
 
@@ -357,12 +358,12 @@ public final class PlanTestDriver {
 		ContactManagerPluginData.Builder contactManagerPluginDataBuilder = ContactManagerPluginData.builder();
 		ContactManagerPluginData contactManagerPluginData = contactManagerPluginDataBuilder.build();
 
-		return ModelPlugin	.builder()//
-							.setAntigenProducerPluginData(antigenProducerPluginData)//
-							.setVaccineProducerPluginData(vaccineProducerPluginData)//
-							.setVaccinatorPluginData(vaccinatorPluginData)//
-							.setContactManagerPluginData(contactManagerPluginData)//
-							.getModelPlugin();
+		return ModelPlugin.builder()//
+				.setAntigenProducerPluginData(antigenProducerPluginData)//
+				.setVaccineProducerPluginData(vaccineProducerPluginData)//
+				.setVaccinatorPluginData(vaccinatorPluginData)//
+				.setContactManagerPluginData(contactManagerPluginData)//
+				.getModelPlugin();
 	}
 
 	private Plugin getGroupsPlugin() {
@@ -395,40 +396,40 @@ public final class PlanTestDriver {
 
 		final PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Boolean.class)//
-																	.setDefaultValue(false)//
-																	.build();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setType(Boolean.class)//
+				.setDefaultValue(false)//
+				.build();
 
-		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition,0,false);//
-		builder.definePersonProperty(PersonProperty.VACCINE_SCHEDULED, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.VACCINATED, propertyDefinition, 0, false);//
+		builder.definePersonProperty(PersonProperty.VACCINE_SCHEDULED, propertyDefinition, 0, false);//
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(Integer.class)//
-												.build();//
-		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition,0,false);//
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(Integer.class)//
+				.build();//
+		builder.definePersonProperty(PersonProperty.AGE, propertyDefinition, 0, false);//
 
-		propertyDefinition = PropertyDefinition	.builder()//
-												.setType(DiseaseState.class)//
-												.setDefaultValue(DiseaseState.SUSCEPTIBLE)//
-												.build();
+		propertyDefinition = PropertyDefinition.builder()//
+				.setType(DiseaseState.class)//
+				.setDefaultValue(DiseaseState.SUSCEPTIBLE)//
+				.build();
 
-		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition,0,false);//
+		builder.definePersonProperty(PersonProperty.DISEASE_STATE, propertyDefinition, 0, false);//
 
 		final PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
-//		PersonPropertyReportPluginData personPropertyReportPluginData = //
-//				PersonPropertyReportPluginData	.builder()//
-//												.setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
-//												.setReportPeriod(ReportPeriod.DAILY)//
-//												.includePersonProperty(PersonProperty.VACCINATED)//
-//												.includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
-//												.build();
+		// PersonPropertyReportPluginData personPropertyReportPluginData = //
+		// PersonPropertyReportPluginData .builder()//
+		// .setReportLabel(ModelReportLabel.PERSON_PROPERTY_REPORT)//
+		// .setReportPeriod(ReportPeriod.DAILY)//
+		// .includePersonProperty(PersonProperty.VACCINATED)//
+		// .includePersonProperty(PersonProperty.VACCINE_SCHEDULED)//
+		// .build();
 
-		return PersonPropertiesPlugin	.builder()//
-										.setPersonPropertiesPluginData(personPropertiesPluginData)//
-										//.setPersonPropertyReportPluginData(personPropertyReportPluginData)//
-										.getPersonPropertyPlugin();
+		return PersonPropertiesPlugin.builder()//
+				.setPersonPropertiesPluginData(personPropertiesPluginData)//
+				// .setPersonPropertyReportPluginData(personPropertyReportPluginData)//
+				.getPersonPropertyPlugin();
 
 	}
 
@@ -443,19 +444,21 @@ public final class PlanTestDriver {
 	}
 
 	private NIOReportItemHandler getNIOReportItemHandler(Path outputDirectory) {
-		return NIOReportItemHandler	.builder()//
-									.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
-									.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT, outputDirectory.resolve("person_property_report.csv"))//
-									.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.csv"))//
-									.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, outputDirectory.resolve("vaccine_production_report.csv"))//
-									.setDelimiter(",")//
-									.build();
+		return NIOReportItemHandler.builder()//
+				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
+				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT,
+						outputDirectory.resolve("person_property_report.csv"))//
+				.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.csv"))//
+				.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT,
+						outputDirectory.resolve("vaccine_production_report.csv"))//
+				.setDelimiter(",")//
+				.build();
 	}
 
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId,0.0,true);
+			builder.addResource(resourcId, 0.0, true);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();
@@ -463,9 +466,9 @@ public final class PlanTestDriver {
 
 	private Plugin getStochasticsPlugin() {
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
-		final StochasticsPluginData stochasticsPluginData = StochasticsPluginData	.builder()//
-																					.setMainRNGState(wellState)//
-																					.build();
+		final StochasticsPluginData stochasticsPluginData = StochasticsPluginData.builder()//
+				.setMainRNGState(wellState)//
+				.build();
 
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}

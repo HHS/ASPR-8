@@ -1,7 +1,7 @@
 package lesson.plugins.model.support;
 
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 
 public final class MaterialManufactureSpecification {
 
@@ -44,7 +44,7 @@ public final class MaterialManufactureSpecification {
 			data.stageAmount = stageAmount;
 			return this;
 		}
-		
+
 		public Builder setOnOrder(boolean onOrder) {
 			data.onOrder = onOrder;
 			return this;
@@ -59,10 +59,11 @@ public final class MaterialManufactureSpecification {
 		private double deliveryDelay;
 		private double stageAmount;
 		private BatchId batchId;
-		
+
 		public Data() {
-			
+
 		}
+
 		public Data(Data data) {
 			materialId = data.materialId;
 			onOrder = data.onOrder;

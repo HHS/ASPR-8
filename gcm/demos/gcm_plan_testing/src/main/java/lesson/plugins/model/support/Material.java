@@ -1,8 +1,8 @@
 package lesson.plugins.model.support;
 
-import plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 
- public enum Material implements MaterialId {
+public enum Material implements MaterialId {
 
 	VIRUS,
 	GROWTH_MEDIUM,
@@ -10,4 +10,4 @@ import plugins.materials.support.MaterialId;
 	ADJUVANT,
 	PRESERVATIVE,
 	STABILIZER;
- }
+}

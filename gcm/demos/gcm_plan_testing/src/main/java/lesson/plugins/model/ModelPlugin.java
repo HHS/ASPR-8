@@ -1,5 +1,8 @@
 package lesson.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginContext;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.model.actors.antigenproducer.AntigenProducer;
 import lesson.plugins.model.actors.antigenproducer.AntigenProducerPluginData;
 import lesson.plugins.model.actors.contactmanager.ContactManager;
@@ -14,9 +17,6 @@ import lesson.plugins.model.reports.VaccineProductionReport;
 import lesson.plugins.model.reports.VaccineReport;
 import lesson.plugins.model.support.ModelError;
 import lesson.plugins.model.support.ModelReportLabel;
-import nucleus.Plugin;
-import nucleus.PluginContext;
-import plugins.reports.support.ReportPeriod;
 import util.errors.ContractException;
 
 public final class ModelPlugin {
@@ -91,21 +91,25 @@ public final class ModelPlugin {
 	}
 
 	private static void init(PluginContext pluginContext) {
-		AntigenProducerPluginData antigenProducerPluginData = pluginContext.getPluginData(AntigenProducerPluginData.class).get();
-		VaccineProducerPluginData vaccineProducerPluginData = pluginContext.getPluginData(VaccineProducerPluginData.class).get();
+		AntigenProducerPluginData antigenProducerPluginData = pluginContext
+				.getPluginData(AntigenProducerPluginData.class).get();
+		VaccineProducerPluginData vaccineProducerPluginData = pluginContext
+				.getPluginData(VaccineProducerPluginData.class).get();
 		VaccinatorPluginData vaccinatorPluginData = pluginContext.getPluginData(VaccinatorPluginData.class).get();
-		ContactManagerPluginData contactManagerPluginData = pluginContext.getPluginData(ContactManagerPluginData.class).get();
+		ContactManagerPluginData contactManagerPluginData = pluginContext.getPluginData(ContactManagerPluginData.class)
+				.get();
 
 		pluginContext.addActor(new PopulationLoader()::init);
 		pluginContext.addActor(new ContactManager(contactManagerPluginData)::init);
 		pluginContext.addActor(new Vaccinator(vaccinatorPluginData)::init);
 		pluginContext.addActor(new VaccineProducer(vaccineProducerPluginData)::init);
 		pluginContext.addActor(new AntigenProducer(antigenProducerPluginData)::init);
-		
-		
-		pluginContext.addReport(new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init);//
+
+		pluginContext.addReport(
+				new DiseaseStateReport(ModelReportLabel.DISEASE_STATE_REPORT, ReportPeriod.END_OF_SIMULATION)::init);//
 		pluginContext.addReport(new VaccineReport(ModelReportLabel.VACCINE_REPORT, ReportPeriod.DAILY)::init);//
-		pluginContext.addReport(new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init);//
+		pluginContext.addReport(
+				new VaccineProductionReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT, ReportPeriod.DAILY)::init);//
 	}
 
 	private ModelPlugin() {

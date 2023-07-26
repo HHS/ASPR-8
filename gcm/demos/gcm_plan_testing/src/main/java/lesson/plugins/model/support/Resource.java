@@ -1,7 +1,7 @@
 package lesson.plugins.model.support;
 
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
- public enum Resource implements ResourceId {
+public enum Resource implements ResourceId {
 	VACCINE;
- }
+}
