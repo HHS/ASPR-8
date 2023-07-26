@@ -350,7 +350,9 @@ public class AT_MaterialsTestPluginFactory {
                 if (randomGenerator.nextBoolean()) {
                     materialsBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId,
                             randomGenerator.nextInt(10));
-                }
+                } else {
+					materialsBuilder.setMaterialsProducerResourceLevel(testMaterialsProducerId, resourceId, 0);
+				}
             }
         }
 
