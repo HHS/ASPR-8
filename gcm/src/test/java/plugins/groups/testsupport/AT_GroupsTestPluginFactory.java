@@ -18,6 +18,7 @@ import org.junit.platform.commons.annotation.Testable;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -41,7 +42,6 @@ import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
 import plugins.stochastics.testsupport.TestRandomGeneratorId;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -172,7 +172,7 @@ public class AT_GroupsTestPluginFactory {
         List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setGroupPropertyReportPluginData(groupPropertyReportPluginData).getPlugins();
 
-        TestFactoryUtil.checkPluginDataExists(plugins, groupPropertyReportPluginData, GroupsPluginId.PLUGIN_ID, 2);
+        TestFactoryUtil.checkPluginDataExists(plugins, groupPropertyReportPluginData, GroupsPluginId.PLUGIN_ID);
         
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,
@@ -193,7 +193,7 @@ public class AT_GroupsTestPluginFactory {
         List<Plugin> plugins = GroupsTestPluginFactory.factory(0, 0, 0, 0, t -> {
         }).setGroupPopulationReportPluginData(groupPopulationReportPluginData).getPlugins();
 
-        TestFactoryUtil.checkPluginDataExists(plugins, groupPopulationReportPluginData, GroupsPluginId.PLUGIN_ID, 2);
+        TestFactoryUtil.checkPluginDataExists(plugins, groupPopulationReportPluginData, GroupsPluginId.PLUGIN_ID);
         
         // precondition: peoplePluginData is not null
         ContractException contractException = assertThrows(ContractException.class,

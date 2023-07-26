@@ -405,9 +405,9 @@ public class AT_GroupsPluginData {
     }
 
     @Test
-    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addPersonToGroup", args = { GroupId.class,
+    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "associatePersonToGroup", args = { GroupId.class,
             PersonId.class })
-    public void testAddPersonToGroup() {
+    public void testAssociatePersonToGroup() {
 
         Random random = new Random(7282493148489771700L);
 
@@ -1411,4 +1411,147 @@ public class AT_GroupsPluginData {
             assertEquals(pluginDataSb.toString(), pluginData.toString());
         }
     }
+    
+    
+
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroupToPerson", args = {GroupId.class, PersonId.class })
+    public void testAddGroupToPerson() {
+
+        Random random = new Random(7282493148489771700L);
+
+        Map<MultiKey, MutableInteger> expectedGroupAssignments = new LinkedHashMap<>();
+
+        GroupsPluginData.Builder builder = GroupsPluginData.builder();
+        // add in the group types
+        for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+            builder.addGroupTypeId(testGroupTypeId);
+        }
+
+        // create some people
+        List<Integer> personIds = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            personIds.add(i);
+        }
+
+        /*
+         * Add a few groups and add to those groups 0 to 9 randomly selected people.
+         * Record the assignments in the expected data structure.
+         */
+        TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+        for (int i = 0; i < 20; i++) {
+            // add the group
+
+            builder.addGroup(new GroupId(i), testGroupTypeId);
+            testGroupTypeId = testGroupTypeId.next();
+            // select some people and add them to the group
+            Collections.shuffle(personIds, random);
+            int count = random.nextInt(10);
+            for (int j = 0; j < count; j++) {
+                builder.addGroupToPerson(new GroupId(i), new PersonId(personIds.get(j)));
+                builder.addPersonToGroup(new PersonId(personIds.get(j)), new GroupId(i));
+                MultiKey multiKey = new MultiKey(new GroupId(i), new PersonId(personIds.get(j)));
+                expectedGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+                expectedGroupAssignments.get(multiKey).increment();
+            }
+        }
+
+        // build the group initial data
+        GroupsPluginData groupsPluginData = builder.build();
+
+        // show that the group memberships are as expected
+        Map<MultiKey, MutableInteger> actualGroupAssignments = new LinkedHashMap<>();
+
+        for (int i = 0; i < groupsPluginData.getPersonCount(); i++) {
+            PersonId personId = new PersonId(i);
+            for (GroupId groupId : groupsPluginData.getGroupsForPerson(personId)) {
+                MultiKey multiKey = new MultiKey(groupId, personId);
+                actualGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+                actualGroupAssignments.get(multiKey).increment();
+            }
+        }
+
+        assertEquals(expectedGroupAssignments, actualGroupAssignments);
+
+        // precondition test: if the group id is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GroupsPluginData.builder().associatePersonToGroup(null, new PersonId(0)));
+        assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+
+        // precondition test: if the person id is null
+        contractException = assertThrows(ContractException.class,
+                () -> GroupsPluginData.builder().associatePersonToGroup(new GroupId(0), null));
+        assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+    }    
+    
+    @Test
+    @UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addPersonToGroup", args = {PersonId.class, GroupId.class })
+    public void testAddPersonToGroup() {
+
+        Random random = new Random(7282493148489771700L);
+
+        Map<MultiKey, MutableInteger> expectedGroupAssignments = new LinkedHashMap<>();
+
+        GroupsPluginData.Builder builder = GroupsPluginData.builder();
+        // add in the group types
+        for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+            builder.addGroupTypeId(testGroupTypeId);
+        }
+
+        // create some people
+        List<Integer> personIds = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            personIds.add(i);
+        }
+
+        /*
+         * Add a few groups and add to those groups 0 to 9 randomly selected people.
+         * Record the assignments in the expected data structure.
+         */
+        TestGroupTypeId testGroupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+        for (int i = 0; i < 20; i++) {
+            // add the group
+
+            builder.addGroup(new GroupId(i), testGroupTypeId);
+            testGroupTypeId = testGroupTypeId.next();
+            // select some people and add them to the group
+            Collections.shuffle(personIds, random);
+            int count = random.nextInt(10);
+            for (int j = 0; j < count; j++) {
+                builder.addGroupToPerson(new GroupId(i), new PersonId(personIds.get(j)));
+                builder.addPersonToGroup(new PersonId(personIds.get(j)), new GroupId(i));
+                MultiKey multiKey = new MultiKey(new GroupId(i), new PersonId(personIds.get(j)));
+                expectedGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+                expectedGroupAssignments.get(multiKey).increment();
+            }
+        }
+
+        // build the group initial data
+        GroupsPluginData groupsPluginData = builder.build();
+
+        // show that the group memberships are as expected
+        Map<MultiKey, MutableInteger> actualGroupAssignments = new LinkedHashMap<>();
+
+        for (int i = 0; i < groupsPluginData.getPersonCount(); i++) {
+            PersonId personId = new PersonId(i);
+            for (GroupId groupId : groupsPluginData.getGroupsForPerson(personId)) {
+                MultiKey multiKey = new MultiKey(groupId, personId);
+                actualGroupAssignments.putIfAbsent(multiKey, new MutableInteger());
+                actualGroupAssignments.get(multiKey).increment();
+            }
+        }
+
+        assertEquals(expectedGroupAssignments, actualGroupAssignments);
+
+        // precondition test: if the group id is null
+        ContractException contractException = assertThrows(ContractException.class,
+                () -> GroupsPluginData.builder().associatePersonToGroup(null, new PersonId(0)));
+        assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
+
+        // precondition test: if the person id is null
+        contractException = assertThrows(ContractException.class,
+                () -> GroupsPluginData.builder().associatePersonToGroup(new GroupId(0), null));
+        assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+    }    
+
 }

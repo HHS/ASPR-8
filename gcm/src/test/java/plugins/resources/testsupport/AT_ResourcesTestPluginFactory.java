@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -29,15 +30,19 @@ import plugins.regions.support.RegionError;
 import plugins.regions.support.RegionId;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.resources.ResourcesPluginId;
 import plugins.resources.datamanagers.ResourcesPluginData;
+import plugins.resources.reports.PersonResourceReportPluginData;
+import plugins.resources.reports.ResourcePropertyReportPluginData;
+import plugins.resources.reports.ResourceReportPluginData;
 import plugins.resources.support.ResourceError;
 import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -346,4 +351,53 @@ public class AT_ResourcesTestPluginFactory {
 
         assertEquals(expectedPluginData, actualPluginData);
     }
+    
+ 
+   //testSetPersonResourceReportPluginData() plugins.resources.testsupport.ResourcesTestPluginFactory$Factory.setPersonResourceReportPluginData(plugins.resources.reports.ResourceReportPluginData)
+    @Test
+    @UnitTestMethod(target = ResourcesTestPluginFactory.Factory.class, name = "setPersonResourceReportPluginData", args = {
+    		PersonResourceReportPluginData.class })
+    public void testSetPersonResourceReportPluginData() {
+    	PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData.builder()
+        .setReportLabel(new SimpleReportLabel("report label"))
+        .setDefaultInclusion(true)
+        .setReportPeriod(ReportPeriod.DAILY)
+        .build();
+    	
+        List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
+        }).setPersonResourceReportPluginData(personResourceReportPluginData).getPlugins();
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, personResourceReportPluginData, ResourcesPluginId.PLUGIN_ID);
+    }
+ 
+    @Test
+    @UnitTestMethod(target = ResourcesTestPluginFactory.Factory.class, name = "setResourcePropertyReportPluginData", args = {
+    		ResourcePropertyReportPluginData.class })
+    public void testSetResourcePropertyReportPluginData() {
+    	ResourcePropertyReportPluginData resourcePropertyReportPluginData = ResourcePropertyReportPluginData.builder()
+        .setReportLabel(new SimpleReportLabel("report label"))
+        .build();
+    	
+        List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
+        }).setResourcePropertyReportPluginData(resourcePropertyReportPluginData).getPlugins();
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, resourcePropertyReportPluginData, ResourcesPluginId.PLUGIN_ID);
+    }
+    
+    @Test
+    @UnitTestMethod(target = ResourcesTestPluginFactory.Factory.class, name = "setResourceReportPluginData", args = {
+    		ResourceReportPluginData.class })
+    public void testSetResourceReportPluginData() {
+    	ResourceReportPluginData resourceReportPluginData = ResourceReportPluginData.builder()
+        .setReportLabel(new SimpleReportLabel("report label"))
+        .setDefaultInclusion(true)
+        .setReportPeriod(ReportPeriod.DAILY)
+        .build();
+    	
+        List<Plugin> plugins = ResourcesTestPluginFactory.factory(0, 0, t -> {        	
+        }).setResourceReportPluginData(resourceReportPluginData).getPlugins();
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, resourceReportPluginData, ResourcesPluginId.PLUGIN_ID);
+    }
+
 }

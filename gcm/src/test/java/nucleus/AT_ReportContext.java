@@ -6,13 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -834,4 +838,74 @@ public class AT_ReportContext {
 
         assertTrue(called.getValue());
     }
+    
+    @Test
+	@UnitTestMethod(target = ReportContext.class, name = "getBaseDate", args = {})
+	public void testGetBaseDate() {
+
+		// create some base dates to test
+		List<LocalDate> localDates = new ArrayList<>();
+
+		localDates.add(LocalDate.of(2023, 1, 10));
+		localDates.add(LocalDate.of(2024, 6, 13));
+		localDates.add(LocalDate.of(2020, 3, 15));
+		localDates.add(LocalDate.of(2023, 12, 25));
+
+		// loop over the base dates
+		IntStream.range(0, localDates.size()).forEach((i) -> {
+			LocalDate localDate = localDates.get(i);
+			// build a single actor that will show that the base date returned by the
+			// context is correct
+			TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+			
+			pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(0, (c) -> {
+				assertEquals(localDate, c.getBaseDate());
+			}));
+			//add an actor plan to force the simulation to flow time past the report's task time
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+				
+			}));
+			TestPluginData testPluginData = pluginDataBuilder.build();
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			// execute the engine
+			SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
+			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
+		});
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ReportContext.class, name = "getStartTime", args = {})
+	public void testGetStartTime() {
+
+		// create some start times to test
+		List<Double> startTimes = new ArrayList<>();
+
+		startTimes.add(-100.0);
+		startTimes.add(30.23);
+		startTimes.add(17.63);
+		startTimes.add(45.5);
+
+		// loop over the base dates
+		IntStream.range(0, startTimes.size()).forEach((i) -> {
+			Double startTime = startTimes.get(i);
+			// build a single report that will show that the start time returned by the
+			// context is correct
+			TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+			pluginDataBuilder.addTestReportPlan("report", new TestReportPlan(startTime+10,(c)->{
+				assertEquals(startTime, c.getStartTime());
+			}));
+			
+			//add an actor plan to force the simulation to flow time past the report's task time
+			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(startTime+20,(c)->{}));
+			TestPluginData testPluginData = pluginDataBuilder.build();
+			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+			// execute the engine
+			SimulationState simulationState = SimulationState.builder().setStartTime(startTime).build();
+			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
+		});
+
+	}
 }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -25,6 +26,8 @@ import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.personproperties.PersonPropertiesPluginId;
 import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;
+import plugins.personproperties.reports.PersonPropertyReportPluginData;
 import plugins.personproperties.support.PersonPropertyError;
 import plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory.Factory;
 import plugins.regions.RegionsPluginId;
@@ -32,11 +35,12 @@ import plugins.regions.datamanagers.RegionsPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.TestRegionId;
 import plugins.regions.testsupport.TestRegionPropertyId;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.TestFactoryUtil;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -356,4 +360,41 @@ public class AT_PersonPropertiesTestPluginFactory {
 
         assertEquals(expectedPluginData, actualPluginData);
     }
+ 
+
+    @Test
+    @UnitTestMethod(target = PersonPropertiesTestPluginFactory.Factory.class, name = "setPersonPropertyReportPluginData", args = {
+    		PersonPropertyReportPluginData.class })
+    public void testSetsetPersonPropertyReportPluginData() {
+    	PersonPropertyReportPluginData personPropertyReportPluginData = PersonPropertyReportPluginData.builder()//
+    	.setReportLabel(new SimpleReportLabel("report label"))//
+    	.setReportPeriod(ReportPeriod.DAILY)//
+    	.build();
+
+        List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
+        }).setPersonPropertyReportPluginData(personPropertyReportPluginData).getPlugins();
+
+        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyReportPluginData, PersonPropertiesPluginId.PLUGIN_ID);
+    }
+
+    
+    @Test
+    @UnitTestMethod(target = PersonPropertiesTestPluginFactory.Factory.class, name = "setPersonPropertyInteractionReportPluginData", args = {
+    		PersonPropertyInteractionReportPluginData.class })
+    public void testSetPersonPropertyInteractionReportPluginData() {
+    	PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = PersonPropertyInteractionReportPluginData.builder()//
+    	.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK)//
+    	.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK)//
+    	.setReportLabel(new SimpleReportLabel("report label"))//
+    	.setReportPeriod(ReportPeriod.DAILY)//
+    	.build();
+
+        List<Plugin> plugins = PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
+        }).setPersonPropertyInteractionReportPluginData(personPropertyInteractionReportPluginData).getPlugins();
+
+        TestFactoryUtil.checkPluginDataExists(plugins, personPropertyInteractionReportPluginData, PersonPropertiesPluginId.PLUGIN_ID);
+    }
+    
+    
+    
 }

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -28,7 +29,6 @@ import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.globalproperties.support.SimpleGlobalPropertyId;
 import plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import plugins.reports.support.SimpleReportLabel;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -108,7 +108,7 @@ public class AT_GlobalPropertiesTestPluginFactory {
         List<Plugin> plugins = GlobalPropertiesTestPluginFactory.factory(2050026532065791481L, t -> {
         }).setGlobalPropertyReportPluginData(pluginData).getPlugins();
 
-        TestFactoryUtil.checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID, 2);
+        TestFactoryUtil.checkPluginDataExists(plugins, pluginData, GlobalPropertiesPluginId.PLUGIN_ID);
 
         // precondition: globalPropReportPluginData is null
         ContractException contractException = assertThrows(ContractException.class,

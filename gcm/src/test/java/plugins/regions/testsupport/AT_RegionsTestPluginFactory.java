@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import nucleus.ActorContext;
 import nucleus.NucleusError;
 import nucleus.Plugin;
+import nucleus.testsupport.TestFactoryUtil;
 import nucleus.testsupport.testplugin.TestActorPlan;
 import nucleus.testsupport.testplugin.TestPluginData;
 import nucleus.testsupport.testplugin.TestPluginId;
@@ -25,13 +26,16 @@ import plugins.people.support.PersonId;
 import plugins.people.support.PersonRange;
 import plugins.regions.RegionsPluginId;
 import plugins.regions.datamanagers.RegionsPluginData;
+import plugins.regions.reports.RegionPropertyReportPluginData;
+import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.regions.support.RegionError;
 import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
+import plugins.reports.support.ReportPeriod;
+import plugins.reports.support.SimpleReportLabel;
 import plugins.stochastics.StochasticsPluginId;
 import plugins.stochastics.datamanagers.StochasticsPluginData;
 import plugins.stochastics.support.StochasticsError;
 import plugins.stochastics.support.WellState;
-import plugins.util.TestFactoryUtil;
 import plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -289,5 +293,41 @@ public class AT_RegionsTestPluginFactory {
         StochasticsPluginData actualPluginData = RegionsTestPluginFactory.getStandardStochasticsPluginData(seed);
 
         assertEquals(expectedPluginData, actualPluginData);
+    }
+    
+    @Test
+    @UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "setRegionPropertyReportPluginData", args = {
+    		RegionPropertyReportPluginData.class })
+    public void testSetRegionPropertyReportPluginData() {
+    	RegionPropertyReportPluginData regionPropertyReportPluginData = RegionPropertyReportPluginData.builder()//
+    	.setReportLabel(new SimpleReportLabel("RegionPropertyReport"))//
+    	.setDefaultInclusion(true)//
+    	.includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE)//
+    	.excludeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE)//
+    	.build();//
+
+        Factory factory = RegionsTestPluginFactory.factory(0, 0, true, t -> { });
+        factory.setRegionPropertyReportPluginData(regionPropertyReportPluginData);
+        List<Plugin> plugins = factory.getPlugins();
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, regionPropertyReportPluginData, RegionsPluginId.PLUGIN_ID);
+    }
+    
+    @Test
+    @UnitTestMethod(target = RegionsTestPluginFactory.Factory.class, name = "setRegionTransferReportPluginData", args = {
+    		RegionTransferReportPluginData.class })
+    public void testSetRegionTransferReportPluginData() {
+    	RegionTransferReportPluginData regionTransferReportPluginData = RegionTransferReportPluginData.builder()//
+    	.setReportLabel(new SimpleReportLabel("RegionTransferReport"))
+    	.setReportPeriod(ReportPeriod.DAILY)
+    	.build();
+
+        Factory factory = RegionsTestPluginFactory.factory(0, 0, true, t -> { });
+        factory.setRegionTransferReportPluginData(regionTransferReportPluginData);
+        List<Plugin> plugins = factory.getPlugins();
+        
+        TestFactoryUtil.checkPluginDataExists(plugins, regionTransferReportPluginData, RegionsPluginId.PLUGIN_ID);
+
+        
     }
 }
