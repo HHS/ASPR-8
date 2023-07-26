@@ -9,7 +9,7 @@ import java.util.List;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslatorId;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslatorId;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionMembershipInput.RegionPersonInfo;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionMembershipInput.RegionPersonInfo;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionFilterTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs.RegionPropertyDimensionTranslationSpec;

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.input.TestGlobalPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.testsupport.input.TestGlobalPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.globalproperties.testsupport.TestGlobalPropertyId;
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslatorId;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyValueInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.input.PersonPropertyValueInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertiesPluginDataTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyDimensionTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translationSpecs.PersonPropertyFilterTranslationSpec;

@@ -2,9 +2,9 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.AttributeFilterInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.AttributeIdInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.EqualityInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes.input.AttributeFilterInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes.input.AttributeIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.EqualityInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.partitions.support.Equality;
 import plugins.partitions.testsupport.attributes.support.AttributeFilter;

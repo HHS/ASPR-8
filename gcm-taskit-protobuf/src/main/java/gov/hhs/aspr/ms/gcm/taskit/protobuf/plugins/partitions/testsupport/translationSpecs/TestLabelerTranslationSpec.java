@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.translationSpecs;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.input.TestLabelerInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.input.TestLabelerInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.TestLabeler;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 

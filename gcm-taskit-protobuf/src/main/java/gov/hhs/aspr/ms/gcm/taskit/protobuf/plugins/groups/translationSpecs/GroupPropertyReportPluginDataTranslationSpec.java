@@ -1,11 +1,11 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPropertyIdInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPropertyReportPluginDataInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupPropertyReportPropertyMap;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupTypeIdInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.reports.input.GroupPropertyReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.reports.input.GroupPropertyReportPropertyMap;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupTypeIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import plugins.groups.reports.GroupPropertyReportPluginData;
 import plugins.groups.support.GroupPropertyId;
 import plugins.groups.support.GroupTypeId;

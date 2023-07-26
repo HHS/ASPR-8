@@ -1,9 +1,9 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs;
 
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.input.RegionTransferReportPluginDataInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportLabelInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.input.ReportPeriodInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.reports.input.RegionTransferReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportPeriodInput;
 import plugins.regions.reports.RegionTransferReportPluginData;
 import plugins.reports.support.ReportLabel;
 import plugins.reports.support.ReportPeriod;

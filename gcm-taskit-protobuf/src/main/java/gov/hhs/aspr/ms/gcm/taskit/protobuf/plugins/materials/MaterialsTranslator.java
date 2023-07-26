@@ -7,8 +7,8 @@ import gov.hhs.aspr.translation.core.Translator;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.input.BatchIdInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.input.StageIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.support.input.BatchIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.support.input.StageIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchPropertyIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs.BatchStatusReportPluginDataTranslationSpec;

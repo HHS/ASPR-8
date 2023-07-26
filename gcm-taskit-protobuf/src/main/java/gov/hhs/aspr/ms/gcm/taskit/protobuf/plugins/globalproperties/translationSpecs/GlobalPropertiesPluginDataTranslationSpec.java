@@ -4,10 +4,10 @@ import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyDefinitionMapInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.input.PropertyValueMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.data.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionMapInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyValueMapInput;
 import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;

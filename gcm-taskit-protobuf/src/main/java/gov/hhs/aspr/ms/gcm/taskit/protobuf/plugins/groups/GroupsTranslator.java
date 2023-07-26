@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.input.GroupIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs.GroupIdTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs.GroupMemberFilterTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs.GroupPopulationReportPluginDataTranslationSpec;

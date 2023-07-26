@@ -2,8 +2,8 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translation
 
 import com.google.protobuf.Any;
 
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyDimensionInput;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.input.PersonPropertyIdInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.input.PersonPropertyDimensionInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.input.PersonPropertyIdInput;
 import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
 import plugins.personproperties.support.PersonPropertyDimension;
 import plugins.personproperties.support.PersonPropertyId;
