@@ -118,7 +118,7 @@
                 <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
-                        <?m2e ignore?>
+                        <?m2e execute onConfiguration?>
                         <id>unpack-protos</id>
                         <phase>generate-sources</phase>
                         <goals>
