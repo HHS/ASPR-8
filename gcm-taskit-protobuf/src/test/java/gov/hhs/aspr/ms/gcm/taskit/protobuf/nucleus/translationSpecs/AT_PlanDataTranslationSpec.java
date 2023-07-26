@@ -10,7 +10,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.PlanDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.ExamplePlanData;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import nucleus.PlanData;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanData;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

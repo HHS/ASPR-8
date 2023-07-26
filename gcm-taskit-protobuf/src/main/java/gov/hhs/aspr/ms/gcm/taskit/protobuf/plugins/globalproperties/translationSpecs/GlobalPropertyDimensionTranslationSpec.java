@@ -5,8 +5,8 @@ import com.google.protobuf.Any;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyDimensionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.globalproperties.support.GlobalPropertyDimension;
-import plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyDimension;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 
 public class GlobalPropertyDimensionTranslationSpec
         extends ProtobufTranslationSpec<GlobalPropertyDimensionInput, GlobalPropertyDimension> {

@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.data.input.PeoplePluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.support.input.PersonRangeInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
 
 /**
  * TranslationSpec that defines how to convert between

@@ -13,9 +13,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslator
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.reports.input.ResourcePropertyReportPluginDataInput;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.resources.reports.ResourcePropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReportPluginData;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

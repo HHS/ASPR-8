@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.translationSpecs;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupMemberFilterInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.groups.support.GroupMemberFilter;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupMemberFilter;
 
 public class GroupMemberFilterTranslationSpec
         extends ProtobufTranslationSpec<GroupMemberFilterInput, GroupMemberFilter> {

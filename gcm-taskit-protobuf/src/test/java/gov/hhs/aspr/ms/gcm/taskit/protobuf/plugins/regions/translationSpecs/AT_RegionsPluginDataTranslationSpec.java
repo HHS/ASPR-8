@@ -15,9 +15,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.data.input.RegionsPlu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.regions.testsupport.RegionsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.RegionsTestPluginFactory;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

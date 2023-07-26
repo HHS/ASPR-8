@@ -6,8 +6,8 @@ import java.util.List;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionFilterInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.regions.support.RegionFilter;
-import plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionFilter;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 
 /**
  * TranslationSpec that defines how to convert between

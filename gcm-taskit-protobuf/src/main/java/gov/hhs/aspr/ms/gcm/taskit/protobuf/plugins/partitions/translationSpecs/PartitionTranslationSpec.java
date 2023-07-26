@@ -4,9 +4,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.filters.in
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.LabelerInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.PartitionInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.Partition;
-import plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Partition;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 
 /**
  * TranslationSpec that defines how to convert between

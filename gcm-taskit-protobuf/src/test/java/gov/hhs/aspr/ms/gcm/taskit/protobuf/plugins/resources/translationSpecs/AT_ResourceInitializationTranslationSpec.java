@@ -13,8 +13,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslator
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceInitializationInput;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.resources.support.ResourceInitialization;
-import plugins.resources.testsupport.TestResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

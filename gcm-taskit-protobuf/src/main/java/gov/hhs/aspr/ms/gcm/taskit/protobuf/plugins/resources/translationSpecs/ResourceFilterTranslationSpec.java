@@ -4,9 +4,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.Equa
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceFilterInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.support.Equality;
-import plugins.resources.support.ResourceFilter;
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceFilter;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
 public class ResourceFilterTranslationSpec extends ProtobufTranslationSpec<ResourceFilterInput, ResourceFilter> {
 

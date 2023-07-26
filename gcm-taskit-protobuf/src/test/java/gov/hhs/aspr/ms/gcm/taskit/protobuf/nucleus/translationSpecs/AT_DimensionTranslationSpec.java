@@ -10,7 +10,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.DimensionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport.ExampleDimension;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

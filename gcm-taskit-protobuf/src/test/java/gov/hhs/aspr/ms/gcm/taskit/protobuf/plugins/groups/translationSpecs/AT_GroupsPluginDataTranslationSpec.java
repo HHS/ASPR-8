@@ -15,11 +15,11 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslat
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.groups.support.GroupId;
-import plugins.groups.testsupport.GroupsTestPluginFactory;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.GroupsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

@@ -17,11 +17,11 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.reports.input.RegionP
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.regions.reports.RegionPropertyReportPluginData;
-import plugins.regions.support.RegionPropertyId;
-import plugins.regions.testsupport.TestRegionPropertyId;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

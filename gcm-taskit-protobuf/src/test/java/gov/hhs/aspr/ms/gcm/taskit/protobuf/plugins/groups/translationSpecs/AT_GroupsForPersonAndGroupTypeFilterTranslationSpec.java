@@ -13,9 +13,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslat
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.groups.support.GroupsForPersonAndGroupTypeFilter;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupsForPersonAndGroupTypeFilter;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

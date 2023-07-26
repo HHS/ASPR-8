@@ -4,9 +4,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.reports.inpu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * TranslationSpec that defines how to convert between

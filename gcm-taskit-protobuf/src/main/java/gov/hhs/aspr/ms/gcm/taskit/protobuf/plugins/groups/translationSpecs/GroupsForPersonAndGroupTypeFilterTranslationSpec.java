@@ -4,9 +4,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupTyp
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupsForPersonAndGroupTypeFilterInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.EqualityInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.groups.support.GroupTypeId;
-import plugins.groups.support.GroupsForPersonAndGroupTypeFilter;
-import plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupsForPersonAndGroupTypeFilter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
 
 public class GroupsForPersonAndGroupTypeFilterTranslationSpec
         extends ProtobufTranslationSpec<GroupsForPersonAndGroupTypeFilterInput, GroupsForPersonAndGroupTypeFilter> {

@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.DimensionInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 
 public class DimensionTranslationSpec extends ProtobufTranslationSpec<DimensionInput, Dimension> {
 

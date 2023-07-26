@@ -10,13 +10,13 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.data.input.Stocha
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.support.Well;
-import plugins.stochastics.support.WellState;
-import plugins.stochastics.testsupport.StochasticsTestPluginFactory;
-import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.Well;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport.StochasticsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_StochasticsTranslator {

@@ -6,9 +6,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionI
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionPropertyDimensionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionPropertyIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.RegionPropertyDimension;
-import plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyDimension;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
 
 public class RegionPropertyDimensionTranslationSpec
         extends ProtobufTranslationSpec<RegionPropertyDimensionInput, RegionPropertyDimension> {

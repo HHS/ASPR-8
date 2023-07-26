@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.LabelerInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
 
 /**
  * TranslationSpec that defines how to convert between

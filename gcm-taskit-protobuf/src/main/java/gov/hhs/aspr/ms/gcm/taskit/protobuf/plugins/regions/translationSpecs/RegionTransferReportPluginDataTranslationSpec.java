@@ -4,9 +4,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.reports.input.RegionT
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportPeriodInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.regions.reports.RegionTransferReportPluginData;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 
 /**
  * TranslationSpec that defines how to convert between

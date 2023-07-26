@@ -6,10 +6,10 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupPro
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.support.input.GroupTypeIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.groups.reports.GroupPropertyReportPluginData;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * TranslationSpec that defines how to convert between

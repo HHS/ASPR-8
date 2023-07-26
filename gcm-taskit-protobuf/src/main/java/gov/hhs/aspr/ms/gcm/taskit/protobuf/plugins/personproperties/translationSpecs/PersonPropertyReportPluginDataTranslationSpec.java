@@ -5,10 +5,10 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.inpu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.reports.input.PersonPropertyReportPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportPeriodInput;
-import plugins.personproperties.reports.PersonPropertyReportPluginData;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.reports.PersonPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 
 /**
  * TranslationSpec that defines how to convert between

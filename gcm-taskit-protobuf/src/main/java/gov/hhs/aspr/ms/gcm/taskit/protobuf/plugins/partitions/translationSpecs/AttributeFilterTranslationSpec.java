@@ -6,9 +6,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.attributes.input.AttributeIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input.EqualityInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.support.Equality;
-import plugins.partitions.testsupport.attributes.support.AttributeFilter;
-import plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeFilter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
 
 /**
  * TranslationSpec that defines how to convert between

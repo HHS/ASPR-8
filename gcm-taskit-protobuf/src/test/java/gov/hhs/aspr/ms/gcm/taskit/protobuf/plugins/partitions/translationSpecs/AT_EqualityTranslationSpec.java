@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.transl
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.translationSpecs.TestLabelerTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

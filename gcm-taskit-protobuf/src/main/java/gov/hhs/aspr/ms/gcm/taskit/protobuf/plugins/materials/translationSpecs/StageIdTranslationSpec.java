@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.support.input.StageIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
 
 /**
  * TranslationSpec that defines how to convert between

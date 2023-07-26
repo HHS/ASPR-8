@@ -10,8 +10,8 @@ import java.util.LinkedHashSet;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

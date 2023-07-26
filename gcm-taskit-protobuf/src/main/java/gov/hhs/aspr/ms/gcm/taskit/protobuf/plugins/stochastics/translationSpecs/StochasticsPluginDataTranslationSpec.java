@@ -5,9 +5,9 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.support.input.Ran
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.support.input.RandomNumberGeneratorMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.support.input.WellStateInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 
 /**
  * TranslationSpec that defines how to convert between

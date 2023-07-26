@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.transl
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.partitions.datamanagers.PartitionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsPluginData;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_PartitionsTranslator {

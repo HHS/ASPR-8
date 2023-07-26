@@ -4,11 +4,11 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import nucleus.Event;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.LabelerSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelerSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 public class TestLabeler implements Labeler {
     private String id;

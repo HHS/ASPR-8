@@ -10,7 +10,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.Prop
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_PropertiesTranslator {

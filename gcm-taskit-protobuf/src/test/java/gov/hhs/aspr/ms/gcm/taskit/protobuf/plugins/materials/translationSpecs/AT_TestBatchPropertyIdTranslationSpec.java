@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.materials.testsupport.TestBatchPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestBatchPropertyId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
@@ -46,7 +46,7 @@ public class AT_TestBatchPropertyIdTranslationSpec {
         TestBatchPropertyIdTranslationSpec translationSpec = new TestBatchPropertyIdTranslationSpec();
         translationSpec.init(protobufTranslationEngine);
 
-        TestBatchPropertyId expectedAppValue = plugins.materials.testsupport.TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
+        TestBatchPropertyId expectedAppValue = TestBatchPropertyId.BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK;
 
         TestBatchPropertyIdInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 

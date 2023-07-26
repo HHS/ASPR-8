@@ -20,13 +20,13 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.Resou
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourcePropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.data.input.ResourcesPluginDataInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.people.support.PersonId;
-import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourcesPluginData;
-import plugins.resources.support.ResourceId;
-import plugins.resources.support.ResourceInitialization;
-import plugins.resources.support.ResourcePropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * TranslationSpec that defines how to convert between

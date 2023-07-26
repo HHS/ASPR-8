@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.testsupport;
 
 import java.util.Objects;
 
-import nucleus.PlanData;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanData;
 
 /**
  * Example implementation of {@link PlanData}

@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.support.input.PersonIdInput;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

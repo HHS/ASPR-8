@@ -13,10 +13,10 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.inpu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * TranslationSpec that defines how to convert between

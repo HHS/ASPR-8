@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.testsupport.input.TestRegionIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.regions.testsupport.TestRegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 
 /**
  * TranslationSpec that defines how to convert between

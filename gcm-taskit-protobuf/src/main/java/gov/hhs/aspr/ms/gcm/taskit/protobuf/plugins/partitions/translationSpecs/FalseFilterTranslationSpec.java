@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.filters.input.FalseFilterInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.support.filters.FalseFilter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.FalseFilter;
 
 /**
  * TranslationSpec that defines how to convert between

@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.translationSpecs;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.reports.input.StageReportPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.materials.reports.StageReportPluginData;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * TranslationSpec that defines how to convert between

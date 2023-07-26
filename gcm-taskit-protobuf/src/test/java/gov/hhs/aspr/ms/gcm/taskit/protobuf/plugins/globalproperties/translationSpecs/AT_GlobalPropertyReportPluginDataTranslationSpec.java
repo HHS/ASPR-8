@@ -12,10 +12,10 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslat
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.TestGlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

@@ -15,13 +15,13 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.Prop
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyValueMapInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupPropertyValue;
-import plugins.groups.support.GroupTypeId;
-import plugins.people.support.PersonId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyValue;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * TranslationSpec that defines how to convert between

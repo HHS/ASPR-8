@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.translation
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.support.input.PersonPropertyIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 
 /**
  * TranslationSpec that defines how to convert between

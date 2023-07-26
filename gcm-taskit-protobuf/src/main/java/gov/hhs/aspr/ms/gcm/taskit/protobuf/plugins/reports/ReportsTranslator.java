@@ -9,8 +9,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.translationSpecs.Simp
 import gov.hhs.aspr.ms.taskit.core.TranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.Translator;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 
 /**
  * Translator for the Reports Plugin.

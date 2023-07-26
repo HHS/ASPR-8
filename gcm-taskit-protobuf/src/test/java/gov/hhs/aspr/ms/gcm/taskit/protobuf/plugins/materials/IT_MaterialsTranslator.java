@@ -19,14 +19,14 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.ResourcesTranslator
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.materials.datamangers.MaterialsPluginData;
-import plugins.materials.reports.BatchStatusReportPluginData;
-import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
-import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
-import plugins.materials.reports.StageReportPluginData;
-import plugins.materials.testsupport.MaterialsTestPluginFactory;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.MaterialsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_MaterialsTranslator {

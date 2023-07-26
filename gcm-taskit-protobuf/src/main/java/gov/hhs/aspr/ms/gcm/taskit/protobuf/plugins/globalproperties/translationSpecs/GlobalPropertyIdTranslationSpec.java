@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translation
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 
 /**
  * TranslationSpec that defines how to convert between

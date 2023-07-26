@@ -22,15 +22,15 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.Prop
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input.ResourceInitializationInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.materials.datamangers.MaterialsPluginData;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.BatchPropertyId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.materials.support.StageId;
-import plugins.resources.support.ResourceId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * TranslationSpec that defines how to convert between

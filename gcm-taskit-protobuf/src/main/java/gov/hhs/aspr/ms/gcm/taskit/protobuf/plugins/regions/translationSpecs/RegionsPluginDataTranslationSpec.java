@@ -14,11 +14,11 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionM
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.support.input.RegionPropertyValueMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.data.input.RegionsPluginDataInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.RegionPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * TranslationSpec that defines how to convert between

@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.translationSpecs;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.testsupport.input.TestAttributeIdInput;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.TestAttributeId;
 
 /**
  * TranslationSpec that defines how to convert between

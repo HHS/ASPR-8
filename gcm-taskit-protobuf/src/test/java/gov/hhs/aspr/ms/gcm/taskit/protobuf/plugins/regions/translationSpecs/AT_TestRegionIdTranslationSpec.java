@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.testsupport.input.Tes
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
-import plugins.regions.testsupport.TestRegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
