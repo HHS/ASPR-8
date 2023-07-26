@@ -28,7 +28,7 @@ import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_PersonPropertyInteractionReportPluginDataTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = PersonPropertyInteractionReportPluginDataTranslationSpec.class, args = {})
     public void testConstructor() {

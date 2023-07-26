@@ -16,36 +16,36 @@ import plugins.partitions.datamanagers.PartitionsPluginData;
 import util.annotations.UnitTestForCoverage;
 
 public class IT_PartitionsTranslator {
-    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
-    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
+        Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+        Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
-    @Test
-    @UnitTestForCoverage
-    public void testGroupsTranslator() {
-        String fileName = "pluginData.json";
+        @Test
+        @UnitTestForCoverage
+        public void testGroupsTranslator() {
+                String fileName = "pluginData.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
+                TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-                        .addTranslationSpec(new TestFilterTranslationSpec())
-                        .addTranslationSpec(new TestLabelerTranslationSpec()))
-                .addTranslator(PartitionsTranslator.getTranslator())
-                .addInputFilePath(filePath.resolve(fileName), PartitionsPluginDataInput.class)
-                .addOutputFilePath(filePath.resolve(fileName), PartitionsPluginData.class)
-                .build();
+                TranslationController translatorController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
+                                                .addTranslationSpec(new TestFilterTranslationSpec())
+                                                .addTranslationSpec(new TestLabelerTranslationSpec()))
+                                .addTranslator(PartitionsTranslator.getTranslator())
+                                .addInputFilePath(filePath.resolve(fileName), PartitionsPluginDataInput.class)
+                                .addOutputFilePath(filePath.resolve(fileName), PartitionsPluginData.class)
+                                .build();
 
-        PartitionsPluginData expectedPluginData = PartitionsPluginData.builder()
-                .setRunContinuitySupport(true)
-                .build();
+                PartitionsPluginData expectedPluginData = PartitionsPluginData.builder()
+                                .setRunContinuitySupport(true)
+                                .build();
 
-        translatorController.writeOutput(expectedPluginData);
+                translatorController.writeOutput(expectedPluginData);
 
-        translatorController.readInput();
+                translatorController.readInput();
 
-        PartitionsPluginData actualPluginData = translatorController.getFirstObject(PartitionsPluginData.class);
+                PartitionsPluginData actualPluginData = translatorController.getFirstObject(PartitionsPluginData.class);
 
-        assertEquals(expectedPluginData, actualPluginData);
-        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
-    }
+                assertEquals(expectedPluginData, actualPluginData);
+                assertEquals(expectedPluginData.toString(), actualPluginData.toString());
+        }
 }

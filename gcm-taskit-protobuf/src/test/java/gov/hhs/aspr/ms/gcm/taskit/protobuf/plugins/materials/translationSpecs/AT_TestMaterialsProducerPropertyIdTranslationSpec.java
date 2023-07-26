@@ -20,7 +20,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestMaterialsProducerPropertyIdTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = TestMaterialsProducerPropertyIdTranslationSpec.class, args = {})
     public void testConstructor() {

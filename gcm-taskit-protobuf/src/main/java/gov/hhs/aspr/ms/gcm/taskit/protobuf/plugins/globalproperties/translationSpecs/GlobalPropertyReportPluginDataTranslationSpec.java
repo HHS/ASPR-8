@@ -1,9 +1,9 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.reports.input.GlobalPropertyReportPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.support.input.GlobalPropertyIdInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportLabelInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.reports.support.ReportLabel;

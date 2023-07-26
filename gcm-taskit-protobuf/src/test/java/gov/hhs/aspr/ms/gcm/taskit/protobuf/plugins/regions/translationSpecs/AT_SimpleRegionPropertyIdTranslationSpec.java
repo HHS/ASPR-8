@@ -18,7 +18,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_SimpleRegionPropertyIdTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = SimpleRegionPropertyIdTranslationSpec.class, args = {})
     public void testConstructor() {

@@ -15,7 +15,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_ReportPeriodTranslationSpec {
-        
+
     @Test
     @UnitTestConstructor(target = ReportPeriodTranslationSpec.class, args = {})
     public void testConstructor() {

@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.input.PlanDataInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import nucleus.PlanData;
 
 /**

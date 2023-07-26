@@ -5,8 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.protobuf.ByteString;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.support.input.WellStateInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.stochastics.support.WellState;
 
 /**

@@ -16,7 +16,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_DimensionTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = DimensionTranslationSpec.class, args = {})
     public void testConstructor() {

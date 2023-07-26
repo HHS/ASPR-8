@@ -21,7 +21,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_StochasticsPluginDataTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = StochasticsPluginDataTranslationSpec.class, args = {})
     public void testConstructor() {
@@ -63,7 +63,6 @@ public class AT_StochasticsPluginDataTranslationSpec {
         }
         builder.setMainRNGState(((Well) stochasticsDataManager.getRandomGenerator()).getWellState());
 
-        
         StochasticsPluginData expectedAppValue = builder.build();
 
         StochasticsPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);

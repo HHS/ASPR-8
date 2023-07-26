@@ -19,57 +19,57 @@ import util.annotations.UnitTestMethod;
 
 public class AT_GlobalPropertiesPluginDataTranslationSpec {
 
-    @Test
-    @UnitTestConstructor(target = GlobalPropertiesPluginDataTranslationSpec.class, args = {})
-    public void testConstructor() {
-        assertNotNull(new GlobalPropertiesPluginDataTranslationSpec());
-    }
+        @Test
+        @UnitTestConstructor(target = GlobalPropertiesPluginDataTranslationSpec.class, args = {})
+        public void testConstructor() {
+                assertNotNull(new GlobalPropertiesPluginDataTranslationSpec());
+        }
 
-    @Test
-    @UnitTestForCoverage
-    public void testConvertObject() {
-        TranslationController translationController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(GlobalPropertiesTranslator.getTranslator())
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
-                .build();
+        @Test
+        @UnitTestForCoverage
+        public void testConvertObject() {
+                TranslationController translationController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
+                                .addTranslator(GlobalPropertiesTranslator.getTranslator())
+                                .addTranslator(PropertiesTranslator.getTranslator())
+                                .addTranslator(ReportsTranslator.getTranslator())
+                                .build();
 
-        ProtobufTranslationEngine protobufTranslationEngine = translationController
-                .getTranslationEngine(ProtobufTranslationEngine.class);
+                ProtobufTranslationEngine protobufTranslationEngine = translationController
+                                .getTranslationEngine(ProtobufTranslationEngine.class);
 
-        GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
-        translationSpec.init(protobufTranslationEngine);
+                GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
+                translationSpec.init(protobufTranslationEngine);
 
-        GlobalPropertiesPluginData expectedAppValue = GlobalPropertiesTestPluginFactory
-                .getStandardGlobalPropertiesPluginData(8368397106493368066L);
+                GlobalPropertiesPluginData expectedAppValue = GlobalPropertiesTestPluginFactory
+                                .getStandardGlobalPropertiesPluginData(8368397106493368066L);
 
-        GlobalPropertiesPluginDataInput globalPropertiesPluginDataInput = translationSpec
-                .convertAppObject(expectedAppValue);
+                GlobalPropertiesPluginDataInput globalPropertiesPluginDataInput = translationSpec
+                                .convertAppObject(expectedAppValue);
 
-        GlobalPropertiesPluginData actualAppValue = translationSpec
-                .convertInputObject(globalPropertiesPluginDataInput);
+                GlobalPropertiesPluginData actualAppValue = translationSpec
+                                .convertInputObject(globalPropertiesPluginDataInput);
 
-        assertEquals(expectedAppValue, actualAppValue);
-        assertEquals(expectedAppValue.toString(), actualAppValue.toString());
-    }
+                assertEquals(expectedAppValue, actualAppValue);
+                assertEquals(expectedAppValue.toString(), actualAppValue.toString());
+        }
 
-    @Test
-    @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getAppObjectClass", args = {})
-    public void testGetAppObjectClass() {
-        GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
+        @Test
+        @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getAppObjectClass", args = {})
+        public void testGetAppObjectClass() {
+                GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
 
-        assertEquals(GlobalPropertiesPluginData.class,
-                translationSpec.getAppObjectClass());
-    }
+                assertEquals(GlobalPropertiesPluginData.class,
+                                translationSpec.getAppObjectClass());
+        }
 
-    @Test
-    @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getInputObjectClass", args = {})
-    public void testGetInputObjectClass() {
-        GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
+        @Test
+        @UnitTestMethod(target = GlobalPropertiesPluginDataTranslationSpec.class, name = "getInputObjectClass", args = {})
+        public void testGetInputObjectClass() {
+                GlobalPropertiesPluginDataTranslationSpec translationSpec = new GlobalPropertiesPluginDataTranslationSpec();
 
-        assertEquals(GlobalPropertiesPluginDataInput.class,
-                translationSpec.getInputObjectClass());
-    }
+                assertEquals(GlobalPropertiesPluginDataInput.class,
+                                translationSpec.getInputObjectClass());
+        }
 
 }

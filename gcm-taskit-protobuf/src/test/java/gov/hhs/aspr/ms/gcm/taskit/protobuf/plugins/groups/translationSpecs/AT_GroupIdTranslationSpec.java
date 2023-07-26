@@ -18,7 +18,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupIdTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = GroupIdTranslationSpec.class, args = {})
     public void testConstructor() {

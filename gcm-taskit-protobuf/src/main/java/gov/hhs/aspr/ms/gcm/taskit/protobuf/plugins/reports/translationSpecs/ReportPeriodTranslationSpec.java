@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input.ReportPeriodInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.reports.support.ReportPeriod;
 
 /**

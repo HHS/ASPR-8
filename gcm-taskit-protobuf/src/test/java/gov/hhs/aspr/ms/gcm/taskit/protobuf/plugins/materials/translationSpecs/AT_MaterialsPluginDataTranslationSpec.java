@@ -52,7 +52,8 @@ public class AT_MaterialsPluginDataTranslationSpec {
         int numBatchesInStage = 30;
         long seed = 524805676405822016L;
 
-        MaterialsPluginData expectedAppValue = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches, numStages, numBatchesInStage, seed);
+        MaterialsPluginData expectedAppValue = MaterialsTestPluginFactory.getStandardMaterialsPluginData(numBatches,
+                numStages, numBatchesInStage, seed);
 
         MaterialsPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 

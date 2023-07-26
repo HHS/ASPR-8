@@ -1,13 +1,12 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
-
 import com.google.protobuf.Any;
 
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.data.input.GlobalPropertiesPluginDataInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyDefinitionMapInput;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.support.input.PropertyValueMapInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import plugins.globalproperties.support.GlobalPropertyId;
 import plugins.util.properties.PropertyDefinition;

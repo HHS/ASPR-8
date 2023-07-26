@@ -71,7 +71,7 @@ public class AT_RegionsPluginDataTranslationSpec {
         inputValue = translationSpec.convertAppObject(expectedAppValue);
 
         actualAppValue = translationSpec.convertInputObject(inputValue);
-        
+
         assertEquals(expectedAppValue, actualAppValue);
         assertEquals(expectedAppValue.toString(), actualAppValue.toString());
     }

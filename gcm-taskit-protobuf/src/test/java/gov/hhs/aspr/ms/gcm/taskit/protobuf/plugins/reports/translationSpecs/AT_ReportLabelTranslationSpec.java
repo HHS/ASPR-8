@@ -16,7 +16,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_ReportLabelTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = ReportLabelTranslationSpec.class, args = {})
     public void testConstructor() {

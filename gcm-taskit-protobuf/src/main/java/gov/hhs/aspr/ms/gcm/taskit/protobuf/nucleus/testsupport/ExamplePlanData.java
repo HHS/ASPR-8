@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import nucleus.PlanData;
 
-/** 
+/**
  * Example implementation of {@link PlanData}
  */
 public final class ExamplePlanData implements PlanData {
@@ -38,5 +38,5 @@ public final class ExamplePlanData implements PlanData {
 		ExamplePlanData other = (ExamplePlanData) obj;
 		return Double.doubleToLongBits(planTime) == Double.doubleToLongBits(other.planTime);
 	}
-	
+
 }

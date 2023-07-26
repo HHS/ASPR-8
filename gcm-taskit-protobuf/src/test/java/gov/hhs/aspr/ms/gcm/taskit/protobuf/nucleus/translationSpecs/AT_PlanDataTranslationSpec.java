@@ -16,7 +16,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_PlanDataTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = PlanDataTranslationSpec.class, args = {})
     public void testConstructor() {

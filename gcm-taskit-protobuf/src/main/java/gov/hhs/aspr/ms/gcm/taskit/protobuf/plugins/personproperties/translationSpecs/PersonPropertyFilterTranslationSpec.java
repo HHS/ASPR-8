@@ -26,7 +26,8 @@ public class PersonPropertyFilterTranslationSpec
     protected PersonPropertyFilterInput convertAppObject(PersonPropertyFilter appObject) {
         PersonPropertyIdInput personPropertyIdInput = this.translationEngine
                 .convertObjectAsSafeClass(appObject.getPersonPropertyId(), PersonPropertyId.class);
-        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(), Equality.class);
+        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(),
+                Equality.class);
         Any personPropertyValue = this.translationEngine.getAnyFromObject(appObject.getPersonPropertyValue());
 
         return PersonPropertyFilterInput.newBuilder()

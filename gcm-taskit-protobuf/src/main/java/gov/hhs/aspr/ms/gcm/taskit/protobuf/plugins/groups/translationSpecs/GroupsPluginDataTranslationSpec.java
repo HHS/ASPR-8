@@ -83,7 +83,7 @@ public class GroupsPluginDataTranslationSpec extends ProtobufTranslationSpec<Gro
             PersonId personId = new PersonId(ptgMembership.getPersonId());
 
             for (int gId : ptgMembership.getGroupIdsList()) {
-                builder.addGroupToPerson( new GroupId(gId), personId);
+                builder.addGroupToPerson(new GroupId(gId), personId);
             }
         }
 

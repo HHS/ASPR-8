@@ -37,7 +37,8 @@ public class RegionPropertyDimensionTranslationSpec
 
         RegionPropertyIdInput globalPropertyIdInput = this.translationEngine
                 .convertObjectAsSafeClass(appObject.getRegionPropertyId(), RegionPropertyId.class);
-        RegionIdInput groupIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getRegionId(), RegionId.class);
+        RegionIdInput groupIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getRegionId(),
+                RegionId.class);
 
         builder
                 .setRegionPropertyId(globalPropertyIdInput)

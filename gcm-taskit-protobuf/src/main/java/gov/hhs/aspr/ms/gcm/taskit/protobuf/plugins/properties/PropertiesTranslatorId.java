@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties;
 
 import gov.hhs.aspr.ms.taskit.core.TranslatorId;
 
-/** 
+/**
  * TranslatorId for the Properties Translator
  */
 public final class PropertiesTranslatorId implements TranslatorId {

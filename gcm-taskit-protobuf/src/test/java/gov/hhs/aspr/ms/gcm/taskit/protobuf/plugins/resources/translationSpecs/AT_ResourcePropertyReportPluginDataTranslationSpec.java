@@ -21,7 +21,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_ResourcePropertyReportPluginDataTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = ResourcePropertyReportPluginDataTranslationSpec.class, args = {})
     public void testConstructor() {

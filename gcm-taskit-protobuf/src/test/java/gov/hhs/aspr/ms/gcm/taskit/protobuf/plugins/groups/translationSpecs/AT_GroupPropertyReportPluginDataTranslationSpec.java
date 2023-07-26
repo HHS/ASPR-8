@@ -25,7 +25,7 @@ import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 
 public class AT_GroupPropertyReportPluginDataTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = GroupPropertyReportPluginDataTranslationSpec.class, args = {})
     public void testConstructor() {

@@ -55,7 +55,8 @@ public class AT_PersonPropertiesPluginDataTranslationSpec {
             people.add(new PersonId(i));
         }
 
-        PersonPropertiesPluginData expectedAppValue = PersonPropertiesTestPluginFactory.getStandardPersonPropertiesPluginData(people, seed, 5.0);
+        PersonPropertiesPluginData expectedAppValue = PersonPropertiesTestPluginFactory
+                .getStandardPersonPropertiesPluginData(people, seed, 5.0);
 
         PersonPropertiesPluginDataInput inputValue = translationSpec.convertAppObject(expectedAppValue);
 

@@ -24,7 +24,8 @@ public class GroupsForPersonAndGroupTypeFilterTranslationSpec
     protected GroupsForPersonAndGroupTypeFilterInput convertAppObject(GroupsForPersonAndGroupTypeFilter appObject) {
         GroupTypeIdInput groupTypeIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getGroupTypeId(),
                 GroupTypeId.class);
-        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(), Equality.class);
+        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(),
+                Equality.class);
         int groupCount = appObject.getGroupCount();
 
         return GroupsForPersonAndGroupTypeFilterInput.newBuilder()

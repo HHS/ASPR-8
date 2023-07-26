@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import util.annotations.UnitTestField;
 
 public class AT_MaterialsTranslatorId {
-    
+
     @Test
     @UnitTestField(target = MaterialsTranslatorId.class, name = "TRANSLATOR_ID")
     public void testTranslatorId() {

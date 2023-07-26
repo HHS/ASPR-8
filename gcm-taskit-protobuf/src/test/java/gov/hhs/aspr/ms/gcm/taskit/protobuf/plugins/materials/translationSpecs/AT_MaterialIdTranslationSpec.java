@@ -21,7 +21,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_MaterialIdTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = MaterialIdTranslationSpec.class, args = {})
     public void testConstructor() {

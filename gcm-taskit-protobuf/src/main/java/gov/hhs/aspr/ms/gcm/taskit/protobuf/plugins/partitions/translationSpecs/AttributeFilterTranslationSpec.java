@@ -30,7 +30,8 @@ public class AttributeFilterTranslationSpec extends ProtobufTranslationSpec<Attr
     protected AttributeFilterInput convertAppObject(AttributeFilter appObject) {
         AttributeIdInput attributeIdInput = this.translationEngine.convertObjectAsSafeClass(appObject.getAttributeId(),
                 AttributeId.class);
-        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(), Equality.class);
+        EqualityInput equalityInput = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(),
+                Equality.class);
         Any value = this.translationEngine.getAnyFromObject(appObject.getValue());
 
         return AttributeFilterInput.newBuilder()

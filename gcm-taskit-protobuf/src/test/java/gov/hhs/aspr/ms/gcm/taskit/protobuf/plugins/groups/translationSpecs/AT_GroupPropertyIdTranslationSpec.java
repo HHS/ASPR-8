@@ -19,7 +19,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupPropertyIdTranslationSpec {
-    
+
     @Test
     @UnitTestConstructor(target = GroupPropertyIdTranslationSpec.class, args = {})
     public void testConstructor() {

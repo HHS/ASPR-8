@@ -38,189 +38,189 @@ import util.annotations.UnitTestForCoverage;
 import util.random.RandomGeneratorProvider;
 
 public class IT_ResourcesTranslator {
-    Path basePath = TestResourceHelper.getResourceDir(this.getClass());
-    Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
+        Path basePath = TestResourceHelper.getResourceDir(this.getClass());
+        Path filePath = TestResourceHelper.makeTestOutputDir(basePath);
 
-    @Test
-    @UnitTestForCoverage
-    public void testResourcesTranslator() {
-        String fileName = "pluginData.json";
+        @Test
+        @UnitTestForCoverage
+        public void testResourcesTranslator() {
+                String fileName = "pluginData.json";
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
+                TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(filePath.resolve(fileName), ResourcesPluginDataInput.class)
-                .addOutputFilePath(filePath.resolve(fileName), ResourcesPluginData.class)
-                .build();
+                TranslationController translatorController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
+                                .addTranslator(ResourcesTranslator.getTranslator())
+                                .addTranslator(PropertiesTranslator.getTranslator())
+                                .addTranslator(PeopleTranslator.getTranslator())
+                                .addTranslator(RegionsTranslator.getTranslator())
+                                .addTranslator(ReportsTranslator.getTranslator())
+                                .addInputFilePath(filePath.resolve(fileName), ResourcesPluginDataInput.class)
+                                .addOutputFilePath(filePath.resolve(fileName), ResourcesPluginData.class)
+                                .build();
 
-        long seed = 524805676405822016L;
-        int initialPopulation = 100;
-        List<PersonId> people = new ArrayList<>();
+                long seed = 524805676405822016L;
+                int initialPopulation = 100;
+                List<PersonId> people = new ArrayList<>();
 
-        for (int i = 0; i < initialPopulation; i++) {
-            people.add(new PersonId(i));
-        }
-        
-        ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory
-                .getStandardResourcesPluginData(people, seed);
+                for (int i = 0; i < initialPopulation; i++) {
+                        people.add(new PersonId(i));
+                }
 
-        translatorController.writeOutput(expectedPluginData);
-        translatorController.readInput();
+                ResourcesPluginData expectedPluginData = ResourcesTestPluginFactory
+                                .getStandardResourcesPluginData(people, seed);
 
-        ResourcesPluginData actualPluginData = translatorController.getFirstObject(ResourcesPluginData.class);
+                translatorController.writeOutput(expectedPluginData);
+                translatorController.readInput();
 
-        assertEquals(expectedPluginData, actualPluginData);
-        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
-    }
+                ResourcesPluginData actualPluginData = translatorController.getFirstObject(ResourcesPluginData.class);
 
-    @Test
-    @UnitTestForCoverage
-    public void testPersonResourceReportTranslatorSpec() {
-        String fileName = "personResourceReport.json";
-
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-
-        TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(filePath.resolve(fileName),
-                        PersonResourceReportPluginDataInput.class)
-                .addOutputFilePath(filePath.resolve(fileName),
-                        PersonResourceReportPluginData.class)
-                .build();
-
-        long seed = 524805676405822016L;
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-        ReportLabel reportLabel = new SimpleReportLabel("person resource report label");
-        ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-        PersonResourceReportPluginData.Builder builder = PersonResourceReportPluginData.builder();
-
-        builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod).setDefaultInclusion(false);
-
-        Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
-        assertFalse(expectedResourceIds.isEmpty());
-
-        for (ResourceId resourceId : expectedResourceIds) {
-            if (randomGenerator.nextBoolean()) {
-                builder.includeResource(resourceId);
-            } else {
-                builder.excludeResource(resourceId);
-            }
+                assertEquals(expectedPluginData, actualPluginData);
+                assertEquals(expectedPluginData.toString(), actualPluginData.toString());
         }
 
-        PersonResourceReportPluginData expectedPluginData = builder.build();
+        @Test
+        @UnitTestForCoverage
+        public void testPersonResourceReportTranslatorSpec() {
+                String fileName = "personResourceReport.json";
 
-        translatorController.writeOutput(expectedPluginData);
-        translatorController.readInput();
+                TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        PersonResourceReportPluginData actualPluginData = translatorController
-                .getFirstObject(PersonResourceReportPluginData.class);
+                TranslationController translatorController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
+                                .addTranslator(ResourcesTranslator.getTranslator())
+                                .addTranslator(PropertiesTranslator.getTranslator())
+                                .addTranslator(PeopleTranslator.getTranslator())
+                                .addTranslator(RegionsTranslator.getTranslator())
+                                .addTranslator(ReportsTranslator.getTranslator())
+                                .addInputFilePath(filePath.resolve(fileName),
+                                                PersonResourceReportPluginDataInput.class)
+                                .addOutputFilePath(filePath.resolve(fileName),
+                                                PersonResourceReportPluginData.class)
+                                .build();
 
-        assertEquals(expectedPluginData, actualPluginData);
-        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
-    }
+                long seed = 524805676405822016L;
+                RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-    @Test
-    @UnitTestForCoverage
-    public void testResourcePropertyReportTranslatorSpec() {
-        String fileName = "resourcePropertyReport.json";
+                ReportLabel reportLabel = new SimpleReportLabel("person resource report label");
+                ReportPeriod reportPeriod = ReportPeriod.DAILY;
 
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
+                PersonResourceReportPluginData.Builder builder = PersonResourceReportPluginData.builder();
 
-        TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(filePath.resolve(fileName),
-                        ResourcePropertyReportPluginDataInput.class)
-                .addOutputFilePath(filePath.resolve(fileName),
-                        ResourcePropertyReportPluginData.class)
-                .build();
+                builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod).setDefaultInclusion(false);
 
-        ReportLabel reportLabel = new SimpleReportLabel("resource property report label");
+                Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
+                assertFalse(expectedResourceIds.isEmpty());
 
-        ResourcePropertyReportPluginData.Builder builder = ResourcePropertyReportPluginData.builder();
+                for (ResourceId resourceId : expectedResourceIds) {
+                        if (randomGenerator.nextBoolean()) {
+                                builder.includeResource(resourceId);
+                        } else {
+                                builder.excludeResource(resourceId);
+                        }
+                }
 
-        builder.setReportLabel(reportLabel);
+                PersonResourceReportPluginData expectedPluginData = builder.build();
 
-        ResourcePropertyReportPluginData expectedPluginData = builder.build();
+                translatorController.writeOutput(expectedPluginData);
+                translatorController.readInput();
 
-        translatorController.writeOutput(expectedPluginData);
-        translatorController.readInput();
+                PersonResourceReportPluginData actualPluginData = translatorController
+                                .getFirstObject(PersonResourceReportPluginData.class);
 
-        ResourcePropertyReportPluginData actualPluginData = translatorController
-                .getFirstObject(ResourcePropertyReportPluginData.class);
-
-        assertEquals(expectedPluginData, actualPluginData);
-        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
-    }
-
-    @Test
-    @UnitTestForCoverage
-    public void testResourceReportTranslatorSpec() {
-        String fileName = "resourceReport.json";
-
-        TestResourceHelper.createTestOutputFile(filePath, fileName);
-
-        TranslationController translatorController = TranslationController.builder()
-                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
-                .addTranslator(ResourcesTranslator.getTranslator())
-                .addTranslator(PropertiesTranslator.getTranslator())
-                .addTranslator(PeopleTranslator.getTranslator())
-                .addTranslator(RegionsTranslator.getTranslator())
-                .addTranslator(ReportsTranslator.getTranslator())
-                .addInputFilePath(filePath.resolve(fileName),
-                        ResourceReportPluginDataInput.class)
-                .addOutputFilePath(filePath.resolve(fileName),
-                        ResourceReportPluginData.class)
-                .build();
-
-        long seed = 524805676405822016L;
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-        ReportLabel reportLabel = new SimpleReportLabel("resource report label");
-        ReportPeriod reportPeriod = ReportPeriod.DAILY;
-
-        ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
-
-        builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod).setDefaultInclusion(false);
-
-        Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
-        assertFalse(expectedResourceIds.isEmpty());
-
-        for (ResourceId resourceId : expectedResourceIds) {
-            if (randomGenerator.nextBoolean()) {
-                builder.includeResource(resourceId);
-            } else {
-                builder.excludeResource(resourceId);
-            }
+                assertEquals(expectedPluginData, actualPluginData);
+                assertEquals(expectedPluginData.toString(), actualPluginData.toString());
         }
 
-        ResourceReportPluginData expectedPluginData = builder.build();
+        @Test
+        @UnitTestForCoverage
+        public void testResourcePropertyReportTranslatorSpec() {
+                String fileName = "resourcePropertyReport.json";
 
-        translatorController.writeOutput(expectedPluginData);
-        translatorController.readInput();
+                TestResourceHelper.createTestOutputFile(filePath, fileName);
 
-        ResourceReportPluginData actualPluginData = translatorController
-                .getFirstObject(ResourceReportPluginData.class);
+                TranslationController translatorController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
+                                .addTranslator(ResourcesTranslator.getTranslator())
+                                .addTranslator(PropertiesTranslator.getTranslator())
+                                .addTranslator(PeopleTranslator.getTranslator())
+                                .addTranslator(RegionsTranslator.getTranslator())
+                                .addTranslator(ReportsTranslator.getTranslator())
+                                .addInputFilePath(filePath.resolve(fileName),
+                                                ResourcePropertyReportPluginDataInput.class)
+                                .addOutputFilePath(filePath.resolve(fileName),
+                                                ResourcePropertyReportPluginData.class)
+                                .build();
 
-        assertEquals(expectedPluginData, actualPluginData);
-        assertEquals(expectedPluginData.toString(), actualPluginData.toString());
-    }
+                ReportLabel reportLabel = new SimpleReportLabel("resource property report label");
+
+                ResourcePropertyReportPluginData.Builder builder = ResourcePropertyReportPluginData.builder();
+
+                builder.setReportLabel(reportLabel);
+
+                ResourcePropertyReportPluginData expectedPluginData = builder.build();
+
+                translatorController.writeOutput(expectedPluginData);
+                translatorController.readInput();
+
+                ResourcePropertyReportPluginData actualPluginData = translatorController
+                                .getFirstObject(ResourcePropertyReportPluginData.class);
+
+                assertEquals(expectedPluginData, actualPluginData);
+                assertEquals(expectedPluginData.toString(), actualPluginData.toString());
+        }
+
+        @Test
+        @UnitTestForCoverage
+        public void testResourceReportTranslatorSpec() {
+                String fileName = "resourceReport.json";
+
+                TestResourceHelper.createTestOutputFile(filePath, fileName);
+
+                TranslationController translatorController = TranslationController.builder()
+                                .setTranslationEngineBuilder(ProtobufTranslationEngine.builder())
+                                .addTranslator(ResourcesTranslator.getTranslator())
+                                .addTranslator(PropertiesTranslator.getTranslator())
+                                .addTranslator(PeopleTranslator.getTranslator())
+                                .addTranslator(RegionsTranslator.getTranslator())
+                                .addTranslator(ReportsTranslator.getTranslator())
+                                .addInputFilePath(filePath.resolve(fileName),
+                                                ResourceReportPluginDataInput.class)
+                                .addOutputFilePath(filePath.resolve(fileName),
+                                                ResourceReportPluginData.class)
+                                .build();
+
+                long seed = 524805676405822016L;
+                RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+                ReportLabel reportLabel = new SimpleReportLabel("resource report label");
+                ReportPeriod reportPeriod = ReportPeriod.DAILY;
+
+                ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
+
+                builder.setReportLabel(reportLabel).setReportPeriod(reportPeriod).setDefaultInclusion(false);
+
+                Set<TestResourceId> expectedResourceIds = EnumSet.allOf(TestResourceId.class);
+                assertFalse(expectedResourceIds.isEmpty());
+
+                for (ResourceId resourceId : expectedResourceIds) {
+                        if (randomGenerator.nextBoolean()) {
+                                builder.includeResource(resourceId);
+                        } else {
+                                builder.excludeResource(resourceId);
+                        }
+                }
+
+                ResourceReportPluginData expectedPluginData = builder.build();
+
+                translatorController.writeOutput(expectedPluginData);
+                translatorController.readInput();
+
+                ResourceReportPluginData actualPluginData = translatorController
+                                .getFirstObject(ResourceReportPluginData.class);
+
+                assertEquals(expectedPluginData, actualPluginData);
+                assertEquals(expectedPluginData.toString(), actualPluginData.toString());
+        }
 
 }

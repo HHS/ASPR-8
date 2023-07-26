@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.translationSpecs;
 
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.support.input.PersonRangeInput;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import plugins.people.support.PersonRange;
 
 /**

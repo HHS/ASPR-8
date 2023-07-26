@@ -18,8 +18,8 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.reports.inpu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
-import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestResourceHelper;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import plugins.people.support.PersonId;
 import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import plugins.personproperties.reports.PersonPropertyInteractionReportPluginData;

@@ -20,7 +20,7 @@ import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupsForPersonFilterTranslationSpec {
-        
+
     @Test
     @UnitTestConstructor(target = GroupsForPersonFilterTranslationSpec.class, args = {})
     public void testConstructor() {

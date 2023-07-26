@@ -19,7 +19,8 @@ public class GroupTypesForPersonFilterTranslationSpec
 
     @Override
     protected GroupTypesForPersonFilterInput convertAppObject(GroupTypesForPersonFilter appObject) {
-        EqualityInput equality = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(), Equality.class);
+        EqualityInput equality = this.translationEngine.convertObjectAsSafeClass(appObject.getEquality(),
+                Equality.class);
         int groupTypeCount = appObject.getGroupTypeCount();
 
         return GroupTypesForPersonFilterInput.newBuilder()
