@@ -1,6 +1,6 @@
-package plugins.stochastics.support;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
-import plugins.globalproperties.support.SimpleGlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.SimpleGlobalPropertyId;
 import util.errors.ContractException;
 
 public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {

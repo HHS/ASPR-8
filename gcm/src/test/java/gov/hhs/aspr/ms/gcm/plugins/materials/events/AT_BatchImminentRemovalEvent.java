@@ -1,8 +1,8 @@
-package plugins.materials.events;
+package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

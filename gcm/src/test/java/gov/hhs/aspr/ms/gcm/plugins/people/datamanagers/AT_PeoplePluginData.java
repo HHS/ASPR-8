@@ -1,4 +1,4 @@
-package plugins.people.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.people.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,10 +14,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.PluginData;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

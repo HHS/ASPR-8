@@ -1,10 +1,10 @@
-package plugins.regions.reports;
+package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
 
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import net.jcip.annotations.ThreadSafe;
-import plugins.reports.support.PeriodicReportPluginData;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
 import util.errors.ContractException;
 
 /**

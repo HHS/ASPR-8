@@ -1,16 +1,16 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.NucleusError;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.support.filters.Filter;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
 import util.errors.ContractException;
 
 public final class RegionFilter extends Filter {

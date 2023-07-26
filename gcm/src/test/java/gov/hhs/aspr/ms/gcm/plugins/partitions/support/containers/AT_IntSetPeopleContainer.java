@@ -1,4 +1,4 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestField;
 import util.annotations.UnitTestMethod;

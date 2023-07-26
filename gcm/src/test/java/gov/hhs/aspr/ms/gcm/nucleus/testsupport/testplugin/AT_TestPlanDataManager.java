@@ -1,4 +1,4 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

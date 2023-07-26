@@ -1,4 +1,4 @@
-package plugins.personproperties.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -17,15 +17,15 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.personproperties.support.PersonPropertyError;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport.TestPersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

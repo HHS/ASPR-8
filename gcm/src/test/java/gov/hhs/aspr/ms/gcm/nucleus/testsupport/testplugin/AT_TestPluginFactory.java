@@ -1,4 +1,4 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,10 +11,10 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import nucleus.NucleusError;
-import nucleus.Plugin;
-import nucleus.testsupport.testplugin.TestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginFactory.Factory;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;

@@ -1,18 +1,18 @@
-package plugins.groups;
+package gov.hhs.aspr.ms.gcm.plugins.groups;
 
 import java.util.Optional;
 
-import nucleus.Plugin;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.groups.reports.GroupPopulationReport;
-import plugins.groups.reports.GroupPopulationReportPluginData;
-import plugins.groups.reports.GroupPropertyReport;
-import plugins.groups.reports.GroupPropertyReportPluginData;
-import plugins.groups.support.GroupError;
-import plugins.people.PeoplePluginId;
-import plugins.personproperties.support.PersonPropertyError;
-import plugins.stochastics.StochasticsPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPopulationReport;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPopulationReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReport;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import util.errors.ContractException;
 
 /**

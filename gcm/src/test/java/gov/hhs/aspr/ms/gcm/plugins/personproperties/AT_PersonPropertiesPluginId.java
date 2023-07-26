@@ -1,4 +1,4 @@
-package plugins.personproperties;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

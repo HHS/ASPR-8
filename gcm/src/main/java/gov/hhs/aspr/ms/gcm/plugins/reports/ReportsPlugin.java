@@ -1,6 +1,6 @@
-package plugins.reports;
+package gov.hhs.aspr.ms.gcm.plugins.reports;
 
-import nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
 /**
  * A plugin providing a report actors to the simulation.

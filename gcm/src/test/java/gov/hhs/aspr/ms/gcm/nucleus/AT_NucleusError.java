@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

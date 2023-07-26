@@ -1,4 +1,4 @@
-package nucleus.util;
+package gov.hhs.aspr.ms.gcm.nucleus.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

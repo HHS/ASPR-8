@@ -1,4 +1,4 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -13,15 +13,15 @@ import java.util.Set;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.ReportContext;
-import nucleus.SimplePluginId;
-import nucleus.Simulation;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

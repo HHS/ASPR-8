@@ -1,17 +1,17 @@
-package plugins.globalproperties.reports;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ReportContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
-import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
-import plugins.globalproperties.support.GlobalPropertiesError;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.events.GlobalPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import util.errors.ContractException;
 
 /**

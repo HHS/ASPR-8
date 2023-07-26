@@ -1,7 +1,7 @@
 
 package lesson;
 
-import nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 
 /* start code_ref=events_actor_1_mutates_values*/
 public final class Actor1 {

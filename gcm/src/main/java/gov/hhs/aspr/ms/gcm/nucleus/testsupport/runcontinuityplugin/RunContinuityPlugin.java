@@ -1,7 +1,7 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.Plugin;
 import util.errors.ContractException;
 
 /**

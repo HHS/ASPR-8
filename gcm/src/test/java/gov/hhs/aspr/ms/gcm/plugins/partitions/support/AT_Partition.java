@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,13 +11,13 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
-import plugins.partitions.support.filters.Filter;
-import plugins.partitions.support.filters.TrueFilter;
-import plugins.partitions.testsupport.FunctionalAttributeLabeler;
-import plugins.partitions.testsupport.attributes.support.AttributeFilter;
-import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.TrueFilter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.FunctionalAttributeLabeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeFilter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 

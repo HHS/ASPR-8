@@ -1,4 +1,4 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

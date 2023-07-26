@@ -1,9 +1,9 @@
-package plugins.partitions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport;
 
 import java.util.function.Function;
 
-import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.partitions.testsupport.attributes.support.AttributeLabeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeLabeler;
 
 /**
  * A Function-based implementor of AttributeLabeler. Not suitable for

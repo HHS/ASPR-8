@@ -1,9 +1,9 @@
-package plugins.regions.events;
+package gov.hhs.aspr.ms.gcm.plugins.regions.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.people.support.PersonId;
-import plugins.regions.support.RegionId;
 
 @Immutable
 public record PersonRegionUpdateEvent(PersonId personId,

@@ -1,4 +1,4 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,7 +8,7 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

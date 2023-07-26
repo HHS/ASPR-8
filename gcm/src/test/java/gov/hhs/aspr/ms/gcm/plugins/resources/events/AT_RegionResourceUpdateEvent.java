@@ -1,9 +1,9 @@
-package plugins.resources.events;
+package gov.hhs.aspr.ms.gcm.plugins.resources.events;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.regions.support.RegionId;
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

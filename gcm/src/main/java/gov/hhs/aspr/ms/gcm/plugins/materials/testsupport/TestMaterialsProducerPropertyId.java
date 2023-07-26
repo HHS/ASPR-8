@@ -1,12 +1,12 @@
-package plugins.materials.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.materials.testsupport;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * A test support enumeration that contains a variety of materials producer

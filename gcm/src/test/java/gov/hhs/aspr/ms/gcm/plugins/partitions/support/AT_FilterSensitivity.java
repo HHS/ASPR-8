@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,12 +8,12 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import plugins.partitions.testsupport.TestPartitionsContext;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

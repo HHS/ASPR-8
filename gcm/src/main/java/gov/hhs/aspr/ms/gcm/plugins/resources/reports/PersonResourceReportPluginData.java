@@ -1,15 +1,15 @@
-package plugins.resources.reports;
+package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import net.jcip.annotations.ThreadSafe;
-import plugins.reports.support.PeriodicReportPluginData;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
 import util.errors.ContractException;
 
 /**

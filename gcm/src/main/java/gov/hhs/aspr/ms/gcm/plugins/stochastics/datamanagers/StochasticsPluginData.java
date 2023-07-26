@@ -1,16 +1,16 @@
-package plugins.stochastics.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.WellState;
 import util.errors.ContractException;
 
 /**

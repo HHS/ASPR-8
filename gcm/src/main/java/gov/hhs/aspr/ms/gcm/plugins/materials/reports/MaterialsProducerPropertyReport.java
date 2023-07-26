@@ -1,14 +1,14 @@
-package plugins.materials.reports;
+package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
-import nucleus.ReportContext;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.MaterialsProducerAdditionEvent;
-import plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialsProducerAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialsProducerPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * A Report that displays assigned materials producer property values over time.

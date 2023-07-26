@@ -1,4 +1,4 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;

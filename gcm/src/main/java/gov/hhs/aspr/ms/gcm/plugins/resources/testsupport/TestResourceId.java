@@ -1,8 +1,8 @@
-package plugins.resources.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.resources.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
 /**
  * Enumeration that identifies resources for all tests

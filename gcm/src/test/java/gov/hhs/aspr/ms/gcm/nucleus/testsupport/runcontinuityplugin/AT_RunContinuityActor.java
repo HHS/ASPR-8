@@ -1,4 +1,4 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,10 +7,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,12 +18,12 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.PluginDataBuilder;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.WellState;
-import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

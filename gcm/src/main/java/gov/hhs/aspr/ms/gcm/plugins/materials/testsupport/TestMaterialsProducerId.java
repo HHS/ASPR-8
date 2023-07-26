@@ -1,8 +1,8 @@
-package plugins.materials.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.materials.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 
 /**
  * A test support enumeration that contains a variety of materials producer id values.

@@ -1,4 +1,4 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.function.Consumer;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import net.jcip.annotations.Immutable;
-import nucleus.ActorContext;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
 
 /**
  * An immutable container of the initial state of continuity properties.

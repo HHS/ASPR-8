@@ -1,19 +1,19 @@
-package plugins.resources;
+package gov.hhs.aspr.ms.gcm.plugins.resources;
 
 import java.util.Optional;
 
-import nucleus.Plugin;
-import plugins.people.PeoplePluginId;
-import plugins.regions.RegionsPluginId;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.datamanagers.ResourcesPluginData;
-import plugins.resources.reports.PersonResourceReport;
-import plugins.resources.reports.PersonResourceReportPluginData;
-import plugins.resources.reports.ResourcePropertyReport;
-import plugins.resources.reports.ResourcePropertyReportPluginData;
-import plugins.resources.reports.ResourceReport;
-import plugins.resources.reports.ResourceReportPluginData;
-import plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.PersonResourceReport;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.PersonResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReport;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReport;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import util.errors.ContractException;
 
 public final class ResourcesPlugin {

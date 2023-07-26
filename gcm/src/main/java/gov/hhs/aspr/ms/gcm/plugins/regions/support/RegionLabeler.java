@@ -1,17 +1,17 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Event;
-import nucleus.NucleusError;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.LabelerSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelerSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
 import util.errors.ContractException;
 
 /**

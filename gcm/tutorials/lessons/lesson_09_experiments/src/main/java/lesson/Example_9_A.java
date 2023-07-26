@@ -1,12 +1,12 @@
 package lesson;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.disease.DiseasePlugin;
 import lesson.plugins.disease.DiseasePluginData;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
-import nucleus.Experiment;
-import nucleus.Plugin;
 
 /* start code_ref=experiements_example_9_ A */
 public final class Example_9_A {

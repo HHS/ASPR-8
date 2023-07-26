@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import plugins.partitions.support.filters.Filter;
 
 /**
  * A {@linkplain Partition} is the general description of a partitioning of the

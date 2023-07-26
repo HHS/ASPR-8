@@ -1,4 +1,4 @@
-package plugins.materials.events;
+package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,9 +10,9 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.materials.support.MaterialsError;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.testsupport.TestMaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestMaterialsProducerId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

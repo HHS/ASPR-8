@@ -1,8 +1,8 @@
-package plugins.personproperties.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport;
 
-import plugins.partitions.support.Equality;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.support.PersonPropertyLabeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyLabeler;
 
 /**
  * A person property labeler that labels people as either true or false based on

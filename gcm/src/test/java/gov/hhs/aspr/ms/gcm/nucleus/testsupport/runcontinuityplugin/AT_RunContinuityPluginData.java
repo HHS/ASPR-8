@@ -1,4 +1,4 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,7 +13,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;

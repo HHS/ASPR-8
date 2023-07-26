@@ -1,4 +1,4 @@
-package plugins.groups.reports;
+package gov.hhs.aspr.ms.gcm.plugins.groups.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -14,16 +14,16 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.groups.support.GroupError;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.TestGroupPropertyId;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

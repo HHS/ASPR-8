@@ -1,20 +1,20 @@
-package plugins.regions.reports;
+package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.ReportContext;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.RegionAdditionEvent;
-import plugins.regions.events.RegionPropertyDefinitionEvent;
-import plugins.regions.events.RegionPropertyUpdateEvent;
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.RegionPropertyId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionPropertyDefinitionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

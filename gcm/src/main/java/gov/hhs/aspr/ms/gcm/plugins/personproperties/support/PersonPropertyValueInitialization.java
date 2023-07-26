@@ -1,4 +1,4 @@
-package plugins.personproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.support;
 
 public class PersonPropertyValueInitialization {
 	private final PersonPropertyId personPropertyId;

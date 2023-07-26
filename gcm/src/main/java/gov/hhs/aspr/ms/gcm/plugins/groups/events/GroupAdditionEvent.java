@@ -1,8 +1,8 @@
-package plugins.groups.events;
+package gov.hhs.aspr.ms.gcm.plugins.groups.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.groups.support.GroupId;
 
 /**
  * An event indicating that a group has been created

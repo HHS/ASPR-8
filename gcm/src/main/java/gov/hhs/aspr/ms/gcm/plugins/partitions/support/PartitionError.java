@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

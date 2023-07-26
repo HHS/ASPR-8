@@ -1,8 +1,8 @@
-package plugins.globalproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.events;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

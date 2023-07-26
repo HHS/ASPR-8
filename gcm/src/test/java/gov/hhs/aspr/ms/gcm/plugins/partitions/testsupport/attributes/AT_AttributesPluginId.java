@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

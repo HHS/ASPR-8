@@ -1,15 +1,15 @@
-package plugins.groups.reports;
+package gov.hhs.aspr.ms.gcm.plugins.groups.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ReportContext;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupTypeId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 
 /**
  * A periodic Report that displays the number of groups having a particular

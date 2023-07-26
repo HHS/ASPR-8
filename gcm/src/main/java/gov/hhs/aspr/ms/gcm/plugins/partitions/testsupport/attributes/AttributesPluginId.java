@@ -1,6 +1,6 @@
-package plugins.partitions.testsupport.attributes;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 /**
  * Static plugin id implementation for the Attributes Plugin
  * 

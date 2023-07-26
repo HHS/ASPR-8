@@ -1,10 +1,10 @@
-package plugins.materials.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.materials.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.materials.support.BatchConstructionInfo;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchConstructionInfo;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 
 public class TestBatchConstructionInfo {
 

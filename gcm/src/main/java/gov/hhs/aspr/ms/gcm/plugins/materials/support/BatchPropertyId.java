@@ -1,4 +1,4 @@
-package plugins.materials.support;
+package gov.hhs.aspr.ms.gcm.plugins.materials.support;
 
 import net.jcip.annotations.ThreadSafe;
 

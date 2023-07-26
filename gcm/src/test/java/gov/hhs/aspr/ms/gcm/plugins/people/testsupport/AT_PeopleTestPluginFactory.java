@@ -1,4 +1,4 @@
-package plugins.people.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.people.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -9,23 +9,23 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import nucleus.NucleusError;
-import nucleus.Plugin;
-import nucleus.testsupport.TestFactoryUtil;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestPluginId;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.people.PeoplePluginId;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonRange;
-import plugins.people.testsupport.PeopleTestPluginFactory.Factory;
-import plugins.stochastics.StochasticsPluginId;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.StochasticsError;
-import plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.TestFactoryUtil;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.plugins.people.testsupport.PeopleTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;

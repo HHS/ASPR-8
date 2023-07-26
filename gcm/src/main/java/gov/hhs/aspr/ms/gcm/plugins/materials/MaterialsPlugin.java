@@ -1,21 +1,21 @@
-package plugins.materials;
+package gov.hhs.aspr.ms.gcm.plugins.materials;
 
 import java.util.Optional;
 
-import nucleus.Plugin;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.datamangers.MaterialsPluginData;
-import plugins.materials.reports.BatchStatusReport;
-import plugins.materials.reports.BatchStatusReportPluginData;
-import plugins.materials.reports.MaterialsProducerPropertyReport;
-import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
-import plugins.materials.reports.MaterialsProducerResourceReport;
-import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
-import plugins.materials.reports.StageReport;
-import plugins.materials.reports.StageReportPluginData;
-import plugins.materials.support.MaterialsError;
-import plugins.regions.RegionsPluginId;
-import plugins.resources.ResourcesPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReport;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerPropertyReport;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerResourceReport;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReport;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.ResourcesPluginId;
 import util.errors.ContractException;
 
 /**

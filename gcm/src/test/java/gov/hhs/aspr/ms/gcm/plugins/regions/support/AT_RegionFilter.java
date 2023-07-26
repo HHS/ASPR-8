@@ -1,4 +1,4 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,19 +18,19 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.NucleusError;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.support.filters.Filter;
-import plugins.partitions.testsupport.TestPartitionsContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
-import plugins.regions.testsupport.RegionsTestPluginFactory;
-import plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
-import plugins.regions.testsupport.TestRegionId;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.RegionsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.RegionsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

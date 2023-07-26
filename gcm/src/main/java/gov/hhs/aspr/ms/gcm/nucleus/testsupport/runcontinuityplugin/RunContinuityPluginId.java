@@ -1,6 +1,6 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 
 /**
  * Static plugin id implementation for the person properties plugin

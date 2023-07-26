@@ -1,18 +1,18 @@
-package plugins.regions.reports;
+package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonAdditionEvent;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
-import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import util.wrappers.MultiKey;
 import util.wrappers.MutableInteger;
 

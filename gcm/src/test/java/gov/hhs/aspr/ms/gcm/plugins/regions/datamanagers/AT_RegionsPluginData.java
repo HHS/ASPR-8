@@ -1,4 +1,4 @@
-package plugins.regions.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,16 +21,16 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import nucleus.PluginData;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.RegionPropertyId;
-import plugins.regions.testsupport.TestRegionId;
-import plugins.regions.testsupport.TestRegionPropertyId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

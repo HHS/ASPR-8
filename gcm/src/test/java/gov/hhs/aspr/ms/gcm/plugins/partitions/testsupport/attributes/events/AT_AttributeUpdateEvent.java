@@ -1,12 +1,12 @@
-package plugins.partitions.testsupport.attributes.events;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.partitions.testsupport.attributes.support.TestAttributeId;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

@@ -1,4 +1,4 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -16,14 +16,14 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import plugins.partitions.testsupport.TestPartitionsContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 /*
  * Static support class for testing PopulationContainer implementer classes

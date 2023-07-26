@@ -1,4 +1,4 @@
-package plugins.partitions;
+package gov.hhs.aspr.ms.gcm.plugins.partitions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

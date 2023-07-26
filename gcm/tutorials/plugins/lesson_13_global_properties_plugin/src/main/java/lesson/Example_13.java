@@ -9,18 +9,18 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.support.GlobalProperty;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
-import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.reports.support.NIOReportItemHandler;
-import plugins.util.properties.PropertyDefinition;
 
 public final class Example_13 {
 

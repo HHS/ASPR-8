@@ -1,4 +1,4 @@
-package plugins.partitions.support.filters;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,16 +11,16 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Event;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionError;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import plugins.partitions.testsupport.TestPartitionsContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 

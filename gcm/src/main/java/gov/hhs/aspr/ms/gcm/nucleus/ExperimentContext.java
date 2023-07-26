@@ -1,12 +1,12 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import gov.hhs.aspr.ms.gcm.nucleus.util.TriConsumer;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.util.TriConsumer;
 import util.errors.ContractException;
 
 /**

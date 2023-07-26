@@ -1,4 +1,4 @@
-package tools;
+package gov.hhs.aspr.ms.gcm.tools;
 
 import util.meta.unittestcoverage.reports.MetaInfoReport;
 

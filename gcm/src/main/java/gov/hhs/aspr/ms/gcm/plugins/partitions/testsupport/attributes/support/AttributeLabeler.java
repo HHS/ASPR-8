@@ -1,17 +1,17 @@
-package plugins.partitions.testsupport.attributes.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.Event;
-import plugins.partitions.support.Labeler;
-import plugins.partitions.support.LabelerSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelerSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.AttributesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * A labeler for attributes. The dimension of the labeler is the given

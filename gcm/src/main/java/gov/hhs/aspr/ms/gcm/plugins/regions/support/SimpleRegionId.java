@@ -1,4 +1,4 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 public final class SimpleRegionId implements RegionId {
 	private final Object value;

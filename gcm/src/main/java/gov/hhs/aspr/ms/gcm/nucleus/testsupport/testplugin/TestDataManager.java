@@ -1,9 +1,9 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import java.util.List;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 
 /**
  * Test Support data manager implementation designed to execute test-defined

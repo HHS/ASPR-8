@@ -1,4 +1,4 @@
-package plugins.materials.support;
+package gov.hhs.aspr.ms.gcm.plugins.materials.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

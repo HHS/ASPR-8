@@ -1,9 +1,9 @@
-package plugins.partitions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport;
 
-import nucleus.ActorContext;
-import nucleus.DataManager;
-import nucleus.NucleusError;
-import plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import util.errors.ContractException;
 
 /**

@@ -1,4 +1,4 @@
-package plugins.materials;
+package gov.hhs.aspr.ms.gcm.plugins.materials;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,17 +10,17 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.materials.datamangers.MaterialsPluginData;
-import plugins.materials.reports.BatchStatusReportPluginData;
-import plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
-import plugins.materials.reports.MaterialsProducerResourceReportPluginData;
-import plugins.materials.reports.StageReportPluginData;
-import plugins.materials.support.MaterialsError;
-import plugins.regions.RegionsPluginId;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.resources.ResourcesPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.MaterialsProducerResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.ResourcesPluginId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 

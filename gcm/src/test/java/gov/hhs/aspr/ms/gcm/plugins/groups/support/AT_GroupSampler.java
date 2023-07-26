@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.people.support.PersonId;
-import plugins.stochastics.support.RandomNumberGeneratorId;
-import plugins.stochastics.testsupport.TestRandomGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport.TestRandomGeneratorId;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupSampler {

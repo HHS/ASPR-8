@@ -1,4 +1,4 @@
-package plugins.people.support;
+package gov.hhs.aspr.ms.gcm.plugins.people.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

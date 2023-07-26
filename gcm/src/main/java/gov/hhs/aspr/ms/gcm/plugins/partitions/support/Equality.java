@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import org.apache.commons.math3.random.RandomGenerator;
 

@@ -1,4 +1,4 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,15 +16,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.ExperimentParameterData;
-import nucleus.ExperimentStatusConsole;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentStatusConsole;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 
 public final class MT_NIOReportItemHandler {
 

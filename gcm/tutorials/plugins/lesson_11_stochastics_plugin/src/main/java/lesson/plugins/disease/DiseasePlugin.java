@@ -1,6 +1,6 @@
 package lesson.plugins.disease;
 
-import nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
 public final class DiseasePlugin {
 

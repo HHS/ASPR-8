@@ -1,4 +1,4 @@
-package plugins.groups.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.groups.testsupport;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.groups.support.GroupPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 public enum TestGroupPropertyId implements GroupPropertyId {
 

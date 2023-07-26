@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,7 +12,7 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.support.Tuplator.Builder;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Tuplator.Builder;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 

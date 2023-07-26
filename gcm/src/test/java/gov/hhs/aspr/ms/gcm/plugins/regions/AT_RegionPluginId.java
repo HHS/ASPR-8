@@ -1,4 +1,4 @@
-package plugins.regions;
+package gov.hhs.aspr.ms.gcm.plugins.regions;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

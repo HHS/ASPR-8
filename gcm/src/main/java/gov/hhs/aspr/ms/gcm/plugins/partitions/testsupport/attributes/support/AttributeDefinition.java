@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support;
 
 import net.jcip.annotations.ThreadSafe;
 import util.errors.ContractException;

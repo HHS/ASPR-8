@@ -1,6 +1,6 @@
 package lesson.plugins.model.support;
 
-import plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 
 public enum GlobalProperty implements GlobalPropertyId {
 

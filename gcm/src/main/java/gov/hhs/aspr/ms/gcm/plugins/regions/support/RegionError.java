@@ -1,4 +1,4 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

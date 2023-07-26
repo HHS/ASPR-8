@@ -1,10 +1,10 @@
-package plugins.resources.reports;
+package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
 import util.errors.ContractException;
 
 /**

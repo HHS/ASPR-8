@@ -1,4 +1,4 @@
-package plugins.globalproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

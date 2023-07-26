@@ -1,10 +1,10 @@
-package plugins.people.events;
+package gov.hhs.aspr.ms.gcm.plugins.people.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.people.support.PersonConstructionData;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 /**

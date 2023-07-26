@@ -1,4 +1,4 @@
-package plugins.globalproperties.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,8 +8,8 @@ import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * Enumeration that provides a variety of global property definitions for testing purposes

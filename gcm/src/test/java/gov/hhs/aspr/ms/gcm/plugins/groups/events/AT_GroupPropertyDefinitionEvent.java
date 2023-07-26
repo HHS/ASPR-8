@@ -1,4 +1,4 @@
-package plugins.groups.events;
+package gov.hhs.aspr.ms.gcm.plugins.groups.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.groups.support.GroupError;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupTypeId;
-import plugins.groups.testsupport.TestGroupPropertyId;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

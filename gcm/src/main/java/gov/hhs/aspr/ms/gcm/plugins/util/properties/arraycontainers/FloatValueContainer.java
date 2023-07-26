@@ -1,10 +1,10 @@
-package plugins.util.properties.arraycontainers;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Supplier;
 
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

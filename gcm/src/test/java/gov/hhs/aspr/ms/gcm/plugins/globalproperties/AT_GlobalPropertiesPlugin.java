@@ -1,4 +1,4 @@
-package plugins.globalproperties;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,11 +9,11 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestMethod;
 
 public class AT_GlobalPropertiesPlugin {

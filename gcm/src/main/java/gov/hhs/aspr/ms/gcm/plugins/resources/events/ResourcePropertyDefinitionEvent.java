@@ -1,11 +1,11 @@
-package plugins.resources.events;
+package gov.hhs.aspr.ms.gcm.plugins.resources.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
-import plugins.resources.support.ResourcePropertyId;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 @Immutable

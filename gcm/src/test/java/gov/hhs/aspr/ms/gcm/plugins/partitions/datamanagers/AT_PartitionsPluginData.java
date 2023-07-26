@@ -1,4 +1,4 @@
-package plugins.partitions.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import util.annotations.UnitTestMethod;
 
 public class AT_PartitionsPluginData {

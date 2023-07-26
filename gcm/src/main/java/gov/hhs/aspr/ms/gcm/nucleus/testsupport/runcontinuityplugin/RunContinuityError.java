@@ -1,4 +1,4 @@
-package nucleus.testsupport.runcontinuityplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

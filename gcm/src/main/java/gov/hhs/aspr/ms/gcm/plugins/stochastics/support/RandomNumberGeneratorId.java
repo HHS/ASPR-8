@@ -1,4 +1,4 @@
-package plugins.stochastics.support;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
 import net.jcip.annotations.ThreadSafe;
 

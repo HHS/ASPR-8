@@ -1,8 +1,8 @@
-package plugins.groups.events;
+package gov.hhs.aspr.ms.gcm.plugins.groups.events;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

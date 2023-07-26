@@ -1,9 +1,9 @@
-package plugins.groups.events;
+package gov.hhs.aspr.ms.gcm.plugins.groups.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.groups.support.GroupId;
-import plugins.people.support.PersonId;
 
 /**
  * Event to indicating that person was added to a group

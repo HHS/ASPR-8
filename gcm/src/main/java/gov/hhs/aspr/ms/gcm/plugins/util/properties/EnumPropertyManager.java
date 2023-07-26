@@ -1,9 +1,9 @@
-package plugins.util.properties;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties;
 
 import java.util.Iterator;
 import java.util.function.Supplier;
 
-import plugins.util.properties.arraycontainers.EnumContainer;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers.EnumContainer;
 import util.errors.ContractException;
 
 /**

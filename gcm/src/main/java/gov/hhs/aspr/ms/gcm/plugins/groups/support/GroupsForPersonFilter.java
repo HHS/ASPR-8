@@ -1,19 +1,19 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.NucleusError;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.events.GroupMembershipAdditionEvent;
-import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.partitions.support.Equality;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionError;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.support.filters.Filter;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.events.GroupMembershipAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.groups.events.GroupMembershipRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 public class GroupsForPersonFilter extends Filter {

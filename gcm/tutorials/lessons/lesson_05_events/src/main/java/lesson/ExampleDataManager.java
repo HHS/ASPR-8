@@ -1,8 +1,8 @@
 package lesson;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 
 public final class ExampleDataManager extends DataManager {
 

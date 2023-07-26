@@ -3,7 +3,7 @@ package lesson;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 
-import nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
 
 public class SimpleOutputConsumer implements Consumer<ExperimentContext> {
 

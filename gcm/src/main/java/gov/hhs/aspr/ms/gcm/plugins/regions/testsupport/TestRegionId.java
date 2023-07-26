@@ -1,8 +1,8 @@
-package plugins.regions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.regions.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 
 /**
  * Enumeration that identifies region components for all tests

@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -8,19 +8,19 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
-import nucleus.EventFilter;
-import nucleus.IdentifiableFunctionMap;
-import plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
-import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
-import plugins.partitions.testsupport.attributes.support.AttributeError;
-import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.nucleus.IdentifiableFunctionMap;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 /**

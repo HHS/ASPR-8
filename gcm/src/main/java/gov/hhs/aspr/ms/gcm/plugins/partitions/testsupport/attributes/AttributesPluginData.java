@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.partitions.testsupport.attributes.support.AttributeDefinition;
-import plugins.partitions.testsupport.attributes.support.AttributeError;
-import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 @Immutable

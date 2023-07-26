@@ -1,4 +1,4 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 /**
  * An enumeration supporting {@link PeriodicReport} that represents the

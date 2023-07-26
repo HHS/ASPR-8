@@ -2,14 +2,14 @@ package lesson.plugins.model.reports;
 
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import lesson.plugins.model.PersonProperty;
-import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
 
 public final class VaccineReport {
 

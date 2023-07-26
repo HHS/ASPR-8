@@ -1,4 +1,4 @@
-package plugins.util.properties.arraycontainers;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers.IntValueContainer.IntValueType;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

@@ -1,4 +1,4 @@
-package plugins.util.properties;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.util.properties.PropertyDefinition.Builder;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition.Builder;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

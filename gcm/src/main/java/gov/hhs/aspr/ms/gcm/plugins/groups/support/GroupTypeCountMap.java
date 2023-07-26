@@ -1,13 +1,13 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Partition;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import plugins.partitions.support.Partition;
 import util.errors.ContractException;
 
 /**

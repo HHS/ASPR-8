@@ -1,8 +1,8 @@
-package plugins.globalproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.events;
 
-import nucleus.Event;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 /**
  * An event released by the global data manager whenever a global property

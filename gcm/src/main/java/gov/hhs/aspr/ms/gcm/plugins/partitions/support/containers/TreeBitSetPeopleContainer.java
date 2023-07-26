@@ -1,4 +1,4 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -7,9 +7,9 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import plugins.partitions.support.PartitionError;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.errors.ContractException;
 
 

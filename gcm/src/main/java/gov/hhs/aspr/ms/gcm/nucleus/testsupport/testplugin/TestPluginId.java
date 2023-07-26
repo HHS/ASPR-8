@@ -1,7 +1,7 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
-import nucleus.PluginId;
-import nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
 /**
  * Static plugin id implementation for the TestPlugin
  * 

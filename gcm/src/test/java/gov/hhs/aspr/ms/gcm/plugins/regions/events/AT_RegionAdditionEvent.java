@@ -1,4 +1,4 @@
-package plugins.regions.events;
+package gov.hhs.aspr.ms.gcm.plugins.regions.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,9 +10,9 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
-import plugins.regions.support.SimpleRegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.SimpleRegionId;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

@@ -1,12 +1,12 @@
-package plugins.regions.events;
+package gov.hhs.aspr.ms.gcm.plugins.regions.events;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.regions.support.RegionError;
-import plugins.regions.support.RegionId;
 import util.errors.ContractException;
 
 /**

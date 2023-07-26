@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,12 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.Simulation;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 
 public class AT_StochasticsPlugin {

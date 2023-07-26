@@ -1,14 +1,14 @@
-package plugins.resources.reports;
+package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
-import nucleus.ReportContext;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.events.ResourcePropertyDefinitionEvent;
-import plugins.resources.events.ResourcePropertyUpdateEvent;
-import plugins.resources.support.ResourceId;
-import plugins.resources.support.ResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourcePropertyDefinitionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourcePropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
 
 /**
  * A Report that displays assigned resource property values over time.

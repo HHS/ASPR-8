@@ -1,4 +1,4 @@
-package plugins.materials.datamangers;
+package gov.hhs.aspr.ms.gcm.plugins.materials.datamangers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,20 +10,20 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.BatchPropertyId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsError;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.MaterialsProducerPropertyId;
-import plugins.materials.support.StageId;
-import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

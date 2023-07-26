@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
  * PlugingDataBuilder is an interface for the builders of plugins.

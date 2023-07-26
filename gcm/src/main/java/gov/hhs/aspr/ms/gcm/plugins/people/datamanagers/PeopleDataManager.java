@@ -1,4 +1,4 @@
-package plugins.people.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.people.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -6,19 +6,19 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
-import nucleus.EventFilter;
-import nucleus.NucleusError;
-import plugins.people.events.PersonAdditionEvent;
-import plugins.people.events.PersonImminentAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
-import plugins.people.events.PersonRemovalEvent;
-import plugins.people.support.PersonConstructionData;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
 import util.errors.ContractException;
 
 /**

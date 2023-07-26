@@ -1,4 +1,4 @@
-package plugins.personproperties.reports;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,12 +12,12 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.personproperties.testsupport.TestPersonPropertyId;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport.TestPersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

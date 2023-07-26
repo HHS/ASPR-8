@@ -1,22 +1,22 @@
-package plugins.globalproperties.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
-import nucleus.EventFilter;
-import nucleus.IdentifiableFunctionMap;
-import plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
-import plugins.globalproperties.events.GlobalPropertyUpdateEvent;
-import plugins.globalproperties.support.GlobalPropertiesError;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.globalproperties.support.GlobalPropertyInitialization;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.nucleus.IdentifiableFunctionMap;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.events.GlobalPropertyDefinitionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.events.GlobalPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

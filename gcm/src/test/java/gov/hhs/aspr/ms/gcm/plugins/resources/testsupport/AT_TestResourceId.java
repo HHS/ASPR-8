@@ -1,4 +1,4 @@
-package plugins.resources.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.resources.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,7 +14,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import util.annotations.UnitTestMethod;
 import util.random.RandomGeneratorProvider;
 import util.wrappers.MutableInteger;

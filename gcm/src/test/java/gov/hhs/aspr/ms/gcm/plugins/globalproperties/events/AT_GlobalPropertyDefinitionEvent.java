@@ -1,13 +1,13 @@
-package plugins.globalproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.globalproperties.support.SimpleGlobalPropertyId;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.SimpleGlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

@@ -1,4 +1,4 @@
-package plugins.personproperties.reports;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.reports;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,20 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
-import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 
 /**
  * A periodic Report that displays the number of people exhibiting a tuple of

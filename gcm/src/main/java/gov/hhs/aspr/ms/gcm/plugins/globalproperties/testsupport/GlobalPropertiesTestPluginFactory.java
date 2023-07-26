@@ -1,4 +1,4 @@
-package plugins.globalproperties.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,18 +6,18 @@ import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import nucleus.ActorContext;
-import nucleus.NucleusError;
-import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.globalproperties.support.GlobalPropertiesError;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
 

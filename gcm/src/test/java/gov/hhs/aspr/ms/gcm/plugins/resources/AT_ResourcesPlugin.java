@@ -1,4 +1,4 @@
-package plugins.resources;
+package gov.hhs.aspr.ms.gcm.plugins.resources;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,16 +9,16 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.people.PeoplePluginId;
-import plugins.regions.RegionsPluginId;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.resources.datamanagers.ResourcesPluginData;
-import plugins.resources.reports.PersonResourceReportPluginData;
-import plugins.resources.reports.ResourcePropertyReportPluginData;
-import plugins.resources.reports.ResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.PersonResourceReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReportPluginData;
 import util.annotations.UnitTestMethod;
 
 public class AT_ResourcesPlugin {

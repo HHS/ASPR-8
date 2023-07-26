@@ -1,4 +1,4 @@
-package plugins.globalproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
 import net.jcip.annotations.ThreadSafe;
 

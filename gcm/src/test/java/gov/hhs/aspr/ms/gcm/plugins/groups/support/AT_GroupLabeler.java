@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,22 +15,22 @@ import java.util.function.Function;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import nucleus.Event;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.groups.datamanagers.GroupsDataManager;
-import plugins.groups.events.GroupMembershipAdditionEvent;
-import plugins.groups.events.GroupMembershipRemovalEvent;
-import plugins.groups.testsupport.GroupsTestPluginFactory;
-import plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.partitions.support.LabelerSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.testsupport.TestPartitionsContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.groups.events.GroupMembershipAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.groups.events.GroupMembershipRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.GroupsTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.GroupsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelerSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 

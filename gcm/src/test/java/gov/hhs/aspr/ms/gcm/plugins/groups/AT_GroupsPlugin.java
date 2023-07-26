@@ -1,4 +1,4 @@
-package plugins.groups;
+package gov.hhs.aspr.ms.gcm.plugins.groups;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,15 +9,15 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.groups.reports.GroupPopulationReportPluginData;
-import plugins.groups.reports.GroupPropertyReportPluginData;
-import plugins.people.PeoplePluginId;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.stochastics.StochasticsPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPopulationReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import util.annotations.UnitTestMethod;
 
 public class AT_GroupsPlugin {

@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
 import java.util.List;

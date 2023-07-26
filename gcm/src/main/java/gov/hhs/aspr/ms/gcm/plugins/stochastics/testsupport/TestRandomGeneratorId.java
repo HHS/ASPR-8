@@ -1,6 +1,6 @@
-package plugins.stochastics.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport;
 
-import plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 /**
  * Enumeration that provides a variety of RandomNumberGeneratorId values for testing purposes
  * 

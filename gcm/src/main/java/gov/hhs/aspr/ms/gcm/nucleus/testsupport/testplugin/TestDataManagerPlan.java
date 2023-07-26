@@ -1,8 +1,8 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import java.util.function.Consumer;
 
-import nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import util.errors.ContractException;
 
 /**

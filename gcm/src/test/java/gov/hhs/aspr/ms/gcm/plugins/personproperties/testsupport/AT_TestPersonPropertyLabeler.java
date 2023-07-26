@@ -1,11 +1,11 @@
-package plugins.personproperties.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.support.Equality;
-import plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

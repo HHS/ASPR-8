@@ -1,11 +1,11 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * PeopleContainer implementor that uses hash-bucketed ArrayLists and an

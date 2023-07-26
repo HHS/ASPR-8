@@ -1,27 +1,27 @@
-package plugins.resources.reports;
+package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import nucleus.ReportContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.events.PersonAdditionEvent;
-import plugins.people.events.PersonImminentRemovalEvent;
-import plugins.people.support.PersonId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.events.PersonRegionUpdateEvent;
-import plugins.regions.events.RegionAdditionEvent;
-import plugins.regions.support.RegionId;
-import plugins.reports.support.PeriodicReport;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.events.PersonResourceUpdateEvent;
-import plugins.resources.events.ResourceIdAdditionEvent;
-import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 

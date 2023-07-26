@@ -1,4 +1,4 @@
-package plugins.regions;
+package gov.hhs.aspr.ms.gcm.plugins.regions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,14 +9,14 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.people.PeoplePluginId;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.regions.reports.RegionPropertyReportPluginData;
-import plugins.regions.reports.RegionTransferReportPluginData;
-import plugins.reports.support.ReportPeriod;
-import plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import util.annotations.UnitTestMethod;
 
 public class AT_RegionPlugin {

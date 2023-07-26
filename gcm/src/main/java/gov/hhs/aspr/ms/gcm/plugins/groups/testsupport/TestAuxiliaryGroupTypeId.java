@@ -1,8 +1,8 @@
-package plugins.groups.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.groups.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
 
 /**
  * Enumeration of GroupTypeId to support unit testing

@@ -1,4 +1,4 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,16 +14,16 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import nucleus.Event;
-import nucleus.NucleusError;
-import plugins.partitions.support.containers.BasePeopleContainer;
-import plugins.partitions.support.containers.PeopleContainer;
-import plugins.partitions.support.filters.Filter;
-import plugins.partitions.support.filters.TrueFilter;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
-import plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers.BasePeopleContainer;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers.PeopleContainer;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.TrueFilter;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 import util.errors.ContractException;
 
 /**

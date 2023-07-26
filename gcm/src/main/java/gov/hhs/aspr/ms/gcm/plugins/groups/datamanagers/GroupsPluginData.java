@@ -1,4 +1,4 @@
-package plugins.groups.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,18 +12,18 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyValue;
+import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.groups.support.GroupError;
-import plugins.groups.support.GroupId;
-import plugins.groups.support.GroupPropertyId;
-import plugins.groups.support.GroupPropertyValue;
-import plugins.groups.support.GroupTypeId;
-import plugins.people.support.PersonError;
-import plugins.people.support.PersonId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 import util.wrappers.MultiKey;
 

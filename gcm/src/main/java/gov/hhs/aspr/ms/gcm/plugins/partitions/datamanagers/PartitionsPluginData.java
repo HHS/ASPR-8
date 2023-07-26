@@ -1,8 +1,8 @@
-package plugins.partitions.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
 
 /**
  * An immutable container of the initial state of partitions. It contains: <BR>

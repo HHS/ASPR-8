@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import lesson.plugins.family.datamanagers.FamilyDataManager;
 import lesson.plugins.family.support.FamilyId;
 import lesson.plugins.person.datamanagers.PersonDataManager;
 import lesson.plugins.person.events.PersonRemovalEvent;
 import lesson.plugins.person.support.PersonId;
 import lesson.plugins.vaccine.events.VaccinationEvent;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
 
 public final class VaccinationDataManager extends DataManager {
 

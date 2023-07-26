@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
  * The unique identifier for data managers. DataManagerId values are constructed

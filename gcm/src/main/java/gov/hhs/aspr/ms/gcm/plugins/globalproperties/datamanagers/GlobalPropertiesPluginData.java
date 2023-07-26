@@ -1,4 +1,4 @@
-package plugins.globalproperties.datamanagers;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

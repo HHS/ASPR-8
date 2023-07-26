@@ -1,4 +1,4 @@
-package plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

@@ -1,6 +1,6 @@
-package plugins.regions;
+package gov.hhs.aspr.ms.gcm.plugins.regions;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 /**
  * Static plugin id implementation for the GlobalsPlugin
  * 

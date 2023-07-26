@@ -1,9 +1,9 @@
-package plugins.materials.events;
+package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsError;
 import util.errors.ContractException;
 
 /**

@@ -1,4 +1,4 @@
-package plugins.people;
+package gov.hhs.aspr.ms.gcm.plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

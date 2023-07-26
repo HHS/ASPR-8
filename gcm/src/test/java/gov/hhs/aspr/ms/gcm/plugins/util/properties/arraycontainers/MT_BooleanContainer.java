@@ -1,4 +1,4 @@
-package plugins.util.properties.arraycontainers;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers;
 
 /*
  * Manual performance and tuning test turned off until adoption of JOL or some other appropriate library for assessing memory use in post-8 java.

@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

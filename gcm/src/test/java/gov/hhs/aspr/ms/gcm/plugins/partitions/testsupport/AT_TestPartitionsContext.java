@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,15 +6,15 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ActorContext;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.datamanagers.PartitionsDataManager;
-import plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import plugins.partitions.testsupport.attributes.AttributesDataManager;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.AttributesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

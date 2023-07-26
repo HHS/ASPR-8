@@ -1,4 +1,4 @@
-package tools.codestats;
+package gov.hhs.aspr.ms.gcm.tools.codestats;
 
 import util.meta.codecount.CodeCountReport;
 

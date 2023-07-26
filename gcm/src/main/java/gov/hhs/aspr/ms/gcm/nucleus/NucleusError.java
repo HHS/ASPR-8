@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

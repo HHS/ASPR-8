@@ -1,9 +1,9 @@
-package plugins.resources.support;
+package gov.hhs.aspr.ms.gcm.plugins.resources.support;
 
 import java.util.Optional;
 
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

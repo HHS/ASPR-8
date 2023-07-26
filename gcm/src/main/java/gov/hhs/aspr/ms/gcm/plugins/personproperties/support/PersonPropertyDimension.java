@@ -1,14 +1,14 @@
-package plugins.personproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.support;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import nucleus.Dimension;
-import nucleus.DimensionContext;
-import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

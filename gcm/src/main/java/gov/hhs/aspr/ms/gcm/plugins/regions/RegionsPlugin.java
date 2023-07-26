@@ -1,16 +1,16 @@
-package plugins.regions;
+package gov.hhs.aspr.ms.gcm.plugins.regions;
 
 import java.util.Optional;
 
-import nucleus.Plugin;
-import plugins.people.PeoplePluginId;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.regions.reports.RegionPropertyReport;
-import plugins.regions.reports.RegionPropertyReportPluginData;
-import plugins.regions.reports.RegionTransferReport;
-import plugins.regions.reports.RegionTransferReportPluginData;
-import plugins.regions.support.RegionError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReport;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReport;
+import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import util.errors.ContractException;
 
 public final class RegionsPlugin {

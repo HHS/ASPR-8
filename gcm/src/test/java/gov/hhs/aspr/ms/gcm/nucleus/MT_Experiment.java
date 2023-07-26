@@ -1,10 +1,10 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.util.ArrayList;
 
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 
 /**
  * Manual experiment test focusing on the generation and handling of exceptions.

@@ -1,6 +1,9 @@
-package plugins.reports.support;
+package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -10,10 +13,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ScenarioStatus;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.ExperimentContext;
-import nucleus.ScenarioStatus;
 
 /**
  * A thread-safe utility that supports tab delimited text based files that have

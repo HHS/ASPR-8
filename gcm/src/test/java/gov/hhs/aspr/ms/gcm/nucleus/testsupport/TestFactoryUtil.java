@@ -1,4 +1,4 @@
-package nucleus.testsupport;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 
 public class TestFactoryUtil {
 	/*

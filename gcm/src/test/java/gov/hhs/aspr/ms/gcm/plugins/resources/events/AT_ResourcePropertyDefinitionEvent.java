@@ -1,16 +1,16 @@
-package plugins.resources.events;
+package gov.hhs.aspr.ms.gcm.plugins.resources.events;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.resources.support.ResourceError;
-import plugins.resources.support.ResourceId;
-import plugins.resources.support.ResourcePropertyId;
-import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;

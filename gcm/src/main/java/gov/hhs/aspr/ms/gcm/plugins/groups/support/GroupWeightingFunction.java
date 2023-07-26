@@ -1,6 +1,6 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * A functional interface for selecting people from a group based on assigning a

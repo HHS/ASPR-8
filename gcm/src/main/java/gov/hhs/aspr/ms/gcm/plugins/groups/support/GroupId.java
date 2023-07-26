@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;

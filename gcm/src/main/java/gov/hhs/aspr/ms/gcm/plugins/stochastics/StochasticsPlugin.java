@@ -1,9 +1,9 @@
-package plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import net.jcip.annotations.ThreadSafe;
-import nucleus.Plugin;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
 import util.errors.ContractError;
 
 /**

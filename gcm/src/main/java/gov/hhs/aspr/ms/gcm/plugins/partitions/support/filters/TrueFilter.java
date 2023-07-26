@@ -1,12 +1,12 @@
-package plugins.partitions.support.filters;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.support.PersonId;
 
 /**
  * A filter that passes all people. Used for concatenating filters into an

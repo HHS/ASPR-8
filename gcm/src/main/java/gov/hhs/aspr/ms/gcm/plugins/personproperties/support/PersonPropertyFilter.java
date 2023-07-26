@@ -1,20 +1,20 @@
-package plugins.personproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.NucleusError;
-import plugins.partitions.support.Equality;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionError;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.support.filters.Filter;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 public final class PersonPropertyFilter extends Filter {

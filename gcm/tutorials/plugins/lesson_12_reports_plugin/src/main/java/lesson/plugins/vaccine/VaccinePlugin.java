@@ -1,5 +1,7 @@
 package lesson.plugins.vaccine;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import lesson.plugins.family.FamilyPluginId;
 import lesson.plugins.model.ModelLabel;
 import lesson.plugins.person.PersonPluginId;
@@ -7,8 +9,6 @@ import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import lesson.plugins.vaccine.reports.FamilyVaccineReport;
 import lesson.plugins.vaccine.reports.HourlyVaccineReport;
 import lesson.plugins.vaccine.reports.StatelessVaccineReport;
-import nucleus.Plugin;
-import plugins.reports.support.ReportPeriod;
 
 public class VaccinePlugin {
 

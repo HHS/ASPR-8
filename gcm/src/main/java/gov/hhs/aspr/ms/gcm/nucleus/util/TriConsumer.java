@@ -1,4 +1,4 @@
-package nucleus.util;
+package gov.hhs.aspr.ms.gcm.nucleus.util;
 
 import java.util.Objects;
 import java.util.function.Consumer;

@@ -1,6 +1,6 @@
-package plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 /**
  * Static plugin id implementation for the StochasticsPlugin
  * 

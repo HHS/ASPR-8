@@ -1,6 +1,6 @@
-package plugins.globalproperties;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 /**
  * Static plugin id implementation for the GlobalsPlugin
  * 

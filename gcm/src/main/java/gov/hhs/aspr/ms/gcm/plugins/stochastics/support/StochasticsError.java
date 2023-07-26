@@ -1,4 +1,4 @@
-package plugins.stochastics.support;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

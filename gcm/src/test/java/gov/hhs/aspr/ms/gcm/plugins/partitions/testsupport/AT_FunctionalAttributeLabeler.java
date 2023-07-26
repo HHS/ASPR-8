@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
 import util.annotations.UnitTestConstructor;
 
 public class AT_FunctionalAttributeLabeler {

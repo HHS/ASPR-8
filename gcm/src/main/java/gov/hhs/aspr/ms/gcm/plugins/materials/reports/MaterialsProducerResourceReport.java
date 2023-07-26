@@ -1,16 +1,16 @@
-package plugins.materials.reports;
+package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
-import nucleus.ReportContext;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.MaterialsProducerAdditionEvent;
-import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.events.ResourceIdAdditionEvent;
-import plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialsProducerAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialsProducerResourceUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
 /**
  * A Report that displays materials producer resource changes over time.

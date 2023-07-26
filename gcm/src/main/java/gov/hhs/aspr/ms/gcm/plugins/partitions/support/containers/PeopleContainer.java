@@ -1,10 +1,10 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * Interface for abstracting the details of how people ids are stored as either

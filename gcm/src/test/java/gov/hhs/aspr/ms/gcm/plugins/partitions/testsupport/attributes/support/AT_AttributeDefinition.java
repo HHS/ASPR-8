@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

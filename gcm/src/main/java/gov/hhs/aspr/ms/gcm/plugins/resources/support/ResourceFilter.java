@@ -1,18 +1,18 @@
-package plugins.resources.support;
+package gov.hhs.aspr.ms.gcm.plugins.resources.support;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import nucleus.NucleusError;
-import plugins.partitions.support.Equality;
-import plugins.partitions.support.FilterSensitivity;
-import plugins.partitions.support.PartitionError;
-import plugins.partitions.support.PartitionsContext;
-import plugins.partitions.support.filters.Filter;
-import plugins.people.support.PersonId;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.events.PersonResourceUpdateEvent;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
 import util.errors.ContractException;
 
 public final class ResourceFilter extends Filter {

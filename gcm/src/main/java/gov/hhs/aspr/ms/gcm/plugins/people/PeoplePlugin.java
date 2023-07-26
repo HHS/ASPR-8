@@ -1,8 +1,8 @@
-package plugins.people;
+package gov.hhs.aspr.ms.gcm.plugins.people;
 
-import nucleus.Plugin;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 
 /**
  * A nucleus plugin for representing people, dealing only with their existence.

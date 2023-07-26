@@ -1,16 +1,16 @@
-package plugins.partitions;
+package gov.hhs.aspr.ms.gcm.plugins.partitions;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import nucleus.NucleusError;
-import nucleus.Plugin;
-import nucleus.PluginId;
-import plugins.partitions.datamanagers.PartitionsDataManager;
-import plugins.partitions.datamanagers.PartitionsPluginData;
-import plugins.partitions.support.PartitionError;
-import plugins.people.PeoplePluginId;
-import plugins.stochastics.StochasticsPluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import util.errors.ContractException;
 
 /**

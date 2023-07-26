@@ -1,4 +1,4 @@
-package plugins.util.properties.arraycontainers;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers;
 
 import java.util.Arrays;
 import java.util.Iterator;

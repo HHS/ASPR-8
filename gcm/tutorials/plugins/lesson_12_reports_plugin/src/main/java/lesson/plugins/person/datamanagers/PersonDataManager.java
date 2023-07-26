@@ -3,12 +3,12 @@ package lesson.plugins.person.datamanagers;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import lesson.plugins.person.events.PersonAdditionEvent;
 import lesson.plugins.person.events.PersonRemovalEvent;
 import lesson.plugins.person.support.PersonId;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
-import nucleus.Event;
 
 public final class PersonDataManager extends DataManager {
 

@@ -1,4 +1,4 @@
-package plugins.regions.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.regions.testsupport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,8 +8,8 @@ import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.regions.support.RegionPropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
  * Enumeration that identifies region property definitions

@@ -1,8 +1,8 @@
-package plugins.materials.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.materials.testsupport;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 
 /**
  * A test support enumeration that contains a variety of material id values.

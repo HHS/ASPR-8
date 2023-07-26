@@ -1,12 +1,12 @@
-package plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support.containers;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import plugins.partitions.support.PartitionsContext;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * Implementor of PeopleContainer that acts as a dynamic switching mechanism

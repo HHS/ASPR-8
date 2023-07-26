@@ -1,4 +1,4 @@
-package plugins.stochastics.support;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

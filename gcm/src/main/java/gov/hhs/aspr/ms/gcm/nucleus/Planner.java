@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 public enum Planner {
 	/*
 	 * Defines the type of actor that has created a plan. THE ORDER OF THIS ENUM

@@ -1,4 +1,4 @@
-package plugins.personproperties.support;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.support;
 
 import net.jcip.annotations.ThreadSafe;
 

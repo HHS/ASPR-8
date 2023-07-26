@@ -1,8 +1,8 @@
-package nucleus.testsupport.testplugin;
+package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 
 import java.util.List;
 
-import nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 
 /**
  * Test Support report implementation designed to execute test-defined behaviors

@@ -1,9 +1,9 @@
-package plugins.personproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.personproperties.support.PersonPropertyId;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

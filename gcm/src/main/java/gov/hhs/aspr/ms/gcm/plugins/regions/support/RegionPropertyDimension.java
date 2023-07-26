@@ -1,13 +1,13 @@
-package plugins.regions.support;
+package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import nucleus.Dimension;
-import nucleus.DimensionContext;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 public class RegionPropertyDimension implements Dimension {

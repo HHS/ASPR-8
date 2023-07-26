@@ -1,4 +1,4 @@
-package plugins.resources.reports;
+package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -7,24 +7,24 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.ReportContext;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestOutputConsumer;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
-import plugins.reports.support.SimpleReportLabel;
-import plugins.resources.datamanagers.ResourcesDataManager;
-import plugins.resources.datamanagers.ResourcesPluginData;
-import plugins.resources.support.ResourcePropertyId;
-import plugins.resources.support.ResourcePropertyInitialization;
-import plugins.resources.testsupport.ResourcesTestPluginFactory;
-import plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
-import plugins.resources.testsupport.TestResourceId;
-import plugins.resources.testsupport.TestResourcePropertyId;
-import plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.ResourcesTestPluginFactory;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.ResourcesTestPluginFactory.Factory;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourcePropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

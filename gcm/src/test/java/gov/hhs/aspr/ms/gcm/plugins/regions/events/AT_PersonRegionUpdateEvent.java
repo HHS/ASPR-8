@@ -1,9 +1,9 @@
-package plugins.regions.events;
+package gov.hhs.aspr.ms.gcm.plugins.regions.events;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.people.support.PersonId;
-import plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

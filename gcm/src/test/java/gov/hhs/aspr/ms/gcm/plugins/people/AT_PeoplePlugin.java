@@ -1,12 +1,12 @@
-package plugins.people;
+package gov.hhs.aspr.ms.gcm.plugins.people;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 import util.annotations.UnitTestMethod;
 
 public class AT_PeoplePlugin {

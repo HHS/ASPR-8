@@ -3,11 +3,11 @@ package lesson.plugins.vaccine;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import lesson.plugins.people.PersonDataManager;
 import lesson.plugins.people.PersonId;
 import lesson.plugins.people.PersonRemovalEvent;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
 
 /* start code_ref=plugin_dependencies_vaccine_data_manager*/
 public final class VaccinationDataManager extends DataManager {

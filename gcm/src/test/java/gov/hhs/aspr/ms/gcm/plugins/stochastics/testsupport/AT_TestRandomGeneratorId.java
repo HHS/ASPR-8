@@ -1,4 +1,4 @@
-package plugins.stochastics.testsupport;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import plugins.stochastics.support.RandomNumberGeneratorId;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 import util.annotations.UnitTestMethod;
 
 public class AT_TestRandomGeneratorId {

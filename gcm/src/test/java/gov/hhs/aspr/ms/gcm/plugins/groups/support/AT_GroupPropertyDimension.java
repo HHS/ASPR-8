@@ -1,4 +1,4 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -12,12 +12,12 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import nucleus.DimensionContext;
-import plugins.groups.datamanagers.GroupsPluginData;
-import plugins.groups.testsupport.TestGroupPropertyId;
-import plugins.groups.testsupport.TestGroupTypeId;
-import plugins.util.properties.PropertyDefinition;
-import plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;
@@ -65,11 +65,11 @@ public class AT_GroupPropertyDimension {
 
         // precondition test : if the global property id is not assigned
         ContractException contractException = assertThrows(ContractException.class,
-                () -> plugins.groups.support.GroupPropertyDimension.builder().setGroupId(new GroupId(0)).build());
+                () -> gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyDimension.builder().setGroupId(new GroupId(0)).build());
         assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
         // if the groupId was not assigned
-        contractException = assertThrows(ContractException.class, () -> plugins.groups.support.GroupPropertyDimension
+        contractException = assertThrows(ContractException.class, () -> gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyDimension
                 .builder().setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK).build());
         assertEquals(GroupError.NULL_GROUP_ID, contractException.getErrorType());
     }

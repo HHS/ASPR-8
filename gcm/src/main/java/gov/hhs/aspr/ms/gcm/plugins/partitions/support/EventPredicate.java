@@ -1,9 +1,9 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import java.util.Optional;
 
-import nucleus.Event;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * A generics based function that returns an optional {@link PersonId} from a

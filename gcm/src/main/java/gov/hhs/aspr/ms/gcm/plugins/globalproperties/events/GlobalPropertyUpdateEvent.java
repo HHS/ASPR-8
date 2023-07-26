@@ -1,8 +1,8 @@
-package plugins.globalproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.globalproperties.support.GlobalPropertyId;
 
 /**
  * An event released by the global data manager whenever a global property is

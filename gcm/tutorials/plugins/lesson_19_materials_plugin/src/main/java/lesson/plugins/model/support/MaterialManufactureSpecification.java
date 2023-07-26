@@ -1,7 +1,7 @@
 package lesson.plugins.model.support;
 
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 
 public final class MaterialManufactureSpecification {
 

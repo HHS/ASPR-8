@@ -1,10 +1,10 @@
-package plugins.partitions.support;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.people.support.PersonId;
 
 /**
  * Partitions are maintained as events relating to people are resolved. To do so

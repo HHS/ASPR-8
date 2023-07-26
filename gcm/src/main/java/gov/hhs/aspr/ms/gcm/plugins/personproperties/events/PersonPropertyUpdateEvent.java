@@ -1,9 +1,9 @@
-package plugins.personproperties.events;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.people.support.PersonId;
-import plugins.personproperties.support.PersonPropertyId;
 
 /**
  * An observation event indicating that a person's property assignment has

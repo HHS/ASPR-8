@@ -1,4 +1,4 @@
-package nucleus;
+package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
  * The status of a scenario from the perspective of an experiment. All scenarios

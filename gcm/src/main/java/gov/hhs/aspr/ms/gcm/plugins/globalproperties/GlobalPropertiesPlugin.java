@@ -1,14 +1,14 @@
-package plugins.globalproperties;
+package gov.hhs.aspr.ms.gcm.plugins.globalproperties;
 
 import java.util.Optional;
 
-import nucleus.Plugin;
-import nucleus.PluginContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.globalproperties.reports.GlobalPropertyReport;
-import plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import plugins.globalproperties.support.GlobalPropertiesError;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReport;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
 import util.errors.ContractException;
 
 /**

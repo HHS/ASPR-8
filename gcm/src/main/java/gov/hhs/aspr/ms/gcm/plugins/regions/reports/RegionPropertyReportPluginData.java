@@ -1,15 +1,15 @@
-package plugins.regions.reports;
-import net.jcip.annotations.ThreadSafe;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.regions.support.RegionPropertyId;
-import plugins.reports.support.ReportError;
-import plugins.reports.support.ReportLabel;
-import plugins.util.properties.PropertyError;
-import util.errors.ContractException;
-
+package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import net.jcip.annotations.ThreadSafe;
+import util.errors.ContractException;
 
 /**
  * A PluginData class supporting RegionPropertyReport construction.

@@ -1,7 +1,7 @@
-package plugins.groups.support;
+package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
-import nucleus.DataManager;
-import nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
 import util.errors.ContractException;
 
 /**

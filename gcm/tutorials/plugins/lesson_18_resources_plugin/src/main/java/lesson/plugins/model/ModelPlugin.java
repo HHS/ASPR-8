@@ -1,5 +1,6 @@
 package lesson.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import lesson.plugins.model.actors.PopulationLoader;
 import lesson.plugins.model.actors.QuestionnaireDistributor;
 import lesson.plugins.model.actors.ResourceLoader;
@@ -7,7 +8,6 @@ import lesson.plugins.model.actors.TreatmentManager;
 import lesson.plugins.model.reports.DeathReport;
 import lesson.plugins.model.reports.QuestionnaireReport;
 import lesson.plugins.model.reports.TreatmentReport;
-import nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

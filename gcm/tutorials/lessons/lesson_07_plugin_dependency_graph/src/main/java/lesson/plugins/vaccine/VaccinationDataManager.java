@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import lesson.plugins.family.FamilyDataManager;
 import lesson.plugins.family.FamilyId;
 import lesson.plugins.people.PersonDataManager;
 import lesson.plugins.people.PersonId;
 import lesson.plugins.people.PersonRemovalEvent;
-import nucleus.DataManager;
-import nucleus.DataManagerContext;
 
 public final class VaccinationDataManager extends DataManager {
 

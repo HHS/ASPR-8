@@ -1,6 +1,6 @@
-package plugins.personproperties;
+package gov.hhs.aspr.ms.gcm.plugins.personproperties;
 
-import nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 
 /**
  * Static plugin id implementation for the person properties plugin

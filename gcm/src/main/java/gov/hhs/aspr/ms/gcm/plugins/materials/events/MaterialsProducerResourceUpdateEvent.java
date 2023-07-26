@@ -1,9 +1,9 @@
-package plugins.materials.events;
+package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.resources.support.ResourceId;
 
 @Immutable
 public record MaterialsProducerResourceUpdateEvent(MaterialsProducerId materialsProducerId,

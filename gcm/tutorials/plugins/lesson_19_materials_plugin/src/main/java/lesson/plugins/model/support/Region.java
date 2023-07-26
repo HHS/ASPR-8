@@ -1,7 +1,7 @@
 package lesson.plugins.model.support;
 
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
-import plugins.regions.support.RegionId;
 import util.errors.ContractException;
 
 /**

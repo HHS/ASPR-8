@@ -1,9 +1,9 @@
-package plugins.partitions.testsupport.attributes.events;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import net.jcip.annotations.Immutable;
-import nucleus.Event;
-import plugins.partitions.testsupport.attributes.support.AttributeId;
-import plugins.people.support.PersonId;
 
 @Immutable
 public record AttributeUpdateEvent(PersonId personId,

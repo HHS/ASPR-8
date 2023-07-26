@@ -1,11 +1,11 @@
-package plugins.materials.support;
+package gov.hhs.aspr.ms.gcm.plugins.materials.support;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import net.jcip.annotations.Immutable;
-import plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**

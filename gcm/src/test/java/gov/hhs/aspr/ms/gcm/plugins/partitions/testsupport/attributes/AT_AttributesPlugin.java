@@ -1,4 +1,4 @@
-package plugins.partitions.testsupport.attributes;
+package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,22 +11,22 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.PluginId;
-import nucleus.testsupport.testplugin.TestActorPlan;
-import nucleus.testsupport.testplugin.TestPlugin;
-import nucleus.testsupport.testplugin.TestPluginData;
-import nucleus.testsupport.testplugin.TestPluginData.Builder;
-import nucleus.testsupport.testplugin.TestSimulation;
-import plugins.partitions.PartitionsPlugin;
-import plugins.partitions.datamanagers.PartitionsPluginData;
-import plugins.people.PeoplePlugin;
-import plugins.people.PeoplePluginId;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData.Builder;
+import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.PartitionsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import util.annotations.UnitTestMethod;
 
 public class AT_AttributesPlugin {

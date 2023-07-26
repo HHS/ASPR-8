@@ -2,13 +2,13 @@ package lesson.plugins.model.actors;
 
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.Resource;
-import nucleus.ActorContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourcesDataManager;
 
 public class ResourceLoader {
 

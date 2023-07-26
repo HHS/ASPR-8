@@ -1,10 +1,10 @@
-package plugins.reports;
+package gov.hhs.aspr.ms.gcm.plugins.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import util.annotations.UnitTestMethod;
 
 public class AT_ReportPlugin {

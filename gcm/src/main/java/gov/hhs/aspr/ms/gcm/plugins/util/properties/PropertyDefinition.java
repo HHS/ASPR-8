@@ -1,4 +1,4 @@
-package plugins.util.properties;
+package gov.hhs.aspr.ms.gcm.plugins.util.properties;
 
 import java.util.Optional;
 

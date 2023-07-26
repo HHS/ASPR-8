@@ -1,19 +1,19 @@
-package plugins.materials.reports;
+package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import nucleus.ReportContext;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.StageAdditionEvent;
-import plugins.materials.events.StageImminentRemovalEvent;
-import plugins.materials.events.StageMaterialsProducerUpdateEvent;
-import plugins.materials.events.StageOfferUpdateEvent;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.materials.support.StageId;
-import plugins.reports.support.ReportHeader;
-import plugins.reports.support.ReportItem;
-import plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageAdditionEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageMaterialsProducerUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageOfferUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * A Report that displays the creation, destruction, offering, batch conversion,

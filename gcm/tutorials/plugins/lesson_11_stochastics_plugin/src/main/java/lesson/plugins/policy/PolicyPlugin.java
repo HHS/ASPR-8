@@ -1,6 +1,6 @@
 package lesson.plugins.policy;
 
-import nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
 public final class PolicyPlugin {
 

@@ -5,19 +5,19 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
+import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import lesson.plugins.disease.DiseasePlugin;
 import lesson.plugins.disease.DiseasePluginData;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.policy.PolicyPlugin;
 import lesson.plugins.policy.PolicyPluginData;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.ExperimentParameterData;
-import nucleus.FunctionalDimension;
-import nucleus.Plugin;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
 
 public final class Example_11_B {
 
