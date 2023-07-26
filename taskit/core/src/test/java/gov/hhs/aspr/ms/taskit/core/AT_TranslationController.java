@@ -26,9 +26,9 @@ import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObje
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexObjectTranslatorId;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.translationSpecs.TestComplexObjectTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslator;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestObjectTranslatorId;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestForCoverage;
 import util.annotations.UnitTestMethod;

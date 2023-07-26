@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.taskit.core.testsupport.testobject.app;
+package gov.hhs.aspr.ms.taskit.core.testsupport.testobject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestObjectUtil;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testcomplexobject.TestComplexAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppEnum;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 

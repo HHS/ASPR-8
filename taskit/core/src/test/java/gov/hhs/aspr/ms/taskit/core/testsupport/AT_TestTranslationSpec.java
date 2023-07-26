@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.taskit.core.TranslationEngine;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs.TestObjectTranslationSpec;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;

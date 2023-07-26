@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.taskit.core.testsupport.testobject.translationSpecs;
 
 import gov.hhs.aspr.ms.taskit.core.testsupport.TestTranslationSpec;
 import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestAppObject;
-import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.TestInputObject;
+import gov.hhs.aspr.ms.taskit.core.testsupport.testobject.input.TestInputObject;
 
 public class TestObjectTranslationSpec extends TestTranslationSpec<TestInputObject, TestAppObject> {
 
