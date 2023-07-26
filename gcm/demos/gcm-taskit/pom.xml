@@ -36,7 +36,7 @@
 		<!-- dependency versions -->
 		<gcm.version>4.0.0-SNAPSHOT</gcm.version>
 		<gcm-taskit-protobuf.version>2.4.0-SNAPSHOT</gcm-taskit-protobuf.version>
-        <protoc.version>3.21.12</protoc.version>
+		<protoc.version>3.21.12</protoc.version>
 	</properties>
 
 	<!-- Dependencies -->
@@ -48,7 +48,7 @@
 		</dependency>
 		<dependency>
 			<groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
-			<artifactId>plugin-translators-all</artifactId>
+			<artifactId>gcm-taskit-protobuf</artifactId>
 			<version>${gcm-taskit-protobuf.version}</version>
 		</dependency>
 	</dependencies>
@@ -78,7 +78,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
@@ -99,33 +99,33 @@
 			</plugin>
 
 			<!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>${flatten-maven-plugin.version}</version>
-                <executions>
-                    <!-- enable flattening -->
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                        <configuration>
-                            <updatePomFile>true</updatePomFile>
-                        </configuration>
-                    </execution>
-                    <!-- ensure proper cleanup -->
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>${flatten-maven-plugin.version}</version>
+				<executions>
+					<!-- enable flattening -->
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+						<configuration>
+							<updatePomFile>true</updatePomFile>
+						</configuration>
+					</execution>
+					<!-- ensure proper cleanup -->
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
@@ -143,7 +143,7 @@
 					<protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>com.google.code.maven-replacer-plugin</groupId>
 				<artifactId>maven-replacer-plugin</artifactId>
