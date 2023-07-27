@@ -1,14 +1,14 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.Resource;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
-import lesson.plugins.model.GlobalProperty;
-import lesson.plugins.model.Resource;
 
 public class ResourceLoader {
 

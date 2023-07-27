@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine.support;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.support;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

@@ -1,17 +1,17 @@
 
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import lesson.plugins.family.FamilyDataManager;
-import lesson.plugins.family.FamilyId;
-import lesson.plugins.people.PersonDataManager;
-import lesson.plugins.people.PersonId;
-import lesson.plugins.vaccine.VaccinationDataManager;
 
 public final class ModelActor {
 

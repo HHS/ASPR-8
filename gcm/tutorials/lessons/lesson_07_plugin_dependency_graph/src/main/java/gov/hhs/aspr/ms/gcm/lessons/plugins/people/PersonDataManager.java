@@ -1,4 +1,4 @@
-package lesson.plugins.people;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.people;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

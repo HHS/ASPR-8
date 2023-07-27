@@ -1,10 +1,15 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialsProducer;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Resource;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
@@ -17,11 +22,6 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateE
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
-import lesson.plugins.model.support.DiseaseState;
-import lesson.plugins.model.support.GlobalProperty;
-import lesson.plugins.model.support.MaterialsProducer;
-import lesson.plugins.model.support.PersonProperty;
-import lesson.plugins.model.support.Resource;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 

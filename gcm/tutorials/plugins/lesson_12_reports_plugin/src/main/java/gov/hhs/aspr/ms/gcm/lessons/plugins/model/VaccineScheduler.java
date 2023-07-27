@@ -1,5 +1,5 @@
 
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,11 +7,11 @@ import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.support.PersonId;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 
 public final class VaccineScheduler {
 

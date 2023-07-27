@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine.datamanagers;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.events.VaccinationEvent;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
-import lesson.plugins.family.datamanagers.FamilyDataManager;
-import lesson.plugins.family.support.FamilyId;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.events.PersonRemovalEvent;
-import lesson.plugins.person.support.PersonId;
-import lesson.plugins.vaccine.events.VaccinationEvent;
 
 public final class VaccinationDataManager extends DataManager {
 

@@ -1,7 +1,10 @@
-package lesson.plugins.model.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports;
 
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Material;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialsProducer;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Resource;
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageOfferUpdateEvent;
@@ -18,9 +21,6 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
-import lesson.plugins.model.support.Material;
-import lesson.plugins.model.support.MaterialsProducer;
-import lesson.plugins.model.support.Resource;
 
 public final class VaccineProductionReport extends PeriodicReport {
 

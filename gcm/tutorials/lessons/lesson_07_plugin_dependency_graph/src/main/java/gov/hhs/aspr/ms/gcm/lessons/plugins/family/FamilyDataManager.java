@@ -1,4 +1,4 @@
-package lesson.plugins.family;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.family;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
-import lesson.plugins.people.PersonDataManager;
-import lesson.plugins.people.PersonId;
-import lesson.plugins.people.PersonRemovalEvent;
 
 public final class FamilyDataManager extends DataManager {
 

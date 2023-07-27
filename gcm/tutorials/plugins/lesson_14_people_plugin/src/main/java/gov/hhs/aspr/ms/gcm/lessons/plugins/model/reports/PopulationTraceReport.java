@@ -1,4 +1,4 @@
-package lesson.plugins.model.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;

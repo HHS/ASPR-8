@@ -1,14 +1,14 @@
 
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.family.datamanagers.FamilyDataManager;
-import lesson.plugins.family.support.FamilyId;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.support.PersonId;
 
 public final class PopulationLoader {
 

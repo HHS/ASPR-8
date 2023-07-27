@@ -1,14 +1,14 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 
 public final class Vaccinator {
 

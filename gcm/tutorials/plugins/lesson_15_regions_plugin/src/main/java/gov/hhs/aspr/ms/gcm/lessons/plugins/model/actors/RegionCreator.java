@@ -1,17 +1,17 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.Region;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.RegionProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData.Builder;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.model.Region;
-import lesson.plugins.model.RegionProperty;
 
 public class RegionCreator {
 	/* start code_ref= regions_plugin_region_creator_add_region */

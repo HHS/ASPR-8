@@ -1,4 +1,4 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +9,16 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GroupType;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Material;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialsProducer;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.ModelReportLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Region;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Resource;
 import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
@@ -37,16 +47,6 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.support.DiseaseState;
-import lesson.plugins.model.support.GlobalProperty;
-import lesson.plugins.model.support.GroupType;
-import lesson.plugins.model.support.Material;
-import lesson.plugins.model.support.MaterialsProducer;
-import lesson.plugins.model.support.ModelReportLabel;
-import lesson.plugins.model.support.PersonProperty;
-import lesson.plugins.model.support.Region;
-import lesson.plugins.model.support.Resource;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_19 {

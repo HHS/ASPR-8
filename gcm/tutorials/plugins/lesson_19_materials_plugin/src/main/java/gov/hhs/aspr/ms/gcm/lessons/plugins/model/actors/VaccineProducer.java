@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -6,6 +6,10 @@ import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Material;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialManufactureSpecification;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Resource;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
@@ -15,10 +19,6 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
-import lesson.plugins.model.support.GlobalProperty;
-import lesson.plugins.model.support.Material;
-import lesson.plugins.model.support.MaterialManufactureSpecification;
-import lesson.plugins.model.support.Resource;
 
 public final class VaccineProducer {
 

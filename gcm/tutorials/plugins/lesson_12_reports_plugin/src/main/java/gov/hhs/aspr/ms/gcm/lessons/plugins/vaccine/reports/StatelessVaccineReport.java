@@ -1,20 +1,20 @@
-package lesson.plugins.vaccine.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import lesson.plugins.family.datamanagers.FamilyDataManager;
-import lesson.plugins.family.support.FamilyId;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.support.PersonId;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
 import util.wrappers.MutableInteger;
 
 public class StatelessVaccineReport extends PeriodicReport {

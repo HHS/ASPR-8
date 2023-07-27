@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine.datamanagers;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.support.VaccineError;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.support.VaccineInitialization;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
@@ -14,8 +16,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import lesson.plugins.vaccine.support.VaccineError;
-import lesson.plugins.vaccine.support.VaccineInitialization;
 import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 

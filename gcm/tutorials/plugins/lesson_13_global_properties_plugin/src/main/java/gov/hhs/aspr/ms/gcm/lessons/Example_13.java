@@ -1,4 +1,4 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +9,9 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelReportLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
@@ -18,9 +21,6 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertie
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportLabel;
-import lesson.plugins.model.support.GlobalProperty;
 
 public final class Example_13 {
 

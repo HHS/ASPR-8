@@ -1,7 +1,7 @@
-package lesson.plugins.family.events;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.family.events;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
-import lesson.plugins.family.support.FamilyId;
 import net.jcip.annotations.Immutable;
 
 @Immutable

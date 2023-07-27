@@ -1,4 +1,4 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +10,9 @@ import java.util.stream.IntStream;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelReportLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinePlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
@@ -22,9 +25,6 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.model.ModelReportLabel;
-import lesson.plugins.vaccine.VaccinePlugin;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_14 {

@@ -1,4 +1,4 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,6 +7,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyPluginData;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.PersonPlugin;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinePlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
@@ -15,12 +21,6 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import lesson.plugins.family.FamilyPlugin;
-import lesson.plugins.family.FamilyPluginData;
-import lesson.plugins.model.ModelLabel;
-import lesson.plugins.model.ModelPlugin;
-import lesson.plugins.person.PersonPlugin;
-import lesson.plugins.vaccine.VaccinePlugin;
 
 public final class Example_12 {
 

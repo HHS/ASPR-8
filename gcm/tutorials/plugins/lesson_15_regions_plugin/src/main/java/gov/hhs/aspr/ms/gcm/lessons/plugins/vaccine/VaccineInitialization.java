@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 
 /**
  * Represents the initial vaccine count for a person 

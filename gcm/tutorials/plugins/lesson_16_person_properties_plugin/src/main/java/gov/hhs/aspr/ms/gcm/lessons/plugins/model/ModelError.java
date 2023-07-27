@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import util.errors.ContractError;
 import util.errors.ContractException;

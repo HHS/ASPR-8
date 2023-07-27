@@ -1,4 +1,4 @@
-package lesson.plugins.person.support;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.person.support;
 
 import net.jcip.annotations.Immutable;
 

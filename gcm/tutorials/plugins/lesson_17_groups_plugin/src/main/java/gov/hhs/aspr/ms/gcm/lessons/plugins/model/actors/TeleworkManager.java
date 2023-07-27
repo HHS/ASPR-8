@@ -1,9 +1,14 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GroupProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GroupType;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Plan;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
@@ -12,11 +17,6 @@ import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.model.support.DiseaseState;
-import lesson.plugins.model.support.GlobalProperty;
-import lesson.plugins.model.support.GroupProperty;
-import lesson.plugins.model.support.GroupType;
-import lesson.plugins.model.support.PersonProperty;
 
 public class TeleworkManager {
 

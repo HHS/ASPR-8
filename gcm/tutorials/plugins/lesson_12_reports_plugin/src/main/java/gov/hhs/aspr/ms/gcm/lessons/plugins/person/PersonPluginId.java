@@ -1,4 +1,4 @@
-package lesson.plugins.person;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.person;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;

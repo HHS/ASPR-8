@@ -1,4 +1,4 @@
-package lesson.plugins.policy;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.policy;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;

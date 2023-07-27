@@ -1,23 +1,23 @@
-package lesson.plugins.vaccine.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.events.FamilyAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.events.FamilyMemberShipAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.events.VaccinationEvent;
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import lesson.plugins.family.datamanagers.FamilyDataManager;
-import lesson.plugins.family.events.FamilyAdditionEvent;
-import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
-import lesson.plugins.family.support.FamilyId;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.events.PersonAdditionEvent;
-import lesson.plugins.person.support.PersonId;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
-import lesson.plugins.vaccine.events.VaccinationEvent;
 import util.wrappers.MutableInteger;
 
 public class FamilyVaccineReport {

@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.util.function.Consumer;
 

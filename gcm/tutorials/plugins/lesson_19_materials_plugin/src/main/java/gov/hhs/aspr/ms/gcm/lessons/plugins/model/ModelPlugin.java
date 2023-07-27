@@ -1,14 +1,14 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.ContactManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.PopulationLoader;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.Vaccinator;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DiseaseStateReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.VaccineProductionReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.VaccineReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.ModelReportLabel;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import lesson.plugins.model.actors.ContactManager;
-import lesson.plugins.model.actors.PopulationLoader;
-import lesson.plugins.model.actors.Vaccinator;
-import lesson.plugins.model.reports.DiseaseStateReport;
-import lesson.plugins.model.reports.VaccineProductionReport;
-import lesson.plugins.model.reports.VaccineReport;
-import lesson.plugins.model.support.ModelReportLabel;
 
 public final class ModelPlugin {
 	public static Plugin getModelPlugin() {

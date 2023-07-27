@@ -1,14 +1,14 @@
-package lesson.plugins.vaccine;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyPluginId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.PersonPluginId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.FamilyVaccineReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.HourlyVaccineReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.StatelessVaccineReport;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import lesson.plugins.family.FamilyPluginId;
-import lesson.plugins.model.ModelLabel;
-import lesson.plugins.person.PersonPluginId;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
-import lesson.plugins.vaccine.reports.FamilyVaccineReport;
-import lesson.plugins.vaccine.reports.HourlyVaccineReport;
-import lesson.plugins.vaccine.reports.StatelessVaccineReport;
 
 public class VaccinePlugin {
 

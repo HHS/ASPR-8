@@ -1,10 +1,10 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.stream.IntStream;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import lesson.plugins.model.support.GlobalProperty;
 
 /* start code_ref= global_proerties_plugin_gamma_actor*/
 public final class GammaActor {

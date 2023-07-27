@@ -1,4 +1,4 @@
-package lesson.plugins.family.datamanagers;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,16 +8,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyPluginData;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.events.FamilyAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.events.FamilyMemberShipAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
-import lesson.plugins.family.FamilyPluginData;
-import lesson.plugins.family.events.FamilyAdditionEvent;
-import lesson.plugins.family.events.FamilyMemberShipAdditionEvent;
-import lesson.plugins.family.support.FamilyId;
-import lesson.plugins.person.datamanagers.PersonDataManager;
-import lesson.plugins.person.events.PersonRemovalEvent;
-import lesson.plugins.person.support.PersonId;
 
 public final class FamilyDataManager extends DataManager {
 

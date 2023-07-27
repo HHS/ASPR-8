@@ -1,14 +1,14 @@
-package lesson.plugins.person.datamanagers;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
-import lesson.plugins.person.events.PersonAdditionEvent;
-import lesson.plugins.person.events.PersonRemovalEvent;
-import lesson.plugins.person.support.PersonId;
 
 public final class PersonDataManager extends DataManager {
 

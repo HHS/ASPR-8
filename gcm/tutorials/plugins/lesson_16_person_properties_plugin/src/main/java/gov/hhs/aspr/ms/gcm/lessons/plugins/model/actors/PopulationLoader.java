@@ -1,10 +1,12 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
@@ -18,8 +20,6 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import lesson.plugins.model.GlobalProperty;
-import lesson.plugins.model.PersonProperty;
 
 public class PopulationLoader {
 	private RandomGenerator randomGenerator;

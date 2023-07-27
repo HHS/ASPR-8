@@ -1,8 +1,8 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.disease.DiseaseDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import lesson.plugins.disease.DiseaseDataManager;
-import lesson.plugins.policy.PolicyDataManager;
 
 public final class ModelActor {
 

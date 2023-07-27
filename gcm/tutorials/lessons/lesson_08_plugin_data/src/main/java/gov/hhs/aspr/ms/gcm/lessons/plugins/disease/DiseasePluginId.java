@@ -1,4 +1,4 @@
-package lesson.plugins.disease;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.disease;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;

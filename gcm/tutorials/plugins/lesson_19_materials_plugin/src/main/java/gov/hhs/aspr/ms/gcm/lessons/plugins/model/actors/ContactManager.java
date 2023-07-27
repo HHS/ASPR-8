@@ -1,4 +1,4 @@
-package lesson.plugins.model.actors;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +9,9 @@ import java.util.Random;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsDataManager;
@@ -18,9 +21,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import lesson.plugins.model.support.DiseaseState;
-import lesson.plugins.model.support.GlobalProperty;
-import lesson.plugins.model.support.PersonProperty;
 
 public class ContactManager {
 	private ActorContext actorContext;

@@ -1,13 +1,13 @@
-package lesson.plugins.vaccine;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
-import lesson.plugins.people.PersonDataManager;
-import lesson.plugins.people.PersonId;
-import lesson.plugins.people.PersonRemovalEvent;
 
 /* start code_ref=plugin_dependencies_vaccine_data_manager*/
 public final class VaccinationDataManager extends DataManager {

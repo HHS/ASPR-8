@@ -1,7 +1,8 @@
-package lesson.plugins.model.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports;
 
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
@@ -9,7 +10,6 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertie
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import lesson.plugins.model.PersonProperty;
 
 public final class VaccineReport {
 

@@ -1,13 +1,13 @@
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelActor;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
-import lesson.plugins.family.FamilyDataManager;
-import lesson.plugins.model.ModelActor;
-import lesson.plugins.people.PersonDataManager;
-import lesson.plugins.vaccine.VaccinationDataManager;
 
 public final class Example_7 {
 

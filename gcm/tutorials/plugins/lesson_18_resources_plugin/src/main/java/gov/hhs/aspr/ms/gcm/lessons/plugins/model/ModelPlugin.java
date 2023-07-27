@@ -1,13 +1,13 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.PopulationLoader;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.QuestionnaireDistributor;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.ResourceLoader;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.TreatmentManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DeathReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.QuestionnaireReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.TreatmentReport;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import lesson.plugins.model.actors.PopulationLoader;
-import lesson.plugins.model.actors.QuestionnaireDistributor;
-import lesson.plugins.model.actors.ResourceLoader;
-import lesson.plugins.model.actors.TreatmentManager;
-import lesson.plugins.model.reports.DeathReport;
-import lesson.plugins.model.reports.QuestionnaireReport;
-import lesson.plugins.model.reports.TreatmentReport;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

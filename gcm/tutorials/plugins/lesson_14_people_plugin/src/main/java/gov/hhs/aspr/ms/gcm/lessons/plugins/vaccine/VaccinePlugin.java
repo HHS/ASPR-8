@@ -1,11 +1,11 @@
-package lesson.plugins.vaccine;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelReportLabel;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.VaccineReport;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import lesson.plugins.model.ModelReportLabel;
-import lesson.plugins.vaccine.datamanagers.VaccinationDataManager;
-import lesson.plugins.vaccine.reports.VaccineReport;
 
 public class VaccinePlugin {
 

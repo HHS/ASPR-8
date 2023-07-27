@@ -1,4 +1,4 @@
-package lesson.plugins.model.reports;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports;
 
 import java.util.List;
 import java.util.Map;
@@ -6,14 +6,14 @@ import java.util.TreeMap;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import lesson.plugins.model.support.DiseaseState;
-import lesson.plugins.model.support.PersonProperty;
 import util.wrappers.MutableInteger;
 
 public final class ContagionReport {

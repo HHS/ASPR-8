@@ -1,5 +1,5 @@
 /*start code_ref=hello_world_short*/
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 

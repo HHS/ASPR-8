@@ -1,4 +1,4 @@
-package lesson.plugins.vaccine;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;

@@ -1,13 +1,13 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.InfectionManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.PopulationLoader;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.SchoolManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.TeleworkManager;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.ContagionReport;
+import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DiseaseStateReport;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import lesson.plugins.model.actors.InfectionManager;
-import lesson.plugins.model.actors.PopulationLoader;
-import lesson.plugins.model.actors.SchoolManager;
-import lesson.plugins.model.actors.TeleworkManager;
-import lesson.plugins.model.reports.ContagionReport;
-import lesson.plugins.model.reports.DiseaseStateReport;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

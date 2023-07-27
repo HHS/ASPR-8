@@ -1,4 +1,4 @@
-package lesson.plugins.people;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.people;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import net.jcip.annotations.Immutable;

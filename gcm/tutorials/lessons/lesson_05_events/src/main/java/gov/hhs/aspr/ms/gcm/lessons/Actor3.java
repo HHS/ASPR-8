@@ -1,5 +1,5 @@
 
-package lesson;
+package gov.hhs.aspr.ms.gcm.lessons;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
