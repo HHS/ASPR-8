@@ -8,6 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
 import gov.hhs.aspr.ms.gcm.nucleus.Plan;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
@@ -51,7 +52,8 @@ public final class Vaccinator {
 						.setActive(true)//
 						.setCallbackConsumer(consumer)//
 						.setKey(planKey)//
-						.setPlanData(null)//
+						.setPlanData(new PlanData() {
+						})
 						.setTime(planTime)//
 						.build();//
 				actorContext.addPlan(plan);
@@ -87,8 +89,9 @@ public final class Vaccinator {
 				.setActive(true)//
 				.setCallbackConsumer(consumer)//
 				.setKey(planKey)//
-				.setPlanData(null)//
 				.setTime(planTime)//
+				.setPlanData(new PlanData() {
+				})
 				.build();//
 		actorContext.addPlan(plan);
 	}

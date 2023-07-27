@@ -1,6 +1,7 @@
 package lesson;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -58,12 +59,15 @@ import util.time.Stopwatch;
 
 public final class SerializationDemonstration {
 
-	private final String personPropertiesFileName = "personPropertiesOutput.json";
-	private final String globalPropertiesFileName = "globalPropertiesOutput.json";
-	private final String regionsFileName = "regionsOutput.json";
-	private final String peopleFileName = "peopleOutput.json";
-	private final String stochasticsFileName = "stochasticsOutput.json";
-	private final String simStateFileName = "simStateOutput.json";
+	private final String personPropertiesOutputFileName = "personPropertiesOutput.json";
+	private final String globalPropertiesOutputFileName = "globalPropertiesOutput.json";
+	private final String regionsOutputFileName = "regionsOutput.json";
+	private final String peopleOutputFileName = "peopleOutput.json";
+	private final String stochasticsOutputFileName = "stochasticsOutput.json";
+	private final String simStateOutputFileName = "simStateOutput.json";
+	private final String peopleInputFileName = "/peopleInput.json";
+	private final String regionsInputFileName = "/regionsInput.json";
+	private final String globalPropertiesInputFileName = "/globalPropertiesInput.json";
 
 	private final Path outputDirectory;
 	private TranslationController writingTranslationController;
@@ -72,25 +76,40 @@ public final class SerializationDemonstration {
 	private SerializationDemonstration(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 
-		this.readingTranslationController = TranslationController
-				.builder()
-				.addTranslator(
-						PersonPropertiesTranslator.getTranslator())
-				.addTranslator(PropertiesTranslator.getTranslator())
-				.addTranslator(PeopleTranslator.getTranslator())
-				.addTranslator(RegionsTranslator.getTranslator())
-				.addTranslator(
-						GlobalPropertiesTranslator.getTranslator())
-				.addTranslator(ReportsTranslator.getTranslator())
-				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-						.addTranslationSpec(new PersonPropertyTranslatorSpec())
-						.addTranslationSpec(new GlobalPropertyTranslatorSpec())
-						.addTranslationSpec(new RegionTranslatorSpec()))
-				.addInputFilePath(Paths.get("./src/main/resources/peopleInput.json"), PeoplePluginDataInput.class)
-				.addInputFilePath(Paths.get("./src/main/resources/regionsInput.json"), RegionsPluginDataInput.class)
-				.addInputFilePath(Paths.get("./src/main/resources/globalPropertiesInput.json"),
-						GlobalPropertiesPluginDataInput.class)
-				.build();
+		Path peopleInputPath;
+		Path regionsInputPath;
+		Path globalPropsInputPath;
+
+		try {
+			peopleInputPath = Paths.get(this.getClass().getResource(peopleInputFileName).toURI());
+			regionsInputPath = Paths.get(this.getClass().getResource(regionsInputFileName).toURI());
+			globalPropsInputPath = Paths.get(this.getClass().getResource(globalPropertiesInputFileName).toURI());
+
+			this.readingTranslationController = TranslationController
+					.builder()
+					.addTranslator(
+							PersonPropertiesTranslator.getTranslator())
+					.addTranslator(PropertiesTranslator.getTranslator())
+					.addTranslator(PeopleTranslator.getTranslator())
+					.addTranslator(RegionsTranslator.getTranslator())
+					.addTranslator(
+							GlobalPropertiesTranslator.getTranslator())
+					.addTranslator(ReportsTranslator.getTranslator())
+					.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
+							.addTranslationSpec(new PersonPropertyTranslatorSpec())
+							.addTranslationSpec(new GlobalPropertyTranslatorSpec())
+							.addTranslationSpec(new RegionTranslatorSpec()))
+					// .addInputFilePath(peopleInputPath,
+					// 		PeoplePluginDataInput.class)
+					// .addInputFilePath(regionsInputPath,
+					// 		RegionsPluginDataInput.class)
+					// .addInputFilePath(globalPropsInputPath,
+					// 		GlobalPropertiesPluginDataInput.class)
+					.build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -127,8 +146,8 @@ public final class SerializationDemonstration {
 				.build();
 		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS,
 				propertyDefinition, 0.0, false);
-		// builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
-		// propertyDefinition);
+		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
+		propertyDefinition, 0.0, false);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Boolean.class)//
@@ -376,12 +395,12 @@ public final class SerializationDemonstration {
 			File outputDir = this.outputDirectory.resolve("scenario" + i).toFile();
 			outputDir.mkdir();
 
-			Path personPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(personPropertiesFileName);
-			Path globalPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(globalPropertiesFileName);
-			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsFileName);
-			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleFileName);
-			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsFileName);
-			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateFileName);
+			Path personPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(personPropertiesOutputFileName);
+			Path globalPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(globalPropertiesOutputFileName);
+			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsOutputFileName);
+			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleOutputFileName);
+			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsOutputFileName);
+			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateOutputFileName);
 
 			translationControllerBuilder
 					.addOutputFilePath(personPropertiesPath, PersonPropertiesPluginData.class, i)
