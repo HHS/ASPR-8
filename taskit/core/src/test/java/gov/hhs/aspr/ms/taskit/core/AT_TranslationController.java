@@ -384,12 +384,8 @@ public class AT_TranslationController {
 
         assertTrue(actualObjects.containsAll(expectedObjects));
 
-        // preconditions
-        ContractException contractException = assertThrows(ContractException.class, () -> {
-            translationController.getObjects(TestInputObject.class);
-        });
-
-        assertEquals(CoreTranslationError.UNKNOWN_CLASSREF, contractException.getErrorType());
+        List<TestComplexAppObject> actualObjects2 = translationController.getObjects(TestComplexAppObject.class);
+        assertTrue(actualObjects2.isEmpty());
     }
 
     @Test

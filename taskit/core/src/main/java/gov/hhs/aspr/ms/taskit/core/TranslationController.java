@@ -643,12 +643,6 @@ public class TranslationController {
      * given classRef
      * 
      * @param <T> the type of the obect to get
-     * 
-     * @throws ContractException
-     *                           <ul>
-     *                           <li>{@linkplain CoreTranslationError#UNKNOWN_CLASSREF}
-     *                           if no object with the specified class is found</li>
-     *                           </ul>
      */
     public <T> List<T> getObjects(Class<T> classRef) {
         List<T> objects = new ArrayList<>();
@@ -656,10 +650,6 @@ public class TranslationController {
             if (classRef.isAssignableFrom(object.getClass())) {
                 objects.add(classRef.cast(object));
             }
-        }
-
-        if (objects.size() == 0) {
-            throw new ContractException(CoreTranslationError.UNKNOWN_CLASSREF);
         }
 
         return objects;
