@@ -26,7 +26,7 @@ public class IT_StochasticsTranslator {
     @Test
     @UnitTestForCoverage
     public void testStochasticsTranslator() {
-        String fileName = "pluginData.json";
+        String fileName = "stochasticsPluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 

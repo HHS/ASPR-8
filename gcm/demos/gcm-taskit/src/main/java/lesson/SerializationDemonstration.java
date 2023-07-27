@@ -99,12 +99,12 @@ public final class SerializationDemonstration {
 							.addTranslationSpec(new PersonPropertyTranslatorSpec())
 							.addTranslationSpec(new GlobalPropertyTranslatorSpec())
 							.addTranslationSpec(new RegionTranslatorSpec()))
-					// .addInputFilePath(peopleInputPath,
-					// 		PeoplePluginDataInput.class)
-					// .addInputFilePath(regionsInputPath,
-					// 		RegionsPluginDataInput.class)
-					// .addInputFilePath(globalPropsInputPath,
-					// 		GlobalPropertiesPluginDataInput.class)
+					.addInputFilePath(peopleInputPath,
+							PeoplePluginDataInput.class)
+					.addInputFilePath(regionsInputPath,
+							RegionsPluginDataInput.class)
+					.addInputFilePath(globalPropsInputPath,
+							GlobalPropertiesPluginDataInput.class)
 					.build();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -147,7 +147,7 @@ public final class SerializationDemonstration {
 		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS,
 				propertyDefinition, 0.0, false);
 		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
-		propertyDefinition, 0.0, false);
+				propertyDefinition, 0.0, false);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Boolean.class)//
@@ -304,7 +304,7 @@ public final class SerializationDemonstration {
 		this.readingTranslationController.readInput();
 
 		stopwatch.stop();
-		System.out.println(stopwatch.getElapsedMilliSeconds());
+		System.out.println("Read input took: " + stopwatch.getElapsedMilliSeconds() + "ms");
 
 		List<PluginData> pluginDatas = this.readingTranslationController.getObjects(PluginData.class);
 
@@ -432,17 +432,15 @@ public final class SerializationDemonstration {
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {
 
-		System.out.println(scenarioId);
-
 		for (Object object : output) {
 			if (object instanceof PluginData) {
 				writingTranslationController.writeOutput((PluginData) object, scenarioId);
 			}
-			/*
-			 * if (object instanceof SimulationTime) {
-			 * writingTranslationController.writeObjectOutput(object, scenarioId);
-			 * }
-			 */
+
+			if (object instanceof SimulationState) {
+				writingTranslationController.writeOutput(object, scenarioId);
+			}
+
 		}
 
 	}

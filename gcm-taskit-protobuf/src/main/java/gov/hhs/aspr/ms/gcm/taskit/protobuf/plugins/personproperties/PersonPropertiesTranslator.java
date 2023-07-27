@@ -59,7 +59,7 @@ public class PersonPropertiesTranslator {
                     }
 
                     translationEngineBuilder.addFieldToIncludeDefaultValue(
-                            PersonPropertyValueInput.getDescriptor().findFieldByName("personId"));
+                            PersonPropertyValueInput.getDescriptor().findFieldByName("pId"));
 
                 });
 
