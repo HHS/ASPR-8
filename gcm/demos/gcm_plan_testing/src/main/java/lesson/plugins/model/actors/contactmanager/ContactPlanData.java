@@ -1,9 +1,9 @@
 package lesson.plugins.model.actors.contactmanager;
 
-import nucleus.PlanData;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
-public final class ContactPlanData implements PlanData{
+public final class ContactPlanData implements PlanData {
 
 	private final PersonId personId;
 	private final ContactAction contactAction;

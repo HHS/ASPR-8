@@ -1,0 +1,22 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.support.input";
+
+import "google/protobuf/any.proto";
+
+
+message ReportLabelInput {
+    google.protobuf.Any label = 1;
+}
+
+message SimpleReportLabelInput {
+    google.protobuf.Any value = 1;
+}
+
+enum ReportPeriodInput {
+    HOURLY = 0;
+    DAILY = 1;
+    END_OF_SIMULATION = 2;
+}

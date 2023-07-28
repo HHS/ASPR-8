@@ -1,0 +1,36 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.partitions.support.input";
+
+import "plugins/partitions/filters.proto";
+import "google/protobuf/any.proto";
+
+
+// Labelers
+message LabelerInput {
+    google.protobuf.Any labeler = 1;
+}
+
+// Equality
+enum EqualityInput {
+    LESS_THAN = 0;
+    LESS_THAN_EQUAL = 1;
+    EQUAL = 2;
+    NOT_EQUAL = 3;
+    GREATER_THAN_EQUAL = 4;
+    GREATER_THAN = 5;
+}
+
+// Partition
+message PartitionInput {
+    bool retainPersonKeys = 1;
+    repeated LabelerInput labelers = 2;
+    optional FilterInput filter = 3;
+}
+
+message PartitionMapInput {
+    google.protobuf.Any key = 1;
+    PartitionInput partition = 2;
+}

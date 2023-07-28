@@ -1,0 +1,13 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.data.input";
+
+import "plugins/stochastics/support.proto";
+
+
+message StochasticsPluginDataInput {
+    WellStateInput wellState = 1;
+    repeated RandomNumberGeneratorMapInput randomNumberGeneratorIds = 2;
+}

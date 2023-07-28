@@ -1,8 +1,8 @@
 package lesson.plugins.model.actors.contactmanager;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
 
 /**
  * An immutable container of the initial state of actor plans
@@ -38,46 +38,46 @@ public final class ContactManagerPluginData implements PluginData {
 			return new ContactManagerPluginData(data);
 		}
 
-		
-
 		/**
 		 * Sets the minInfectiousPeriod.
 		 * 
 		 */
 		public Builder setMinInfectiousPeriod(int minInfectiousPeriod) {
-			ensureDataMutability();			
+			ensureDataMutability();
 			data.minInfectiousPeriod = minInfectiousPeriod;
 			return this;
 		}
+
 		/**
 		 * Sets the maxInfectiousPeriod.
 		 * 
 		 */
 		public Builder setMaxInfectiousPeriod(int maxInfectiousPeriod) {
-			ensureDataMutability();			
+			ensureDataMutability();
 			data.maxInfectiousPeriod = maxInfectiousPeriod;
 			return this;
 		}
+
 		/**
 		 * Sets the infectionInterval.
 		 * 
 		 */
 		public Builder setInfectionInterval(double infectionInterval) {
-			ensureDataMutability();			
+			ensureDataMutability();
 			data.infectionInterval = infectionInterval;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the communityContactRate.
 		 * 
 		 */
 		public Builder setCommunityContactRate(double communityContactRate) {
-			ensureDataMutability();			
+			ensureDataMutability();
 			data.communityContactRate = communityContactRate;
 			return this;
 		}
-		
+
 		private void ensureDataMutability() {
 			if (data.locked) {
 				data = new Data(data);
@@ -104,12 +104,10 @@ public final class ContactManagerPluginData implements PluginData {
 		private double communityContactRate;
 		private boolean locked;
 
-		
-
 		private Data() {
 		}
 
-		private Data(Data data) {			
+		private Data(Data data) {
 			minInfectiousPeriod = data.minInfectiousPeriod;
 			maxInfectiousPeriod = data.maxInfectiousPeriod;
 			infectionInterval = data.infectionInterval;
@@ -176,9 +174,6 @@ public final class ContactManagerPluginData implements PluginData {
 			return true;
 		}
 
-		
-		
-
 	}
 
 	/**
@@ -207,7 +202,7 @@ public final class ContactManagerPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
+
 	public int getMinInfectiousPeriod() {
 		return data.minInfectiousPeriod;
 	}

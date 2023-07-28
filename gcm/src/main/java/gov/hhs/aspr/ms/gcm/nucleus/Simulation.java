@@ -103,27 +103,27 @@ public class Simulation {
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
-				case ACTOR:
-					builder.append(actorId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(actorPlan);
-					break;
-				case DATA_MANAGER:
-					builder.append(dataManagerId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(dataManagerPlan);
-					break;
-				case REPORT:
-					builder.append(reportId);
-					builder.append("\t");
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(reportPlan);
-					break;
-				default:
-					throw new RuntimeException("unhandled planner case");
+			case ACTOR:
+				builder.append(actorId);
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(actorPlan);
+				break;
+			case DATA_MANAGER:
+				builder.append(dataManagerId);
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(dataManagerPlan);
+				break;
+			case REPORT:
+				builder.append(reportId);
+				builder.append("\t");
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(reportPlan);
+				break;
+			default:
+				throw new RuntimeException("unhandled planner case");
 			}
 
 			builder.append(LINE_SEPARATOR);
@@ -157,8 +157,8 @@ public class Simulation {
 		}
 
 		/**
-		 * Signals to simulation components to record their state as plugin data
-		 * as output to the experiment Defaults to false.
+		 * Signals to simulation components to record their state as plugin data as
+		 * output to the experiment Defaults to false.
 		 */
 		public Builder setRecordState(boolean recordState) {
 			data.stateRecordingIsScheduled = recordState;
@@ -166,12 +166,11 @@ public class Simulation {
 		}
 
 		/**
-		 * Sets the halt time for the simulation. Defaults to null, which is
-		 * equivalent to not halting. If the simulation has been instructed to
-		 * produce its state at halt, then the halt time must be set to a
-		 * positive value. Setting this to a value that is less than the
-		 * simulation time used to start the simulation will result in an
-		 * exception.
+		 * Sets the halt time for the simulation. Defaults to null, which is equivalent
+		 * to not halting. If the simulation has been instructed to produce its state at
+		 * halt, then the halt time must be set to a positive value. Setting this to a
+		 * value that is less than the simulation time used to start the simulation will
+		 * result in an exception.
 		 */
 		public Builder setSimulationHaltTime(Double simulationHaltTime) {
 			data.simulationHaltTime = simulationHaltTime;
@@ -179,13 +178,12 @@ public class Simulation {
 		}
 
 		/**
-		 * Set the simulation state. Defaults to the current date and a start
-		 * time of zero.
+		 * Set the simulation state. Defaults to the current date and a start time of
+		 * zero.
 		 * 
 		 * @throws ContractException
 		 *                           <li>{@link NucleusError#NULL_SIMULATION_TIME} if
-		 *                           the
-		 *                           simulation time is null
+		 *                           the simulation time is null
 		 * 
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
@@ -201,8 +199,7 @@ public class Simulation {
 		 * 
 		 * @throws ContractException
 		 *                           <li>{@link NucleusError#NULL_PLUGIN} if the plugin
-		 *                           is
-		 *                           null
+		 *                           is null
 		 * 
 		 */
 
@@ -228,20 +225,16 @@ public class Simulation {
 		}
 
 		/**
-		 * Returns an Engine instance that is initialized with the plugins and
-		 * output consumer collected by this builder.
+		 * Returns an Engine instance that is initialized with the plugins and output
+		 * consumer collected by this builder.
 		 * 
 		 * @throws ContractException
 		 *                           <li>{@linkplain NucleusError#SIM_HALT_TIME_TOO_EARLY}
-		 *                           If
-		 *                           the simulation halt time is non-negative and less
-		 *                           than
-		 *                           the start time of the simulation</li>
+		 *                           If the simulation halt time is non-negative and
+		 *                           less than the start time of the simulation</li>
 		 *                           <li>{@linkplain NucleusError#MISSING_SIM_HALT_TIME}
-		 *                           If
-		 *                           simulation state is being recorded and the
-		 *                           simulation
-		 *                           halt time is not set.</li>
+		 *                           If simulation state is being recorded and the
+		 *                           simulation halt time is not set.</li>
 		 */
 		public Simulation build() {
 			validate();
@@ -420,10 +413,9 @@ public class Simulation {
 		dataManagerIds.add(dataManagerId);
 
 		/*
-		 * Used to ensure that there is at most one instance of each data
-		 * manager since classes are the identifiers for data managers outside
-		 * of the simulation class. Used to find data managers for actors and
-		 * data managers.
+		 * Used to ensure that there is at most one instance of each data manager since
+		 * classes are the identifiers for data managers outside of the simulation
+		 * class. Used to find data managers for actors and data managers.
 		 */
 		baseClassToDataManagerMap.put(dataManager.getClass(), dataManager);
 
@@ -627,8 +619,8 @@ public class Simulation {
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
 
 		/*
-		 * Add the nodes to the graph, check for duplicate ids, build the
-		 * mapping from plugin id back to plugin
+		 * Add the nodes to the graph, check for duplicate ids, build the mapping from
+		 * plugin id back to plugin
 		 */
 		for (Plugin plugin : data.plugins) {
 			focalPluginId = plugin.getPluginId();
@@ -651,8 +643,8 @@ public class Simulation {
 		}
 
 		/*
-		 * Check for missing plugins from the plugin dependencies that were
-		 * collected from the known plugins.
+		 * Check for missing plugins from the plugin dependencies that were collected
+		 * from the known plugins.
 		 */
 		for (PluginId pluginId : mutableGraph.getNodes()) {
 			if (!pluginMap.containsKey(pluginId)) {
@@ -676,9 +668,8 @@ public class Simulation {
 		}
 
 		/*
-		 * Determine whether the graph is acyclic and generate a graph depth
-		 * evaluator for the graph so that we can determine the order of
-		 * initialization.
+		 * Determine whether the graph is acyclic and generate a graph depth evaluator
+		 * for the graph so that we can determine the order of initialization.
 		 */
 		Optional<GraphDepthEvaluator<PluginId>> optional = GraphDepthEvaluator
 				.getGraphDepthEvaluator(mutableGraph.toGraph());
@@ -861,45 +852,45 @@ public class Simulation {
 			// convert the plan data into a consumer
 			Planner planner = planQueueData.getPlanner();
 			switch (planner) {
-				case ACTOR:
-					planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-					planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
-					planRec.plan = Plan.builder(ActorContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.actorPlan)//
-							.build();
+			case ACTOR:
+				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
+				planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
+				planRec.plan = Plan.builder(ActorContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.actorPlan)//
+						.build();
 
-					break;
-				case DATA_MANAGER:
-					planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-					planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-							planQueueData.getPlanData());
-					planRec.plan = Plan.builder(DataManagerContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.dataManagerPlan)//
-							.build();
+				break;
+			case DATA_MANAGER:
+				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
+				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
+						planQueueData.getPlanData());
+				planRec.plan = Plan.builder(DataManagerContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.dataManagerPlan)//
+						.build();
 
-					break;
-				case REPORT:
-					planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-					planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
-					planRec.plan = Plan.builder(ReportContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.reportPlan)//
-							.build();
+				break;
+			case REPORT:
+				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
+				planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
+				planRec.plan = Plan.builder(ReportContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.reportPlan)//
+						.build();
 
-					break;
-				default:
-					throw new RuntimeException("unhandled case " + planner);
+				break;
+			default:
+				throw new RuntimeException("unhandled case " + planner);
 			}
 			planRec.arrivalId = planQueueData.getArrivalId();
 			planRec.isActive = planQueueData.isActive();
@@ -915,32 +906,32 @@ public class Simulation {
 				Map<Object, PlanRec> map;
 				if (planRec.key != null) {
 					switch (planner) {
-						case ACTOR:
-							map = actorPlanMap.get(planRec.actorId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								actorPlanMap.put(planRec.actorId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						case DATA_MANAGER:
-							map = dataManagerPlanMap.get(planRec.dataManagerId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								dataManagerPlanMap.put(planRec.dataManagerId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						case REPORT:
-							map = reportPlanMap.get(planRec.reportId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								reportPlanMap.put(planRec.reportId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						default:
-							throw new RuntimeException("unhandled case " + planner);
+					case ACTOR:
+						map = actorPlanMap.get(planRec.actorId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							actorPlanMap.put(planRec.actorId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case DATA_MANAGER:
+						map = dataManagerPlanMap.get(planRec.dataManagerId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							dataManagerPlanMap.put(planRec.dataManagerId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case REPORT:
+						map = reportPlanMap.get(planRec.reportId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							reportPlanMap.put(planRec.reportId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					default:
+						throw new RuntimeException("unhandled case " + planner);
 					}
 				}
 			}
@@ -950,34 +941,28 @@ public class Simulation {
 	/**
 	 * Executes this Simulation instance. Contributed plugin initializers are
 	 * accessed in the order of their addition to the builder. Actors and data
-	 * managers are organized based on their plugin dependency ordering. Time
-	 * starts at zero and flows based on planning. When all plans are executed,
-	 * time stops and the simulation halts.
+	 * managers are organized based on their plugin dependency ordering. Time starts
+	 * at zero and flows based on planning. When all plans are executed, time stops
+	 * and the simulation halts.
 	 * 
 	 * @throws ContractException
 	 *                           <li>{@link NucleusError#REPEATED_EXECUTION} if
-	 *                           execute is
-	 *                           invoked more than once
+	 *                           execute is invoked more than once
 	 *
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
-	 *                           contributed
-	 *                           plugins contain dependencies on plugins that have
-	 *                           not been
-	 *                           added to the simulation
+	 *                           contributed plugins contain dependencies on plugins
+	 *                           that have not been added to the simulation
 	 * 
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
-	 *                           contributed
-	 *                           plugins contain duplicate plugin ids
+	 *                           contributed plugins contain duplicate plugin ids
 	 * 
 	 *                           <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES}
-	 *                           if the
-	 *                           contributed plugins form a circular chain of
+	 *                           if the contributed plugins form a circular chain of
 	 *                           dependencies
 	 *                           <li>{@link NucleusError#DATA_MANAGER_INITIALIZATION_FAILURE}
 	 *                           if a data manager does not invoke
 	 *                           {@linkplain DataManager#init(DataManagerContext)}
-	 *                           in its
-	 *                           override of init().
+	 *                           in its override of init().
 	 * 
 	 * 
 	 */
@@ -1092,48 +1077,48 @@ public class Simulation {
 				activePlanCount--;
 			}
 			switch (planRec.planner) {
-				case ACTOR:
-					if (planRec.actorPlan != null) {
-						if (planRec.key != null) {
-							actorPlanMap.get(planRec.actorId).remove(planRec.key);
-						}
-						ActorContentRec actorContentRec = new ActorContentRec();
-						actorContentRec.actorId = planRec.actorId;
-						actorContentRec.plan = planRec.actorPlan;
-						actorQueue.add(actorContentRec);
-						executeActorQueue();
+			case ACTOR:
+				if (planRec.actorPlan != null) {
+					if (planRec.key != null) {
+						actorPlanMap.get(planRec.actorId).remove(planRec.key);
 					}
-					break;
-				case DATA_MANAGER:
-					if (planRec.dataManagerPlan != null) {
-						if (planRec.key != null) {
-							dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
-						}
-						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-						dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-						dataManagerContentRec.dataManagerId = planRec.dataManagerId;
-						dataManagerQueue.add(dataManagerContentRec);
-						executeDataManagerQueue();
-						executeActorQueue();
+					ActorContentRec actorContentRec = new ActorContentRec();
+					actorContentRec.actorId = planRec.actorId;
+					actorContentRec.plan = planRec.actorPlan;
+					actorQueue.add(actorContentRec);
+					executeActorQueue();
+				}
+				break;
+			case DATA_MANAGER:
+				if (planRec.dataManagerPlan != null) {
+					if (planRec.key != null) {
+						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
-					break;
+					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
+					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+					dataManagerQueue.add(dataManagerContentRec);
+					executeDataManagerQueue();
+					executeActorQueue();
+				}
+				break;
 
-				case REPORT:
-					if (planRec.reportPlan != null) {
-						if (planRec.key != null) {
-							reportPlanMap.get(planRec.reportId).remove(planRec.key);
-						}
-						ReportContentRec reportContentRec = new ReportContentRec();
-						reportContentRec.reportPlan = planRec.reportPlan;
-						reportContentRec.reportId = planRec.reportId;
-						reportQueue.add(reportContentRec);
-						executeReportQueue();
+			case REPORT:
+				if (planRec.reportPlan != null) {
+					if (planRec.key != null) {
+						reportPlanMap.get(planRec.reportId).remove(planRec.key);
 					}
+					ReportContentRec reportContentRec = new ReportContentRec();
+					reportContentRec.reportPlan = planRec.reportPlan;
+					reportContentRec.reportId = planRec.reportId;
+					reportQueue.add(reportContentRec);
+					executeReportQueue();
+				}
 
-					break;
+				break;
 
-				default:
-					throw new RuntimeException("unhandled planner type " + planRec.planner);
+			default:
+				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
 
@@ -1184,16 +1169,18 @@ public class Simulation {
 			PlanQueueData.Builder planQueueDataBuilder = PlanQueueData.builder();
 			while (!planningQueue.isEmpty()) {
 				PlanRec planRec = planningQueue.poll();
-				PlanData planData = planRec.plan.getPlanData();
-				if (planData != null) {
-					planQueueDataBuilder.setActive(planRec.isActive)//
-							.setArrivalId(planRec.arrivalId)//
-							.setKey(planRec.key)//
-							.setPlanData(planData)//
-							.setPlanner(planRec.planner)//
-							.setTime(planRec.time);//
+				if (planRec.plan != null) {
+					
+					PlanData planData = planRec.plan.getPlanData();
+					if (planData != null) {
+						planQueueDataBuilder.setActive(planRec.isActive)//
+								.setArrivalId(planRec.arrivalId)//
+								.setKey(planRec.key)//
+								.setPlanData(planData)//
+								.setPlanner(planRec.planner)//
+								.setTime(planRec.time);//
 
-					switch (planRec.planner) {
+						switch (planRec.planner) {
 						case ACTOR:
 							planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
 							break;
@@ -1205,10 +1192,11 @@ public class Simulation {
 							break;
 						default:
 							throw new RuntimeException("unhandled case " + planRec.planner);
-					}
+						}
 
-					PlanQueueData planQueueData = planQueueDataBuilder.build();
-					simulationStateBuilder.addPlanQueueData(planQueueData);
+						PlanQueueData planQueueData = planQueueDataBuilder.build();
+						simulationStateBuilder.addPlanQueueData(planQueueData);
+					}
 				}
 			}
 
@@ -1223,9 +1211,8 @@ public class Simulation {
 
 			if (containsDeletedActors) {
 				/*
-				 * we know that the actor id was valid at some point and that
-				 * the actorMap never shrinks, so we do not have to range check
-				 * the actor id
+				 * we know that the actor id was valid at some point and that the actorMap never
+				 * shrinks, so we do not have to range check the actor id
 				 */
 				if (actorIds.get(actorContentRec.actorId.getValue()) == null) {
 					continue;
@@ -1363,15 +1350,15 @@ public class Simulation {
 	private Consumer<Object> outputConsumer;
 
 	/*
-	 * We drop the plan out of the plan map and thus have no way to reference
-	 * the plan directly. However, we do not remove the plan from the planQueue
-	 * and instead simply mark the plan record as cancelled. When the cancelled
-	 * plan record reaches the top of the queue, it is popped off and ignored.
-	 * This avoids the inefficiency of walking the queue and removing the plan.
+	 * We drop the plan out of the plan map and thus have no way to reference the
+	 * plan directly. However, we do not remove the plan from the planQueue and
+	 * instead simply mark the plan record as cancelled. When the cancelled plan
+	 * record reaches the top of the queue, it is popped off and ignored. This
+	 * avoids the inefficiency of walking the queue and removing the plan.
 	 *
-	 * Note that we are allowing components to delete plans that do not exist.
-	 * This was done to ease any bookkeeping burdens on the component and seems
-	 * generally harmless.
+	 * Note that we are allowing components to delete plans that do not exist. This
+	 * was done to ease any bookkeeping burdens on the component and seems generally
+	 * harmless.
 	 *
 	 * 
 	 */
@@ -1725,15 +1712,15 @@ public class Simulation {
 
 		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
 		/*
-		 * If the working map does not contain the data manager, try to find a
-		 * single match from the base map that was collected from the plugins.
+		 * If the working map does not contain the data manager, try to find a single
+		 * match from the base map that was collected from the plugins.
 		 * 
 		 * If two or more matches are found, then throw an exception.
 		 * 
 		 * If exactly one match is found, update the working map.
 		 * 
-		 * If no matches are found, nothing is done, but we are vulnerable to
-		 * somewhat slower performance if the data manager is sought repeatedly.
+		 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+		 * slower performance if the data manager is sought repeatedly.
 		 */
 		if (dataManager == null) {
 			List<Class<?>> candidates = new ArrayList<>();
@@ -1767,15 +1754,15 @@ public class Simulation {
 
 		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
 		/*
-		 * If the working map does not contain the data manager, try to find a
-		 * single match from the base map that was collected from the plugins.
+		 * If the working map does not contain the data manager, try to find a single
+		 * match from the base map that was collected from the plugins.
 		 * 
 		 * If two or more matches are found, then throw an exception.
 		 * 
 		 * If exactly one match is found, update the working map.
 		 * 
-		 * If no matches are found, nothing is done, but we are vulnerable to
-		 * somewhat slower performance if the data manager is sought repeatedly.
+		 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+		 * slower performance if the data manager is sought repeatedly.
 		 */
 		if (dataManager == null) {
 			List<Class<?>> candidates = new ArrayList<>();
@@ -1817,8 +1804,8 @@ public class Simulation {
 	/*
 	 * Combines a consumer of event with a data manager id so that the event
 	 * consumers can be sorted to comply with the dependency DAG. Note that the
-	 * consumer is itself a wrapper around another consumer that takes in a
-	 * context and a specific event type.
+	 * consumer is itself a wrapper around another consumer that takes in a context
+	 * and a specific event type.
 	 */
 	private static class DataManagerEventConsumer implements Comparable<DataManagerEventConsumer> {
 		private final Consumer<Event> consumer;
@@ -1863,8 +1850,8 @@ public class Simulation {
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
 
 	/*
-	 * Maps of data manager id <--> data manager instances used primarily for
-	 * access permissions between data managers
+	 * Maps of data manager id <--> data manager instances used primarily for access
+	 * permissions between data managers
 	 */
 	private List<DataManagerId> dataManagerIds = new ArrayList<>();
 	private Map<DataManagerId, DataManager> dataManagerIdToDataManagerMap = new LinkedHashMap<>();
@@ -1939,10 +1926,10 @@ public class Simulation {
 	}
 
 	/*
-	 * Recursively processes the event through the filter node . Events should
-	 * be processed through the root filter node. Each node's consumers have
-	 * each such consumer scheduled onto the actor queue for delayed execution
-	 * of the consumer.
+	 * Recursively processes the event through the filter node . Events should be
+	 * processed through the root filter node. Each node's consumers have each such
+	 * consumer scheduled onto the actor queue for delayed execution of the
+	 * consumer.
 	 */
 	private void broadcastEventToFilterNode(final Event event, FilterNode filterNode) {
 
@@ -1988,11 +1975,11 @@ public class Simulation {
 	private final FilterNode rootNode = generateRootNode();
 
 	/*
-	 * A data structure for containing a function that process an event and
-	 * returns a value. The node contains maps of the return value that either
-	 * match actor consumers of the event or child nodes to this node. The nodes
-	 * thus form a tree with a single root node that filters by event class
-	 * type. The tree represents simple conjunctive event filters of the form:
+	 * A data structure for containing a function that process an event and returns
+	 * a value. The node contains maps of the return value that either match actor
+	 * consumers of the event or child nodes to this node. The nodes thus form a
+	 * tree with a single root node that filters by event class type. The tree
+	 * represents simple conjunctive event filters of the form:
 	 * 
 	 * F1(e)=A & F2(e)=B &...
 	 */
@@ -2013,10 +2000,10 @@ public class Simulation {
 		private Map<Object, Map<ActorId, Consumer<Event>>> consumers = new LinkedHashMap<>();
 
 		/*
-		 * Integrates a function and its id and target value into the tree at
-		 * this node as a child node if the node does not already exist. Note
-		 * that functions cannot be compared for equality and that the id value
-		 * takes on this role for the function.
+		 * Integrates a function and its id and target value into the tree at this node
+		 * as a child node if the node does not already exist. Note that functions
+		 * cannot be compared for equality and that the id value takes on this role for
+		 * the function.
 		 */
 		@SuppressWarnings("unchecked")
 		private <T extends Event> FilterNode addChildNode(Object value, IdentifiableFunction<T> identifiableFunction) {
@@ -2040,9 +2027,9 @@ public class Simulation {
 	}
 
 	/*
-	 * Subscribes the current actor (focalActorId) to the event subject to the
-	 * event filter. This overwrites the current consumer associated with this
-	 * event and filter if it is present.
+	 * Subscribes the current actor (focalActorId) to the event subject to the event
+	 * filter. This overwrites the current consumer associated with this event and
+	 * filter if it is present.
 	 */
 	protected <T extends Event> void subscribeActorToEventByFilter(EventFilter<T> eventFilter,
 			BiConsumer<ActorContext, T> eventConsumer) {
@@ -2055,24 +2042,24 @@ public class Simulation {
 		}
 
 		/*
-		 * We wrap the typed consumer with a consumer of event, knowing that the
-		 * cast to (T) is safe. This simplifies the FilterNode class.
+		 * We wrap the typed consumer with a consumer of event, knowing that the cast to
+		 * (T) is safe. This simplifies the FilterNode class.
 		 */
 		@SuppressWarnings("unchecked")
 		Consumer<Event> consumer = event -> eventConsumer.accept(actorContext, (T) event);
 
 		/*
-		 * The event filter does not contain a FunctionValue associated with the
-		 * root filter node, so we have to integrate it with the root node by
-		 * assigning the associated value to the class type that matches the
-		 * generics type of the event filter.
+		 * The event filter does not contain a FunctionValue associated with the root
+		 * filter node, so we have to integrate it with the root node by assigning the
+		 * associated value to the class type that matches the generics type of the
+		 * event filter.
 		 */
 		Object value = eventFilter.getEventClass();
 		FilterNode filterNode = rootNode;
 
 		/*
-		 * We loop through the (function,value) pairs, integrating each into the
-		 * tree of filter nodes and creating new filter nodes as needed.
+		 * We loop through the (function,value) pairs, integrating each into the tree of
+		 * filter nodes and creating new filter nodes as needed.
 		 */
 		for (Pair<IdentifiableFunction<T>, Object> pair : eventFilter.getFunctionValuePairs()) {
 			filterNode = filterNode.addChildNode(value, pair.getFirst());
@@ -2108,8 +2095,8 @@ public class Simulation {
 		FilterNode filterNode = rootNode;
 
 		/*
-		 * Walk down the tree and if we find that any of the function id values
-		 * are not present then we simply return since the consumer cannot exist
+		 * Walk down the tree and if we find that any of the function id values are not
+		 * present then we simply return since the consumer cannot exist
 		 */
 		for (Pair<IdentifiableFunction<T>, Object> pair : eventFilter.getFunctionValuePairs()) {
 			Map<IdentifiableFunction<?>, FilterNode> map = filterNode.children.get(value);
@@ -2138,9 +2125,9 @@ public class Simulation {
 		}
 
 		/*
-		 * Walk back up the tree, removing nodes that have neither child nodes
-		 * nor consumers. Once we hit a node that does not need removal we can
-		 * stop since all ancestor nodes will also not be empty.
+		 * Walk back up the tree, removing nodes that have neither child nodes nor
+		 * consumers. Once we hit a node that does not need removal we can stop since
+		 * all ancestor nodes will also not be empty.
 		 */
 		while (filterNode.parent != null) {
 			boolean removeNode = filterNode.children.isEmpty() && filterNode.consumers.isEmpty();
@@ -2153,25 +2140,21 @@ public class Simulation {
 		}
 
 	}
-	
-	/**
-     * Returns the time (floating point days) of simulation start.
-     * 
-     */
-    protected double getStartTime() {
-        return data.simulationState.getStartTime();
-    }
 
-    /**
-     * Returns the base date that synchronizes with simulation time zero.
-     * 
-     */
-    protected LocalDate getBaseDate() {
-        return data.simulationState.getBaseDate();
-    }
-    
-    
-    
-    
+	/**
+	 * Returns the time (floating point days) of simulation start.
+	 * 
+	 */
+	protected double getStartTime() {
+		return data.simulationState.getStartTime();
+	}
+
+	/**
+	 * Returns the base date that synchronizes with simulation time zero.
+	 * 
+	 */
+	protected LocalDate getBaseDate() {
+		return data.simulationState.getBaseDate();
+	}
 
 }

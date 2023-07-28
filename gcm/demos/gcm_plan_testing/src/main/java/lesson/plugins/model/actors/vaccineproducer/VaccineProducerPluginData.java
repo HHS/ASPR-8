@@ -5,14 +5,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import lesson.plugins.model.support.ModelError;
 import net.jcip.annotations.Immutable;
-import nucleus.PluginData;
-import nucleus.PluginDataBuilder;
-import plugins.materials.support.BatchId;
-import plugins.materials.support.MaterialId;
-import plugins.materials.support.MaterialsError;
-import plugins.materials.support.MaterialsProducerId;
 import util.errors.ContractException;
 
 /**
@@ -48,7 +48,6 @@ public final class VaccineProducerPluginData implements PluginData {
 			ensureImmutability();
 			return new VaccineProducerPluginData(data);
 		}
-
 
 		public Builder setLastBatchAssemblyEndTime(double lastBatchAssemblyEndTime) {
 			ensureDataMutability();
@@ -146,19 +145,19 @@ public final class VaccineProducerPluginData implements PluginData {
 			if (!data.materialsOnOrder.keySet().equals(data.materialIds)) {
 				throw new ContractException(ModelError.MATERIALS_MISMATCH);
 			}
-			
+
 			if (!data.deliveryAmounts.keySet().equals(data.materialIds)) {
 				throw new ContractException(ModelError.MATERIALS_MISMATCH);
 			}
-			
+
 			if (!data.deliveryDelays.keySet().equals(data.materialIds)) {
 				throw new ContractException(ModelError.MATERIALS_MISMATCH);
 			}
-			
+
 			if (!data.stageAmounts.keySet().equals(data.materialIds)) {
 				throw new ContractException(ModelError.MATERIALS_MISMATCH);
 			}
-			
+
 			if (!data.materialBatchIds.keySet().equals(data.materialIds)) {
 				throw new ContractException(ModelError.MATERIALS_MISMATCH);
 			}
@@ -244,7 +243,8 @@ public final class VaccineProducerPluginData implements PluginData {
 			} else if (!deliveryDelays.equals(other.deliveryDelays)) {
 				return false;
 			}
-			if (Double.doubleToLongBits(lastBatchAssemblyEndTime) != Double.doubleToLongBits(other.lastBatchAssemblyEndTime)) {
+			if (Double.doubleToLongBits(lastBatchAssemblyEndTime) != Double
+					.doubleToLongBits(other.lastBatchAssemblyEndTime)) {
 				return false;
 			}
 			if (locked != other.locked) {
@@ -297,18 +297,15 @@ public final class VaccineProducerPluginData implements PluginData {
 		return new Builder(new Data());
 	}
 
-
 	private final Data data;
 
 	private VaccineProducerPluginData(final Data data) {
 		this.data = data;
 	}
 
-
 	public MaterialsProducerId getMaterialsProducerId() {
 		return data.materialsProducerId;
 	}
-
 
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
@@ -373,7 +370,6 @@ public final class VaccineProducerPluginData implements PluginData {
 		return new LinkedHashSet<>(data.materialIds);
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -381,7 +377,6 @@ public final class VaccineProducerPluginData implements PluginData {
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -401,6 +396,5 @@ public final class VaccineProducerPluginData implements PluginData {
 		}
 		return true;
 	}
-	
-	
+
 }

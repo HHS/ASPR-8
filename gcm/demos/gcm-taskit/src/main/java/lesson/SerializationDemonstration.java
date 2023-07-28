@@ -1,26 +1,51 @@
 package lesson;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.gcm.translation.protobuf.nucleus.NucleusTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.globalproperties.input.GlobalPropertiesPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.PeopleTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.people.input.PeoplePluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.personproperties.PersonPropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.properties.PropertiesTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.RegionsTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.regions.input.RegionsPluginDataInput;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.reports.ReportsTranslator;
-import gov.hhs.aspr.gcm.translation.protobuf.plugins.stochastics.StochasticsTranslator;
-import gov.hhs.aspr.translation.core.TranslationController;
-import gov.hhs.aspr.translation.core.Translator;
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
+import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.SimulationState;
+import gov.hhs.aspr.ms.gcm.nucleus.SimulationStateCollector;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyDimension;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.reports.ReportsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.NucleusTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.data.input.GlobalPropertiesPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.PeopleTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.data.input.PeoplePluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.personproperties.PersonPropertiesTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.properties.PropertiesTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.RegionsTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.data.input.RegionsPluginDataInput;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
+import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.StochasticsTranslator;
+import gov.hhs.aspr.ms.taskit.core.TranslationController;
+import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
@@ -29,41 +54,20 @@ import lesson.plugins.model.Region;
 import lesson.translatorSpecs.GlobalPropertyTranslatorSpec;
 import lesson.translatorSpecs.PersonPropertyTranslatorSpec;
 import lesson.translatorSpecs.RegionTranslatorSpec;
-import nucleus.Dimension;
-import nucleus.Experiment;
-import nucleus.ExperimentContext;
-import nucleus.ExperimentParameterData;
-import nucleus.Plugin;
-import nucleus.PluginData;
-import nucleus.SimulationState;
-import nucleus.SimulationStateCollector;
-import plugins.globalproperties.GlobalPropertiesPlugin;
-import plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import plugins.globalproperties.support.GlobalPropertyDimension;
-import plugins.globalproperties.support.GlobalPropertyId;
-import plugins.people.PeoplePlugin;
-import plugins.people.datamanagers.PeoplePluginData;
-import plugins.personproperties.PersonPropertiesPlugin;
-import plugins.personproperties.datamanagers.PersonPropertiesPluginData;
-import plugins.regions.RegionsPlugin;
-import plugins.regions.datamanagers.RegionsPluginData;
-import plugins.reports.ReportsPlugin;
-import plugins.reports.support.NIOReportItemHandler;
-import plugins.stochastics.StochasticsPlugin;
-import plugins.stochastics.datamanagers.StochasticsPluginData;
-import plugins.stochastics.support.WellState;
-import plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 import util.time.Stopwatch;
 
 public final class SerializationDemonstration {
 
-	private final String personPropertiesFileName = "personPropertiesOutput.json";
-	private final String globalPropertiesFileName = "globalPropertiesOutput.json";
-	private final String regionsFileName = "regionsOutput.json";
-	private final String peopleFileName = "peopleOutput.json";
-	private final String stochasticsFileName = "stochasticsOutput.json";
-	private final String simStateFileName = "simStateOutput.json";
+	private final String personPropertiesOutputFileName = "personPropertiesOutput.json";
+	private final String globalPropertiesOutputFileName = "globalPropertiesOutput.json";
+	private final String regionsOutputFileName = "regionsOutput.json";
+	private final String peopleOutputFileName = "peopleOutput.json";
+	private final String stochasticsOutputFileName = "stochasticsOutput.json";
+	private final String simStateOutputFileName = "simStateOutput.json";
+	private final String peopleInputFileName = "/peopleInput.json";
+	private final String regionsInputFileName = "/regionsInput.json";
+	private final String globalPropertiesInputFileName = "/globalPropertiesInput.json";
 
 	private final Path outputDirectory;
 	private TranslationController writingTranslationController;
@@ -72,25 +76,40 @@ public final class SerializationDemonstration {
 	private SerializationDemonstration(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 
-		this.readingTranslationController = TranslationController
-				.builder()
-				.addTranslator(
-						PersonPropertiesTranslator.getTranslator())
-				.addTranslator(PropertiesTranslator.getTranslator())
-				.addTranslator(PeopleTranslator.getTranslator())
-				.addTranslator(RegionsTranslator.getTranslator())
-				.addTranslator(
-						GlobalPropertiesTranslator.getTranslator())
-				.addTranslator(ReportsTranslator.getTranslator())
-				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-						.addTranslationSpec(new PersonPropertyTranslatorSpec())
-						.addTranslationSpec(new GlobalPropertyTranslatorSpec())
-						.addTranslationSpec(new RegionTranslatorSpec()))
-				.addInputFilePath(Paths.get("./src/main/resources/peopleInput.json"), PeoplePluginDataInput.class)
-				.addInputFilePath(Paths.get("./src/main/resources/regionsInput.json"), RegionsPluginDataInput.class)
-				.addInputFilePath(Paths.get("./src/main/resources/globalPropertiesInput.json"),
-						GlobalPropertiesPluginDataInput.class)
-				.build();
+		Path peopleInputPath;
+		Path regionsInputPath;
+		Path globalPropsInputPath;
+
+		try {
+			peopleInputPath = Paths.get(this.getClass().getResource(peopleInputFileName).toURI());
+			regionsInputPath = Paths.get(this.getClass().getResource(regionsInputFileName).toURI());
+			globalPropsInputPath = Paths.get(this.getClass().getResource(globalPropertiesInputFileName).toURI());
+
+			this.readingTranslationController = TranslationController
+					.builder()
+					.addTranslator(
+							PersonPropertiesTranslator.getTranslator())
+					.addTranslator(PropertiesTranslator.getTranslator())
+					.addTranslator(PeopleTranslator.getTranslator())
+					.addTranslator(RegionsTranslator.getTranslator())
+					.addTranslator(
+							GlobalPropertiesTranslator.getTranslator())
+					.addTranslator(ReportsTranslator.getTranslator())
+					.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
+							.addTranslationSpec(new PersonPropertyTranslatorSpec())
+							.addTranslationSpec(new GlobalPropertyTranslatorSpec())
+							.addTranslationSpec(new RegionTranslatorSpec()))
+					.addInputFilePath(peopleInputPath,
+							PeoplePluginDataInput.class)
+					.addInputFilePath(regionsInputPath,
+							RegionsPluginDataInput.class)
+					.addInputFilePath(globalPropsInputPath,
+							GlobalPropertiesPluginDataInput.class)
+					.build();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -127,8 +146,8 @@ public final class SerializationDemonstration {
 				.build();
 		builder.definePersonProperty(PersonProperty.EDUCATION_ATTEMPTS,
 				propertyDefinition, 0.0, false);
-		// builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
-		// propertyDefinition);
+		builder.definePersonProperty(PersonProperty.VACCINE_ATTEMPTS,
+				propertyDefinition, 0.0, false);
 
 		propertyDefinition = PropertyDefinition.builder()//
 				.setType(Boolean.class)//
@@ -285,7 +304,7 @@ public final class SerializationDemonstration {
 		this.readingTranslationController.readInput();
 
 		stopwatch.stop();
-		System.out.println(stopwatch.getElapsedMilliSeconds());
+		System.out.println("Read input took: " + stopwatch.getElapsedMilliSeconds() + "ms");
 
 		List<PluginData> pluginDatas = this.readingTranslationController.getObjects(PluginData.class);
 
@@ -376,12 +395,12 @@ public final class SerializationDemonstration {
 			File outputDir = this.outputDirectory.resolve("scenario" + i).toFile();
 			outputDir.mkdir();
 
-			Path personPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(personPropertiesFileName);
-			Path globalPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(globalPropertiesFileName);
-			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsFileName);
-			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleFileName);
-			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsFileName);
-			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateFileName);
+			Path personPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(personPropertiesOutputFileName);
+			Path globalPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(globalPropertiesOutputFileName);
+			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsOutputFileName);
+			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleOutputFileName);
+			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsOutputFileName);
+			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateOutputFileName);
 
 			translationControllerBuilder
 					.addOutputFilePath(personPropertiesPath, PersonPropertiesPluginData.class, i)
@@ -413,17 +432,15 @@ public final class SerializationDemonstration {
 
 	private void handleSimulationStateCollection(Integer scenarioId, List<Object> output) {
 
-		System.out.println(scenarioId);
-
 		for (Object object : output) {
 			if (object instanceof PluginData) {
 				writingTranslationController.writeOutput((PluginData) object, scenarioId);
 			}
-			/*
-			 * if (object instanceof SimulationTime) {
-			 * writingTranslationController.writeObjectOutput(object, scenarioId);
-			 * }
-			 */
+
+			if (object instanceof SimulationState) {
+				writingTranslationController.writeOutput(object, scenarioId);
+			}
+
 		}
 
 	}

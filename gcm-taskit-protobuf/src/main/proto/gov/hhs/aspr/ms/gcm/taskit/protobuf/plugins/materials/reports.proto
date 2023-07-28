@@ -1,0 +1,24 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.reports.input";
+
+import "plugins/reports/support.proto";
+
+
+message BatchStatusReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message MaterialsProducerPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message MaterialsProducerResourceReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}
+
+message StageReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+}

@@ -5,14 +5,14 @@ import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.PersonProperty;
-import nucleus.ActorContext;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class VaccineEducator {
 
@@ -27,18 +27,18 @@ public class VaccineEducator {
 		int educationAttempts = personPropertiesDataManager
 				.getPersonPropertyValue(personId, PersonProperty.EDUCATION_ATTEMPTS);
 		personPropertiesDataManager
-		.setPersonPropertyValue(personId, PersonProperty.EDUCATION_ATTEMPTS, educationAttempts + 1);
+				.setPersonPropertyValue(personId, PersonProperty.EDUCATION_ATTEMPTS, educationAttempts + 1);
 
 		if (randomGenerator.nextDouble() < educationSuccessRate) {
 			personPropertiesDataManager
-			.setPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE, false);
+					.setPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE, false);
 		} else {
-			planEducation(personId);			
+			planEducation(personId);
 		}
 	}
 
 	private void planEducation(PersonId personId) {
-		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * educationAttemptInterval;		
+		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * educationAttemptInterval;
 		Consumer<ActorContext> plan = (c) -> educatePerson(personId);
 		actorContext.addPlan(plan, planTime);
 	}
@@ -75,7 +75,7 @@ public class VaccineEducator {
 			Boolean refusesVaccine = personPropertiesDataManager
 					.getPersonPropertyValue(personId, PersonProperty.REFUSES_VACCINE);
 			if (refusesVaccine) {
-				planEducation(personId);				
+				planEducation(personId);
 			}
 		}
 

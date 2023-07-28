@@ -1,0 +1,26 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.groups.reports.input";
+
+import "plugins/groups/support.proto";
+import "plugins/reports/support.proto";
+
+message GroupPropertyReportPropertyMap {
+    GroupTypeIdInput groupTypeId = 1;
+    repeated GroupPropertyIdInput groupProperties = 2;
+}
+
+message GroupPopulationReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+}
+
+message GroupPropertyReportPluginDataInput {
+    ReportLabelInput reportLabel = 1;
+    ReportPeriodInput reportPeriod = 2;
+    repeated GroupPropertyReportPropertyMap includedProperties = 3;
+    repeated GroupPropertyReportPropertyMap excludedProperties = 4;
+    bool defaultInclusionPolicy = 5;
+}

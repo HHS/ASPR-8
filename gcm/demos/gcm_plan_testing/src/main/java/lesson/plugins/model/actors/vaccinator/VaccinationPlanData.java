@@ -1,7 +1,7 @@
 package lesson.plugins.model.actors.vaccinator;
 
-import nucleus.PlanData;
-import plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.nucleus.PlanData;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 public class VaccinationPlanData implements PlanData {
 

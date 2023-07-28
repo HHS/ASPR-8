@@ -1,8 +1,8 @@
 {
   "globalPropertyDefinitinions": [{
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "IMMUNITY_START_TIME"
     },
     "propertyDefinition": {
@@ -14,8 +14,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "VACCINE_ATTEMPT_INTERVAL"
     },
     "propertyDefinition": {
@@ -27,8 +27,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "EDUCATION_ATTEMPT_INTERVAL"
     },
     "propertyDefinition": {
@@ -40,8 +40,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "EDUCATION_SUCCESS_RATE"
     },
     "propertyDefinition": {
@@ -53,8 +53,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "VACCINE_REFUSAL_PROBABILITY"
     },
     "propertyDefinition": {
@@ -66,8 +66,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "IMMUNITY_PROBABILITY"
     },
     "propertyDefinition": {
@@ -79,8 +79,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "SIMULATION_DURATION"
     },
     "propertyDefinition": {
@@ -92,8 +92,8 @@
     "propertyTrackingPolicy": true
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "POPULATION_SIZE"
     },
     "propertyDefinition": {
@@ -106,8 +106,8 @@
   }],
   "globalPropertyValues": [{
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "IMMUNITY_START_TIME"
     },
     "propertyValue": {
@@ -117,8 +117,8 @@
     "propertyValueTime": 0.0
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "IMMUNITY_PROBABILITY"
     },
     "propertyValue": {
@@ -128,8 +128,8 @@
     "propertyValueTime": 0.0
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "VACCINE_ATTEMPT_INTERVAL"
     },
     "propertyValue": {
@@ -139,8 +139,8 @@
     "propertyValueTime": 0.0
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "EDUCATION_ATTEMPT_INTERVAL"
     },
     "propertyValue": {
@@ -150,8 +150,8 @@
     "propertyValueTime": 0.0
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "EDUCATION_SUCCESS_RATE"
     },
     "propertyValue": {
@@ -161,8 +161,8 @@
     "propertyValueTime": 0.0
   }, {
     "propertyId": {
-      "@type": "type.googleapis.com/gov.hhs.aspr.gcm.translation.protobuf.WrapperEnumValue",
-      "enumTypeUrl": "gov.hhs.aspr.gcm.translation.demo.GlobalPropertyInput",
+      "@type": "type.googleapis.com/gov.hhs.aspr.ms.taskit.protobuf.WrapperEnumValue",
+      "enumTypeUrl": "gov.hhs.aspr.ms.gcm.taskit.protobuf.demo.GlobalPropertyInput",
       "value": "VACCINE_REFUSAL_PROBABILITY"
     },
     "propertyValue": {

@@ -1,0 +1,18 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.taskit.protobuf;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.taskit.protobuf.testsupport.testcomplexobject.input";
+
+import "google/protobuf/any.proto";
+
+message TestComplexInputObjectSubObject {
+}
+
+message TestComplexInputObject {
+    string testString = 1;
+    double startTime = 2;
+    int32 numEntities = 3;
+    TestComplexInputObjectSubObject subObject = 4;
+    google.protobuf.Any id = 5;
+}

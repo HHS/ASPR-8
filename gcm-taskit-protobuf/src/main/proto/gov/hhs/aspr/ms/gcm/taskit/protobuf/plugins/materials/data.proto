@@ -1,0 +1,25 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.data.input";
+
+import "plugins/properties/support.proto";
+import "plugins/materials/support.proto";
+
+message MaterialsPluginDataInput {
+    repeated MaterialIdInput materialIds = 1;
+    repeated MaterialsProducerIdInput materialsProducerIds = 2;
+    repeated BatchPropertyDefinitionMapInput batchPropertyDefinitions = 3;
+    repeated PropertyDefinitionMapInput materialsProducerPropertyDefinitions = 4;
+    repeated MaterialsProducerPropertyValueMapInput materialsProducerPropertyValues = 5;
+    repeated MaterialsProducerResourceLevelMapInput materialsProducerResourceLevels = 6;
+    repeated BatchInput batchIds = 7;
+    repeated BatchPropertyValueInput batchPropertyValues = 8;
+    repeated MaterialsProducerInventoryBatchesInput materialsProducerInverntoryBatches = 9;
+    repeated StageInput stageIds = 10;
+    repeated StageBatchInput stageBatches = 11;
+    repeated MaterialsProducerStagesInput materialsProducerStages = 12;
+    int32 nextBatchRecordId = 13;
+	int32 nextStageRecordId = 14;
+}

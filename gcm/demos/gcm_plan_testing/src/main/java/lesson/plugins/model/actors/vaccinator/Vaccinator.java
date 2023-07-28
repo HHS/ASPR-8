@@ -7,31 +7,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.Plan;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialsProducerResourceUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
 import lesson.plugins.model.support.DiseaseState;
 import lesson.plugins.model.support.GlobalProperty;
 import lesson.plugins.model.support.PersonProperty;
 import lesson.plugins.model.support.Resource;
-import nucleus.ActorContext;
-import nucleus.Plan;
-import plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import plugins.materials.datamangers.MaterialsDataManager;
-import plugins.materials.events.MaterialsProducerResourceUpdateEvent;
-import plugins.materials.support.MaterialsProducerId;
-import plugins.people.datamanagers.PeopleDataManager;
-import plugins.people.support.PersonId;
-import plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import plugins.personproperties.events.PersonPropertyUpdateEvent;
-import plugins.regions.datamanagers.RegionsDataManager;
-import plugins.regions.support.RegionId;
-import plugins.resources.datamanagers.ResourcesDataManager;
 import util.wrappers.MutableDouble;
 import util.wrappers.MutableLong;
 
 public class Vaccinator {
 	public static boolean LOG_ACTIVE = true;
-	
+
 	private boolean selfProduceVaccine = false;
-	
+
 	private MaterialsDataManager materialsDataManager;
 
 	private RegionsDataManager regionsDataManager;
@@ -69,17 +69,20 @@ public class Vaccinator {
 			if (infectedPersonCount >= infectionPersonCountThreshold) {
 				manufactureStarted = true;
 				globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, true);
-				actorContext.unsubscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE));
+				actorContext.unsubscribe(personPropertiesDataManager
+						.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE));
 			}
 		}
 	}
 
-	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext, final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
+	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext,
+			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
 
 			final MaterialsProducerId materialsProducerId = materialsProducerResourceUpdateEvent.materialsProducerId();
 
-			final long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, Resource.VACCINE);
+			final long resourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId,
+					Resource.VACCINE);
 			final List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
 
 			final long resourceToTransfer = resourceLevel / regionIds.size();
@@ -88,11 +91,13 @@ public class Vaccinator {
 			for (final RegionId regionId : regionIds) {
 				final MutableLong availableVaccine = availableVaccines.get(regionId);
 				if (remainderResource > 0) {
-					materialsDataManager.transferResourceToRegion(materialsProducerId, Resource.VACCINE, regionId, resourceToTransfer + 1);
+					materialsDataManager.transferResourceToRegion(materialsProducerId, Resource.VACCINE, regionId,
+							resourceToTransfer + 1);
 					remainderResource--;
 					availableVaccine.increment(resourceToTransfer + 1);
 				} else {
-					materialsDataManager.transferResourceToRegion(materialsProducerId, Resource.VACCINE, regionId, resourceToTransfer);
+					materialsDataManager.transferResourceToRegion(materialsProducerId, Resource.VACCINE, regionId,
+							resourceToTransfer);
 					availableVaccine.increment(resourceToTransfer);
 				}
 			}
@@ -100,7 +105,8 @@ public class Vaccinator {
 		}
 	}
 
-	private void handlePersonPropertyUpdateEvent(final ActorContext actorContext, final PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	private void handlePersonPropertyUpdateEvent(final ActorContext actorContext,
+			final PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 
 		final DiseaseState diseaseState = (DiseaseState) personPropertyUpdateEvent.getCurrentPropertyValue();
 		if (diseaseState == DiseaseState.INFECTIOUS) {
@@ -130,7 +136,8 @@ public class Vaccinator {
 			actorContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
-		actorContext.subscribe(materialsDataManager.getEventFilterForMaterialsProducerResourceUpdateEvent(), this::handleMaterialsProducerResourceUpdateEvent);
+		actorContext.subscribe(materialsDataManager.getEventFilterForMaterialsProducerResourceUpdateEvent(),
+				this::handleMaterialsProducerResourceUpdateEvent);
 
 		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			vaccinationSchedules.put(regionId, new MutableDouble());
@@ -141,7 +148,8 @@ public class Vaccinator {
 
 			manufactureStarted = vaccinatorPluginData.isManufactureStarted();
 			if (!manufactureStarted) {
-				actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
+				actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(
+						PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
 			}
 			infectedPersonCount = vaccinatorPluginData.getInfectedPersonCount();
 			infectionPersonCountThreshold = vaccinatorPluginData.getInfectionPersonCountThreshold();
@@ -165,9 +173,12 @@ public class Vaccinator {
 				}
 			}
 
-			actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
-			final double infectionThreshold = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD);
-			infectedPersonCount = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
+			actorContext.subscribe(personPropertiesDataManager.getEventFilterForPersonPropertyUpdateEvent(
+					PersonProperty.DISEASE_STATE), this::handlePersonPropertyUpdateEvent);
+			final double infectionThreshold = globalPropertiesDataManager
+					.getGlobalPropertyValue(GlobalProperty.INFECTION_THRESHOLD);
+			infectedPersonCount = personPropertiesDataManager
+					.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
 			infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
 			determineVaccineManufacutureStart();
 			scheduleVaccinations();
@@ -193,16 +204,19 @@ public class Vaccinator {
 		actorContext.releaseOutput(builder.build());
 	}
 
-	private boolean isCapturableResource(final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
+	private boolean isCapturableResource(
+			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (!materialsProducerResourceUpdateEvent.resourceId().equals(Resource.VACCINE)) {
 			return false;
 		}
-		final boolean isResourceAdditionToProducer = materialsProducerResourceUpdateEvent.currentResourceLevel() > materialsProducerResourceUpdateEvent.previousResourceLevel();
+		final boolean isResourceAdditionToProducer = materialsProducerResourceUpdateEvent
+				.currentResourceLevel() > materialsProducerResourceUpdateEvent.previousResourceLevel();
 		if (!isResourceAdditionToProducer) {
 			return false;
 		}
 
-		long distributedVaccineCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
+		long distributedVaccineCount = personPropertiesDataManager
+				.getPersonCountForPropertyValue(PersonProperty.VACCINATED, true);
 
 		for (final RegionId regionId : regionsDataManager.getRegionIds()) {
 			distributedVaccineCount += resourcesDataManager.getRegionResourceLevel(regionId, Resource.VACCINE);
@@ -226,20 +240,22 @@ public class Vaccinator {
 			final List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
 			Collections.sort(peopleInRegion);
 			for (final PersonId personId : peopleInRegion) {
-				final boolean vaccine_scheduled = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.VACCINE_SCHEDULED);
+				final boolean vaccine_scheduled = personPropertiesDataManager.getPersonPropertyValue(personId,
+						PersonProperty.VACCINE_SCHEDULED);
 				if (availableVaccine.getValue() <= 0) {
 					break;
 				}
 				if (!vaccine_scheduled) {
 					availableVaccine.decrement();
-					personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINE_SCHEDULED, true);
+					personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINE_SCHEDULED,
+							true);
 
 					VaccinationPlanData vaccinationPlanData = new VaccinationPlanData(personId, vaccineTime.getValue());
-					Plan<ActorContext> plan = Plan	.builder(ActorContext.class)//
-													.setCallbackConsumer((c) -> vaccinatePerson(personId))//
-													.setTime(vaccineTime.getValue())//
-													.setPlanData(vaccinationPlanData)//
-													.build();
+					Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+							.setCallbackConsumer((c) -> vaccinatePerson(personId))//
+							.setTime(vaccineTime.getValue())//
+							.setPlanData(vaccinationPlanData)//
+							.build();
 					actorContext.addPlan(plan);
 
 					vaccineTime.increment(delayTime);
@@ -247,13 +263,12 @@ public class Vaccinator {
 			}
 		}
 		final int populationSize = peopleDataManager.getPopulationCount();
-		final int scheduledVaccinationCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
+		final int scheduledVaccinationCount = personPropertiesDataManager
+				.getPersonCountForPropertyValue(PersonProperty.VACCINE_SCHEDULED, true);
 		if (scheduledVaccinationCount >= populationSize) {
 			globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE, false);
 		}
 	}
-
-
 
 	private void log(Object... values) {
 		if (LOG_ACTIVE) {

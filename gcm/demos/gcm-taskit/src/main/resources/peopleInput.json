@@ -1,4 +1,6 @@
 {
-  "personRanges": [],
+  "personRanges": [{
+    "highPersonId": 999
+  }],
   "personCount": 1000
 }

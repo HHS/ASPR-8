@@ -1,6 +1,6 @@
 package lesson.translatorSpecs;
 
-import gov.hhs.aspr.translation.protobuf.core.ProtobufTranslationSpec;
+import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationSpec;
 import lesson.input.PersonPropertyInput;
 import lesson.plugins.model.PersonProperty;
 

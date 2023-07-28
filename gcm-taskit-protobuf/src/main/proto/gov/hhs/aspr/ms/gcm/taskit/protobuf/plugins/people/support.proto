@@ -1,0 +1,15 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.people.support.input";
+
+
+message PersonIdInput {
+    int32 id = 1;
+}
+
+message PersonRangeInput {
+    int32 lowPersonId = 1;
+    int32 highPersonId = 2;
+}

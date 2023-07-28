@@ -1,0 +1,71 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.resources.support.input";
+
+import "google/protobuf/any.proto";
+import "plugins/properties/support.proto";
+import "plugins/regions/support.proto";
+import "plugins/partitions/support.proto";
+
+
+message ResourceIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message ResourcePropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message ResourceIdMapInput {
+    ResourceIdInput resourceId = 1;
+    double resourceTime = 2;
+    bool resourceTimeTrackingPolicy = 3;
+}
+
+message ResourcePropertyDefinitionMapInput {
+    ResourceIdInput resourceId = 1;
+    PropertyDefinitionMapInput resourcePropertyDefinitionMap = 2;
+}
+
+message ResourceInitializationInput {
+    google.protobuf.Any resourceId = 1;
+    int64 amount = 2;
+}
+
+message PersonResourceLevelInput {
+    int32 personId = 1;
+    int64 amount = 2;
+}
+
+message PersonResourceLevelMapInput {
+    ResourceIdInput resourceId = 1;
+    repeated PersonResourceLevelInput personResourceLevels = 2;
+}
+
+message PersonResourceTimeInput {
+    int32 personId = 1;
+    double resourceTime = 2;
+}
+
+message PersonResourceTimeMapInput {
+    ResourceIdInput resourceId = 1;
+    repeated PersonResourceTimeInput personResourceTimes = 2;
+}
+
+message ResourcePropertyValueMapInput {
+    ResourceIdInput resourceId = 1;
+    PropertyValueMapInput resourcePropertyValueMap = 2;
+}
+
+message RegionResourceLevelMapInput {
+    RegionIdInput regionId = 1;
+    repeated ResourceInitializationInput regionResourceLevels = 2;
+}
+
+message ResourceFilterInput {
+    ResourceIdInput resourceId = 1;
+    EqualityInput equality = 2;
+    int64 resourceValue = 3;
+}

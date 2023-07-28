@@ -1,0 +1,80 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins;
+
+option java_multiple_files = true;
+option java_package = "gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.materials.support.input";
+
+import "plugins/resources/support.proto";
+import "plugins/properties/support.proto";
+import "google/protobuf/any.proto";
+
+
+message MaterialIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message MaterialsProducerPropertyValueMapInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated PropertyValueMapInput propertyValues = 2;
+}
+
+message MaterialsProducerResourceLevelMapInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated ResourceInitializationInput resourceLevels = 2;
+}
+
+message BatchIdInput {
+    int32 id = 1;
+}
+
+message BatchPropertyIdInput {
+    google.protobuf.Any id = 1;
+}
+
+message BatchPropertyDefinitionMapInput {
+    MaterialIdInput materialId = 1;
+    repeated PropertyDefinitionMapInput propertyDefinitions = 2;
+}
+
+message BatchInput {
+    BatchIdInput batchId = 1;
+    MaterialIdInput materialId = 2;
+    double amount = 3;
+}
+
+message BatchPropertyValueInput {
+    BatchIdInput batchId = 1;
+    repeated PropertyValueMapInput propertyValues = 2;
+}
+
+message MaterialsProducerInventoryBatchesInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated BatchIdInput batches = 2;
+}
+
+message StageIdInput {
+    int32 id = 1;
+}
+
+message StageInput {
+    StageIdInput stageId = 1;
+    bool offered = 2;
+}
+
+message StageBatchInput {
+    StageIdInput stageId = 1;
+    repeated BatchIdInput batchesInStage = 2;
+}
+
+message MaterialsProducerStagesInput {
+    MaterialsProducerIdInput materialsProducerId = 1;
+    repeated StageIdInput stages = 2;
+}
