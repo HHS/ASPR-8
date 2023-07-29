@@ -16,7 +16,7 @@ public final class Example_4 {
 	 * Beta. We also introduce the ability of the Actor to plan.
 	 */
 
-	/* start code_ref=data_managers_intro_to_data_managers */
+	/* start code_ref=data_managers_intro_to_data_managers|code_cap=A data manager is added to the simulation.*/
 	public static void main(String[] args) {
 
 		PluginId pluginId = new SimplePluginId("example plugin");

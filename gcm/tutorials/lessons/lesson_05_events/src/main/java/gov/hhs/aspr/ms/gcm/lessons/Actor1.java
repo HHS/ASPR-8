@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.lessons;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 
-/* start code_ref=events_actor_1_mutates_values*/
+/* start code_ref=events_actor_1_mutates_values|code_cap=Actor 1 schedules updates to both the alpha and beta properties.*/
 public final class Actor1 {
 
 	public void init(ActorContext actorContext) {

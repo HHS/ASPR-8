@@ -5,7 +5,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 
-/*start code_ref=plugins_intro_to_plugins*/
+/*start code_ref=plugins_intro_to_plugins|code_cap=A simple plugin added to the simulation. Plugins act as modules for all components contributed to the simulation.*/
 public final class Example_2 {
 
 	private Example_2() {

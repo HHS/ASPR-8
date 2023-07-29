@@ -14,7 +14,12 @@ public final class Example_6 {
 	private Example_6() {
 	}
 
-	/* start code_ref=plugin_dependencies_connecting_the_plugins */
+	/*
+	 * start code_ref=plugin_dependencies_connecting_the_plugins|code_cap=The
+	 * people, vaccine, family and model plugins are contributed to the simulation.
+	 * On execution, the model pluin's single actor schedules the vaccination of
+	 * each person as well as a few random removals of people from the simulation.
+	 */
 	public static void main(String[] args) {
 
 		PluginId peoplePluginId = new SimplePluginId("people plugin");

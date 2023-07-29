@@ -6,7 +6,7 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public final class DiseasePluginData implements PluginData {
-	/* start code_ref=plugin_data_internal_data */
+	/* start code_ref=plugin_data_internal_data|code_cap=The disease plugin data collects the various general disease properties used to initialize the disease data manager.*/
 	private static class Data {
 
 		private double r0;
@@ -62,7 +62,7 @@ public final class DiseasePluginData implements PluginData {
 
 	}
 
-	/* start code_ref=plugin_data_builder_class */
+	/* start code_ref=plugin_data_builder_class|code_cap=The builder class for the immutable disease plugin data class.*/
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
 
@@ -98,7 +98,7 @@ public final class DiseasePluginData implements PluginData {
 	}
 	/* end */
 
-	/* start code_ref=plugin_data_private_constructor */
+	/* start code_ref=plugin_data_private_constructor|code_cap=The disease plugin data is constructed from the collected data in a private constructor.*/
 	private final Data data;
 
 	private DiseasePluginData(final Data data) {
@@ -106,7 +106,8 @@ public final class DiseasePluginData implements PluginData {
 	}
 
 	/* end */
-	/* start code_ref=plugin_data_accessor_methods */
+	
+	/* start code_ref=plugin_data_accessor_methods|code_cap=The disease plugin data grants access to its immutable field values.*/
 	public double getAsymptomaticDays() {
 		return data.asymptomaticDays;
 	}
@@ -120,7 +121,7 @@ public final class DiseasePluginData implements PluginData {
 	}
 	/* end */
 
-	/* start code_ref=plugin_data_clone_builder */
+	/* start code_ref=plugin_data_clone_builder|code_cap=The disease plugin data creates a copy of its data an places it in the returned plugin data builder.*/
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));

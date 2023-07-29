@@ -32,7 +32,8 @@ public final class Example_9_B {
 				.build();
 	}
 
-	/* start code_ref=experiements_example_9_ B */
+	
+	/* start code_ref=experiments_example_9_B|code_cap=Example 9 B introduces a single dimension that sets the R0 value of the disease plugin data to two values.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

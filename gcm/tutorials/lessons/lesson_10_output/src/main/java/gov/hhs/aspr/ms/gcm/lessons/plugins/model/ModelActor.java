@@ -5,7 +5,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 
 public final class ModelActor {
-	/* start code_ref=output_model_actor_init */
+	/* start code_ref=output_model_actor_init|code_cap=The model actor now reports output via the release output method provided by its context. */
 	public void init(ActorContext actorContext) {
 		DiseaseDataManager diseaseDataManager = actorContext.getDataManager(DiseaseDataManager.class);
 		actorContext.releaseOutput("Model Actor initializing");

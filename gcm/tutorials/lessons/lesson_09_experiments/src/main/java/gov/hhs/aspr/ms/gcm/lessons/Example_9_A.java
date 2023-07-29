@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
-/* start code_ref=experiements_example_9_ A */
+/* start code_ref=experiments_example_9_A|code_cap=Example 9 replaces Example 8's use of the simulation with an experiment.*/
 public final class Example_9_A {
 
 	private Example_9_A() {

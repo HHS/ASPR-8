@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.lessons;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 
-/* start code_ref=data_managers_example_actor*/
+/* start code_ref=data_managers_example_actor|code_cap=The example actor initializes by making plans to update the alpha property on a daily basis.*/
 public final class ExampleActor {
 
 	public void init(ActorContext actorContext) {

@@ -5,7 +5,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
  * 
  *
  */
-/* start code_ref=plugin_data_plugin_builder */
+/* start code_ref=plugin_data_plugin_builder|code_cap=Every plugin data class has a corresponding builder class to aid in the experiment's generation of alternate scenarios.*/
 public interface PluginDataBuilder {
 	/**
 	 * Returns a plugin data

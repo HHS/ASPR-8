@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 
-/* start code_ref=plugin_dependencies_vaccine_data_manager*/
+/* start code_ref=plugin_dependencies_vaccine_data_manager|code_cap=The vaccination manager tracks the vaccination status of each person, reacting to the person removal as needed.*/
 public final class VaccinationDataManager extends DataManager {
 
 	private Set<PersonId> vaccinatedPeople = new LinkedHashSet<>();

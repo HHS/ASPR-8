@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 
-/* start code_ref=output_example_10_A */
+/* start code_ref=output_example_10_A|code_cap=The simulation sends the released output from the contexts to an output consumer.*/
 public final class Example_10_A {
 
 	private Example_10_A() {

@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
  * 
  *
  */
-/* start code_ref=plugin_data_plugin_id */
+/* start code_ref=plugin_data_plugin_id|code_cap=The plugin id for the disease plugin is implemented as a static constant.*/
 public final class DiseasePluginId implements PluginId {
 	private DiseasePluginId() {
 	}

@@ -63,7 +63,7 @@ public final class VaccinationDataManager extends DataManager {
 
 	}
 
-	/* start code_ref=dag_dependent_query */
+	/* start code_ref=dag_dependent_query|code_cap=By adding a plugin dependencies on the people and family plugins, the vaccine data manager can now answer questions about the vaccine status of family members*/
 	public List<PersonId> getUnvaccinatedFamilyMembers(PersonId personId) {
 		if (!personDataManager.personExists(personId)) {
 			throw new RuntimeException("unknown person " + personId);

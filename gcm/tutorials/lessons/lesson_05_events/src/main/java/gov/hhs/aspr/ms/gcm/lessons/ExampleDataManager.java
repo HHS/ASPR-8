@@ -26,7 +26,7 @@ public final class ExampleDataManager extends DataManager {
 		return beta;
 	}
 
-	/* start code_ref=events_intro_to_event_generation */
+	/* start code_ref=events_intro_to_event_generation|code_cap=The alpha and beta updates are managed via private mutation events.*/
 	private static record AlphaChangeMutationEvent(int alpha) implements Event {
 	}
 

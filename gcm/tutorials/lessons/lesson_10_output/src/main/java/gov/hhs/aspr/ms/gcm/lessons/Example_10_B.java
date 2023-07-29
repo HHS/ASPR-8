@@ -92,7 +92,7 @@ public final class Example_10_B {
 
 	}
 
-	/* start code_ref=output_example_10_B */
+	/* start code_ref=output_example_10_B|code_cap=The experiment is now involved in the output process.  A new output consumer is used that has access to scenario level information.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

@@ -18,7 +18,7 @@ import net.jcip.annotations.ThreadSafe;
  * 
  *
  */
-/* start code_ref=plugin_data_interface */
+/* start code_ref=plugin_data_interface|code_cap=The PluginData interface indicates that its implementors are immutable.  Plugin data objects are shared between all simulation instances and thus must be thread safe.  It introduces a single method used to copy plugin datas during the experiment process.*/
 @ThreadSafe
 public interface PluginData {
 	/**

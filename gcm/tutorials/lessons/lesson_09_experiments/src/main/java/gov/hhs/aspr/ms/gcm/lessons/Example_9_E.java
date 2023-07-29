@@ -92,7 +92,7 @@ public final class Example_9_E {
 
 	}
 
-	/* start code_ref=experiements_example_9_E */
+	/* start code_ref=experiements_example_9_E|code_cap=Executing the 12 scenarios of the previous experiment with four threads.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

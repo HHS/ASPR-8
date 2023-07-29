@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
 
-/* start code_ref=output_consumer_D */
+/* start code_ref=output_consumer_D|code_cap=Output consumer D demonstrates that the meta data collected from the dimensions is available from the experiment context. Thus output can be associated with the scenario's meta data.*/
 public class OutputConsumer_D implements Consumer<ExperimentContext> {
 
 	@Override

@@ -1,4 +1,4 @@
-/*start code_ref=hello_world_short*/
+/*start code_ref=hello_world_short|code_cap=Building and executing an empty simulation.*/
 package gov.hhs.aspr.ms.gcm.lessons;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
@@ -11,7 +11,10 @@ public final class Example_1 {
 	/* end */
 
 	public static void alternateMain(String[] args) {
-		/* start code_ref=hello_world_long */
+		/*
+		 * start code_ref=hello_world_long|code_cap=Building and executing an empty
+		 * simulation broken out into discrete commands.
+		 */
 		Simulation.Builder builder = Simulation.builder();
 		Simulation simulation = builder.build();
 		simulation.execute();

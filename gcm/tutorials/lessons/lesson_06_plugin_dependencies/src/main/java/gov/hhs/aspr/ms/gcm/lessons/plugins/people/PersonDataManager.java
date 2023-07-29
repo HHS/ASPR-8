@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 
-/* start code_ref=plugin_dependencies_defining_a_person_data_manager*/
+/* start code_ref=plugin_dependencies_defining_a_person_data_manager|code_cap=The PersonDataManager manages people by adding people, removing people and releasing  person removal events.*/
 public final class PersonDataManager extends DataManager {
 
 	private int masterPersonId;

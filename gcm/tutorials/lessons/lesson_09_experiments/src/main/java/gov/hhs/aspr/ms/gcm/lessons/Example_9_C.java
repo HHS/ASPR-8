@@ -13,7 +13,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
-/* start code_ref=experiments_example_steamlined_dimension */
+/* start code_ref=experiments_example_steamlined_dimension|code_cap=Example 9 C improves on the creation of the R0 dimension.*/
 public final class Example_9_C {
 
 	private Example_9_C() {
@@ -61,7 +61,7 @@ public final class Example_9_C {
 	}
 	/* end */
 
-	/* start code_ref=experiements_example_9_ C */
+	/* start code_ref=experiments_example_9_C|code_cap=Execution of the experiment is cleaner.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

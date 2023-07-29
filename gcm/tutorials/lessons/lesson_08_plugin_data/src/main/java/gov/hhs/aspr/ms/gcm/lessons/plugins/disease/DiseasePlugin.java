@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.disease;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
-/* start code_ref=plugin_data_plugin */
+/* start code_ref=plugin_data_plugin|code_cap=The DiseasePlugin class is a static class for creating the disease plugin.*/
 public final class DiseasePlugin {
 
 	private DiseasePlugin() {

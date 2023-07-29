@@ -4,7 +4,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-/* start code_ref=events_alpha_change_event */
+/* start code_ref=events_alpha_change_event|code_cap=An event to notify that the alpha property has been updated. */
 public final class AlphaChangeEvent implements Event {
 
 	private final int previousAlpha;

@@ -58,7 +58,7 @@ public final class Example_9_D {
 
 	}
 
-	/* start code_ref=experiements_policy_dimension */
+	/* start code_ref=experiements_policy_dimension|code_cap=A dimension representing school related policies is added.  Note that this dimension has four levels and covers two policies.*/
 	private static Dimension getPolicyDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -92,7 +92,7 @@ public final class Example_9_D {
 	}
 	/* end */
 
-	/* start code_ref=experiements_example_9_D */
+	/* start code_ref=experiements_example_9_D|code_cap=The new policy dimension is added to the experiment with four levels. The R0 dimension was reduced to three levels.  Thus the experiment will run twelve scenarios.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

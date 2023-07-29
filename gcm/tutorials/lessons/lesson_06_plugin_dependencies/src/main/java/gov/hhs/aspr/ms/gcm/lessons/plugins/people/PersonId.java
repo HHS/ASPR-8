@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.people;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-/* start code_ref=plugin_dependencies_defining_a_person_id */
+/* start code_ref=plugin_dependencies_defining_a_person_id|code_cap=The PersonId class defines people and wraps an int value.*/
 public final class PersonId implements Comparable<PersonId> {
 
 	private final int id;

@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.family;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-/* start code_ref=plugin_dependencies_defining_a_family_id */
+/* start code_ref=plugin_dependencies_defining_a_family_id|code_cap=The family id, like the person id, simply wraps an int.*/
 public final class FamilyId implements Comparable<FamilyId> {
 
 	private final int id;
