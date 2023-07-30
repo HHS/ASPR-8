@@ -22,7 +22,7 @@ import util.wrappers.MutableInteger;
 
 public class FamilyVaccineReport {
 
-	/* start code_ref=reports_plugin_family_vaccine_report_enums */
+	/* start code_ref=reports_plugin_family_vaccine_report_enums|code_cap=The family vaccine report defines two enums for the vaccination status of families and individuals. */
 	private static enum FamilyVaccineStatus {
 		NONE("unvacinated_families"), //
 		PARTIAL("partially_vaccinated_families"), //
@@ -47,7 +47,7 @@ public class FamilyVaccineReport {
 	}
 	/* end */
 
-	/* start code_ref=reports_plugin_family_vaccine_report_fields */
+	/* start code_ref=reports_plugin_family_vaccine_report_fields|code_cap=The family vaccine report collects summary data as events unfold and requires a few private data structures to record these events. */
 	private final ReportLabel reportLabel;
 
 	private ReportHeader reportHeader;
@@ -67,7 +67,7 @@ public class FamilyVaccineReport {
 	private final Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 	/* end */
 
-	/* start code_ref=reports_plugin_family_vaccine_report_constructor */
+	/* start code_ref=reports_plugin_family_vaccine_report_constructor|code_cap=The report initializes its data structures.*/
 	public FamilyVaccineReport(final ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
 
@@ -83,7 +83,7 @@ public class FamilyVaccineReport {
 	}
 	/* end */
 
-	/* start code_ref=reports_plugin_family_vaccine_report_handling_events */
+	/* start code_ref=reports_plugin_family_vaccine_report_handling_events|code_cap=The report will need to have handlers for each of the subscribed events. */
 	private void handleFamilyAdditionEvent(final ReportContext reportContext,
 			final FamilyAdditionEvent familyAdditionEvent) {
 		refreshFamilyStatus(familyAdditionEvent.getFamilyId());
@@ -121,7 +121,7 @@ public class FamilyVaccineReport {
 	}
 	/* end */
 
-	/* start code_ref=reports_plugin_family_vaccine_report_init_subscriptions */
+	/* start code_ref=reports_plugin_family_vaccine_report_init_subscriptions|code_cap=The report must subscribe to the events that are pertinent to reporting individual and family vaccination status.*/
 	public void init(final ReportContext reportContext) {
 		this.reportContext = reportContext;
 		/*
@@ -138,7 +138,7 @@ public class FamilyVaccineReport {
 		 * report, so we will need to build up out status maps
 		 */
 
-		/* start code_ref=reports_plugin_family_vaccine_report_init_setup */
+		/* start code_ref=reports_plugin_family_vaccine_report_init_setup|code_cap=The local data structures are initialized from the current vaccine states. */
 		familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
 		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
 		PersonDataManager personDataManager = reportContext.getDataManager(PersonDataManager.class);
@@ -153,7 +153,7 @@ public class FamilyVaccineReport {
 		/* end */
 
 		// determine the family vaccine status for every family
-		/* start code_ref=reports_plugin_family_vaccine_report_init_family_status */
+		/* start code_ref=reports_plugin_family_vaccine_report_init_family_status|code_cap=Determining vaccine status for each family.*/
 		for (final FamilyId familyId : familyDataManager.getFamilyIds()) {
 
 			final int familySize = familyDataManager.getFamilySize(familyId);
@@ -182,7 +182,7 @@ public class FamilyVaccineReport {
 
 		// ensure that any person not assigned to a family is still counted
 
-		/* start code_ref=reports_plugin_family_vaccine_report_init_person_status */
+		/* start code_ref=reports_plugin_family_vaccine_report_init_person_status|code_cap=Capturing individuals who have no family association. */
 		for (final PersonId personId : personDataManager.getPeople()) {
 			if (familyDataManager.getFamilyId(personId).isEmpty()) {
 
@@ -198,13 +198,13 @@ public class FamilyVaccineReport {
 		}
 		/* end */
 
-		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output */
+		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output|code_cap=The initial state of the report is released as a single report item.*/
 		releaseReportItem();
 		/* end */
 	}
 
 	/*
-	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_family_status
+	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_family_status|code_cap=Events that effect the status of a family are processed centrally.
 	 */
 	private void refreshFamilyStatus(final FamilyId familyId) {
 
@@ -240,7 +240,7 @@ public class FamilyVaccineReport {
 	/* end */
 
 	/*
-	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status
+	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status|code_cap=Events that effect the status of an individual are processed centrally.
 	 */
 	private void refreshIndividualStatus(final PersonId personId) {
 		IndividualVaccineStatus newStatus;
@@ -266,7 +266,7 @@ public class FamilyVaccineReport {
 	/* end */
 
 	/*
-	 * start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item
+	 * start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item|code_cap=Each time a family or individual have a relevant change a report item is released.
 	 */
 	private void releaseReportItem() {
 		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel)

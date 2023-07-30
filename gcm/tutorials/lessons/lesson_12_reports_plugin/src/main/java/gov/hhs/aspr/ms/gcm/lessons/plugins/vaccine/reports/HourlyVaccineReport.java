@@ -23,7 +23,7 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {
-	/* start code_ref=reports_plugin_hourly_vaccine_constructor */
+	/* start code_ref=reports_plugin_hourly_vaccine_constructor|code_cap=The hourly vaccine report covers the same content as the family vaccine report. Rather than report events as they happen, it instead periodically summarizes these events.*/
 	public HourlyVaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		super(reportLabel, reportPeriod);
 
@@ -124,12 +124,12 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 	}
 
-	/* start code_ref=reports_plugin_hourly_vaccine_initialization */
+	/* start code_ref=reports_plugin_hourly_vaccine_initialization|code_cap=The same subscriptions are created as before.*/
 	protected void prepare(ReportContext reportContext) {
 
 		/*
 		 * Subscribe to all the relevant events
-		 */
+		 */		
 
 		reportContext.subscribe(VaccinationEvent.class, this::handleVaccinationEvent);
 		reportContext.subscribe(FamilyAdditionEvent.class, this::handleFamilyAdditionEvent);
@@ -206,7 +206,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	private ReportHeader reportHeader;
 
 	@Override
-	/* start code_ref=reports_plugin_hourly_vaccine_flush */
+	/* start code_ref=reports_plugin_hourly_vaccine_flush|code_cap=Once an hour the report releases a report item that summarizes the family and individual vaccine status. */
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder builder = ReportItem.builder()//
 				.setReportLabel(getReportLabel())//

@@ -36,7 +36,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 	}
 
 	@Override
-	/* start code_ref=reports_plugin_stateless_vaccine_flush */
+	/* start code_ref=reports_plugin_stateless_vaccine_flush|code_cap= The stateless vaccine report does not process any events. Instead, it periodically derives the report item by polling the relevant data managers.*/
 	protected void flush(ReportContext reportContext) {
 
 		FamilyDataManager familyDataManager = reportContext.getDataManager(FamilyDataManager.class);

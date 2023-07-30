@@ -27,7 +27,7 @@ public final class Example_12 {
 	private Example_12() {
 	}
 
-	/* start code_ref=reports_plugin_family_dimension */
+	/* start code_ref=reports_plugin_family_dimension|code_cap=The family dimension set the maximum family size to four values.*/
 	private static Dimension getFamilySizeDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -58,7 +58,7 @@ public final class Example_12 {
 	}
 	/* end */
 
-	/* start code_ref=reports_plugin_example_12_plugins */
+	/* start code_ref=reports_plugin_example_12_plugins|code_cap= Initialization of the various plugins. */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -91,7 +91,7 @@ public final class Example_12 {
 
 		/* end */
 
-		/* start code_ref=reports_plugin_nio */
+		/* start code_ref=reports_plugin_nio|code_cap=The three reports in this experiment each produce report items and release them as output.  The NIOReportItemHandler is initialized here by indicating the file associated with each report.  */
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
 				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
 				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
@@ -99,7 +99,7 @@ public final class Example_12 {
 				.addExperimentReport(outputDirectory.resolve("experiment_report.xls")).build();
 		/* end */
 
-		/* start code_ref=reports_plugin_example_12_execution */
+		/* start code_ref=reports_plugin_example_12_execution|code_cap=The experiment is executed using the NIOReportItemHandler as an experiment output consumer.*/
 		Dimension familySizeDimension = getFamilySizeDimension();
 
 		Experiment.builder()//

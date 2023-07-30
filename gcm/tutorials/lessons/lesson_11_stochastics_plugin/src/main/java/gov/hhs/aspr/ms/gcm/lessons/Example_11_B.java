@@ -67,7 +67,7 @@ public final class Example_11_B {
 
 	}
 
-	/* start code_ref=stochastics_plugin_stochastics_dimension */
+	/* start code_ref=stochastics_plugin_stochastics_dimension|code_cap=The stochastics dimension introduces three random seeds that will be used in creating the scenarios.  Note that seeds are generated outside of the levels within the dimension. */
 	private static Dimension getStochasticsDimension(long seed) {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -102,7 +102,7 @@ public final class Example_11_B {
 
 	/* end */
 
-	/* start code_ref=stochastics_plugin_example_11_D */
+	/* start code_ref=stochastics_plugin_example_11_B|code_cap=The experiment uses the stochastics dimension, resulting in twelve scenarios.*/
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();

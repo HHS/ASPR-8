@@ -37,7 +37,7 @@ public final class Example_11_A {
 				.build();
 	}
 
-	/* start code_ref=stochastics_plugin_policy_dimension */
+	/* start code_ref=stochastics_plugin_policy_dimension|code_cap=The policy dimension has four levels for the infection rates that trigger school closure.*/
 	private static Dimension getPolicyDimension() {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -67,7 +67,7 @@ public final class Example_11_A {
 	}
 	/* end */
 
-	/* start code_ref=stochastics_plugin_example_11_A */
+	/* start code_ref=stochastics_plugin_example_11_A|code_cap=Example 11 introduces the stochastics plugin and executes four scenarios.  The random seed for each scenario will be identical. */
 	public static void main(String[] args) {
 
 		DiseasePluginData diseasePluginData = getDiseasePluginData();
