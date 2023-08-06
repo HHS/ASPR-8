@@ -23,7 +23,7 @@ public class IT_PeopleTranslator {
     @Test
     @UnitTestForCoverage
     public void testPeopleTranslator() {
-        String fileName = "pluginData.json";
+        String fileName = "peoplePluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 

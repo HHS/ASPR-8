@@ -38,7 +38,7 @@ public class IT_GroupsTranslator {
     @Test
     @UnitTestForCoverage
     public void testGroupsTranslator() {
-        String fileName = "pluginData.json";
+        String fileName = "groupsPluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 

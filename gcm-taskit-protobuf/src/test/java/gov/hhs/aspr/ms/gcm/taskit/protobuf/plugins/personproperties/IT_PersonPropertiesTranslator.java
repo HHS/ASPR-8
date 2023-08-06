@@ -40,7 +40,7 @@ public class IT_PersonPropertiesTranslator {
     @Test
     @UnitTestForCoverage
     public void testPersonPropertiesTranslator() {
-        String fileName = "pluginData.json";
+        String fileName = "personPropertiesPluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 
