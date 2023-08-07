@@ -30,7 +30,7 @@ public class IT_GlobalPropertiesTranslator {
     @Test
     @UnitTestForCoverage
     public void testGlobalPropertiesPluginDataIntegration() {
-        String fileName = "pluginData.json";
+        String fileName = "globalPropertiesPluginData.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 

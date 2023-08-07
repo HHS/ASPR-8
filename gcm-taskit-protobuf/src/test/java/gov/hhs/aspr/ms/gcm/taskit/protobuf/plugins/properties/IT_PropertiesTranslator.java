@@ -20,7 +20,7 @@ public class IT_PropertiesTranslator {
     @Test
     @UnitTestForCoverage
     public void testPropertyValueMapTranslator() {
-        String fileName = "data.json";
+        String fileName = "propertyDefinition.json";
 
         TestResourceHelper.createTestOutputFile(filePath, fileName);
 

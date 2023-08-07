@@ -22,7 +22,7 @@ public class IT_PartitionsTranslator {
         @Test
         @UnitTestForCoverage
         public void testGroupsTranslator() {
-                String fileName = "pluginData.json";
+                String fileName = "partitionsPluginData.json";
 
                 TestResourceHelper.createTestOutputFile(filePath, fileName);
 

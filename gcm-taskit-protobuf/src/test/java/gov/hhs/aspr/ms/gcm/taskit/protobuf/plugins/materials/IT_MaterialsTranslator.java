@@ -36,7 +36,7 @@ public class IT_MaterialsTranslator {
 	@Test
 	@UnitTestForCoverage
 	public void testMaterialsTranslator() {
-		String fileName = "pluginData.json";
+		String fileName = "materialsPluginData.json";
 
 		TestResourceHelper.createTestOutputFile(filePath, fileName);
 
