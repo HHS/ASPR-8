@@ -44,7 +44,7 @@ public class IT_ResourcesTranslator {
         @Test
         @UnitTestForCoverage
         public void testResourcesTranslator() {
-                String fileName = "pluginData.json";
+                String fileName = "resourcesPluginData.json";
 
                 TestResourceHelper.createTestOutputFile(filePath, fileName);
 

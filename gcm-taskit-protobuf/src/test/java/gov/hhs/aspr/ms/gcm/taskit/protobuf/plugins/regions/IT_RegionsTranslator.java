@@ -41,7 +41,7 @@ public class IT_RegionsTranslator {
         @Test
         @UnitTestForCoverage
         public void testRegionsTranslator() {
-                String fileName = "pluginData.json";
+                String fileName = "regionsPluginData.json";
 
                 TestResourceHelper.createTestOutputFile(filePath, fileName);
 
