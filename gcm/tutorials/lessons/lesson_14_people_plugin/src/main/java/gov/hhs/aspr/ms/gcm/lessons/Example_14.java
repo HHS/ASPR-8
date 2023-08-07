@@ -32,7 +32,7 @@ public final class Example_14 {
 	private Example_14() {
 	}
 
-	/* start code_ref= people_plugin_stochastics_dimension */
+	/* start code_ref= people_plugin_stochastics_dimension|code_cap=The stochastics dimension contains levels for each replication value. Note that the generation of the random seed values occurs outside of the lambda code.*/
 	private static Dimension getStochasticsDimension(int replicationCount, long seed) {
 		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
 
@@ -66,7 +66,7 @@ public final class Example_14 {
 	}
 	/* end */
 
-	/* start code_ref= people_plugin_example_14_init */
+	/* start code_ref= people_plugin_example_14_init|code_cap=The population trace and vaccination reports are associated with corresponding file names via the NIO report item handler.*/
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -90,7 +90,7 @@ public final class Example_14 {
 						.build();
 
 		/* end */
-		/* start code_ref= people_plugin_example_14_adding_plugins */
+		/* start code_ref= people_plugin_example_14_adding_plugins|code_cap=The various plugins are initialized with data and added to the experiment.*/
 
 		// create the people plugin with an initial population of ten people,
 		// numbered 1, 3, 5,...,19

@@ -20,7 +20,7 @@ import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
 public final class VaccinationDataManager extends DataManager {
-	/* start code_ref= people_plugin_vaccine_counts */
+	/* start code_ref= people_plugin_vaccine_counts|code_cap=The vaccination data manager uses a simple map from person id to a counter to track the number of vaccinations for each person.*/
 	private Map<PersonId, MutableInteger> vaccinationCounts = new LinkedHashMap<>();
 	/* end */
 	private PeopleDataManager personDataManager;
@@ -28,7 +28,7 @@ public final class VaccinationDataManager extends DataManager {
 	private DataManagerContext dataManagerContext;
 
 	@Override
-	/* start code_ref= people_plugin_vaccination_data_manager */
+	/* start code_ref= people_plugin_vaccination_data_manager|code_cap=The vaccination data manager initializes by recording initial vaccine counts for each person and subscribing to person addition, person removal and person vaccination events.*/
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
@@ -39,11 +39,10 @@ public final class VaccinationDataManager extends DataManager {
 			vaccinationCounts.put(personId, new MutableInteger());
 		}
 		dataManagerContext.subscribe(VaccinationMutationEvent.class, this::handleVaccinationMutationEvent);
-
 	}
 	/* end */
 
-	/* start code_ref= people_plugin_vaccination_handling_person_removal */
+	/* start code_ref= people_plugin_vaccination_handling_person_removal|code_cap= The vaccination manager*/
 
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
 			PersonRemovalEvent personRemovalEvent) {
