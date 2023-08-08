@@ -23,7 +23,7 @@ public class VaccineEducator {
 	private RandomGenerator randomGenerator;
 	private ActorContext actorContext;
 
-	/* start code_ref= person_properties_vaccine_educator_educate_person */
+	/* start code_ref= person_properties_vaccine_educator_educate_person|code_cap= After updating the number of educational attempts for a person, the vaccine educator succeeds in educating the person to stop refusing vaccination based on the global property, EDUCATION_SUCCESS_RATE.  */
 	private void educatePerson(PersonId personId) {
 		int educationAttempts = personPropertiesDataManager.getPersonPropertyValue(personId,
 				PersonProperty.EDUCATION_ATTEMPTS);
@@ -38,7 +38,7 @@ public class VaccineEducator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccine_educator_handle_new_person */
+	/* start code_ref= person_properties_vaccine_educator_handle_new_person|code_cap= The planning of an educational attempt on a person is scheduled to a random time in the future based on the global property, EDUCATION_ATTEMPT_INTERVAL. */
 	private void planEducation(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * educationAttemptInterval;
 		Consumer<ActorContext> plan = (c) -> educatePerson(personId);
@@ -57,7 +57,7 @@ public class VaccineEducator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccine_educator_init */
+	/* start code_ref= person_properties_vaccine_educator_init|code_cap=The vaccine educator initializes by planning the education for each person who refuses vaccination.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 

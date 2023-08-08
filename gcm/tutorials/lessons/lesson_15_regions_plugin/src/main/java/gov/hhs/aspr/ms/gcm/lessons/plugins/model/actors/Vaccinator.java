@@ -21,7 +21,7 @@ public final class Vaccinator {
 	private VaccinationDataManager vaccinationDataManager;
 	private RandomGenerator randomGenerator;
 
-	/* start code_ref= regions_plugin_vaccinator_alter_priority_property */
+	/* start code_ref= regions_plugin_vaccinator_alter_priority_property|code_cap= Toggling the vaccine priority for a randomly selected region.*/
 	private void alterVaccinePriorityPropertyOnRandomRegion(ActorContext actorContext) {
 		List<RegionId> regionids = new ArrayList<>(regionsDataManager.getRegionIds());
 		if (regionids.isEmpty()) {
@@ -33,7 +33,7 @@ public final class Vaccinator {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_vaccinator_priority_property */
+	/* start code_ref= regions_plugin_vaccinator_priority_property|code_cap= On day 50, the vaccinator defines the Boolean VACCINE PRIORITY property and assigns randomized values to the existing regions. It then plans for updates to 50 regional vaccine priority property values over 50 days.*/
 	private void addVaccinePriorityPropertyToRegions(ActorContext actorContext) {
 
 		PropertyDefinition propertyDefinition = //
@@ -106,7 +106,7 @@ public final class Vaccinator {
 		}
 	}
 
-	/* start code_ref= regions_plugin_vaccinator_init */
+	/* start code_ref= regions_plugin_vaccinator_init|code_cap=The vaccinator initializes by planning the vaccination of 5000 people carried out over approximately 50 days. */
 	public void init(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		randomGenerator = stochasticsDataManager.getRandomGenerator();

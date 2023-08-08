@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData.Builde
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class RegionCreator {
-	/* start code_ref= regions_plugin_region_creator_add_region */
+	/* start code_ref= regions_plugin_region_creator_add_region|code_cap=When the region creator actor adds a new region, it assigns a random lat-lon corrdinate and possibly assigns a vaccine priority status to the region. */
 	private void addRegion(ActorContext actorContext) {
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
@@ -39,7 +39,7 @@ public class RegionCreator {
 	}
 
 	/* end */
-	/* start code_ref= regions_plugin_region_creator_init */
+	/* start code_ref= regions_plugin_region_creator_init|code_cap=The region creator actor plans the addition of five new regions. */
 	public void init(ActorContext actorContext) {
 		for (int i = 0; i < 5; i++) {
 			double planTime = 20 * i + 1;

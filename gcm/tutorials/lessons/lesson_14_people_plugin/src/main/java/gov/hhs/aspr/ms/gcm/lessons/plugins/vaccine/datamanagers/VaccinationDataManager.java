@@ -42,7 +42,7 @@ public final class VaccinationDataManager extends DataManager {
 	}
 	/* end */
 
-	/* start code_ref= people_plugin_vaccination_handling_person_removal|code_cap= The vaccination manager*/
+	/* start code_ref= people_plugin_vaccination_handling_person_removal|code_cap= The vaccination manager removes people from its count tracking as needed.  Newly added people may enter into the simulation with some vaccinations.*/
 
 	private void handlePersonRemovalEvent(DataManagerContext dataManagerContext,
 			PersonRemovalEvent personRemovalEvent) {
