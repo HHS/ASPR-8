@@ -51,11 +51,11 @@ public final class Example_18 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	/* start code_ref=resources_getResourcesPlugin */
+	/* start code_ref=resources_getResourcesPlugin|code_cap=The resource plugin is initialized with by defining the two resource ids at time zero with time tracking turned on. The person resource report is set to report at the end of the simulation.*/
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-		for (ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId, 0.0, true);
+		for (ResourceId resourceId : Resource.values()) {
+			builder.addResource(resourceId, 0.0, true);
 		}
 		ResourcesPluginData resourcesPluginData = builder.build();
 
@@ -107,7 +107,7 @@ public final class Example_18 {
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
-	/* start code_ref=resources_getPersonPropertiesPlugin */
+	/* start code_ref=resources_getPersonPropertiesPlugin|code_cap=The person properties plugin is initialized with several properties.*/
 	private Plugin getPersonPropertiesPlugin() {
 
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -137,7 +137,7 @@ public final class Example_18 {
 	}
 	/* end */
 
-	/* start code_ref=resources_getGlobalPropertiesPlugin */
+	/* start code_ref=resources_getGlobalPropertiesPlugin|code_cap=The global properties plugin is initialized with several properties.*/
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -271,7 +271,7 @@ public final class Example_18 {
 				"susceptible_population_proportion", values);
 	}
 
-	/* start code_ref=resources_execute */
+	/* start code_ref=resources_execute|code_cap=The various plugins are gathered from their initial data, dimensions are added and the experiment is executed over 864 scenarios using 8 threads.*/
 	private void execute() {
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
@@ -304,7 +304,7 @@ public final class Example_18 {
 	}
 	/* end */
 
-	/* start code_ref=resources_main */
+	/* start code_ref=resources_main|code_cap=Executing example 18 with an output directory.*/
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");

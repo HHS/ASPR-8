@@ -70,7 +70,7 @@ public final class Example_16 {
 		return RegionsPlugin.builder().setRegionsPluginData(regionsPluginData).getRegionsPlugin();
 	}
 
-	/* start code_ref= person_properties_get_person_properties_plugin */
+	/* start code_ref= person_properties_get_person_properties_plugin|code_cap= The person properties plugin is built with the four person properties needed to model each person.  The person property report is set to report only at the end of the simulation.*/
 	private Plugin getPersonPropertiesPlugin() {
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
@@ -165,7 +165,7 @@ public final class Example_16 {
 		return getGlobalPropertyDimension(GlobalProperty.EDUCATION_SUCCESS_RATE, "education_success_rate", values);
 	}
 
-	/* start code_ref= person_properties_get_global_properties_plugin */
+	/* start code_ref= person_properties_get_global_properties_plugin|code_cap=The global properties plugin is initialized with several properties. */
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -205,7 +205,7 @@ public final class Example_16 {
 	}
 
 	/* end */
-	/* start code_ref= person_properties_example_16_execute */
+	/* start code_ref= person_properties_example_16_execute|The various plugins are gathered from their initial data. */
 	private void execute() {
 
 		/*
@@ -246,7 +246,7 @@ public final class Example_16 {
 		 * Assemble and execute the experiment
 		 */
 
-		/* start code_ref= person_properties_execute_experiment */
+		/* start code_ref= person_properties_execute_experiment|code_cap=The experiment executes 810 scenarios on 8 threads.*/
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
 				.setThreadCount(8)//
@@ -274,7 +274,7 @@ public final class Example_16 {
 		/* end */
 	}
 
-	/* start code_ref= person_properties_example_16_main */
+	/* start code_ref= person_properties_example_16_main|code_cap=Executing example 16 with an output directory. */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");

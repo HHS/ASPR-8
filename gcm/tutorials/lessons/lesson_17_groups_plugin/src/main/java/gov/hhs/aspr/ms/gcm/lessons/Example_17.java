@@ -68,7 +68,7 @@ public final class Example_17 {
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
-	/* start code_ref= groups_plugin_example_17_groups_plugin */
+	/* start code_ref= groups_plugin_example_17_groups_plugin|code_cap=The groups plugin includes a tele-work property for work places and open status property for schools.*/
 	private Plugin getGroupsPlugin() {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (GroupType groupType : GroupType.values()) {
@@ -112,7 +112,9 @@ public final class Example_17 {
 		return StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 	}
 
-	/* start code_ref= groups_plugin_example_17_person_properties */
+	/*
+	 * start code_ref= groups_plugin_example_17_person_properties|code_cap=The person properties plugin is initialized with several properties.
+	 */
 	private Plugin getPersonPropertiesPlugin() {
 
 		PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -150,7 +152,8 @@ public final class Example_17 {
 	}
 	/* end */
 
-	/* start code_ref= groups_plugin_example_17_global_properties */
+	/* start code_ref= groups_plugin_example_17_global_properties|code_cap= The
+	 * global properties plugin is initialized with several properties*/
 	private Plugin getGlobalPropertiesPlugin() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -226,7 +229,11 @@ public final class Example_17 {
 		return dimensionBuilder.build();
 	}
 
-	/* start code_ref= groups_plugin_example_17_execute */
+	/*
+	 * start code_ref= groups_plugin_example_17_execute|code_cap=The various plugins
+	 * are gathered from their initial data, dimensions are added and the experiment
+	 * is executed over 36 scenarios using 8 threads.
+	 */
 	private void execute() {
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
@@ -254,7 +261,10 @@ public final class Example_17 {
 	}
 	/* end */
 
-	/* start code_ref= groups_plugin_example_17_init */
+	/*
+	 * start code_ref= groups_plugin_example_17_init|code_cap=Executing example 17
+	 * with an output directory.
+	 */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");

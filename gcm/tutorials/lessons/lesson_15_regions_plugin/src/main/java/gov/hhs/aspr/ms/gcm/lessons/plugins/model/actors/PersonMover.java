@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManag
 
 public class PersonMover {
 
-	/* start code_ref= regions_plugin_person_mover_move_person */
+	/* start code_ref= regions_plugin_person_mover_move_person|code_cap= The person mover actor attempts to move a randomly selected person from their current region to a new region. */
 	private void moveRandomPerson(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -42,7 +42,7 @@ public class PersonMover {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_person_mover_init */
+	/* start code_ref= regions_plugin_person_mover_init|code_cap=The person mover actor plans for 1000 movements of people over time.*/
 	public void init(ActorContext actorContext) {
 		for (int i = 0; i < 1000; i++) {
 			double planTime = ((double) i) * 0.1;

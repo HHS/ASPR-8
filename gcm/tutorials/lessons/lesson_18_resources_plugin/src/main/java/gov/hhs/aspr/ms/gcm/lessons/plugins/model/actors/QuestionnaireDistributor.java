@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
 public class QuestionnaireDistributor {
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
-	/* start code_ref=resources_QuestionnaireDistributor_init */
+	/* start code_ref=resources_QuestionnaireDistributor_init|code_cap=The questionnaire distributor initializes by subscribing to anti-viral and hospital bed person resource updates.*/
 	public void init(ActorContext actorContext) {
 		ResourcesDataManager resourcesDataManager = actorContext.getDataManager(ResourcesDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -22,13 +22,13 @@ public class QuestionnaireDistributor {
 		actorContext.subscribe(eventFilter, this::handleAntiViralDistribution);
 
 		eventFilter = resourcesDataManager.getEventFilterForPersonResourceUpdateEvent(Resource.HOSPITAL_BED);
-		actorContext.subscribe(eventFilter, this::handleAntiHospitalBedDistribution);
+		actorContext.subscribe(eventFilter, this::handleHospitalBedDistribution);
 
 	}
 	/* end */
 
 	/*
-	 * start code_ref=resources_QuestionnaireDistributor_handleAntiViralDistribution
+	 * start code_ref=resources_QuestionnaireDistributor_handleAntiViralDistribution|code_cap=The questionnaire distributor distributes a questionnaire to each person who ends their anti-viral treatment and is not also hospitalized. 
 	 */
 	private void handleAntiViralDistribution(ActorContext actorContext,
 			PersonResourceUpdateEvent personResourceUpdateEvent) {
@@ -45,9 +45,9 @@ public class QuestionnaireDistributor {
 	/* end */
 
 	/*
-	 * start code_ref=resources_QuestionnaireDistributor_handleAntiHospitalBedDistribution
+	 * start code_ref=resources_QuestionnaireDistributor_handleAntiHospitalBedDistribution|code_cap=The questionnaire distributor distributes a questionnaire to each person that leaves the hospital.
 	 */
-	private void handleAntiHospitalBedDistribution(ActorContext actorContext,
+	private void handleHospitalBedDistribution(ActorContext actorContext,
 			PersonResourceUpdateEvent personResourceUpdateEvent) {
 		PersonId personId = personResourceUpdateEvent.personId();
 		boolean hasBed = personResourceUpdateEvent.currentResourceLevel() > 0;

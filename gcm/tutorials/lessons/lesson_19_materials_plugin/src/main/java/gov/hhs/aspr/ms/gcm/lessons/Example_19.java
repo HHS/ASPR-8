@@ -74,7 +74,7 @@ public final class Example_19 {
 	private Example_19(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 	}
-	/* start code_ref=materials_plugin_example_19_execute */
+	/* start code_ref=materials_plugin_example_19_execute|code_cap=The various plugins are gathered from their initial data, dimensions are added and the experiment is executed over 81 scenarios using 8 threads. */
 
 	private void execute() {
 
@@ -110,7 +110,7 @@ public final class Example_19 {
 		return getGlobalPropertyDimension(GlobalProperty.COMMUNITY_CONTACT_RATE, "community_contact_rate", values);
 	}
 
-	/* start code_ref=materials_plugin_example_19_global_properties_plugin */
+	/* start code_ref=materials_plugin_example_19_global_properties_plugin|code_cap=The global properties plugin is initialized with several properties.*/
 	private Plugin getGlobalPropertiesPlugin() {
 		final GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -200,7 +200,7 @@ public final class Example_19 {
 		return getGlobalPropertyDimension(GlobalProperty.INITIAL_INFECTIONS, "initial_infections", values);
 	}
 
-	/* start code_ref=materials_plugin_example_19_materials_plugin */
+	/* start code_ref=materials_plugin_example_19_materials_plugin|code_cap= The materials plugin establishes the materials producer ids and the material types.*/
 	private Plugin getMaterialsPlugin() {
 		final MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
 		for (final MaterialsProducer materialsProducer : MaterialsProducer.values()) {
@@ -219,7 +219,7 @@ public final class Example_19 {
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
-	/* start code_ref=materials_plugin_example_19_person_properties_plugin */
+	/* start code_ref=materials_plugin_example_19_person_properties_plugin|code_cap=The person properties plugin includes person property definitions and the data for the person property report. */
 	private Plugin getPersonPropertiesPlugin() {
 
 		final PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
@@ -293,7 +293,7 @@ public final class Example_19 {
 				.build();
 	}
 
-	/* start code_ref=materials_plugin_example_19_resources_plugin */
+	/* start code_ref=materials_plugin_example_19_resources_plugin|code_cap=The resources plugin is created with the single VACCINE resource id.*/
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (final ResourceId resourcId : Resource.values()) {

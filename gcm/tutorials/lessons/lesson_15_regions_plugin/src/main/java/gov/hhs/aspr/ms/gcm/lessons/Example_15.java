@@ -47,7 +47,7 @@ public final class Example_15 {
 	private List<Region> initialRegions = new ArrayList<>();
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
 
-	/* start code_ref= regions_plugin_example_15_nio */
+	/* start code_ref= regions_plugin_example_15_nio|code_cap= The region property, region transfer and vaccination reports are mapped to distinct file names. */
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
@@ -60,7 +60,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_getting_people_plugin */
+	/* start code_ref= regions_plugin_example_getting_people_plugin|code_cap=The people plugin is initialized with the starting populaiton. */
 	private Plugin getPeoplePlugin() {
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (PersonId personId : initialPeople) {
@@ -71,7 +71,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_getting_regions_plugin */
+	/* start code_ref= regions_plugin_example_getting_regions_plugin|code_cap=The regions plugin is initialized with the starting regions and people, with each person is assigned to a randomly selected region. The two region-based reports are also initialized and added to the report plugin's data.*/
 	private Plugin getRegionsPlugin() {
 		// create the region plugin with an initial five regions, each region
 		// having 200 people
@@ -119,7 +119,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_15_intialize_people_regions */
+	/* start code_ref= regions_plugin_example_15_intialize_people_regions|code_cap=Lists of initial people and regions are created and will be used to initialize the various plugins. */
 	private void initializePeopleAndRegions() {
 		for (int i = 0; i < 1000; i++) {
 			initialPeople.add(new PersonId(i));
@@ -130,7 +130,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_15_stochastics */
+	/* start code_ref= regions_plugin_example_15_stochastics|code_cap=The stochastics plugin is initialized with a random seed value.  A dimension is added to add new seeds to the resulting scenarios. */
 	private Plugin getStochasticsPlugin() {
 
 		WellState wellState = WellState.builder().setSeed(randomGenerator.nextLong()).build();
@@ -172,7 +172,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_15_execute */
+	/* start code_ref= regions_plugin_example_15_execute|code_cap= The various plugins are gathered from their initial data.*/
 	private void execute() {
 		/*
 		 * Create person ids and region ids that are shared across the plugins
@@ -215,7 +215,7 @@ public final class Example_15 {
 		/*
 		 * Assemble and execute the experiment
 		 */
-		/* start code_ref= regions_plugin_example_15_executing_experiment */
+		/* start code_ref= regions_plugin_example_15_executing_experiment |code_cap=The experiment is run with five scenarios, each using distinct random seed values.*/
 		Experiment.builder()//
 				.addPlugin(modelPlugin)//
 				.addPlugin(regionsPlugin)//
@@ -229,7 +229,7 @@ public final class Example_15 {
 		/* end */
 	}
 
-	/* start code_ref= regions_plugin_example_15_main */
+	/* start code_ref= regions_plugin_example_15_main|code_cap=Executing example 15 with an output directory. */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");

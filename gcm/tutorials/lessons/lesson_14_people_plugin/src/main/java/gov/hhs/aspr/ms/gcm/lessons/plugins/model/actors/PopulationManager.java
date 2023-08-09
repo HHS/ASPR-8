@@ -13,7 +13,7 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManag
 
 public final class PopulationManager {
 
-	/* start code_ref= people_plugin_population_manager */
+	/* start code_ref= people_plugin_population_manager|code_cap= The population manager schedules 100 randomized actions to either add or remove people.*/
 	public void init(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();

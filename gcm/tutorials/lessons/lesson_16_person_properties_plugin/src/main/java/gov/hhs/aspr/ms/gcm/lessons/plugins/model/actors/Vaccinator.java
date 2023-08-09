@@ -25,7 +25,7 @@ public final class Vaccinator {
 	private double vaccineAttemptInterval;
 	private ActorContext actorContext;
 
-	/* start code_ref= person_properties_vaccinator_vaccinate_person */
+	/* start code_ref= person_properties_vaccinator_vaccinate_person|code_cap= With each vaccination attempt, the vaccinator updates the VACCINE_ATTEMPTS person property for the person.  People who refuse vaccination are scheduled for another vaccination attempt. */
 	private void vaccinatePerson(PersonId personId) {
 		int vaccineAttempts = personPropertiesDataManager.getPersonPropertyValue(personId,
 				PersonProperty.VACCINE_ATTEMPTS);
@@ -58,7 +58,7 @@ public final class Vaccinator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccinator_handle_vaccine_acceptance */
+	/* start code_ref= person_properties_vaccinator_handle_vaccine_acceptance|code_cap=When a person stops refusing vaccination, the vaccinator immediately attempts the vaccination of that person. */
 	private void handleVaccineAcceptance(ActorContext actorContext,
 			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		/*
@@ -75,7 +75,7 @@ public final class Vaccinator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccinator_handle_new_person */
+	/* start code_ref= person_properties_vaccinator_plan_vaccination|code_cap= Each unvaccinated person has a planned vaccination based on the VACCINE_ATTEMPT_INTERVAL global property. */
 	private void planVaccination(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
 		Object planKey = personId;
@@ -95,7 +95,7 @@ public final class Vaccinator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccinator_init */
+	/* start code_ref= person_properties_vaccinator_init|code_cap=The vaccinator initializes by planning vaccination attempts for each person who is unvaccinated. It also subscribes to changes in the vaccine refusal property for all people so that when a person stops refusing vaccine, they can be vaccinated immediately.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);

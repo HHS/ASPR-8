@@ -37,7 +37,7 @@ public class TreatmentManager {
 	 * hospital. If the treatment was successful then mark the person as immune.
 	 * Otherwise, mark the person as a hospital death.
 	 */
-	/* start code_ref=resources_treatment_manager_assessHospitalization */
+	/* start code_ref=resources_treatment_manager_assessHospitalization|code_cap= The treatment manager determines whether the hospitalization was a success taking into account whether the person received an antiviral treatment before entering the hospital. If the treatment was successful then the person is marked as immune. Otherwise, the person is marked as a hospital death.*/
 	private void assessHospitalization(PersonId personId) {
 
 		boolean treatedWithAntiViral = personPropertiesDataManager.getPersonPropertyValue(personId,
@@ -63,7 +63,7 @@ public class TreatmentManager {
 	 * as a home death.
 	 */
 
-	/* start code_ref=resources_treatment_manager_hospitalizePerson */
+	/* start code_ref=resources_treatment_manager_hospitalizePerson|code_cap= The treatment manager attempts to find a hospital bed for a person who has not been treated or for whom treatment failed. If no hospital bed is available, the person is set to die in their home.*/
 	private void hospitalizePerson(PersonId personId) {
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 
@@ -89,7 +89,7 @@ public class TreatmentManager {
 	 * Expend the antiviral resource from the person. If the antiviral succeeded,
 	 * then mark the person as immune. Otherwise, hospitalize the person immediately
 	 */
-	/* start code_ref=resources_treatment_manager_assessAntiviralTreatment */
+	/* start code_ref=resources_treatment_manager_assessAntiviralTreatment|code_cap=The treatment manager assesses the success of the anti-viral treatment of a person and expends the medication.  If the treatment was unsuccessful the person is immediately hospitalized. */
 	private void assessAntiviralTreatment(PersonId personId) {
 
 		resourcesDataManager.removeResourceFromPerson(Resource.ANTI_VIRAL_MED, personId, 1L);
@@ -106,7 +106,7 @@ public class TreatmentManager {
 	 * available, then schedule an assessment of its success after the necessary
 	 * waiting period. Otherwise, hospitalize the person immediately.
 	 */
-	/* start code_ref=resources_treatment_manager_treatWithAntiviral */
+	/* start code_ref=resources_treatment_manager_treatWithAntiviral|code_cap= The treatment manager attempts to treat an infected person with anti-viral medication, if it is available. If no dose is available, the person is immediately hospitalized.   */
 	private void treatWithAntiviral(PersonId personId) {
 
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -126,7 +126,7 @@ public class TreatmentManager {
 	}
 	/* end */
 
-	/* start code_ref=resources_treatment_manager_init */
+	/* start code_ref=resources_treatment_manager_init|code_cap=The treatment manager establishes various constants and infects all non-immune people, scheduling them for anti-viral treatment. */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);

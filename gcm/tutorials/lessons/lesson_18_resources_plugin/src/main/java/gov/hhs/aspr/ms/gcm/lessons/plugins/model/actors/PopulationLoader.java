@@ -61,7 +61,7 @@ public class PopulationLoader {
 		return defaultRegionId;
 	}
 
-	/* start code_ref=resources_population_loader_init */
+	/* start code_ref=resources_population_loader_init|code_cap= The population loader initializes the population by assigning to each person a randomly selected region id and immunity status. */
 	public void init(ActorContext actorContext) {
 
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);

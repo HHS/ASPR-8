@@ -73,7 +73,7 @@ public class ContactManager {
 	}
 	/* end */
 
-	/* start code_ref=materials_plugin_contact_manager_infect_person */
+	/* start code_ref=materials_plugin_contact_manager_infect_person|code_cap= When a person is infected, the number of possible infectious contacts is determined and planned.  After the last infectious contact, the person is scheduled to become recovered. */
 	private void infectPerson(final PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
@@ -91,7 +91,7 @@ public class ContactManager {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_contact_manager_init */
+	/* start code_ref=materials_plugin_contact_manager_init|code_cap=The infection manager initializes by infecting the initially infected people in the first day.*/
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 
