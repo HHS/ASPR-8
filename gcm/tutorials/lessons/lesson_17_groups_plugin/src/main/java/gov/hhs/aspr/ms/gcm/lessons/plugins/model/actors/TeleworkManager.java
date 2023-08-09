@@ -23,7 +23,7 @@ public class TeleworkManager {
 	private final double reviewInterval = 7;
 	private ActorContext actorContext;
 
-	/* start code_ref= groups_plugin_telework_manager_init */
+	/* start code_ref= groups_plugin_telework_manager_init|code_cap= The telework manager initializes by scheduling a telework status review for seven days from the start of the simulation.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		scheduleNextReview();
@@ -41,7 +41,7 @@ public class TeleworkManager {
 	}
 
 	/* end */
-	/* start code_ref= groups_plugin_telework_review_status */
+	/* start code_ref= groups_plugin_telework_review_status|code_cap= The telework manager schedules a review every seven days until a threshold of infections is reached.  Once the threshold is achieved, work places are randomly selected to use telework until the end of the simulation.*/
 	private void reviewTeleworkStatus(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();

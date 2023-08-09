@@ -25,7 +25,7 @@ public class SchoolManager {
 	private double closureThreshold;
 	private final double reviewInterval = 7;
 
-	/* start code_ref= groups_plugin_school_manager_init */
+	/* start code_ref= groups_plugin_school_manager_init|code_cap=The school manager initializes by establishing some property constants and planning school status review for seven days after the simulation starts.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -59,7 +59,7 @@ public class SchoolManager {
 
 	/* end */
 
-	/* start code_ref= groups_plugin_school_manager_review_school */
+	/* start code_ref= groups_plugin_school_manager_review_school|code_cap=Each school is review on a weekly basis.  As the fraction of students who are infected increases, the school transitions from OPEN to COHORT to CLOSED.*/
 	private void reviewSchool(GroupId groupId) {
 
 		int infectiousCount = 0;
@@ -100,7 +100,7 @@ public class SchoolManager {
 
 	/* end */
 
-	/* start code_ref= groups_plugin_school_manager_close_schools */
+	/* start code_ref= groups_plugin_school_manager_close_schools|code_cap=When a school is closed, all the students are removed from the school group so that infection can no longer spread via school-based contact. */
 	private void closeSchool(GroupId groupId) {
 		groupsDataManager.setGroupPropertyValue(groupId, GroupProperty.SCHOOL_STATUS, SchoolStatus.CLOSED);
 		List<PersonId> people = groupsDataManager.getPeopleForGroup(groupId);
@@ -110,7 +110,7 @@ public class SchoolManager {
 	}
 	/* end */
 
-	/* start code_ref= groups_plugin_school_manager_split_schools */
+	/* start code_ref= groups_plugin_school_manager_split_schools|code_cap= When a school moves to COHORT status, a new group is added to the simulation and half of the students move to this new group.*/
 	private void splitSchoolIntoCohorts(GroupId groupId) {
 		GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(GroupType.SCHOOL)
 				.build();

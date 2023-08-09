@@ -34,7 +34,7 @@ public class InfectionManager {
 	private int maxInfectiousPeriod;
 	private double infectionInterval;
 
-	/* start code_ref= groups_plugin_infection_manager_init */
+	/* start code_ref= groups_plugin_infection_manager_init|code_cap=The infection manager initializes by infecting the initially infected people in the first day. */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 
@@ -74,7 +74,7 @@ public class InfectionManager {
 	}
 	/* end */
 
-	/* start code_ref= groups_plugin_infection_manager_infect_person */
+	/* start code_ref= groups_plugin_infection_manager_infect_person|code_cap= When a person is infected, the number of possible infectious contacts is determined and planned.  After the last infectious contact, the person is scheduled to become recovered.*/
 	private void infectPerson(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
@@ -89,7 +89,7 @@ public class InfectionManager {
 	}
 	/* end */
 
-	/* start code_ref= groups_plugin_infection_manager_infect_contact */
+	/* start code_ref= groups_plugin_infection_manager_infect_contact|code_cap= The infection manager attempts to infect a susceptible person found in a randomly selected group associated with the currently infected person. */
 	private void infectContact(PersonId personId) {
 		List<GroupId> groupsForPerson = groupsDataManager.getGroupsForPerson(personId);
 		GroupId groupId = groupsForPerson.get(randomGenerator.nextInt(groupsForPerson.size()));

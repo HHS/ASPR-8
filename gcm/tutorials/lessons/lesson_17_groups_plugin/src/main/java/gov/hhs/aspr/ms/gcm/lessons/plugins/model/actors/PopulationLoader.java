@@ -41,7 +41,7 @@ public class PopulationLoader {
 	private double averageSchoolSize;
 	private double averageWorkSize;
 
-	/* start code_ref= groups_plugin_population_loader_init_region_population */
+	/* start code_ref= groups_plugin_population_loader_init_region_population|code_cap=The population for a region is initialized with each person being assigned an age, an immunity status and a region.*/
 	private void initializeRegionPopulation(RegionId regionId, int populationSize) {
 
 		double n = populationSize;
@@ -83,7 +83,7 @@ public class PopulationLoader {
 			peopleDataManager.addPerson(personConstructionData);
 		}
 		/* end */
-		/* start code_ref= groups_plugin_population_loader_adding_groups */
+		/* start code_ref= groups_plugin_population_loader_adding_groups|code_cap=The home, work and school groups are added to the groups data manager. */
 		// create the home groups
 		List<GroupId> homeGroupIds = new ArrayList<>();
 		for (int i = 0; i < homeCount; i++) {
@@ -113,7 +113,7 @@ public class PopulationLoader {
 		/* end */
 
 		// determine the subsets of people by age
-		/* start code_ref= groups_plugin_population_loader_age_subsets */
+		/* start code_ref= groups_plugin_population_loader_age_subsets|code_cap=The people are separated into age related lists. */
 		List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
 		List<PersonId> adults = new ArrayList<>();
 		List<PersonId> children = new ArrayList<>();
@@ -130,7 +130,7 @@ public class PopulationLoader {
 			}
 		}
 		/* end */
-		/* start code_ref= groups_plugin_population_loader_group_assignments */
+		/* start code_ref= groups_plugin_population_loader_group_assignments|code_cap=People are assigned to homes, work places and schools. */
 		Random random = new Random(randomGenerator.nextLong());
 		/*
 		 * Randomize the adults and assign them to the home groups such that there is at
@@ -174,7 +174,7 @@ public class PopulationLoader {
 	}
 
 	/* end */
-	/* start code_ref= groups_plugin_population_loader_init */
+	/* start code_ref= groups_plugin_population_loader_init|code_cap=The population loader initializes by establishing various constants from the global properties and establishing the population of each region. */
 	public void init(ActorContext actorContext) {
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		groupsDataManager = actorContext.getDataManager(GroupsDataManager.class);

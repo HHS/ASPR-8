@@ -16,7 +16,7 @@ public class ResourceLoader {
 	 * Allocate antiviral doses and hospital beds uniformly to all regions.
 	 */
 
-	/* start code_ref=resources_resource_loader_init */
+	/* start code_ref=resources_resource_loader_init|code_cap= The resource loader initializes the anti-viral medication doses and hospital beds for each region. */
 	public void init(ActorContext actorContext) {
 
 		RegionsDataManager regionsDataManager = actorContext.getDataManager(RegionsDataManager.class);
