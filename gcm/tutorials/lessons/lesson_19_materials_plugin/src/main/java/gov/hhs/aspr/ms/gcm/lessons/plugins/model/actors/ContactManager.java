@@ -38,7 +38,7 @@ public class ContactManager {
 				DiseaseState.RECOVERED);
 	}
 
-	/* start code_ref=materials_plugin_contact_manager_infect_contact */
+	/* start code_ref=materials_plugin_contact_manager_infect_contact|code_cap=The contact manager attempts to make an infectious contact from an infected person to a randomly selected susceptible person who is not vaccinated from either the general public or from one of the infected person's groups.  */
 	private void infectContact(final PersonId personId) {
 
 		if (randomGenerator.nextDouble() < communityContactRate) {

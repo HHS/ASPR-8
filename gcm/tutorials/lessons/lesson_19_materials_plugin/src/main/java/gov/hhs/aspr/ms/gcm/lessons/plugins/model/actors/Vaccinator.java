@@ -52,7 +52,7 @@ public class Vaccinator {
 
 	private boolean manufactureStarted;
 
-	/* start code_ref=materials_plugin_vaccinator_manufacture_start */
+	/* start code_ref=materials_plugin_vaccinator_manufacture_start|code_cap=If vaccine manufacture has not yet started and the number of infected people exceeds a threshold, then the vaccinator set the MANUFACTURE_VACCINE global property to true, signaling to the vaccine related materials producers to start.*/
 	private void determineVaccineManufacutureStart() {
 		if (!manufactureStarted) {
 			if (infectedPersonCount >= infectionPersonCountThreshold) {
@@ -65,7 +65,7 @@ public class Vaccinator {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_vaccinator_producer_resource_update */
+	/* start code_ref=materials_plugin_vaccinator_producer_resource_update|code_cap=When a resource change occurs on a materials producer, the vaccinator determines if the change represents doses of vaccine and whether there is any remaining demand. */
 	private void handleMaterialsProducerResourceUpdateEvent(final ActorContext actorContext,
 			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (isCapturableResource(materialsProducerResourceUpdateEvent)) {
@@ -97,7 +97,7 @@ public class Vaccinator {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_vaccinator_person_property_update */
+	/* start code_ref=materials_plugin_vaccinator_person_property_update|code_cap=If a person become infectious, the vaccinator reviews whether to start vaccine manufacture.*/
 	private void handlePersonPropertyUpdateEvent(final ActorContext actorContext,
 			final PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 
@@ -109,7 +109,7 @@ public class Vaccinator {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_vaccinator_init */
+	/* start code_ref=materials_plugin_vaccinator_init |code_cap=The vaccinator initializes by subscribing to changes in materials producer resource levels so that it can distribute vaccines to regions. It also subscribes to changes in person disease state to select people for vaccination.*/
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		actorContext.addActor(new VaccineProducer(MaterialsProducer.VACCINE_PRODUCER)::init);
@@ -143,7 +143,7 @@ public class Vaccinator {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_vaccinator_producer_capturable_resource */
+	/* start code_ref=materials_plugin_vaccinator_producer_capturable_resource|code_cap= When a materials producer updates its resource level, the vaccinator confirms that the resource is vaccine doses that have been added to the producer's inventory and that there is current demand for the vaccine.   */
 	private boolean isCapturableResource(
 			final MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		if (!materialsProducerResourceUpdateEvent.resourceId().equals(Resource.VACCINE)) {
@@ -168,7 +168,7 @@ public class Vaccinator {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_vaccinator_producer_schedule_vaccinations */
+	/* start code_ref=materials_plugin_vaccinator_producer_schedule_vaccinations|code_cap=The vaccinator schedules vaccinations at initialization and whenever a materials producer produces resources. The vaccinator tries to distribute the available doses of vaccine with a standard delay time between scheduled vaccinations. */
 	private void scheduleVaccinations() {
 		final double delayTime = 1 / (double) vaccinationsPerRegionPerDay;
 
@@ -204,7 +204,7 @@ public class Vaccinator {
 	}
 	/* end */
 
-	/* start code_ref=materials_plugin_vaccinator_producer_vaccinate_person */
+	/* start code_ref=materials_plugin_vaccinator_producer_vaccinate_person|code_cap=The vaccinator sets the person's VACCINATED property to true and moves one unit of vaccine from the person's region to the person. */
 	private void vaccinatePerson(final PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 		resourcesDataManager.transferResourceToPersonFromRegion(Resource.VACCINE, personId, 1L);

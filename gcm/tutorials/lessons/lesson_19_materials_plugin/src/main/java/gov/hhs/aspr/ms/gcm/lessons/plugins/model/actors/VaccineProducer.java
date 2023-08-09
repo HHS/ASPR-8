@@ -78,7 +78,7 @@ public final class VaccineProducer {
 		materialsDataManager.removeStage(stageId, true);
 	}
 
-	/* start code_ref=materials_plugin_vaccine_producer_end_vaccine_preparation */
+	/* start code_ref=materials_plugin_vaccine_producer_end_vaccine_preparation|code_cap=When an vaccine production stage is ready for release, the vaccine producer converts the stage doses of vaccine and places them in its resource inventory.*/
 	private void endVaccinePreparation(final StageId stageId) {
 		materialsDataManager.convertStageToResource(stageId, Resource.VACCINE, vaccineUnits);
 		planVaccinePrepartion();
@@ -107,7 +107,7 @@ public final class VaccineProducer {
 
 	}
 
-	/* start code_ref=materials_plugin_vaccine_producer_init */
+	/* start code_ref=materials_plugin_vaccine_producer_init|code_cap=The vaccine producer initializes by subscribing to offered stages(from the antigen producer) and subscribing to the start of vaccine manufacture.*/
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
@@ -225,7 +225,7 @@ public final class VaccineProducer {
 		}
 	}
 
-	/* start code_ref=materials_plugin_vaccine_producer_plan_vaccine_preparation */
+	/* start code_ref=materials_plugin_vaccine_producer_plan_vaccine_preparation|code_cap=Responding to events that may allow for additional manufacture of vaccine doses, the vaccine producer attempts to continue manufacturing.*/
 	private void planVaccinePrepartion() {
 		final Boolean continueManufature = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.MANUFACTURE_VACCINE);

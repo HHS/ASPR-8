@@ -58,7 +58,7 @@ public final class AntigenProducer {
 		materialRecs.put(materialId, materialManufactureSpecification);
 	}
 
-	/* start code_ref=materials_plugin_antigen_producer_end_fermentation */
+	/* start code_ref=materials_plugin_antigen_producer_end_fermentation|code_cap=When an antigen containing stage is ready for release, the antigen producer converts the stage into a batch of antigen and re-stages this batch on an offered stage.*/
 	private void endFermentationStage(final StageId stageId) {
 		final BatchId batch = materialsDataManager.convertStageToBatch(//
 				StageConversionInfo.builder()//
@@ -86,7 +86,7 @@ public final class AntigenProducer {
 		return true;
 	}
 
-	/* start code_ref=materials_plugin_antigen_producer_init */
+	/* start code_ref=materials_plugin_antigen_producer_init|code_cap=The antigen producer initializes by subscribing to stage transfers from itself as well as changes to the manufacturing policy. */
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 		materialsDataManager = actorContext.getDataManager(MaterialsDataManager.class);
@@ -150,7 +150,7 @@ public final class AntigenProducer {
 		}
 	}
 
-	/* start code_ref=materials_plugin_antigen_producer_plan_fermentation */
+	/* start code_ref=materials_plugin_antigen_producer_plan_fermentation|code_cap=Responding to events that may allow for additional manufacture of antigen stages, the antigen producer attempts to continue manufacturing.*/
 	private void planFermentation() {
 
 		final Boolean continueManufature = globalPropertiesDataManager
