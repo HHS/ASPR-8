@@ -73,6 +73,7 @@ public final class SerializationDemonstration {
 	private TranslationController writingTranslationController;
 	private TranslationController readingTranslationController;
 
+	// test
 	private SerializationDemonstration(Path outputDirectory) {
 		this.outputDirectory = outputDirectory;
 
