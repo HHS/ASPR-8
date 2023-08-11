@@ -1,6 +1,6 @@
-![GitHub](https://img.shields.io/github/license/HHS/ASPR-8)
-![GitHub tag (with filter)](https://img.shields.io/github/v/tag/HHS/ASPR-8)
-![GitHub contributors](https://img.shields.io/github/contributors/HHS/ASPR-8)
+[![GPL LICENSE][license-shield]][license-url]
+[![GitHub tag (with filter)][tag-shield]][tag-url]
+[![GitHub contributors][contributors-shield]][contributors-url]
 
 
 # General Computational Model
@@ -47,3 +47,13 @@ That's all there is to building the project. After running the above command, th
 ## License
 
 Distributed under the GPLv3 License. See `LICENSE` for more information.
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-8
+[contributors-url]: https://github.com/HHS/ASPR-8/graphs/contributors
+[tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-8
+[tag-url]: https://github.com/HHS/ASPR-8/releases/tag/v4.0.0-RC1
+[license-shield]: https://img.shields.io/github/license/HHS/ASPR-8
+[license-url]: LICENSE
