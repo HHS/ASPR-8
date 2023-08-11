@@ -11,7 +11,7 @@ GCM is a Java based simulation framework for building disease progression models
 Users of GCM should have a general familiarity with Java and object oriented programming and would benefit from some exposure to event based modeling.
 
 ## Overview
-Below is a high level overview of the core tenants of GCM.
+THere are 3 core tenants to GCM.
 
 ### Simulation
 GCM is an event based simulation composed of data managers, actors and an event engine.  
@@ -31,23 +31,21 @@ GCM also provides an experiment management system.
 Each plugin contains zero to many data objects that define the initial state of its actors and data managers. Each such data object may be altered freely.  
 The complete set of all combinations (scenarios) of the variant plugin data objects form an experiment and a separate simulation instance is executed for each combination.
 
-## Getting Started
+## Requirements
+- Maven 3.8.x
+- Java 17
+- Your favroite IDE for developing Java projects
+- Modeling Utilities located [here](https://github.com/HHS/ASPR-ms-util)
 
-### Requirements
-This project requires the latest Maven (3.8.6 as of writing) and Java 17.  
-> [!IMPORTANT]
-> In order to build this repo, you will need to clone and build the util repo located at https://github.com/HHS/ASPR-ms-util
-
-### Building
+## Building
 Once you have cloned the repo and imported it into your favorite IDE, navigate into the gcm directory on the command line.  
 Once there, run the following command: ```mvn clean install```  
-That's all there is to building the project. After running the above command, the next place you should start looking is at the documentation located in ```doc/2022.09.29 GCM 4.0 Modeling Guide.docx``` and following the lessons.
+That's all there is to building the project.  
+After running the above command, the next place you should start looking is at the Modeling Guide located in [doc](doc) and following the lessons.
 
 
 ## License
-
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
-
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
