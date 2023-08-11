@@ -46,7 +46,7 @@ That's all there is to building the project. After running the above command, th
 
 ## License
 
-Distributed under the GPLv3 License. See `LICENSE` for more information.
+Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
 
 
 
