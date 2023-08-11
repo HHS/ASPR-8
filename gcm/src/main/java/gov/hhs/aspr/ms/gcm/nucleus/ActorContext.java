@@ -18,7 +18,7 @@ import util.errors.ContractException;
  *
  */
 
-public final class ActorContext 
+public final class ActorContext {
 
 	private final Simulation simulation;
 
