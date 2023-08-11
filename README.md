@@ -41,7 +41,7 @@ This project requires the latest Maven (3.8.6 as of writing) and Java 17.
 ### Building
 Once you have cloned the repo and imported it into your favorite IDE, navigate into the gcm directory on the command line.  
 Once there, run the following command: ```mvn clean install```  
-That's all there is to building the project. After running the above command, the next place you should start looking is at the documentation located in doc/2022.09.29 GCM 4.0 Modeling Guide.docx and following the lessons.
+That's all there is to building the project. After running the above command, the next place you should start looking is at the documentation located in ```doc/2022.09.29 GCM 4.0 Modeling Guide.docx``` and following the lessons.
 
 
 ## License
