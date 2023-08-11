@@ -19,10 +19,10 @@ jobs:
 
     steps:
     - name: Checkout gcm
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
     
     - name: checkout util
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
       with:
         repository: HHS/ASPR-ms-util
         path: util
