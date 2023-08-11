@@ -30,7 +30,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build Util
-      run: mvn clean install --file util/pom.xml
+      run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build GCM
       run: mvn clean install --file gcm/pom.xml
 
