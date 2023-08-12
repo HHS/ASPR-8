@@ -35,6 +35,7 @@ jobs:
     - name: Build GCM
       run: mvn clean package --file gcm/pom.xml
   create_release:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
