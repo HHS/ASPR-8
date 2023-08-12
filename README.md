@@ -1,6 +1,8 @@
 [![GPL LICENSE][license-shield]][license-url]
 [![GitHub tag (with filter)][tag-shield]][tag-url]
 [![GitHub contributors][contributors-shield]][contributors-url]
+[![GitHub Workflow Status (with event)][dev-build-shield]][dev-build-url]
+
 
 
 # General Computational Model
@@ -55,3 +57,5 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 [tag-url]: https://github.com/HHS/ASPR-8/releases/tag/v4.0.0-RC1
 [license-shield]: https://img.shields.io/github/license/HHS/ASPR-8
 [license-url]: LICENSE
+[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-8/dev-pre-mavencentral.yml?label=dev-build
+[dev-build-url]: https://github.com/HHS/ASPR-8/actions/workflows/dev-pre-mavencentral.yml
