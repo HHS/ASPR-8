@@ -1,0 +1,52 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout GCM
+      uses: actions/checkout@v3
+    - name: Checkout Util
+      uses: actions/checkout@v3
+      with:
+        repository: HHS/ASPR-ms-util
+        path: util
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build Util
+      run: mvn clean install -DskipTests --file util/pom.xml
+    - name: Build GCM
+      run: mvn clean package --file gcm/pom.xml
+  create_release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Get Version
+      run: |
+        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
+    - name: Make Release
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "gcm/target/gcm-${{ env.version }}.jar,gcm/target/gcm-${{ env.version }}-sources.jar"
+        prerelease: endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC')
+    
+
+    
