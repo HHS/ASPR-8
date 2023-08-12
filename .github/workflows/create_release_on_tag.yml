@@ -43,7 +43,7 @@ jobs:
       run: |
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
     - name: Make Release
-    - uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@v1
       with:
         artifacts: "gcm/target/gcm-${{ env.version }}.jar,gcm/target/gcm-${{ env.version }}-sources.jar"
         prerelease: endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC')
