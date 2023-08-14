@@ -21,15 +21,16 @@ public class TestPlugin {
 	private TestPlugin() {
 	}
 
-	/*
+	/**
 	 * Initializes a simulation via the given context. Using a TestPluginData
 	 * retrieved from the context, this initializer adds test actor and test
 	 * data manager instances that are used in testing. It also creates an
 	 * TestPlanDataManager that is used internally to this plugin to help manage
 	 * plan distribution for the aforementioned actors and data managers.
 	 * 
-	 * @throws ContractException <li>{@linkplain
-	 * NucleusError#NULL_PLUGIN_CONTEXT} if the pluginContext is null</li>
+	 * @throws ContractException {@linkplain
+	 *                           NucleusError#NULL_PLUGIN_CONTEXT} if the
+	 *                           pluginContext is null
 	 */
 	private static void init(PluginContext pluginContext) {
 		if (pluginContext == null) {
@@ -52,7 +53,7 @@ public class TestPlugin {
 		for (Object alias : testPluginData.getTestActorAliases()) {
 			pluginContext.addActor(new TestActor(alias)::init);
 		}
-		
+
 		for (Object alias : testPluginData.getTestReportAliases()) {
 			pluginContext.addReport(new TestReport(alias)::init);
 		}

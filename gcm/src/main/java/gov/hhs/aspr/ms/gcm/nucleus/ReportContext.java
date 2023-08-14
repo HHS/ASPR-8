@@ -14,10 +14,7 @@ import util.errors.ContractException;
  * by the simulation each time it interacts with an report. Reports are defined
  * by this context. If this context is passed to a method invocation, then that
  * method is a report method.
- * 
- *
  */
-
 public final class ReportContext {
 
 	public ReportId getReportId() {
@@ -36,6 +33,7 @@ public final class ReportContext {
 	 * only passive plans remain on the planning schedule.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
@@ -45,9 +43,7 @@ public final class ReportContext {
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
 	 *                           finished
-	 * 
-	 * 
-	 * 
+	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
 		Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
@@ -64,6 +60,7 @@ public final class ReportContext {
 	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
@@ -73,9 +70,7 @@ public final class ReportContext {
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
 	 *                           finished
-	 * 
-	 * 
-	 * 
+	 *                           </ul>
 	 */
 	public void addPlan(Plan<ReportContext> plan) {
 		if (plan == null) {
@@ -88,9 +83,11 @@ public final class ReportContext {
 	 * Retrieves a plan stored for the given key.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
 	 *                           key is
 	 *                           null
+	 *                           </ul>
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
 		return simulation.getReportPlan(key);
@@ -123,12 +120,9 @@ public final class ReportContext {
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
-	 *                           key is
-	 *                           null
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is null
 	 */
-
 	public Optional<Plan<ReportContext>> removePlan(final Object key) {
 		return simulation.removeReportPlan(key);
 	}
@@ -136,7 +130,6 @@ public final class ReportContext {
 	/**
 	 * Returns a list of the current plan keys associated with the current
 	 * report
-	 * 
 	 */
 	public List<Object> getPlanKeys() {
 		return simulation.getReportPlanKeys();
@@ -147,6 +140,7 @@ public final class ReportContext {
 	 * execution of data changes.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
 	 *                           event class
 	 *                           is null
@@ -156,7 +150,7 @@ public final class ReportContext {
 	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
 	 *                           if the
 	 *                           data manager is already subscribed
-	 * 
+	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
 		simulation.subscribeReportToEvent(eventClass, eventConsumer);
@@ -166,10 +160,8 @@ public final class ReportContext {
 	 * Unsubscribes the report from events of the given type for all phases of
 	 * event handling.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
-	 *                           event class
-	 *                           is null
+	 * @throws ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                            event class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeReportFromEvent(eventClass);
@@ -178,10 +170,8 @@ public final class ReportContext {
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
-	 *                           if the
-	 *                           consumer is null</li>
+	 * @throws ContractException {@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
+	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationClose(Consumer<ReportContext> consumer) {
 		simulation.subscribeReportToSimulationClose(consumer);
@@ -191,6 +181,7 @@ public final class ReportContext {
 	 * Returns the DataManger instance from the given class reference
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS}
 	 *                           if the
 	 *                           class reference is null</li>
@@ -198,9 +189,8 @@ public final class ReportContext {
 	 *                           the class
 	 *                           reference does not correspond to a contained data
 	 *                           view</li>
-	 * 
+	 *                           </ul>
 	 */
-
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 		return simulation.getDataManagerForActor(dataManagerClass);
 	}
@@ -223,21 +213,19 @@ public final class ReportContext {
 			Function<T, Consumer<ReportContext>> conversionFunction) {
 		simulation.setReportPlanDataConverter(planDataClass, conversionFunction);
 	}
-	
-	/**
-     * Returns the time (floating point days) of simulation start.
-     * 
-     */
-	public double getStartTime() {
-        return simulation.getStartTime();
-    }
 
-	 /**
-     * Returns the base date that synchronizes with simulation time zero.
-     * 
-     */
-    public LocalDate getBaseDate() {
-    	return simulation.getBaseDate();
-    }
+	/**
+	 * Returns the time (floating point days) of simulation start.
+	 */
+	public double getStartTime() {
+		return simulation.getStartTime();
+	}
+
+	/**
+	 * Returns the base date that synchronizes with simulation time zero.
+	 */
+	public LocalDate getBaseDate() {
+		return simulation.getBaseDate();
+	}
 
 }

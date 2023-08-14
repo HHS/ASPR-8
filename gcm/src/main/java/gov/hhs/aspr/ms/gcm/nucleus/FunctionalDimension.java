@@ -7,7 +7,6 @@ import java.util.function.Function;
 /**
  * A Dimension implementation based on Functions as level implementations.
  */
-
 public final class FunctionalDimension implements Dimension {
 
 	private static class Data {
@@ -33,7 +32,6 @@ public final class FunctionalDimension implements Dimension {
 	/**
 	 * A builder class for Dimension
 	 */
-
 	public static class Builder {
 
 		private Data data = new Data();

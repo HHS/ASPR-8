@@ -7,12 +7,10 @@ import java.util.function.Consumer;
 import net.jcip.annotations.ThreadSafe;
 
 /**
- * A Consumer<ExperimentContext> implementation that can be used in an
+ * A Consumer&lt;{@link ExperimentContext}> implementation that can be used in
+ * an
  * Experiment for reporting experiment progress to the console.
- * 
- *
  */
-
 @ThreadSafe
 public final class ExperimentStatusConsole implements Consumer<ExperimentContext> {
 
@@ -43,7 +41,7 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 
 			return result;
 		}
-		
+
 		private StatusConsoleState getCopiedStatusConsoleState() {
 
 			/*
@@ -62,7 +60,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		}
 
 		/**
-		 * Builds the ExperimentStatusConsole from the arguments gathered by the builder. 
+		 * Builds the ExperimentStatusConsole from the arguments gathered by the
+		 * builder.
 		 */
 		public ExperimentStatusConsole build() {
 			try {
@@ -149,7 +148,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			scenarioString = "scenario";
 		}
 
-		printStream.println("Experiment completion of " + experimentCount + " " + scenarioString + " in " + timeExpression + ":");
+		printStream.println(
+				"Experiment completion of " + experimentCount + " " + scenarioString + " in " + timeExpression + ":");
 		for (ScenarioStatus scenarioStatus : ScenarioStatus.values()) {
 			List<Integer> scenarios = experimentContext.getScenarios(scenarioStatus);
 			if (!scenarios.isEmpty()) {
@@ -172,14 +172,15 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			if (failCount > maxFailureCount) {
 				int unprintedFailureCount = failCount - maxFailureCount;
 				printStream.println("..." + unprintedFailureCount + " more failed scenarios");
-			}			
+			}
 		}
 		printStream.println("end of experiment status console");
 	}
 
 	private void handleSimulationClose(ExperimentContext experimentContext, int scenarioId) {
 
-		int completionCount = experimentContext.getStatusCount(ScenarioStatus.SUCCEDED) + experimentContext.getStatusCount(ScenarioStatus.PREVIOUSLY_SUCCEEDED)
+		int completionCount = experimentContext.getStatusCount(ScenarioStatus.SUCCEDED)
+				+ experimentContext.getStatusCount(ScenarioStatus.PREVIOUSLY_SUCCEEDED)
 				+ experimentContext.getStatusCount(ScenarioStatus.FAILED);
 
 		double completionProportion = completionCount;
@@ -217,7 +218,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		}
 
 		if (reportToConsole) {
-			int executedCountForThisRun = experimentContext.getStatusCount(ScenarioStatus.SUCCEDED) + experimentContext.getStatusCount(ScenarioStatus.FAILED);
+			int executedCountForThisRun = experimentContext.getStatusCount(ScenarioStatus.SUCCEDED)
+					+ experimentContext.getStatusCount(ScenarioStatus.FAILED);
 			double averageTimePerExecution = experimentContext.getElapsedSeconds() / executedCountForThisRun;
 			int remainingExecutions = experimentContext.getScenarioCount() - completionCount;
 			double expectedRemainingTime = Math.round(averageTimePerExecution * remainingExecutions);
@@ -226,7 +228,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 			if (experimentContext.getScenarioCount() == 1) {
 				scenarioString = "scenario";
 			}
-			System.out.println(completionCount + " of " + experimentContext.getScenarioCount() + " " + scenarioString + ", " + percentComplete + "% complete. Expected experiment completion in "
+			System.out.println(completionCount + " of " + experimentContext.getScenarioCount() + " " + scenarioString
+					+ ", " + percentComplete + "% complete. Expected experiment completion in "
 					+ timeExpression);
 		}
 
@@ -236,7 +239,6 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 	 * Initializes this ExperimentStatusConsole, which registers for simulation
 	 * and experiment close events.
 	 */
-
 	@Override
 	public void accept(ExperimentContext experimentContext) {
 		experimentContext.subscribeToSimulationClose(this::handleSimulationClose);

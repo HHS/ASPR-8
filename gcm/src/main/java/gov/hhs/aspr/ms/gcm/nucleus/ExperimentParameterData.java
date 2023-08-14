@@ -23,10 +23,7 @@ import util.errors.ContractException;
  * 
  * The experiment then executes the scenarios concurrently based on the number
  * of threads chosen for the execution.
- *
- *
  */
-
 public final class ExperimentParameterData {
 
 	public static class Builder {
@@ -77,11 +74,8 @@ public final class ExperimentParameterData {
 		 * on the machine that is running the experiment. Setting the thread
 		 * count to zero causes the simulations to execute in the main thread.
 		 *
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
-		 *             the thread count is negative</li>
-		 *
-		 * 
+		 * @throws ContractException {@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
+		 *                           the thread count is negative
 		 */
 		public Builder setThreadCount(final int threadCount) {
 			if (threadCount < 0) {
@@ -209,8 +203,6 @@ public final class ExperimentParameterData {
 			return true;
 		}
 
-		
-
 	}
 
 	/**
@@ -244,7 +236,8 @@ public final class ExperimentParameterData {
 	}
 
 	/**
-	 * Return the halt time for the simulation. Returns empty optional to indicate that no
+	 * Return the halt time for the simulation. Returns empty optional to indicate
+	 * that no
 	 * halting time is specified.
 	 */
 	public Optional<Double> getSimulationHaltTime() {
@@ -273,7 +266,6 @@ public final class ExperimentParameterData {
 	/**
 	 * Instructs the experiment to continue experiment progress from the
 	 * experiment progress log.
-	 * 
 	 */
 	public boolean continueFromProgressLog() {
 		return data.continueFromProgressLog;

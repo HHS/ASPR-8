@@ -1,11 +1,8 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
- * 
  * Combines a PlanData with a priority value used to reconstruct the order of
  * plans from de-serialized plans from a previous simulation execution.
- *
- *
  */
 public final class PrioritizedPlanData {
 	private final PlanData planData;

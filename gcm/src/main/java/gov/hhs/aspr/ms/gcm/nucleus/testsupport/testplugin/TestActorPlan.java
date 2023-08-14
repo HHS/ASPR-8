@@ -21,13 +21,11 @@ public class TestActorPlan {
 	 * Constructs an actor action plan. If assignKey is false, then this actor
 	 * action plan will return an empty optional key.
 	 * 
-	 * @throws ContractException
-	 *            
-	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
-	 * 
+	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
+	 *                           null
 	 */
 	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan) {
-		
+
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
@@ -37,8 +35,6 @@ public class TestActorPlan {
 		this.plan = plan;
 	}
 
-	
-
 	/**
 	 * Boilerplate implementation of hashCode consistent with equals()
 	 */
@@ -46,7 +42,7 @@ public class TestActorPlan {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);		
+		result = prime * result + (executed ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(scheduledTime);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -71,7 +67,7 @@ public class TestActorPlan {
 		if (executed != other.executed) {
 			return false;
 		}
-		
+
 		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
 			return false;
 		}
@@ -82,7 +78,7 @@ public class TestActorPlan {
 	 * Constructs an test actor plan from another test actor plan.
 	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
-		scheduledTime = testActorPlan.scheduledTime;		
+		scheduledTime = testActorPlan.scheduledTime;
 		executed = testActorPlan.executed;
 		plan = testActorPlan.plan;
 	}

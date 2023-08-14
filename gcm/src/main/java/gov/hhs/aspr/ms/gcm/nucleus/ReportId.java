@@ -2,10 +2,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
  * The unique identifier for reports.
- * 
- *
  */
-
 public final class ReportId {
 
 	private final int id;

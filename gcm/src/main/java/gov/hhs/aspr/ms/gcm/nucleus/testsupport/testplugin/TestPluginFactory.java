@@ -21,7 +21,7 @@ import util.errors.ContractException;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation}
+ * {@link TestSimulation#execute}
  */
 public final class TestPluginFactory {
 	private TestPluginFactory() {

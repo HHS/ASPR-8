@@ -46,9 +46,6 @@ import util.path.Path;
  * After initialization is over, time flows based on the execution of planning.
  * Plans are collected from both actors and data managers. When no more plans
  * remain, the simulation halts.
- * 
- * 
- *
  */
 @NotThreadSafe
 public class Simulation {
@@ -103,27 +100,27 @@ public class Simulation {
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
-			case ACTOR:
-				builder.append(actorId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(actorPlan);
-				break;
-			case DATA_MANAGER:
-				builder.append(dataManagerId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(dataManagerPlan);
-				break;
-			case REPORT:
-				builder.append(reportId);
-				builder.append("\t");
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(reportPlan);
-				break;
-			default:
-				throw new RuntimeException("unhandled planner case");
+				case ACTOR:
+					builder.append(actorId);
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(actorPlan);
+					break;
+				case DATA_MANAGER:
+					builder.append(dataManagerId);
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(dataManagerPlan);
+					break;
+				case REPORT:
+					builder.append(reportId);
+					builder.append("\t");
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(reportPlan);
+					break;
+				default:
+					throw new RuntimeException("unhandled planner case");
 			}
 
 			builder.append(LINE_SEPARATOR);
@@ -181,10 +178,8 @@ public class Simulation {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@link NucleusError#NULL_SIMULATION_TIME} if
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if
 		 *                           the simulation time is null
-		 * 
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
@@ -197,12 +192,9 @@ public class Simulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@link NucleusError#NULL_PLUGIN} if the plugin
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin
 		 *                           is null
-		 * 
 		 */
-
 		public Builder addPlugin(Plugin plugin) {
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
@@ -229,12 +221,14 @@ public class Simulation {
 		 * consumer collected by this builder.
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#SIM_HALT_TIME_TOO_EARLY}
 		 *                           If the simulation halt time is non-negative and
 		 *                           less than the start time of the simulation</li>
 		 *                           <li>{@linkplain NucleusError#MISSING_SIM_HALT_TIME}
 		 *                           If simulation state is being recorded and the
 		 *                           simulation halt time is not set.</li>
+		 *                           </ul>
 		 */
 		public Simulation build() {
 			validate();
@@ -422,9 +416,6 @@ public class Simulation {
 		DataManagerContext dataManagerContext = new DataManagerContext(dataManagerId, this);
 		dataManagerIdToDataManagerContextMap.put(dataManagerId, dataManagerContext);
 
-		/*
-		 * 
-		 */
 		dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
 		dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
 
@@ -678,7 +669,6 @@ public class Simulation {
 			/*
 			 * Explain in detail why there is a circular dependency
 			 */
-
 			Graph<PluginId, Object> g = mutableGraph.toGraph();
 
 			g = Graphs.getSourceSinkReducedGraph(g);
@@ -852,45 +842,45 @@ public class Simulation {
 			// convert the plan data into a consumer
 			Planner planner = planQueueData.getPlanner();
 			switch (planner) {
-			case ACTOR:
-				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-				planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
-				planRec.plan = Plan.builder(ActorContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.actorPlan)//
-						.build();
+				case ACTOR:
+					planRec.actorId = actorIds.get(planQueueData.getPlannerId());
+					planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
+					planRec.plan = Plan.builder(ActorContext.class)//
+							.setActive(planQueueData.isActive())//
+							.setKey(planQueueData.getKey())//
+							.setPlanData(planQueueData.getPlanData())//
+							.setTime(planQueueData.getTime())//
+							.setCallbackConsumer(planRec.actorPlan)//
+							.build();
 
-				break;
-			case DATA_MANAGER:
-				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-						planQueueData.getPlanData());
-				planRec.plan = Plan.builder(DataManagerContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.dataManagerPlan)//
-						.build();
+					break;
+				case DATA_MANAGER:
+					planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
+					planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
+							planQueueData.getPlanData());
+					planRec.plan = Plan.builder(DataManagerContext.class)//
+							.setActive(planQueueData.isActive())//
+							.setKey(planQueueData.getKey())//
+							.setPlanData(planQueueData.getPlanData())//
+							.setTime(planQueueData.getTime())//
+							.setCallbackConsumer(planRec.dataManagerPlan)//
+							.build();
 
-				break;
-			case REPORT:
-				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-				planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
-				planRec.plan = Plan.builder(ReportContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.reportPlan)//
-						.build();
+					break;
+				case REPORT:
+					planRec.reportId = reportIds.get(planQueueData.getPlannerId());
+					planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
+					planRec.plan = Plan.builder(ReportContext.class)//
+							.setActive(planQueueData.isActive())//
+							.setKey(planQueueData.getKey())//
+							.setPlanData(planQueueData.getPlanData())//
+							.setTime(planQueueData.getTime())//
+							.setCallbackConsumer(planRec.reportPlan)//
+							.build();
 
-				break;
-			default:
-				throw new RuntimeException("unhandled case " + planner);
+					break;
+				default:
+					throw new RuntimeException("unhandled case " + planner);
 			}
 			planRec.arrivalId = planQueueData.getArrivalId();
 			planRec.isActive = planQueueData.isActive();
@@ -906,32 +896,32 @@ public class Simulation {
 				Map<Object, PlanRec> map;
 				if (planRec.key != null) {
 					switch (planner) {
-					case ACTOR:
-						map = actorPlanMap.get(planRec.actorId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							actorPlanMap.put(planRec.actorId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					case DATA_MANAGER:
-						map = dataManagerPlanMap.get(planRec.dataManagerId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							dataManagerPlanMap.put(planRec.dataManagerId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					case REPORT:
-						map = reportPlanMap.get(planRec.reportId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							reportPlanMap.put(planRec.reportId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					default:
-						throw new RuntimeException("unhandled case " + planner);
+						case ACTOR:
+							map = actorPlanMap.get(planRec.actorId);
+							if (map == null) {
+								map = new LinkedHashMap<>();
+								actorPlanMap.put(planRec.actorId, map);
+							}
+							map.put(planRec.key, planRec);
+							break;
+						case DATA_MANAGER:
+							map = dataManagerPlanMap.get(planRec.dataManagerId);
+							if (map == null) {
+								map = new LinkedHashMap<>();
+								dataManagerPlanMap.put(planRec.dataManagerId, map);
+							}
+							map.put(planRec.key, planRec);
+							break;
+						case REPORT:
+							map = reportPlanMap.get(planRec.reportId);
+							if (map == null) {
+								map = new LinkedHashMap<>();
+								reportPlanMap.put(planRec.reportId, map);
+							}
+							map.put(planRec.key, planRec);
+							break;
+						default:
+							throw new RuntimeException("unhandled case " + planner);
 					}
 				}
 			}
@@ -946,16 +936,14 @@ public class Simulation {
 	 * and the simulation halts.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#REPEATED_EXECUTION} if
 	 *                           execute is invoked more than once
-	 *
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
 	 *                           contributed plugins contain dependencies on plugins
 	 *                           that have not been added to the simulation
-	 * 
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
 	 *                           contributed plugins contain duplicate plugin ids
-	 * 
 	 *                           <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES}
 	 *                           if the contributed plugins form a circular chain of
 	 *                           dependencies
@@ -963,8 +951,7 @@ public class Simulation {
 	 *                           if a data manager does not invoke
 	 *                           {@linkplain DataManager#init(DataManagerContext)}
 	 *                           in its override of init().
-	 * 
-	 * 
+	 *                           </ul>
 	 */
 	public void execute() {
 		reportContext = new ReportContext(this);
@@ -1077,48 +1064,48 @@ public class Simulation {
 				activePlanCount--;
 			}
 			switch (planRec.planner) {
-			case ACTOR:
-				if (planRec.actorPlan != null) {
-					if (planRec.key != null) {
-						actorPlanMap.get(planRec.actorId).remove(planRec.key);
+				case ACTOR:
+					if (planRec.actorPlan != null) {
+						if (planRec.key != null) {
+							actorPlanMap.get(planRec.actorId).remove(planRec.key);
+						}
+						ActorContentRec actorContentRec = new ActorContentRec();
+						actorContentRec.actorId = planRec.actorId;
+						actorContentRec.plan = planRec.actorPlan;
+						actorQueue.add(actorContentRec);
+						executeActorQueue();
 					}
-					ActorContentRec actorContentRec = new ActorContentRec();
-					actorContentRec.actorId = planRec.actorId;
-					actorContentRec.plan = planRec.actorPlan;
-					actorQueue.add(actorContentRec);
-					executeActorQueue();
-				}
-				break;
-			case DATA_MANAGER:
-				if (planRec.dataManagerPlan != null) {
-					if (planRec.key != null) {
-						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+					break;
+				case DATA_MANAGER:
+					if (planRec.dataManagerPlan != null) {
+						if (planRec.key != null) {
+							dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+						}
+						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+						dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
+						dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+						dataManagerQueue.add(dataManagerContentRec);
+						executeDataManagerQueue();
+						executeActorQueue();
 					}
-					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
-					dataManagerQueue.add(dataManagerContentRec);
-					executeDataManagerQueue();
-					executeActorQueue();
-				}
-				break;
+					break;
 
-			case REPORT:
-				if (planRec.reportPlan != null) {
-					if (planRec.key != null) {
-						reportPlanMap.get(planRec.reportId).remove(planRec.key);
+				case REPORT:
+					if (planRec.reportPlan != null) {
+						if (planRec.key != null) {
+							reportPlanMap.get(planRec.reportId).remove(planRec.key);
+						}
+						ReportContentRec reportContentRec = new ReportContentRec();
+						reportContentRec.reportPlan = planRec.reportPlan;
+						reportContentRec.reportId = planRec.reportId;
+						reportQueue.add(reportContentRec);
+						executeReportQueue();
 					}
-					ReportContentRec reportContentRec = new ReportContentRec();
-					reportContentRec.reportPlan = planRec.reportPlan;
-					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);
-					executeReportQueue();
-				}
 
-				break;
+					break;
 
-			default:
-				throw new RuntimeException("unhandled planner type " + planRec.planner);
+				default:
+					throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
 
@@ -1170,7 +1157,7 @@ public class Simulation {
 			while (!planningQueue.isEmpty()) {
 				PlanRec planRec = planningQueue.poll();
 				if (planRec.plan != null) {
-					
+
 					PlanData planData = planRec.plan.getPlanData();
 					if (planData != null) {
 						planQueueDataBuilder.setActive(planRec.isActive)//
@@ -1181,17 +1168,17 @@ public class Simulation {
 								.setTime(planRec.time);//
 
 						switch (planRec.planner) {
-						case ACTOR:
-							planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
-							break;
-						case DATA_MANAGER:
-							planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
-							break;
-						case REPORT:
-							planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
-							break;
-						default:
-							throw new RuntimeException("unhandled case " + planRec.planner);
+							case ACTOR:
+								planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
+								break;
+							case DATA_MANAGER:
+								planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
+								break;
+							case REPORT:
+								planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
+								break;
+							default:
+								throw new RuntimeException("unhandled case " + planRec.planner);
 						}
 
 						PlanQueueData planQueueData = planQueueDataBuilder.build();
@@ -1359,10 +1346,7 @@ public class Simulation {
 	 * Note that we are allowing components to delete plans that do not exist. This
 	 * was done to ease any bookkeeping burdens on the component and seems generally
 	 * harmless.
-	 *
-	 * 
 	 */
-
 	@SuppressWarnings("unchecked")
 	protected Optional<Plan<DataManagerContext>> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
@@ -2143,7 +2127,6 @@ public class Simulation {
 
 	/**
 	 * Returns the time (floating point days) of simulation start.
-	 * 
 	 */
 	protected double getStartTime() {
 		return data.simulationState.getStartTime();
@@ -2151,7 +2134,6 @@ public class Simulation {
 
 	/**
 	 * Returns the base date that synchronizes with simulation time zero.
-	 * 
 	 */
 	protected LocalDate getBaseDate() {
 		return data.simulationState.getBaseDate();

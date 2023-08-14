@@ -30,11 +30,11 @@ public interface TriConsumer<T, U, V> {
 	 * Performs this operation on the given arguments.
 	 *
 	 * @param t
-	 *            the first input argument
+	 *          the first input argument
 	 * @param u
-	 *            the second input argument
+	 *          the second input argument
 	 * @param u
-	 *            the third input argument
+	 *          the third input argument
 	 */
 	void accept(T t, U u, V v);
 
@@ -46,11 +46,11 @@ public interface TriConsumer<T, U, V> {
 	 * {@code after} operation will not be performed.
 	 *
 	 * @param after
-	 *            the operation to perform after this operation
+	 *              the operation to perform after this operation
 	 * @return a composed {@code TriConsumer} that performs in sequence this
 	 *         operation followed by the {@code after} operation
 	 * @throws NullPointerException
-	 *             if {@code after} is null
+	 *                              if {@code after} is null
 	 */
 	default TriConsumer<T, U, V> andThen(TriConsumer<? super T, ? super U, ? super V> after) {
 		Objects.requireNonNull(after);

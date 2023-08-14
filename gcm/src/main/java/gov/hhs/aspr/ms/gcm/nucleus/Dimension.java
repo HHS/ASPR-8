@@ -8,7 +8,6 @@ import java.util.List;
  * dimension updates the plugin data builders as alternate inputs for each
  * scenario.
  */
-
 public interface Dimension {
 
 	/**
@@ -29,7 +28,6 @@ public interface Dimension {
 	 * list returned by the getExperimentMetaData() method. The content of the
 	 * returned list must be identical for each invocation of the given level.
 	 */
-
 	public List<String> executeLevel(DimensionContext dimensionContext, int level);
 
 }

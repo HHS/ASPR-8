@@ -38,9 +38,7 @@ public class Plan<T> {
 			builder.append("]");
 			return builder.toString();
 		}
-		
-		
-		
+
 	}
 
 	/**
@@ -59,7 +57,6 @@ public class Plan<T> {
 
 		/**
 		 * Constructs a new EventLabel from the collected data.
-		 * 
 		 */
 		public Plan<K> build() {
 			return new Plan<>(new Data<>(data));
@@ -67,7 +64,6 @@ public class Plan<T> {
 
 		/**
 		 * Sets the time of the plan.
-		 * 
 		 */
 		public Builder<K> setTime(double time) {
 			data.time = time;
@@ -79,7 +75,6 @@ public class Plan<T> {
 		 * execution while there are active plans present. Passive plans should
 		 * be used for recurring, non-event driven tasks that do not require the
 		 * continued execution of the simulation.Defaults to true;
-		 * 
 		 */
 		public Builder<K> setActive(boolean active) {
 			data.active = active;
@@ -92,7 +87,6 @@ public class Plan<T> {
 		 * simulation. A non-null value is required when adding a plan that is
 		 * scheduled at or after the simulation halt time when the simulation
 		 * has been instructed to record state on halt. Defaults to false;
-		 * 
 		 */
 		public Builder<K> setPlanData(PlanData planData) {
 			data.planData = planData;
@@ -104,7 +98,6 @@ public class Plan<T> {
 		 * should only be used if the plan may be cancelled or retrieved before
 		 * the plan time since it incurs a significant overhead memory cost.
 		 * Defaults to null.
-		 * 
 		 */
 		public Builder<K> setKey(Object key) {
 			data.key = key;
@@ -115,7 +108,6 @@ public class Plan<T> {
 		 * Sets the required call back behavior for this plan. The call back is
 		 * executed when the plan reaches the top of the queue and the
 		 * simulation's time is set to the plan's time. No default is allowed.
-		 * 
 		 */
 		public Builder<K> setCallbackConsumer(Consumer<K> callbackConsumer) {
 			data.callbackConsumer = callbackConsumer;

@@ -4,9 +4,6 @@ import util.errors.ContractException;
 
 /**
  * Base class for all data managers.
- * 
- * 
- *
  */
 public class DataManager {
 	/**
@@ -24,10 +21,8 @@ public class DataManager {
 	 * simulation. All data manager descendant classes that override this method
 	 * must invoke the super.
 	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
-	 *             if init() is invoked more than once</li>
-	 * 
+	 * @throws ContractException {@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
+	 *                           if init() is invoked more than once
 	 */
 	public void init(DataManagerContext dataManagerContext) {
 		if (initialized) {

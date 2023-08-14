@@ -14,15 +14,12 @@ import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
  * Alias identification exists for the convenience of the test implementor so
  * that tests can name actors and are not bound to the forced ordering pattern
  * implied by ActorId values.
- * 
- *
  */
 public final class TestActor {
 	private final Object alias;
 
 	/**
 	 * Creates the test actor with its alias
-	 * 
 	 */
 	public TestActor(Object alias) {
 		this.alias = alias;

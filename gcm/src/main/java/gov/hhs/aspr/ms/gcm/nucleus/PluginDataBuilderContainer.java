@@ -13,14 +13,14 @@ public interface PluginDataBuilderContainer {
 	 * A ContractException is thrown if there is not exactly one matching instance.
 	 * 
 	 * @throws ContractException
-	 * 
+	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
 	 *                           if more than one plugin data builder matches the
 	 *                           given class reference</li>
-	 * 
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_BUILDER_CLASS}
 	 *                           if no plugin data builder matches the given class
 	 *                           reference</li>
+	 *                           </ul>
 	 */
 	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef);
 

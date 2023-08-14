@@ -10,7 +10,7 @@ import util.errors.ContractException;
 /**
  * An implementor of PluginDataBuilderContainer.
  */
-public final class PluginDataBuilderContext implements PluginDataBuilderContainer{
+public final class PluginDataBuilderContext implements PluginDataBuilderContainer {
 
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderBaseMap = new LinkedHashMap<>();
 	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
@@ -20,15 +20,12 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 
 	/**
 	 * A builder class for DimensionContext
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Builder() {
 		}
 
 		private Map<Class<?>, PluginDataBuilder> pluginDataBuilderMap = new LinkedHashMap<>();
-		
 
 		/**
 		 * Returns the DimensionContext instance composed from the inputs to
@@ -36,7 +33,7 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		 */
 		public PluginDataBuilderContext build() {
 			PluginDataBuilderContext result = new PluginDataBuilderContext();
-			result.pluginDataBuilderBaseMap.putAll(pluginDataBuilderMap);			
+			result.pluginDataBuilderBaseMap.putAll(pluginDataBuilderMap);
 			return result;
 		}
 
@@ -44,11 +41,8 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		 * Given a plugin Data, will add it and its clone builder to the internal map in
 		 * this class
 		 * 
-		 * @throws ContractException
-		 *                           <ul>
-		 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER} if
-		 *                           the plugin data builder is null</li>
-		 * 
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER}
+		 *                           if the plugin data builder is null
 		 */
 		public <T extends PluginDataBuilder> Builder add(T t) {
 			if (t == null) {
@@ -66,7 +60,6 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		return new Builder();
 	}
 
-	
 	@Override
 	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
 
@@ -92,5 +85,4 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		return classRef.cast(pluginDataBuilder);
 	}
 
-	
 }

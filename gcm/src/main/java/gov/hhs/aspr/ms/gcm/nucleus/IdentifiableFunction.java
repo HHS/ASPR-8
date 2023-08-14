@@ -5,12 +5,11 @@ import java.util.function.Function;
 import util.errors.ContractException;
 
 public final class IdentifiableFunction<N> {
-	
+
 	private Object functionId;
-	
+
 	private Function<N, Object> function;
 
-	
 	public IdentifiableFunction(Object functionId, Function<N, Object> function) {
 		if (functionId == null) {
 			throw new ContractException(NucleusError.NULL_FUNCTION_ID);
@@ -18,7 +17,7 @@ public final class IdentifiableFunction<N> {
 		if (function == null) {
 			throw new ContractException(NucleusError.NULL_FUNCTION);
 		}
-		
+
 		this.functionId = functionId;
 		this.function = function;
 	}

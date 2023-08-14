@@ -18,8 +18,6 @@ import util.errors.ContractException;
 /**
  * Thread safe plugin data container for associating plans with actor and data
  * manager aliases.
- * 
- *
  */
 @ThreadSafe
 public class TestPluginData implements PluginData {
@@ -30,8 +28,6 @@ public class TestPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			
-
 
 			for (Object alias : data.testActorPlanMap.keySet()) {
 				List<TestActorPlan> oldPlans = data.testActorPlanMap.get(alias);
@@ -53,7 +49,6 @@ public class TestPluginData implements PluginData {
 				}
 			}
 
-
 			testDataManagerSuppliers.putAll(data.testDataManagerSuppliers);
 
 			for (Object alias : data.testDataManagerPlanMap.keySet()) {
@@ -65,7 +60,7 @@ public class TestPluginData implements PluginData {
 					newPlans.add(newPlan);
 				}
 			}
-			
+
 			this.pluginDependencies.addAll(data.pluginDependencies);
 
 		}
@@ -179,10 +174,14 @@ public class TestPluginData implements PluginData {
 		 * Adds an actor action plan associated with the alias
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
-		 *             null</li>
-		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
-		 *             plan is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
+		 *                           is
+		 *                           null</li>
+		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
+		 *                           action
+		 *                           plan is null</li>
+		 *                           </ul>
 		 */
 		public Builder addTestActorPlan(final Object alias, TestActorPlan testActorPlan) {
 			if (alias == null) {
@@ -210,10 +209,14 @@ public class TestPluginData implements PluginData {
 		 * Adds an report action plan associated with the alias
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
-		 *             null</li>
-		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
-		 *             plan is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
+		 *                           is
+		 *                           null</li>
+		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
+		 *                           action
+		 *                           plan is null</li>
+		 *                           </ul>
 		 */
 		public Builder addTestReportPlan(final Object alias, TestReportPlan testReportPlan) {
 			if (alias == null) {
@@ -242,7 +245,12 @@ public class TestPluginData implements PluginData {
 		 * TestDataManager. The supplier must be threadsafe.
 		 * 
 		 * @throws ContractException
-		 * 
+		 *                           <ul>
+		 *                           <li>{@link TestError#NULL_ALIAS} is the alias is
+		 *                           null</li>
+		 *                           <li>{@link TestError#NULL_DATA_MANAGER_SUPPLIER} if
+		 *                           the supplier is null</li>
+		 *                           </ul>
 		 */
 		public Builder addTestDataManager(Object alias, Supplier<TestDataManager> supplier) {
 			if (alias == null) {
@@ -259,10 +267,14 @@ public class TestPluginData implements PluginData {
 		 * Adds an data manager action plan associated with the alias
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain TestError#NULL_ALIAS} if the alias is
-		 *             null</li>
-		 *             <li>{@linkplain TestError#NULL_PLAN}if the actor action
-		 *             plan is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
+		 *                           is
+		 *                           null</li>
+		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
+		 *                           action
+		 *                           plan is null</li>
+		 *                           </ul>
 		 */
 		public Builder addTestDataManagerPlan(final Object alias, TestDataManagerPlan testDataManagerPlan) {
 
@@ -288,9 +300,9 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds a plugin dependency
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain TestError#NULL_PLUGIN_ID} if the plugin
-		 *             id is null</li>
+		 * @throws ContractException {@linkplain TestError#NULL_PLUGIN_ID} if the
+		 *                           plugin
+		 *                           id is null
 		 */
 		public Builder addPluginDependency(final PluginId pluginId) {
 			if (pluginId == null) {
@@ -423,7 +435,5 @@ public class TestPluginData implements PluginData {
 		}
 		return true;
 	}
-
-	
 
 }

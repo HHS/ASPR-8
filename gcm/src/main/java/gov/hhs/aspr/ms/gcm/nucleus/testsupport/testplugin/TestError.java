@@ -6,8 +6,6 @@ import util.errors.ContractException;
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
  * description of the exception.
- * 
- *
  */
 public enum TestError implements ContractError {
 	MULTIPLE_MATCHING_ITEMS("Multiple items were found matching "),
@@ -19,9 +17,9 @@ public enum TestError implements ContractError {
 	NULL_DATA_MANAGER_SUPPLIER("Null data manager supplier"),
 	NULL_PLAN("Null plan"),
 	TEST_EXECUTION_FAILURE("Not all action plans were executed or no action plans were added to the test plugin"),
-	UNKNOWN_DATA_MANAGER_ALIAS("A data manager test plan was submitted under an alias that does not have a test data manager class type"),
-	
-	;
+	UNKNOWN_DATA_MANAGER_ALIAS(
+			"A data manager test plan was submitted under an alias that does not have a test data manager class type"),
+			;
 
 	private final String description;
 

@@ -31,22 +31,17 @@ import util.errors.ContractException;
  * 
  * The experiment then executes the scenarios concurrently based on the number
  * of threads chosen for the execution.
- *
- *
  */
-
 public final class Experiment {
-	
-	
+
 	private static class DimensionRec {
 		private final int index;
 		private final int levelCount;
 		private final Dimension dimension;
 		private List<String> experimentMetaData = new ArrayList<>();
 		private Map<Integer, List<String>> scenarioMetaData = new LinkedHashMap<>();
-		
-		
-		public List<String> getExperimentMetaData(){
+
+		public List<String> getExperimentMetaData() {
 			return experimentMetaData;
 		}
 
@@ -64,7 +59,8 @@ public final class Experiment {
 			List<String> list = dimension.executeLevel(dimensionContext, level);
 			if (list.size() != experimentMetaData.size()) {
 				throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH,
-						"dimension[" + index + "] has meta data: " + experimentMetaData + " that does not match scenario meta data: " + list + " at level " + level);
+						"dimension[" + index + "] has meta data: " + experimentMetaData
+								+ " that does not match scenario meta data: " + list + " at level " + level);
 			}
 
 			List<String> baseList = scenarioMetaData.get(level);
@@ -72,7 +68,8 @@ public final class Experiment {
 				scenarioMetaData.put(level, list);
 			} else {
 				if (!baseList.equals(list)) {
-					throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH, "execution of level " + level + " of dimension[" + index + "] resulted in inconsistent meta scenario data");
+					throw new ContractException(NucleusError.DIMENSION_LABEL_MISMATCH, "execution of level " + level
+							+ " of dimension[" + index + "] resulted in inconsistent meta scenario data");
 				}
 			}
 			return list;
@@ -82,7 +79,6 @@ public final class Experiment {
 			return levelCount;
 		}
 	}
-	
 
 	public static class Builder {
 		private Data data = new Data();
@@ -104,9 +100,9 @@ public final class Experiment {
 		 * Adds the output item handler to the experiment. Consumers of
 		 * experiment context must be thread safe.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_OUTPUT_HANDLER} if the
-		 *             output item handler is null</li>
+		 * @throws ContractException {@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
+		 *                           the
+		 *                           output item handler is null
 		 */
 		public Builder addExperimentContextConsumer(final Consumer<ExperimentContext> experimentContextConsumer) {
 			if (experimentContextConsumer == null) {
@@ -145,10 +141,8 @@ public final class Experiment {
 		 * Set the simulation state. Defaults to the current date and a start
 		 * time of zero.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
-		 *             simulation time is null
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
@@ -215,7 +209,8 @@ public final class Experiment {
 		/*
 		 * All construction arguments are thread safe implementations.
 		 */
-		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager, final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
+		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager,
+				final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
 				final Double simulationHaltTime, final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
@@ -271,7 +266,7 @@ public final class Experiment {
 	}
 
 	private final Data data;
-	
+
 	private List<DimensionRec> dimensionRecs = new ArrayList<>();
 
 	private ExperimentStateManager experimentStateManager;
@@ -282,14 +277,13 @@ public final class Experiment {
 
 	/**
 	 * Executes the experiment using the information collected by the builder.
-	 * 
 	 */
 	public void execute() {
 
 		int scenarioCount = 1;
-		for (int i = 0;i< data.dimensions.size();i++) {
+		for (int i = 0; i < data.dimensions.size(); i++) {
 			Dimension dimension = data.dimensions.get(i);
-			DimensionRec dimensionRec = new DimensionRec(dimension,i);
+			DimensionRec dimensionRec = new DimensionRec(dimension, i);
 			dimensionRecs.add(dimensionRec);
 			scenarioCount *= dimensionRec.getLevelCount();
 		}
@@ -399,8 +393,7 @@ public final class Experiment {
 					plugins,
 					data.experimentParameterData.stateRecordingIsScheduled(),
 					data.experimentParameterData.getSimulationHaltTime().orElse(null),
-					data.simulationState)
-					);
+					data.simulationState));
 			jobIndex++;
 		}
 
@@ -420,8 +413,7 @@ public final class Experiment {
 						plugins,
 						data.experimentParameterData.stateRecordingIsScheduled(),
 						data.experimentParameterData.getSimulationHaltTime().orElse(null),
-						data.simulationState)
-						);
+						data.simulationState));
 				jobIndex++;
 			}
 
@@ -542,7 +534,7 @@ public final class Experiment {
 		 * the functions mutate the plugin builders and return meta data.
 		 */
 		int modulus = 1;
-		for (int i = 0; i < dimensionRecs.size(); i++) {			
+		for (int i = 0; i < dimensionRecs.size(); i++) {
 			DimensionRec dimensionRec = dimensionRecs.get(i);
 
 			/*
@@ -555,7 +547,7 @@ public final class Experiment {
 
 			// get the function from the dimension
 			List<String> dimensionMetaData = dimensionRec.executeLevel(dimensionContext, level);
-			
+
 			scenarioMetaData.addAll(dimensionMetaData);
 		}
 
@@ -566,7 +558,6 @@ public final class Experiment {
 		/*
 		 * Rebuild the plugins.
 		 */
-
 		final List<Plugin> result = new ArrayList<>();
 
 		for (PluginId pluginId : pluginMap.keySet()) {

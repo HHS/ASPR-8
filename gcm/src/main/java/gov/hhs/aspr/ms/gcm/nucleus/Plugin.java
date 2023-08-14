@@ -14,9 +14,6 @@ import util.errors.ContractException;
  * A plugin is the main compositional element of an experiment. Plugins contain
  * the initial data state for simulations and add actors and data managers to
  * each simulation at the startup.
- * 
- * 
- *
  */
 @ThreadSafe
 public final class Plugin {
@@ -40,9 +37,9 @@ public final class Plugin {
 		@Override
 		public int hashCode() {
 			final int prime = 31;
-			int result = 1;			
+			int result = 1;
 			LinkedHashSet<PluginData> set = new LinkedHashSet<>(pluginDatas);
-			result = prime * result +  set.hashCode();
+			result = prime * result + set.hashCode();
 			result = prime * result + pluginDependencies.hashCode();
 			result = prime * result + pluginId.hashCode();
 			return result;
@@ -82,8 +79,6 @@ public final class Plugin {
 
 	/**
 	 * A builder class for Plugin
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Builder() {
@@ -100,10 +95,8 @@ public final class Plugin {
 		/**
 		 * Returns the plugin formed by the inputs collected by this builder.
 		 * 
-		 * @throws ContractException
-		 * 
-		 *             <li>{@linkplain NucleusError#NULL_PLUGIN_ID} if the
-		 *             plugin id was not set or set to null</li>
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
+		 *                           plugin id was not set or set to null
 		 */
 		public Plugin build() {
 			validate();
@@ -132,10 +125,9 @@ public final class Plugin {
 		 * by this graph and secondarily in the order each plugin was
 		 * contributed to a simulation or experiment.
 		 * 
-		 * @throws ContractException
-		 * 
-		 *             <li>{@link NucleusError#NULL_PLUGIN_ID} if the plugin id
-		 *             is null
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN_ID} if the plugin
+		 *                           id
+		 *                           is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
 			if (pluginId == null) {
@@ -152,10 +144,8 @@ public final class Plugin {
 		 * are declared final and 3) it does not pass any reference to itself
 		 * during its construction.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_PLUGIN_DATA} if the
-		 *             plugin data is null</li>
-		 * 
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
+		 *                           plugin data is null
 		 */
 		public Builder addPluginData(PluginData pluginData) {
 			if (pluginData == null) {
@@ -171,10 +161,9 @@ public final class Plugin {
 		 * simulation's startup. The initializer must be thread-safe. It is best
 		 * practice for the initializer to be stateless.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_PLUGIN_INITIALIZER} if
-		 *             the initializer is null</li>
-		 * 
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_INITIALIZER}
+		 *                           if
+		 *                           the initializer is null
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {
 			if (initializer == null) {
@@ -242,7 +231,6 @@ public final class Plugin {
 	 * 
 	 * Initialization behavior can only be confirmed by executing the plugin via
 	 * a simulation instance.
-	 * 
 	 */
 	@Override
 	public boolean equals(Object obj) {

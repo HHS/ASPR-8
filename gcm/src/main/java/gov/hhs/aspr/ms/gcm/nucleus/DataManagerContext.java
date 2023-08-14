@@ -13,10 +13,7 @@ import util.errors.ContractException;
  * A data manager context provides access to the nucleus engine and other data
  * managers for data managers. It is supplied by the engine each time it
  * interacts with a data manager.
- * 
- *
  */
-
 public final class DataManagerContext {
 
 	private final Simulation simulation;
@@ -31,6 +28,7 @@ public final class DataManagerContext {
 	 * Schedules a plan that will be executed at the given time.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
@@ -40,9 +38,8 @@ public final class DataManagerContext {
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
 	 *                           finished
-	 * 
+	 *                           </ul>
 	 */
-
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
 
 		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
@@ -60,6 +57,7 @@ public final class DataManagerContext {
 	 * Schedules a plan.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
@@ -69,9 +67,7 @@ public final class DataManagerContext {
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
 	 *                           finished
-	 * 
-	 * 
-	 * 
+	 *                           </ul>
 	 */
 	public void addPlan(Plan<DataManagerContext> plan) {
 		if (plan == null) {
@@ -85,9 +81,8 @@ public final class DataManagerContext {
 	 * Activity associated with the consumer should be limited to querying data
 	 * state and releasing output.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
-	 *                           if the consumer is null</li>
+	 * @throws ContractException {@link NucleusError#NULL_DATA_MANAGER_CONTEXT_CONSUMER}
+	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationClose(Consumer<DataManagerContext> consumer) {
 		simulation.subscribeDataManagerToSimulationClose(dataManagerId, consumer);
@@ -120,10 +115,8 @@ public final class DataManagerContext {
 	/**
 	 * Retrieves a plan for the given key.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
-	 *                           key is
-	 *                           null
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is null
 	 */
 	public Optional<Plan<DataManagerContext>> getPlan(final Object key) {
 		return simulation.getDataManagerPlan(dataManagerId, key);
@@ -139,8 +132,7 @@ public final class DataManagerContext {
 	 * proxy for actors and data managers should use releaseMutationEvent()
 	 * instead.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_EVENT} if the event is
+	 * @throws ContractException {@link NucleusError#NULL_EVENT} if the event is
 	 *                           null
 	 */
 	public void releaseObservationEvent(final Event event) {
@@ -152,8 +144,7 @@ public final class DataManagerContext {
 	 * 
 	 * This is used for MUTATION events.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_EVENT} if the event is
+	 * @throws ContractException {@link NucleusError#NULL_EVENT} if the event is
 	 *                           null
 	 */
 	public void releaseMutationEvent(final Event event) {
@@ -163,10 +154,8 @@ public final class DataManagerContext {
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
-	 *                           key is
-	 *                           null
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           key is null
 	 */
 	public Optional<Plan<DataManagerContext>> removePlan(final Object key) {
 		return simulation.removeDataManagerPlan(dataManagerId, key);
@@ -185,6 +174,7 @@ public final class DataManagerContext {
 	 * of execution of data changes.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
 	 *                           event class
 	 *                           is null
@@ -194,7 +184,7 @@ public final class DataManagerContext {
 	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
 	 *                           if the
 	 *                           data manager is already subscribed
-	 * 
+	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
 		simulation.subscribeDataManagerToEvent(dataManagerId, eventClass, eventConsumer);
@@ -204,10 +194,8 @@ public final class DataManagerContext {
 	 * Unsubscribes the data manager from events of the given type for all
 	 * phases of event handling.
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
-	 *                           event class
-	 *                           is null
+	 * @throws ContractException {@link NucleusError#NULL_EVENT_CLASS} if the
+	 *                           event class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeDataManagerFromEvent(dataManagerId, eventClass);
@@ -233,12 +221,8 @@ public final class DataManagerContext {
 	 * consumer of ActorContext is invoked after event resolution is finished
 	 * and before time progresses.
 	 * 
-	 * @throws ContractException
-	 * 
-	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
-	 *                           if the
-	 *                           actor context consumer is null
-	 * 
+	 * @throws ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 *                           if the actor context consumer is null
 	 */
 	public ActorId addActor(Consumer<ActorContext> consumer) {
 		return simulation.addActor(consumer);
@@ -264,6 +248,7 @@ public final class DataManagerContext {
 	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
 	 *                           actorId is null
 	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
@@ -272,6 +257,7 @@ public final class DataManagerContext {
 	 *                           <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the
 	 *                           actor id
 	 *                           does not correspond to a known actor
+	 *                           </ul>
 	 */
 	public void removeActor(final ActorId actorId) {
 		simulation.removeActor(actorId);
@@ -291,20 +277,18 @@ public final class DataManagerContext {
 			Function<T, Consumer<DataManagerContext>> conversionFunction) {
 		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
 	}
-	
-	/**
-     * Returns the time (floating point days) of simulation start.
-     * 
-     */
-	public double getStartTime() {
-        return simulation.getStartTime();
-    }
 
-	 /**
-     * Returns the base date that synchronizes with simulation time zero.
-     * 
-     */
-    public LocalDate getBaseDate() {
-    	return simulation.getBaseDate();
-    }
+	/**
+	 * Returns the time (floating point days) of simulation start.
+	 */
+	public double getStartTime() {
+		return simulation.getStartTime();
+	}
+
+	/**
+	 * Returns the base date that synchronizes with simulation time zero.
+	 */
+	public LocalDate getBaseDate() {
+		return simulation.getBaseDate();
+	}
 }

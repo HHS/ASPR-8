@@ -13,8 +13,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
  * 
  * Alias identification exists for the convenience of the test implementor so
  * that tests can name data managers.
- * 
- *
  */
 
 public class TestDataManager extends DataManager {

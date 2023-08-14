@@ -4,8 +4,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
 import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
 /**
  * Static plugin id implementation for the TestPlugin
- * 
- *
  */
 public class TestPluginId {
 	private TestPluginId() {}

@@ -35,8 +35,6 @@ public class RunContinuityPluginData implements PluginData {
 			consumers.addAll(data.consumers);
 			locked = data.locked;
 		}
-		
-		
 
 	}
 
@@ -48,9 +46,7 @@ public class RunContinuityPluginData implements PluginData {
 	}
 
 	/**
-	 * Builder class for PersonPropertyInitialData
-	 * 
-	 *
+	 * Builder class for RunContinuityPluginData
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
@@ -133,7 +129,6 @@ public class RunContinuityPluginData implements PluginData {
 
 	/**
 	 * Returns the list scheduled consumers
-	 * 
 	 */
 	public List<Pair<Double, Consumer<ActorContext>>> getConsumers() {
 		return new ArrayList<>(data.consumers);
@@ -159,7 +154,5 @@ public class RunContinuityPluginData implements PluginData {
 		return data.completionCount >= data.consumers.size();
 
 	}
-	
-	
 
 }

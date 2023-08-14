@@ -3,8 +3,6 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 /**
  * The unique identifier for data managers. DataManagerId values are constructed
  * dynamically and are distributed contiguously from 0.
- * 
- *
  */
 public final class DataManagerId implements Comparable<DataManagerId> {
 	private final int id;
