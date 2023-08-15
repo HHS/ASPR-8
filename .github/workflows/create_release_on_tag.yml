@@ -46,5 +46,5 @@ jobs:
         artifacts: "gcm/target/gcm-${{ env.version }}.jar,gcm/target/gcm-${{ env.version }}-sources.jar"
         prerelease: ${{ endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC') }}
         name: "v${{ env.version }}"
-        tag: "v${{ env.version }}-release"
+        tag: "v${{ env.version }}"
         generateReleaseNotes: true
