@@ -10,7 +10,7 @@
 	<artifactId>gcm</artifactId>
 	<name>General Computational Model</name>
 	<packaging>jar</packaging>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.0.0-RC2</version>
 
 	<properties>
 		<!-- basic project properties -->
