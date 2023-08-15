@@ -110,7 +110,6 @@ public final class PartitionsPluginData implements PluginData {
 
 	/**
 	 * Returns the run continuity support policy
-	 * 
 	 */
 	public boolean supportsRunContinuity() {
 		return data.supportRunContinuity;

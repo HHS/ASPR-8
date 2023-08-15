@@ -69,7 +69,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * Stores resource assignment times per person keyed by the resourceId. Key
 	 * existence subject to time recording policies specified by the scenario.
 	 */
-
 	private Map<ResourceId, Double> resourceDefaultTimes = new LinkedHashMap<>();
 
 	private Map<ResourceId, Boolean> resourceTimeTrackingPolicies = new LinkedHashMap<>();
@@ -86,6 +85,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Constructs the PersonResourceManager from the context
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_RESOURCE_PLUGIN_DATA}
 	 *                           if the plugin data is null</li>
 	 */
@@ -137,12 +137,12 @@ public final class ResourcesDataManager extends DataManager {
 	 * 
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 	 *                           if the amount is negative</li>
 	 *                           <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCES_AVAILABLE}
 	 *                           if the amount exceeds the current balance</li>
 	 */
-
 	private void decrementRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 		Map<ResourceId, MutableLong> map = regionResources.get(regionId);
 		if (map == null) {
@@ -162,6 +162,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Used to more efficiently prepare for multiple population additions.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
 	 *                           if the count is negative</li>
 	 */
@@ -188,6 +189,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * list.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -199,7 +201,6 @@ public final class ResourcesDataManager extends DataManager {
 		 * First, we loop through all possible person id values and determine the exact
 		 * size of the returned list.
 		 */
-
 		final IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
 		if (intValueContainer == null) {
 			return new ArrayList<>();
@@ -239,6 +240,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the list of people who have a non-zero level of the resource
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -251,7 +253,6 @@ public final class ResourcesDataManager extends DataManager {
 		 * First, we loop through all possible person id values and determine the exact
 		 * size of the returned list.
 		 */
-
 		final IntValueContainer intValueContainer = personResourceLevels.get(resourceId);
 
 		if (intValueContainer == null) {
@@ -291,6 +292,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the region resource level.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -328,6 +330,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * person and resource
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -356,6 +359,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the time tracking policy for the given resource
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -370,6 +374,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the current resource level for the given resource id and region id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -448,8 +453,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *        is unknown</li>
 	 *        <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION} if the
 	 *        resource property is already defined</li>
-	 * 
-	 * 
 	 */
 	public void defineResourceProperty(ResourcePropertyInitialization resourcePropertyInitialization) {
 		dataManagerContext
@@ -503,6 +506,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Adds a resource type. Generates a corresponding ResourceIdAdditionEvent.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#DUPLICATE_RESOURCE_ID}
@@ -535,6 +539,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * property id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -555,6 +560,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the resource property id values for the given resource id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -580,6 +586,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns the value of the resource property.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -627,7 +634,6 @@ public final class ResourcesDataManager extends DataManager {
 		 * if the resource assignment times are being tracked, then record the resource
 		 * time.
 		 */
-
 		Boolean trackTimes = resourceTimeTrackingPolicies.get(resourceId);
 		if (trackTimes) {
 			DoubleValueContainer doubleValueContainer = personResourceTimes.get(resourceId);
@@ -797,7 +803,6 @@ public final class ResourcesDataManager extends DataManager {
 	}
 
 	/**
-	 * 
 	 * <ul>
 	 * <li>Adds all event labelers defined by the following events <blockquote>
 	 * <ul>
@@ -816,7 +821,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * <li>Sets person resource levels from the
 	 * {@linkplain ResourcesPluginData}</li>
 	 * 
-	 * <P>
+	 * <p>
 	 * Subscribes to the following events:
 	 * 
 	 * <ul>
@@ -841,14 +846,11 @@ public final class ResourcesDataManager extends DataManager {
 	 * contains a ResourceInitialization that has a negative resource level</li>
 	 * </ul>
 	 * 
-	 * 
 	 * </blockquote></li>
 	 * -------------------------------------------------------------------------------
 	 *
 	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the resource
 	 * assignment data for the person from the {@linkplain ResourcesDataManager}
-	 * 
-	 * 
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
@@ -1061,6 +1063,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@linkplain RegionResourceUpdateEvent} events for each region.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           source region is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -1190,7 +1193,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCES_AVAILABLE}
 	 *                           if the person does not have the required amount of
 	 *                           the resource</li>
-	 * 
 	 */
 	public void removeResourceFromPerson(ResourceId resourceId, PersonId personId, long amount) {
 		dataManagerContext.releaseMutationEvent(new PersonResourceUpdateMutationEvent(resourceId, personId, amount));
@@ -1261,9 +1263,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           if the amount is negative</li>
 	 *                           <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
 	 *                           if the addition results in an overflow</li>
-	 * 
-	 * 
-	 * 
 	 */
 	public void addResourceToRegion(ResourceId resourceId, RegionId regionId, long amount) {
 		dataManagerContext.releaseMutationEvent(new RegionResourceUpdateMutationEvent(resourceId, regionId, amount));
@@ -1318,7 +1317,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           if the region does not have the required amount of
 	 *                           the resource</li>
 	 *
-	 * 
 	 */
 	public void removeResourceFromRegion(ResourceId resourceId, RegionId regionId, long amount) {
 		dataManagerContext.releaseMutationEvent(new RegionResourceRemovalMutationEvent(resourceId, regionId, amount));
@@ -1370,9 +1368,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           the corresponding property definition</li>
 	 *                           <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if
 	 *                           the property has been defined as immutable</li>
-	 * 
-	 * 
-	 * 
 	 */
 	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId,
 			Object resourcePropertyValue) {
@@ -1504,7 +1499,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@linkplain PersonResourceUpdateEvent} events
 	 * 
 	 * 
-	 * 
 	 * @throws ContractException
 	 * 
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
@@ -1605,15 +1599,12 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is not known</li>
-	 * 
-	 * 
 	 */
 	public EventFilter<PersonResourceUpdateEvent> getEventFilterForPersonResourceUpdateEvent(ResourceId resourceId) {
 		validateResourceId(resourceId);
@@ -1627,7 +1618,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
 	 * person id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1656,7 +1646,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
 	 * person id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1706,15 +1695,12 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is not known</li>
-	 * 
-	 * 
 	 */
 	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId) {
 		validateResourceId(resourceId);
@@ -1729,7 +1715,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id and
 	 * region id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
@@ -1740,7 +1725,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
 	 *                           the region id is not known</li>
-	 * 
 	 */
 	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent(ResourceId resourceId,
 			RegionId regionId) {
@@ -1758,7 +1742,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link RegionResourceUpdateEvent} events. Matches on all such events.
 	 *
 	 *
-	 * 
 	 */
 	public EventFilter<RegionResourceUpdateEvent> getEventFilterForRegionResourceUpdateEvent() {
 		return EventFilter.builder(RegionResourceUpdateEvent.class)//
@@ -1780,7 +1763,6 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link ResourcePropertyUpdateEvent} events. Matches on the resource id and
 	 * resource property id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
@@ -1791,7 +1773,6 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           the resource property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the resource property id is not known</li>
-	 * 
 	 */
 	public EventFilter<ResourcePropertyUpdateEvent> getEventFilterForResourcePropertyUpdateEvent(ResourceId resourceId,
 			ResourcePropertyId resourcePropertyId) {

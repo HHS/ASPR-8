@@ -17,7 +17,8 @@ public final class PersonId implements Comparable<PersonId> {
 	 * Consructs the person id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NEGATIVE_PERSON_ID}</li>
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NEGATIVE_PERSON_ID}</li>
 	 */
 	public PersonId(int id) {
 		if (id < 0) {

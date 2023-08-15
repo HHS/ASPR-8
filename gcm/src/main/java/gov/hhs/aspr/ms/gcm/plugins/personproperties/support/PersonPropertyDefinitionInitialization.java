@@ -56,7 +56,6 @@ public final class PersonPropertyDefinitionInitialization {
 
 	/**
 	 * Builder class for a PersonPropertyDefinitionInitialization
-	 * 
 	 */
 	public final static class Builder {
 
@@ -150,7 +149,6 @@ public final class PersonPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
-
 		public Builder addPropertyValue(PersonId personId, Object value) {
 			if (personId == null) {
 				throw new ContractException(PersonError.NULL_PERSON_ID);

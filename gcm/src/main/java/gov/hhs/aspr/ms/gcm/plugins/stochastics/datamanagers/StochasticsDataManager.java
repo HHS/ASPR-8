@@ -39,7 +39,8 @@ public final class StochasticsDataManager extends DataManager {
 	 * Returns the random generator associated with the given id.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           <ul>
+	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the random number generator is null</li>
 	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the random number generator is unknown</li>
@@ -72,7 +73,8 @@ public final class StochasticsDataManager extends DataManager {
 	 * Adds a new RNG.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           <ul>
+	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the randomNumberGeneratorId is null</li>
 	 *             <li>{@linkplain StochasticsError#RANDOM_NUMBER_GENERATOR_ID_ALREADY_EXISTS}
 	 *             if the randomNumberGeneratorId was previously added</li>
@@ -117,8 +119,6 @@ public final class StochasticsDataManager extends DataManager {
 	 * predefined ids in the StochasticsPluginData are generated in the same
 	 * manner as the method
 	 * {@linkplain StochasticsDataManager#getRandomGeneratorFromId(RandomNumberGeneratorId)}
-	 * 
-	 * 
 	 */
 	public StochasticsDataManager(StochasticsPluginData stochasticsPluginData) {
 

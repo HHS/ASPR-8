@@ -56,7 +56,6 @@ public final class GroupTypeCountMap {
 	/**
 	 * Returns an unmodifiable set of the {@link GroupTypeId} values contained
 	 * in this {@link GroupTypeCountMap}
-	 * 
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
 		return groupTypeIds;

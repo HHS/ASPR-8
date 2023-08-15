@@ -307,7 +307,6 @@ public final class MaterialsPluginData implements PluginData {
 		 *
 		 *
 		 */
-
 		@Override
 		public MaterialsPluginData build() {
 
@@ -1181,7 +1180,6 @@ public final class MaterialsPluginData implements PluginData {
 			 *
 			 * locked -- should be locked when equals is invoked
 			 */
-
 			// most of the fields use normal comparison
 
 			if (!batchAmounts.equals(other.batchAmounts)) {
@@ -1449,6 +1447,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the material amount for the given batch.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -1472,6 +1471,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the material type for the given batch id.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -1488,9 +1488,9 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the materials producer id for the given batch id.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
-	 * 
 	 */
 	public List<BatchId> getMaterialsProducerInventoryBatches(final MaterialsProducerId materialsProducerId) {
 		validateMaterialsProducerIdNotNull(materialsProducerId);
@@ -1507,6 +1507,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
@@ -1530,6 +1531,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the property ids associated with the given material id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
@@ -1553,6 +1555,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns a map of the property values associated collected for the given batch
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -1598,6 +1601,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * property id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the materials producer property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -1635,6 +1639,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * producer
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1654,8 +1659,8 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the resource level the given materials producer id and resource.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1693,8 +1698,8 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the batch ids that are assigned to the given stage id.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -1720,8 +1725,8 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the materials producer id associated with the given stage id.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1740,8 +1745,8 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the offer state of the given stage id.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if

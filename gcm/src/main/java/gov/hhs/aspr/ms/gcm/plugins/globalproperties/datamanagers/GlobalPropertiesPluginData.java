@@ -370,7 +370,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	/**
 	 * Returns the set of {@link GlobalPropertyId}
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GlobalPropertyId> Set<T> getGlobalPropertyIds() {
@@ -385,7 +384,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the optional property value for the given property id
 	 * 
 	 * @throws ContractException
-	 * 
 	 * 
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 	 *                           if the global property id is null
@@ -403,7 +401,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the optional property assignment time for the given property id
 	 * 
 	 * @throws ContractException
-	 * 
 	 * 
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 	 *                           if the global property id is null

@@ -74,6 +74,7 @@ public final class PeopleDataManager extends DataManager {
 	 * just prior to invoking this method.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}
 	 *                           if the person construction data is null</li>
 	 *
@@ -215,9 +216,9 @@ public final class PeopleDataManager extends DataManager {
 	 * must invoke the super.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *                           if init() is invoked more than once</li>
-	 * 
 	 * 
 	 *                           <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
 	 *                           if the plugin data person assignment time exceeds
@@ -316,6 +317,7 @@ public final class PeopleDataManager extends DataManager {
 	 * Removes the person from the simulation.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null
 	 *                           <li>

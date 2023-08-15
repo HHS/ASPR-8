@@ -50,7 +50,6 @@ public final class PeoplePluginData implements PluginData {
 			/*
 			 * See notes in equals()
 			 */
-
 			final int prime = 31;
 			int result = 1;
 			long temp = Double.doubleToLongBits(assignmentTime);
@@ -67,7 +66,6 @@ public final class PeoplePluginData implements PluginData {
 			 * sorted and joined during the build process, leaving the person
 			 * ranges unambiguously ordered.
 			 */
-
 			if (this == obj) {
 				return true;
 			}
@@ -264,7 +262,6 @@ public final class PeoplePluginData implements PluginData {
 		 * of people and will be greater than the highest id value of any
 		 * existing person.
 		 */
-
 		public Builder setPersonCount(int personCount) {
 			ensureDataMutability();
 			validatePersonCount(personCount);
@@ -277,7 +274,6 @@ public final class PeoplePluginData implements PluginData {
 		 * to zero.
 		 *		 
 		 */
-
 		public Builder setAssignmentTime(double assignmentTime) {
 			ensureDataMutability();
 			data.assignmentTime = assignmentTime;

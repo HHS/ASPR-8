@@ -24,11 +24,11 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 	 * Constructs this IntPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
 	 *             initial size is negative</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li> 
-	 * 
 	 */
 	public ObjectPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {

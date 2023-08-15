@@ -14,7 +14,8 @@ public record ResourcePropertyDefinitionEvent(ResourceId resourceId, ResourcePro
 	 * Constructs the event.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
 	 *             resource id is null</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             resource property id is null</li>

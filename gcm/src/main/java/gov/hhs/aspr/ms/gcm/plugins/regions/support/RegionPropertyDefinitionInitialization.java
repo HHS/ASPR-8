@@ -49,7 +49,6 @@ public final class RegionPropertyDefinitionInitialization {
 
 	/**
 	 * Builder class for a PropertyDefinitionInitialization
-	 * 
 	 */
 	public final static class Builder {
 
@@ -135,7 +134,6 @@ public final class RegionPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
-
 		public Builder addPropertyValue(RegionId regionId, Object value) {
 			if (regionId == null) {
 				throw new ContractException(RegionError.NULL_REGION_ID);

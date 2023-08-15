@@ -50,6 +50,7 @@ public final class DoubleValueContainer {
 	 * @param index
 	 * @return
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
 	 */
@@ -112,6 +113,7 @@ public final class DoubleValueContainer {
 	 * Sets the value at the index to the given value
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
 	 */

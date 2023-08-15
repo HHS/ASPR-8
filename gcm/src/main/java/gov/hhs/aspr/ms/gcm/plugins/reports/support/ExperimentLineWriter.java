@@ -56,7 +56,6 @@ public final class ExperimentLineWriter {
 	 *             during file initialization</li>
 	 *
 	 */
-
 	public ExperimentLineWriter(final ExperimentContext experimentContext, final Path path, String delimiter) {
 
 		if (Files.exists(path)) {

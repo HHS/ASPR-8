@@ -40,6 +40,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
 	 *                           if the partition contains labelers</li>
 	 *
@@ -178,7 +179,6 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	/**
 	 * Forces the index to evaluate a person's membership in this index.
 	 */
-
 	@Override
 	public Optional<PersonId> samplePartition(final PartitionSampler partitionSampler) {
 		RandomGenerator randomGenerator;

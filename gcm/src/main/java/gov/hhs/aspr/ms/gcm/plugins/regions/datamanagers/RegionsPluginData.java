@@ -539,7 +539,6 @@ public class RegionsPluginData implements PluginData {
 
 	/**
 	 * Returns the set of {@link RegionPropertyId}
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionPropertyId> Set<T> getRegionPropertyIds() {
@@ -582,7 +581,6 @@ public class RegionsPluginData implements PluginData {
 	/**
 	 * Returns the time tracking Policy}. Defaulted to false if not set in the
 	 * builder.
-	 * 
 	 */
 	public boolean getPersonRegionArrivalTrackingPolicy() {
 		return data.trackRegionArrivalTimes;
@@ -623,7 +621,6 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 	 *                           the person id is null
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> Optional<T> getPersonRegion(final PersonId personId) {
@@ -643,7 +640,6 @@ public class RegionsPluginData implements PluginData {
 	 * 
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 	 *                           the person id is null
-	 * 
 	 */
 	public Optional<Double> getPersonRegionArrivalTime(final PersonId personId) {
 		validatePersonId(personId);
@@ -688,7 +684,6 @@ public class RegionsPluginData implements PluginData {
 
 	/**
 	 * Returns the property values
-	 * 
 	 */
 	public Map<RegionId, Map<RegionPropertyId, Object>> getRegionPropertyValues() {
 		Map<RegionId, Map<RegionPropertyId, Object>> result = new LinkedHashMap<>();

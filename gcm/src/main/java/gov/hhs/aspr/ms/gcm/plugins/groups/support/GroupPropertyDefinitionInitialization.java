@@ -163,7 +163,6 @@ public final class GroupPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
-
 		public Builder addPropertyValue(GroupId groupId, Object value) {
 			if (groupId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_ID);

@@ -18,7 +18,8 @@ public record GlobalPropertyDefinitionEvent(GlobalPropertyId globalPropertyId,Ob
 	 * Creates the event.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
 	 *             the property id is null</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *             if the initial property value is null</li>

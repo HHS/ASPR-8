@@ -64,7 +64,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	 * A map of map of map... that starts with regions, each property id in
 	 * order and ends with Counter
 	 */
-
 	private final Map<Object, Object> regionMap = new LinkedHashMap<>();
 
 	private ReportHeader reportHeader;
@@ -132,7 +131,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		 * First, push through the region map with the region to arrive at a
 		 * nested map of maps for the properties
 		 */
-
 		@SuppressWarnings("unchecked")
 		Map<Object, Object> propertyValueMap = (Map<Object, Object>) regionMap.get(regionId);
 		if (propertyValueMap == null) {

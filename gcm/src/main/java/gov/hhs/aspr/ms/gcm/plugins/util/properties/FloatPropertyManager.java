@@ -23,7 +23,8 @@ public final class FloatPropertyManager implements IndexedPropertyManager {
 	 * Constructs this FloatPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
 	 *             initial size is negative</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li> 

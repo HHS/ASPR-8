@@ -160,7 +160,6 @@ public final class ResourcesPluginData implements PluginData {
 			 * 
 			 * 
 			 */
-
 			// These are simply compared:
 			if (!resourceDefaultTimes.equals(other.resourceDefaultTimes)) {
 				return false;
@@ -417,7 +416,6 @@ public final class ResourcesPluginData implements PluginData {
 		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *                           if the resource amount is negative</li>
 		 */
-
 		public Builder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validatePersonId(personId);
@@ -487,7 +485,6 @@ public final class ResourcesPluginData implements PluginData {
 		 *                           if the resource amount is negative</li> *
 		 *
 		 */
-
 		public Builder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 			ensureDataMutability();
 			validateRegionIdNotNull(regionId);
@@ -595,7 +592,6 @@ public final class ResourcesPluginData implements PluginData {
 			/*
 			 * validate personResourceTimes
 			 */
-
 			// private final Map<ResourceId, List<Double>> personResourceTimes;
 			for (ResourceId resourceId : data.personResourceTimes.keySet()) {
 				if (!data.resourceDefaultTimes.containsKey(resourceId)) {
@@ -652,6 +648,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * property id.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -660,7 +657,6 @@ public final class ResourcesPluginData implements PluginData {
 	 *                           the resource property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the resource property id is unknown</li>
-	 * 
 	 */
 	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId,
 			final ResourcePropertyId resourcePropertyId) {
@@ -676,6 +672,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the resource property id associated with the resource.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -709,6 +706,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * definition if now value was assigned.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -743,7 +741,6 @@ public final class ResourcesPluginData implements PluginData {
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is unknown</li>
-	 * 
 	 */
 	public List<Long> getPersonResourceLevels(final ResourceId resourcId) {
 		validateResourceExists(resourcId);
@@ -764,7 +761,6 @@ public final class ResourcesPluginData implements PluginData {
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is unknown</li>
-	 * 
 	 */
 	public List<Double> getPersonResourceTimes(final ResourceId resourcId) {
 		validateResourceExists(resourcId);
@@ -791,11 +787,11 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the resource ids
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is unknown</li>
-	 * 
 	 */
 	public Double getResourceDefaultTime(ResourceId resourceId) {
 		validateResourceExists(resourceId);
@@ -807,6 +803,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * assigned during the build process.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 * 
@@ -831,6 +828,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the tracking policy associated with the resource.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}

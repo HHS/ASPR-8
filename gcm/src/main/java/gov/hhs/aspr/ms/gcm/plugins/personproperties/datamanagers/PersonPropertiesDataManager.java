@@ -97,7 +97,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * We keep the person records in a list rather than a map so that we can
 	 * retrieve a person record by index (personId).
 	 */
-
 	private IdentifiableFunctionMap<PersonPropertyUpdateEvent> functionMap = //
 			IdentifiableFunctionMap.builder(PersonPropertyUpdateEvent.class)//
 					.put(EventFunctionId.PERSON_PROPERTY_ID, e -> e.personPropertyId())//
@@ -110,6 +109,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Constructs the person property data manager from the given plugin data
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
 	 *                           if the plugin data is null</li>
 	 */
@@ -159,6 +159,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Used to more efficiently prepare for multiple population additions.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
 	 *                           if the count is negative</li>
 	 */
@@ -201,7 +202,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id and
 	 * person id.
-	 *
 	 *
 	 *
 	 * @throws ContractException
@@ -254,6 +254,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * property value.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -277,7 +278,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
 	 * property id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -333,6 +333,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * value.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -362,7 +363,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 * determine the number of people who will be returned so that we can size the
 		 * resulting ArrayList properly.
 		 */
-
 		if (indexedPropertyManager != null) {
 			final int n = peopleDataManager.getPersonIdLimit();
 
@@ -401,6 +401,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the number of people who have the given person property value.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -425,7 +426,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 * determine the number of people who will be returned so that we can size the
 		 * resulting ArrayList properly.
 		 */
-
 		int count = 0;
 
 		final IndexedPropertyManager indexedPropertyManager = propertyValues.get(personPropertyId);
@@ -451,6 +451,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given person property id
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -480,6 +481,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * value has never been assigned.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -505,6 +507,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns true if and only if the property assignment times are being tracked
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -519,6 +522,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the default property definition time
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -533,6 +537,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the current value of the person's property
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -768,7 +773,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 *
 		 * 4) person does not exist, property value is not present -- nothing to do
 		 */
-
 		Map<PersonPropertyId, List<Object>> map = personPropertiesPluginData.getPropertyValues();
 		for (PersonPropertyId personPropertyId : map.keySet()) {
 			List<Object> list = map.get(personPropertyId);

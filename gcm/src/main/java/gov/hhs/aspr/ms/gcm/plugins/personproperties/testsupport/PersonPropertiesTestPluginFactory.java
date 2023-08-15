@@ -45,7 +45,7 @@ import util.random.RandomGeneratorProvider;
  * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation}
+ * {@link TestSimulation#execute}
  */
 public class PersonPropertiesTestPluginFactory {
 

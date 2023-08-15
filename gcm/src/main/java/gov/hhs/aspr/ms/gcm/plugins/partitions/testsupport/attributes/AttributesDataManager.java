@@ -42,6 +42,7 @@ public final class AttributesDataManager extends DataManager {
 	 * without validation.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
@@ -78,8 +79,8 @@ public final class AttributesDataManager extends DataManager {
 	/**
 	 * Returns the attribute value associated with the given attribute id
 	 * 
-	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
@@ -220,7 +221,6 @@ public final class AttributesDataManager extends DataManager {
 	 * Updates the person's current attribute value. Generates a corresponding
 	 * {@linkplain AttributeUpdateEvent}
 	 * 
-	 * 
 	 * Throws {@link ContractException}
 	 *
 	 * <ul>
@@ -312,14 +312,12 @@ public final class AttributesDataManager extends DataManager {
 	 * events. Matches on attribute id.
 	 * 
 	 * 
-	 * 
 	 * @throws ContractException
 	 * 
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id is not known</li>
-	 * 
 	 */
 	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent(AttributeId attributeId) {
 		validateAttributeId(attributeId);

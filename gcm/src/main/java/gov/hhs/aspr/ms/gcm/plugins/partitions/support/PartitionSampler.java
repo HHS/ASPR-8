@@ -6,7 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 
 /**
- * 
  * A {@link PartitionSampler} represents the details of a sample query for a
  * {@link Partition}. All inputs to the {@link PartitionSampler} are optional.
  * 

@@ -14,7 +14,6 @@ import util.errors.ContractException;
 
 
 /**
- * 
  * PeopleContainer implementor that uses a BitSet to record a boolean value of
  * true for each person contained. Uses ~1.3 bits for each person in the ENTIRE
  * POPULATION OF THE SIMULATION.
@@ -44,7 +43,6 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	 * 
 	 * @throws ContractException
 	 * <li>{@linkplain PartitionError#NULL_PERSON_DATA_VIEW} if the person data view is null</li>
-	 * 
 	 */
 	public TreeBitSetPeopleContainer(PeopleDataManager personDataManger) {
 		if(personDataManger==null) {

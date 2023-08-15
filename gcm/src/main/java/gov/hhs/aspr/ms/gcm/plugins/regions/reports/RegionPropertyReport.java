@@ -89,7 +89,6 @@ public final class RegionPropertyReport {
 		 * both explicitly included and explicitly excluded
 		 *
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPropertyIds.contains(regionPropertyId)) {
 			return false;
@@ -109,9 +108,9 @@ public final class RegionPropertyReport {
 	}
 
 	/**
-	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
+	 *                           <ul>
+	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
 	 *             if the plugin data is null</li>
 	 *
 	 */
@@ -162,8 +161,7 @@ public final class RegionPropertyReport {
 	 * for each region property's initial value.
 	 * 
 	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 	 *             region property id used in the constructor is unknown</li>
 	 */
 	public void init(final ReportContext reportContext) {

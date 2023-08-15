@@ -54,9 +54,7 @@ public final class LineWriter {
 	 *             <li>if the simulation run is continuing from a progress log and
 	 *             the path is not a regular file (path does not exist) during
 	 *             file initialization</li>
-	 * 
 	 */
-
 	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports, String delimiter) {
 
 		if (Files.exists(path)) {

@@ -56,7 +56,6 @@ public final class PersonResourceReport extends PeriodicReport {
 	 * The resources that will be used in this report. They are derived from the
 	 * values passed in the init() method.
 	 */
-
 	private final boolean includeNewResourceIds;
 	private final Set<ResourceId> includedResourceIds = new LinkedHashSet<>();
 	private final Set<ResourceId> currentResourceIds = new LinkedHashSet<>();
@@ -232,7 +231,6 @@ public final class PersonResourceReport extends PeriodicReport {
 		 * both explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedResourceIds.contains(resourceId)) {
 			return false;
@@ -254,12 +252,11 @@ public final class PersonResourceReport extends PeriodicReport {
 	private PeopleDataManager peopleDataManager;
 
 	/**
-	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
+	 *                           <ul>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 	 *             resource id passed to the constructor is unknown
 	 *             <li>
-	 * 
 	 */
 	@Override
 	protected void prepare(final ReportContext reportContext) {

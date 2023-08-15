@@ -207,7 +207,6 @@ public final class StochasticsPluginData implements PluginData {
 
 	/**
 	 * Returns the RandomNumberGeneratorId values contained in this container
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
@@ -222,9 +221,9 @@ public final class StochasticsPluginData implements PluginData {
 	 * Returns the well state for the give RandomNumberGeneratorId
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           <ul>
+	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the randomNumberGeneratorId is not known</li>
-	 * 
 	 */
 	public WellState getWellState(RandomNumberGeneratorId randomNumberGeneratorId) {
 
@@ -239,9 +238,9 @@ public final class StochasticsPluginData implements PluginData {
 	 * Returns the main well state
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           <ul>
+	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the randomNumberGeneratorId is not known</li>
-	 * 
 	 */
 	public WellState getWellState() {
 		return data.wellState;

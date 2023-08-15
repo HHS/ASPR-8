@@ -39,9 +39,9 @@ import util.errors.ContractException;
  * as data changes are made to people.
  * 
  * 
- * <P>
+ * <p>
  * Subscribes to the following events for all partitions:
- * </P>
+ * </p>
  * <ul>
  * <li>{@linkplain PersonAdditionEvent} <blockquote>Adds the person to all
  * relevant population partitions after event validation and execution phases
@@ -54,10 +54,10 @@ import util.errors.ContractException;
  * still associated with any relevant partitions. </blockquote></li>
  * </ul>
  * 
- * <P>
+ * <p>
  * Subscribes to other events as needed to support the population partition
  * maintenance
- * </P>
+ * </p>
  * 
  *
  *
@@ -171,7 +171,6 @@ public final class PartitionsDataManager extends DataManager {
 	 *             <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET} if the
 	 *             label set contains dimensions not contained in the population
 	 *             partition</li>
-	 * 
 	 */
 	public int getPersonCount(final Object key, LabelSet labelSet) {
 		validateKeyExists(key);
@@ -201,7 +200,6 @@ public final class PartitionsDataManager extends DataManager {
 	 *             <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET} if the
 	 *             label set contains dimensions not contained in the population
 	 *             partition</li>
-	 * 
 	 */
 	public Map<LabelSet, Integer> getPeopleCountMap(final Object key, LabelSet labelSet) {
 		validateKeyExists(key);
@@ -263,12 +261,8 @@ public final class PartitionsDataManager extends DataManager {
 	 *             <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person does
 	 *             not exist</li>
 	 * 
-	 * 
 	 *             <li>{@link PartitionError.NULL_LABEL_SET_FUNCTION} if the
 	 *             label set function is null</li>
-	 * 
-	 * 
-	 * 
 	 * 
 	 */
 	public <T> Optional<T> getPersonValue(Object key, LabelSetFunction<T> labelSetFunction, PersonId personId) {
@@ -297,7 +291,6 @@ public final class PartitionsDataManager extends DataManager {
 	 *             <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
 	 *             if the key is unknown</li>
 	 */
-
 	public boolean contains(final PersonId personId, Object key) {
 		validatePersonNotNull(personId);
 		validatePersonExists(personId);
@@ -330,11 +323,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * 
 	 *             <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET} if the
 	 *             label contains a dimension not present in the partition</li>
-	 * 
-	 * 
-	 * 
 	 */
-
 	public boolean contains(PersonId personId, LabelSet labelSet, Object key) {
 		validatePersonNotNull(personId);
 		validatePersonExists(personId);
@@ -497,16 +486,13 @@ public final class PartitionsDataManager extends DataManager {
 	 * must not duplicate an existing key.
 	 *
 	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PartitionError#NULL_PARTITION} if the
+	 *                           <li>{@linkplain PartitionError#NULL_PARTITION} if the
 	 *             partition is null</li>
 	 *             <li>{@linkplain PartitionError#NULL_PARTITION_KEY} if the key
 	 *             is null</li>
 	 *             <li>{@linkplain PartitionError#DUPLICATE_PARTITION} if a
 	 *             partition is currently associated with the key</li>
-	 * 
 	 */
-
 	public void addPartition(final Partition partition, final Object key) {
 
 		validatePopulationPartitionNotNull(partition);
@@ -588,8 +574,6 @@ public final class PartitionsDataManager extends DataManager {
 	 * null</li>
 	 * <li>{@linkplain PartitionError#UNKNOWN_POPULATION_PARTITION_KEY} if the
 	 * key is unknown</li>
-	 * 
-	 * 
 	 */
 	public void removePartition(final Object key) {
 

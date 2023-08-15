@@ -333,7 +333,6 @@ public final class ResourceReport extends PeriodicReport {
 		 * both explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedResourceIds.contains(resourceId)) {
 			return false;
@@ -354,10 +353,10 @@ public final class ResourceReport extends PeriodicReport {
 
 	/**
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
+	 *                           <ul>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
 	 *             resource id passed to the constructor is unknown
 	 *             <li>
-	 * 
 	 */
 	@Override
 	protected void prepare(final ReportContext reportContext) {

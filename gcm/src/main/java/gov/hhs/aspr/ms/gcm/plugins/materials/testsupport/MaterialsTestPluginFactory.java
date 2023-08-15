@@ -57,7 +57,7 @@ import util.random.RandomGeneratorProvider;
  * set needed to adequately test this Plugin that can be utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation}
+ * {@link TestSimulation#execute}
  */
 public class MaterialsTestPluginFactory {
 
@@ -426,7 +426,6 @@ public class MaterialsTestPluginFactory {
 	 * </ul>
 	 * 
 	 * @throw {@link RuntimeException}
-	 * 
 	 */
 	public static MaterialsPluginData getStandardMaterialsPluginData(int numBatches, int numStages,
 			int numBatchesInStage, long seed) {

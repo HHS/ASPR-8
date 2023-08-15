@@ -15,7 +15,8 @@ public interface IndexedPropertyManager {
 	 * Note that this does not imply that the id exists in the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
 	 *             negative</li>
 	 */
 	public <T> T getPropertyValue(int id);
@@ -26,9 +27,9 @@ public interface IndexedPropertyManager {
 	 * guard against access to removed people.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
 	 *             negative</li>
-	 * 
 	 */
 	public void setPropertyValue(int id, Object propertyValue);
 
@@ -37,7 +38,8 @@ public interface IndexedPropertyManager {
 	 * removing the indicated id from the simulation.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if the id is
 	 *             negative</li>
 	 */
 	public void removeId(int id);
@@ -48,9 +50,9 @@ public interface IndexedPropertyManager {
 	 * expand to hold more data.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_CAPACITY_INCREMENT} if
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_CAPACITY_INCREMENT} if
 	 *             the count is negative</li>
-	 * 
 	 */
 	public void incrementCapacity(int count);
 

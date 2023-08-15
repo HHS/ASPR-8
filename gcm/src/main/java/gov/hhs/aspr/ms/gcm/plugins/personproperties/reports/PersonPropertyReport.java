@@ -248,7 +248,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 		 * both explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPersonPropertyIds.contains(personPropertyId)) {
 			return false;

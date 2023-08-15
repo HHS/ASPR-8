@@ -12,7 +12,6 @@ public interface RandomNumberGeneratorId {
 
 	/**
 	 * Returns the string representation of the generator id
-	 * 
 	 */
 	@Override
 	public String toString();

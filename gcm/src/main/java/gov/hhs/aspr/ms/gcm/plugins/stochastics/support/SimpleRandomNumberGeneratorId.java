@@ -57,7 +57,6 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     }
     /**
 	 * Returns the string representation of the generator's input
-	 * 
 	 */
     @Override
     public String toString() {

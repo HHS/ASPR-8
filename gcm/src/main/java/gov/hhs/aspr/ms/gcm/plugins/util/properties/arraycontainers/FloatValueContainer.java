@@ -51,9 +51,9 @@ public final class FloatValueContainer {
 	 * @param index
 	 * @return
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
-	 * 
 	 */
 	public float getValue(int index) {
 		if (index < 0) {
@@ -90,7 +90,6 @@ public final class FloatValueContainer {
 
 	/**
 	 * Returns the default value
-	 * 
 	 */
 	public float getDefaultValue() {
 		return defaultValue;
@@ -115,6 +114,7 @@ public final class FloatValueContainer {
 	 * Sets the value at the index to the given value
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
 	 */

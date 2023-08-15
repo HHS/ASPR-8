@@ -134,7 +134,6 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
-	 * 
 	 */
 	public Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
 		switch (this) {

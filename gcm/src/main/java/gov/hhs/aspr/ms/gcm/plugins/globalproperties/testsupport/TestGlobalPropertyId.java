@@ -78,7 +78,6 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getRandomPropertyValue(final RandomGenerator randomGenerator) {

@@ -37,7 +37,6 @@ public final class ObjectValueContainer {
 	 * Sets the value at the index.
 	 * 
 	 * @throws IllegalArgumentException if the index is negative
-	 * 
 	 */
 	public void setValue(int index, Object value) {
 

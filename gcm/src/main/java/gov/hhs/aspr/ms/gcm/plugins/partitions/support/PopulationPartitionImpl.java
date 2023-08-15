@@ -966,7 +966,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				 * population partition and thus it is safe to add them.
 				 * 
 				 */
-
 				addPerson(personId);
 			}
 		} else {
@@ -1101,7 +1100,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			 * Initialize the sum of the weights to zero and set the index in
 			 * the weights and weightedKeys to zero.
 			 */
-
 			double sum = 0;
 			int weightsLength = 0;
 			while (keyIterator.hasNext()) {

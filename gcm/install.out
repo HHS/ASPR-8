@@ -1,0 +1,370 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< gov.hhs.aspr.ms:gcm >-------------------------
+[INFO] Building General Computational Model 4.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ gcm ---
+[INFO] Deleting C:\Dev\CDC\ASPR-8\gcm\target
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.9:prepare-agent (default-prepare-agent) @ gcm ---
+[INFO] argLine set to -javaagent:C:\\Users\\bischoffz\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.9\\org.jacoco.agent-0.8.9-runtime.jar=destfile=C:\\Dev\\CDC\\ASPR-8\\gcm\\target\\jacoco.exec
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ gcm ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Dev\CDC\ASPR-8\gcm\src\main\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ gcm ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 327 source files to C:\Dev\CDC\ASPR-8\gcm\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ gcm ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ gcm ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 311 source files to C:\Dev\CDC\ASPR-8\gcm\target\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0-M5:test (default-test) @ gcm ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ gcm ---
+[INFO] Building jar: C:\Dev\CDC\ASPR-8\gcm\target\gcm-4.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.9:report (default-report) @ gcm ---
+[INFO] Skipping JaCoCo execution due to missing execution data file.
+[INFO] 
+[INFO] --- jacoco-maven-plugin:0.8.9:check (default-check) @ gcm ---
+[INFO] Skipping JaCoCo execution due to missing execution data file:C:\Dev\CDC\ASPR-8\gcm\target\jacoco.exec
+[INFO] 
+[INFO] --- maven-source-plugin:3.2.1:jar-no-fork (attach-sources) @ gcm ---
+[INFO] Building jar: C:\Dev\CDC\ASPR-8\gcm\target\gcm-4.0.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- maven-javadoc-plugin:3.5.0:jar (attach-javadocs) @ gcm ---
+[INFO] No previous run data found, generating javadoc.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  25.707 s
+[INFO] Finished at: 2023-08-14T17:13:07-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-javadoc-plugin:3.5.0:jar (attach-javadocs) on project gcm: MavenReportException: Error while generating Javadoc: 
+[ERROR] Exit code: 1
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\groups\datamanagers\GroupsDataManager.java:67: error: reference not found
+[ERROR]  * Mutable data manager that backs the {@linkplain PersonGroupDataView}.
+[ERROR]                                                    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\PartitionsPlugin.java:49: error: unexpected end tag: </p>
+[ERROR] 	 * </p>
+[ERROR] 	   ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\PartitionsPlugin.java:56: error: unexpected end tag: </p>
+[ERROR] 	 * </p>
+[ERROR] 	   ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:26: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:34: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:42: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:64: error: text not allowed in <ul> element
+[ERROR]  * <li><b>AttributeFilter: </b></li>Defines a filter used in partitions.
+[ERROR]                                     ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:70: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:80: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\regions\datamanagers\RegionsDataManager.java:42: error: reference not found
+[ERROR]  * Mutable data manager that backs the {@linkplain RegionDataView}. This data
+[ERROR]                                                    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\regions\datamanagers\RegionsPluginData.java:30: error: reference not found
+[ERROR]  * <li>suppliers of consumers of {@linkplain AgentContext} for region
+[ERROR]                                              ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\stochastics\StochasticsPlugin.java:23: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\stochastics\StochasticsPlugin.java:35: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\stochastics\StochasticsPlugin.java:57: error: unexpected end tag: </p>
+[ERROR]  * </p>
+[ERROR]    ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:48: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:78: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:104: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:117: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:148: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:164: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:201: error: tag not allowed here: <li>
+[ERROR] 	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:241: error: reference not found
+[ERROR] 	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
+[ERROR] 	                                        ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\ActorContext.java:238: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\filters\Filter.java:22: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\filters\Filter.java:34: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\filters\Filter.java:54: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\filters\Filter.java:72: error: tag not allowed here: <li>
+[ERROR] 	 * <li>the context is not null</li>
+[ERROR] 	   ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\filters\AndFilter.java:21: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeDefinition.java:52: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE} if
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeDefinition.java:56: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain AttributeError#NULL_DEFAULT_VALUE}if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeDefinition.java:59: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain AttributeError#INCOMPATIBLE_DEFAULT_VALUE}if
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:94: error: text not allowed in <ul> element
+[ERROR] 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li> if the
+[ERROR] 	                                                                                   ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:97: error: text not allowed in <ul> element
+[ERROR] 	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li> if
+[ERROR] 	                                                                        ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:100: error: reference not found
+[ERROR] 	 *             <li>{@linkplain PartitionError.NULL_EQUALITY_OPERATOR}</li>if
+[ERROR] 	                               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:100: error: text not allowed in <ul> element
+[ERROR] 	 *             <li>{@linkplain PartitionError.NULL_EQUALITY_OPERATOR}</li>if
+[ERROR] 	                                                                          ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:103: error: reference not found
+[ERROR] 	 *             <li>{@linkplain AttributeError.NULL_ATTRIBUTE_VALUE}</li>if
+[ERROR] 	                               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:103: error: text not allowed in <ul> element
+[ERROR] 	 *             <li>{@linkplain AttributeError.NULL_ATTRIBUTE_VALUE}</li>if
+[ERROR] 	                                                                        ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:106: error: reference not found
+[ERROR] 	 *             <li>{@linkplain AttributeError.INCOMPATIBLE_VALUE}</li>if the
+[ERROR] 	                               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:106: error: text not allowed in <ul> element
+[ERROR] 	 *             <li>{@linkplain AttributeError.INCOMPATIBLE_VALUE}</li>if the
+[ERROR] 	                                                                      ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:110: error: reference not found
+[ERROR] 	 *             <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
+[ERROR] 	                               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:110: error: text not allowed in <ul> element
+[ERROR] 	 *             <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
+[ERROR] 	                                                                            ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeFilter.java:93: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeLabeler.java:59: error: unknown tag: throwsContractException
+[ERROR] 	 * @throwsContractException
+[ERROR] 	   ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeLabeler.java:60: error: tag not allowed here: <li>
+[ERROR] 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
+[ERROR] 	                            ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\support\AttributeLabeler.java:62: error: tag not allowed here: <li>
+[ERROR] 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
+[ERROR] 	                            ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManager.java:28: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesDataManager.java:45: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesDataManager.java:84: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesDataManager.java:320: error: tag not allowed here: <li>
+[ERROR] 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesDataManager.java:322: error: tag not allowed here: <li>
+[ERROR] 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPlugin.java:93: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:270: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:358: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:168: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:172: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:190: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:192: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:194: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:210: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:212: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\testsupport\attributes\AttributesPluginData.java:214: error: tag not allowed here: <li>
+[ERROR] 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE}
+[ERROR] 		                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:72: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:74: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:87: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:89: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:107: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:122: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:138: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchConstructionInfo.java:141: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\events\BatchPropertyDefinitionEvent.java:23: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:96: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:99: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:101: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:104: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if no
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:118: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:133: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:148: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:163: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain MaterialsError#NULL_BATCH_ID} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\support\BatchPropertyDefinitionInitialization.java:165: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\reports\BatchStatusReportPluginData.java:116: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\materials\reports\BatchStatusReportPluginData.java:133: error: tag not allowed here: <li>
+[ERROR] 		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
+[ERROR] 		               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\util\properties\IndexedPropertyManager.java:18: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\util\properties\IndexedPropertyManager.java:30: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\util\properties\IndexedPropertyManager.java:42: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\util\properties\IndexedPropertyManager.java:54: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\util\properties\BooleanPropertyManager.java:26: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:34: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:63: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:90: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:126: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:146: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:160: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:172: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:194: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:215: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:246: error: tag not allowed here: <li>
+[ERROR] 	 *                           <li>{@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:278: error: reference not found
+[ERROR] 	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
+[ERROR] 	                                        ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\DataManagerContext.java:275: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\PopulationPartition.java:29: error: tag not allowed here: <li>
+[ERROR] 	 *             <li>if the person id is null</li>
+[ERROR] 	               ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\plugins\partitions\support\DegeneratePopulationPartitionImpl.java:43: error: element not closed: ul
+[ERROR] 	 *                           <ul>
+[ERROR] 	                             ^
+[ERROR] C:\Dev\CDC\ASPR-8\gcm\src\main\java\gov\hhs\aspr\ms\gcm\nucleus\util\TriConsumer.java:36: warning: @param "u" has already been specified
+[ERROR] 	 * @param u
+[ERROR] 	   ^
+[ERROR] 100 errors
+[ERROR] 1 warning
+[ERROR] Command line was: cmd.exe /X /C ""C:\Program Files\Microsoft\jdk-17.0.6.10-hotspot\bin\javadoc.exe" @options @packages"
+[ERROR] 
+[ERROR] Refer to the generated Javadoc files in 'C:\Dev\CDC\ASPR-8\gcm\target\apidocs' dir.
+[ERROR] 
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

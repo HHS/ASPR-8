@@ -19,7 +19,8 @@ public abstract class Filter {
 	 * Returns a filter that is the conjunction of this and the given filter.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PartitionError#NULL_FILTER} if the filter is
+	 *                           <ul>
+	 *                           <li>{@linkplain PartitionError#NULL_FILTER} if the filter is
 	 *             null</li>
 	 */
 	public final Filter and(Filter filter) {
@@ -30,7 +31,8 @@ public abstract class Filter {
 	 * Returns a filter that is the disjunction of this and the given filter.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PartitionError#NULL_FILTER} if the filter is
+	 *                           <ul>
+	 *                           <li>{@linkplain PartitionError#NULL_FILTER} if the filter is
 	 *             null</li>
 	 */
 	public final Filter or(Filter filter) {
@@ -49,9 +51,9 @@ public abstract class Filter {
 	 *
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT} if the
 	 *             context is null</li>
-	 * 
 	 * 
 	 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id
 	 *             is null</li>

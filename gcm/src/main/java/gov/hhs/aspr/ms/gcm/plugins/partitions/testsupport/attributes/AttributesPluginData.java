@@ -267,6 +267,7 @@ public class AttributesPluginData implements PluginData {
 	 * Returns the attribute definition for the given attribute id
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
@@ -354,11 +355,11 @@ public class AttributesPluginData implements PluginData {
 	 * starting from zero.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id is unknown</li>
-	 * 
 	 */
 	public List<Object> getAttributeValues(AttributeId attributeId) {
 		validateAttributeId(attributeId);

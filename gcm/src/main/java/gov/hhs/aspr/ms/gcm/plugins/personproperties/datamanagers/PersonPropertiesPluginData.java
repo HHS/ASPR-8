@@ -391,7 +391,6 @@ public class PersonPropertiesPluginData implements PluginData {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 * 
 	 */
 	public PropertyDefinition getPersonPropertyDefinition(final PersonPropertyId personPropertyId) {
 		validatePersonPropertyIdNotNull(personPropertyId);
@@ -411,7 +410,6 @@ public class PersonPropertiesPluginData implements PluginData {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 * 
 	 */
 	public double getPropertyDefinitionTime(final PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
@@ -427,7 +425,6 @@ public class PersonPropertiesPluginData implements PluginData {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 * 
 	 */
 	public boolean propertyAssignmentTimesTracked(final PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);
@@ -436,7 +433,6 @@ public class PersonPropertiesPluginData implements PluginData {
 
 	/**
 	 * Returns the set of {@link PersonPropertyId} ids
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends PersonPropertyId> Set<T> getPersonPropertyIds() {
@@ -492,11 +488,11 @@ public class PersonPropertiesPluginData implements PluginData {
 	 * ascending order starting from zero.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 * 
 	 */
 	public List<Object> getPropertyValues(PersonPropertyId personPropertyId) {
 		validatePersonPropertyId(personPropertyId);

@@ -23,7 +23,8 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 	 * Constructs this BooleanPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Boolean</li>

@@ -54,7 +54,6 @@ public final class Tuplator {
 	 * @throws IllegalArgumentException
 	 *             <li>if the tuple is null
 	 *             <li>if the tuple's length is not equal to dimensions()
-	 * 
 	 */
 	public void fillTuple(int index, int[] tuple) {
 		if ((index < 0) || (index >= size)) {

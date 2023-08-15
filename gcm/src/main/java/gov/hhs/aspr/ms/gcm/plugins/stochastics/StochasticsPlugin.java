@@ -49,10 +49,10 @@ import util.errors.ContractError;
  * <p>
  * <b>Support classes</b>
  * <ul>
- * <li><b>StochasticsError: </b></li>Enumeration implementing
- * {@linkplain ContractError} for this plugin.
- * <li><b>RandomNumberGeneratorId: </b></li>Marker interface for generator id
- * values
+ * <li><b>StochasticsError: </b>Enumeration implementing
+ * {@linkplain ContractError} for this plugin.</li>
+ * <li><b>RandomNumberGeneratorId: </b>Marker interface for generator id
+ * values</li>
  * </ul>
  * </p>
  *

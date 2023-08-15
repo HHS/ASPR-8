@@ -82,7 +82,6 @@ public final class GlobalPropertyReport {
 		 * both explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPropertyIds.contains(globalPropertyId)) {
 			return false;
@@ -102,13 +101,11 @@ public final class GlobalPropertyReport {
 	}
 
 	/**
-	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+	 *                           <ul>
+	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
 	 *             if the plugin data is null</li>
-	 * 
 	 */
-
 	public GlobalPropertyReport(GlobalPropertyReportPluginData globalPropertyReportPluginData) {
 
 		if (globalPropertyReportPluginData == null) {

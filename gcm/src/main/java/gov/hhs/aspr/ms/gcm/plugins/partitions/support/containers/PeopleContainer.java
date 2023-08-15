@@ -35,8 +35,6 @@ public interface PeopleContainer {
 	 * Returns true if and only if the person was successfully removed.
 	 * 
 	 * Precondition: The person cannot be null.
-	 * 
-	 * 
 	 */
 	public boolean remove(PersonId personId);
 

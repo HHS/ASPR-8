@@ -238,6 +238,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Adds a new region property
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION}
 	 *                           if the region property definition initialization is
 	 *                           null</li>
@@ -330,6 +331,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Used to more efficiently prepare for multiple population additions.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
 	 *                           if the count is negative</li>
 	 */
@@ -350,6 +352,7 @@ public final class RegionsDataManager extends DataManager {
 	 * List elements are unique.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           c id is null
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -437,6 +440,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns the number of people currently in the given region.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -451,6 +455,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns the property definition for the given {@link RegionPropertyId}
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -478,6 +483,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns the value of the region property.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -521,7 +527,6 @@ public final class RegionsDataManager extends DataManager {
 		/*
 		 * Update the population count of the new region
 		 */
-
 		regionPopulationRecordMap.get(regionId).increment();
 
 		final Integer regionIndex = regionToIndexMap.get(regionId).intValue();
@@ -554,7 +559,6 @@ public final class RegionsDataManager extends DataManager {
 
 	/**
 	 * Initializes the state of regions related data from the RegionsPluginData.
-	 *
 	 *
 	 *
 	 * @throws ContractException
@@ -754,7 +758,6 @@ public final class RegionsDataManager extends DataManager {
 	 * <li>{@link RegionError#UNKNOWN_REGION_ID} if the region id is unknown</li>
 	 *
 	 */
-
 	public void setPersonRegion(final PersonId personId, final RegionId regionId) {
 		dataManagerContext.releaseMutationEvent(new PersonRegionUpdateMutationEvent(personId, regionId));
 	}
@@ -774,7 +777,6 @@ public final class RegionsDataManager extends DataManager {
 		/*
 		 * Update the population count associated with the old region
 		 */
-
 		regionPopulationRecordMap.get(oldRegionId).decrement();
 
 		/*
@@ -785,7 +787,6 @@ public final class RegionsDataManager extends DataManager {
 		/*
 		 * Convert the new region id into an int
 		 */
-
 		regionIndex = regionToIndexMap.get(regionId).intValue();
 		/*
 		 * Store in the int at the person's index
@@ -826,7 +827,6 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 * </blockquote></li>
 	 */
-
 	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId,
 			final Object regionPropertyValue) {
 		dataManagerContext.releaseMutationEvent(
@@ -990,7 +990,6 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the arrival region id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
@@ -1012,7 +1011,6 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the departure region id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
@@ -1033,7 +1031,6 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the person id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1075,7 +1072,6 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionPropertyUpdateEvent} events. Matches on the region id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
@@ -1098,7 +1094,6 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionPropertyUpdateEvent} events. Matches on the region property id
 	 * and region id.
-	 *
 	 *
 	 * @throws ContractException
 	 *

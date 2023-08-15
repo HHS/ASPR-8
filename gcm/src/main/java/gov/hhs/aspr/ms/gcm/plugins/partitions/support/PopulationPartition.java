@@ -8,7 +8,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
- * 
  * A {@link PopulationPartition} is the interface for implementors of
  * partitions, maintaining the people associated with the partition's cells by
  * handling individual mutation events.
@@ -27,8 +26,6 @@ public interface PopulationPartition {
 	 * 
 	 * @throws RuntimeException
 	 *             <li>if the person id is null</li>
-	 * 
-	 * 
 	 */
 	public void attemptPersonAddition(PersonId personId);
 
@@ -61,7 +58,6 @@ public interface PopulationPartition {
 	 * Returns the number of people contained in this
 	 * {@link PopulationPartition}
 	 */
-
 	public int getPeopleCount();
 
 	/**

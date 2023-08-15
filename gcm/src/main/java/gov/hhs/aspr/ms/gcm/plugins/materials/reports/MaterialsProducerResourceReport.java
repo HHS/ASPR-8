@@ -48,7 +48,6 @@ public final class MaterialsProducerResourceReport {
 		/*
 		 * Used when a materials producer transfers resource to a region
 		 */
-
 		REMOVED("Removed");
 
 		private final String displayName;

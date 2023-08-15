@@ -368,6 +368,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Constructs the data manager.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
 	 *                           if the material plugin data is null</li>
 	 */
@@ -426,6 +427,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Adds a new material type
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
 	 *                           <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL}
@@ -584,7 +586,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain MaterialsProducerResourceUpdateEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *
@@ -674,6 +675,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the amount of material in the batch.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -689,6 +691,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the type of material in the batch.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -705,6 +708,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the materials producer identifier of the batch
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -722,6 +726,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link BatchPropertyId}
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
@@ -743,6 +748,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the {@link BatchPropertyId} values for the given {@link MaterialId}
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the materials id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID
@@ -764,6 +770,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * validate the inputs.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -773,7 +780,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the batch property id is unknown</li>
 	 */
-
 	@SuppressWarnings("unchecked")
 	public <T> T getBatchPropertyValue(BatchId batchId, BatchPropertyId batchPropertyId) {
 		validateBatchId(batchId);
@@ -792,6 +798,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the stage id the batch. Returns null if the batch is not in a stage.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -892,7 +899,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyUpdateEvent} events. Matches on the materials
 	 * producer id and materials producer property id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
@@ -935,7 +941,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the materials
 	 * producer id and resource id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
@@ -965,7 +970,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the resource
 	 * id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1015,7 +1019,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the stage id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
@@ -1036,7 +1039,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the destination
 	 * materials producer id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1059,7 +1061,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the source
 	 * materials producer id.
-	 *
 	 *
 	 * @throws ContractException
 	 *
@@ -1108,7 +1109,6 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link StageOfferUpdateEvent}
 	 * events. Matches on the stage id.
 	 *
-	 *
 	 * @throws ContractException
 	 *
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
@@ -1128,6 +1128,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * the batches are not staged.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1148,6 +1149,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * material id where the batches are not staged.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1200,6 +1202,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyId}
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the materials producer property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -1229,6 +1232,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the value of the materials producer property.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1257,6 +1261,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the materials producer resource level.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1279,6 +1284,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * the stage is being offered.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1300,6 +1306,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of batch ids matching the stage .
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -1318,8 +1325,8 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage and material type.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -1346,6 +1353,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the materials producer id for the stage.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -1361,8 +1369,8 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -2272,6 +2280,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns true if and only if the stage is offered.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -2482,6 +2491,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -2627,7 +2637,6 @@ public final class MaterialsDataManager extends DataManager {
 	 *                           </blockquote></li>
 	 *
 	 */
-
 	public void transferMaterialBetweenBatches(BatchId sourceBatchId, BatchId destinationBatchId, double amount) {
 
 		dataManagerContext

@@ -32,7 +32,7 @@ import util.random.RandomGeneratorProvider;
  * utilized with
  * </p>
  * 
- * <li>{@link TestSimulation#executeSimulation}
+ * {@link TestSimulation#execute}
  */
 public class StochasticsTestPluginFactory {
 

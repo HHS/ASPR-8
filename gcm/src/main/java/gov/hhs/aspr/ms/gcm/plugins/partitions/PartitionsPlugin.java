@@ -36,29 +36,28 @@ public final class PartitionsPlugin {
 	/**
 	 * Returns the partitions plugin.
 	 *
-	 * <P>
+	 * <p>
 	 * Uses PartitionsPluginId.PLUGIN_ID as its id
-	 * </P>
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * Depends on plugins:
 	 * <ul>
 	 * <li>Stochastics Plugin</li>
 	 * <li>People Plugin</li>
 	 * </ul>
-	 * </P>
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * Provides data mangers:
 	 * <ul>
 	 * <li>{@linkplain PartitionsDataManager}</li>
 	 * </ul>
-	 * </P>
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * Provides no actors:
-	 * </P>
-	 * 
+	 * </p>
 	 */
 	public static class Builder {
 		private Builder() {

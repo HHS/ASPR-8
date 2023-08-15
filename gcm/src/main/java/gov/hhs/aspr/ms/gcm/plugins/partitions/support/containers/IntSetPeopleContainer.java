@@ -201,7 +201,6 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 		/*
 		 * Place the values from the old values array into the new values array.
 		 */
-
 		tree = new int[newSize * 2];
 
 		for (int i = 0; i < buckets.length; i++) {
@@ -353,7 +352,6 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			 * we should rebuild the list and record the new maxSize for the
 			 * list.
 			 */
-
 			// decrement the values int the tree
 			int treeIndex = index + buckets.length;
 			while (treeIndex > 0) {

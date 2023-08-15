@@ -54,7 +54,6 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	 * Builder class for a MaterialsProducerPropertyDefinitionInitialization
 	 * 
 	 *
-	 * 
 	 */
 	public final static class Builder {
 
@@ -142,7 +141,6 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
-
 		public Builder addPropertyValue(MaterialsProducerId materialsProducerId, Object value) {
 			if (materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);

@@ -19,22 +19,19 @@ public final class PeoplePlugin {
 	/**
 	 * Returns the people plugin.
 	 *
-	 * <P>
+	 * <p>
 	 * Uses PeoplePluginId.PLUGIN_ID as its id
-	 * </P>
+	 * </p>
 	 * 
-	 * <P>
+	 * <p>
 	 * Depends on plugins: none
 	 * 
-	 * <P>
+	 * <p>
 	 * Provides data mangers:
 	 * <ul>
 	 * <li>{@linkplain PeopleDataManager}</li>
 	 * </ul>
-	 * </P>
-	 * 
-	 * 
-	 * 
+	 * </p>
 	 */
 	public static Plugin getPeoplePlugin(PeoplePluginData peoplePluginData) {
 

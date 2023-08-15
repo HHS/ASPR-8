@@ -18,7 +18,8 @@ public final class OrFilter extends Filter {
 	 * Constructs a filter that is the disjunction of two filters.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PartitionError#NULL_FILTER} if either filter
+	 *                           <ul>
+	 *                           <li>{@linkplain PartitionError#NULL_FILTER} if either filter
 	 *             is null</li>
 	 */
 	public OrFilter(Filter a, Filter b) {

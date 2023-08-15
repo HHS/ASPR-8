@@ -165,7 +165,6 @@ public final class BatchPropertyDefinitionInitialization {
 		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
 		 *             property value is null</li>
 		 */
-
 		public Builder addPropertyValue(BatchId batchId, Object value) {
 			if (batchId == null) {
 				throw new ContractException(MaterialsError.NULL_BATCH_ID);

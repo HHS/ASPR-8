@@ -200,7 +200,6 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * both explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		Set<GroupPropertyId> set = excludedProperties.get(groupTypeId);
 		if (set != null) {

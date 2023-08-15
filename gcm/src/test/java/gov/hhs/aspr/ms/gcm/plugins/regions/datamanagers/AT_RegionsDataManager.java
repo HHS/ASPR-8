@@ -1773,7 +1773,6 @@ public class AT_RegionsDataManager {
 	/*
 	 * Executes the simulation with each of the region properties defined without
 	 * default values
-	 * 
 	 */
 	private static void testConsumerWithNoDefaultRegionProperties(long seed, Consumer<ActorContext> consumer) {
 

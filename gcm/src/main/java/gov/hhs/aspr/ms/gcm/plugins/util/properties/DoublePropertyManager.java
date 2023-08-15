@@ -24,14 +24,14 @@ public final class DoublePropertyManager implements IndexedPropertyManager {
 	 * Constructs this DoublePropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
 	 *             initial size is negative</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
 	 *             the property definition is null</li>
 	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *             if the property definition's type is not Double</li>
 	 *            
-	 * 
 	 */
 	public DoublePropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {

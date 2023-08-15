@@ -20,7 +20,8 @@ public record BatchPropertyDefinitionEvent(MaterialId materialId, BatchPropertyI
 	 * Constructs the event
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+	 *                           <ul>
+	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 	 *             material id is null</li>
 	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
 	 *             batch property id is null</li>

@@ -90,7 +90,8 @@ public final class AttributeFilter extends Filter {
 	 * Validates this attribute filter
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li> if the
+	 *                           <ul>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li> if the
 	 *             filter's attribute id is null
 	 * 
 	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li> if
@@ -109,7 +110,6 @@ public final class AttributeFilter extends Filter {
 	 *             <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
 	 *             the filter's value is not a COMPARABLE when the filter's
 	 *             equality operator is not EQUALS or NOT_EQUALS.
-	 * 
 	 */
 	@Override
 	public void validate(PartitionsContext partitionsContext) {
