@@ -2,21 +2,20 @@ package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
 import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
+
 /**
- * A simple implementor of {@link GlobalPropertyId} that wraps a value. 
- *
+ * A simple implementor of {@link GlobalPropertyId} that wraps a value.
  */
 public final class SimpleGlobalPropertyId implements GlobalPropertyId {
-	
+
 	private final Object value;
 
 	/**
-	 * Creates a global property id from the given value.  The value must implement a proper equals contract.
+	 * Creates a global property id from the given value. The value must implement a
+	 * proper equals contract.
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if
-	 *             the value is null</li>
+	 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+	 *                           the value is null
 	 */
 	public SimpleGlobalPropertyId(Object value) {
 		if (value == null) {

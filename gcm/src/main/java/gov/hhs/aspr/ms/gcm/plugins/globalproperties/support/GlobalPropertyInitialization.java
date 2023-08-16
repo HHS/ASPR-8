@@ -9,10 +9,7 @@ import util.errors.ContractException;
 
 /**
  * Immutable data class that represents the addition of a global property
- * 
- *
  */
-
 @Immutable
 public class GlobalPropertyInitialization {
 
@@ -67,16 +64,21 @@ public class GlobalPropertyInitialization {
 		 * Returns the GlobalPropertyInitialization formed from the inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if no property definition was provided</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
-		 *             property id was provided</li>
-		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if no property value was provided and the property
-		 *             definition does not contain a default value</li>
-		 *             <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE) if the
-		 *             property value type is not compatible with the property
-		 *             definition</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if no property definition was provided</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           no
+		 *                           property id was provided</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if no property value was provided and the property
+		 *                           definition does not contain a default value</li>
+		 *                           <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE)
+		 *                           if the
+		 *                           property value type is not compatible with the
+		 *                           property
+		 *                           definition</li>
+		 *                           </ul>
 		 */
 		public GlobalPropertyInitialization build() {
 			validate();
@@ -86,9 +88,8 @@ public class GlobalPropertyInitialization {
 		/**
 		 * Sets the property id.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           property id is null
 		 */
 		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
 			if (globalPropertyId == null) {
@@ -101,9 +102,8 @@ public class GlobalPropertyInitialization {
 		/**
 		 * Sets the property definition.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if the property definition is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -117,9 +117,8 @@ public class GlobalPropertyInitialization {
 		 * Sets the value of the global property that overrides any default
 		 * value provided by the property definition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             value is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+		 *                           the value is null
 		 */
 		public Builder setValue(Object value) {
 			if (value == null) {

@@ -9,12 +9,11 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertie
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReport;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
+
 import util.errors.ContractException;
 
 /**
  * A plugin providing a global property data manager to the simulation.
- * 
- *
  */
 public final class GlobalPropertiesPlugin {
 
@@ -67,8 +66,8 @@ public final class GlobalPropertiesPlugin {
 		 * 
 		 * 
 		 * @throws ContractException
-		 *             {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
-		 *             if the global plugin data is null
+		 *                           {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+		 *                           if the global plugin data is null
 		 * 
 		 */
 		public Plugin getGlobalPropertiesPlugin() {
@@ -90,7 +89,8 @@ public final class GlobalPropertiesPlugin {
 			}
 		}
 
-		public Builder setGlobalPropertyReportPluginData(GlobalPropertyReportPluginData globalPropertyReportPluginData) {
+		public Builder setGlobalPropertyReportPluginData(
+				GlobalPropertyReportPluginData globalPropertyReportPluginData) {
 			data.globalPropertyReportPluginData = globalPropertyReportPluginData;
 			return this;
 		}
@@ -106,7 +106,8 @@ public final class GlobalPropertiesPlugin {
 		GlobalPropertiesPluginData data = pluginContext.getPluginData(GlobalPropertiesPluginData.class).get();
 		pluginContext.addDataManager(new GlobalPropertiesDataManager(data));
 
-		Optional<GlobalPropertyReportPluginData> optional = pluginContext.getPluginData(GlobalPropertyReportPluginData.class);
+		Optional<GlobalPropertyReportPluginData> optional = pluginContext
+				.getPluginData(GlobalPropertyReportPluginData.class);
 		if (optional.isPresent()) {
 			GlobalPropertyReportPluginData globalPropertyReportPluginData = optional.get();
 			pluginContext.addReport(new GlobalPropertyReport(globalPropertyReportPluginData)::init);
