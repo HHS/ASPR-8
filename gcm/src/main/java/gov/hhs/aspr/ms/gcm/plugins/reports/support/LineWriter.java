@@ -216,7 +216,7 @@ public final class LineWriter {
 
 			sb.append(scenarioId);
 			if (useExperimentColumns) {
-				List<String> metaData = experimentContext.getScenarioMetaData(scenarioId).get();
+				List<String> metaData = experimentContext.getScenarioMetaData(scenarioId);
 				for (String item : metaData) {
 					sb.append(delimiter);
 					sb.append(item);

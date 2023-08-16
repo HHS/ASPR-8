@@ -245,7 +245,7 @@ public class AT_ExperimentContext {
 						c.subscribeToOutput(Object.class, (c2, s, e) -> {
 							MultiKey.Builder builder = MultiKey.builder();
 							builder.addKey(s);
-							for (String metaDatum : c2.getScenarioMetaData(s).get()) {
+							for (String metaDatum : c2.getScenarioMetaData(s)) {
 								builder.addKey(Integer.parseInt(metaDatum));
 							}
 							combinedMetaData.add(builder.build());
