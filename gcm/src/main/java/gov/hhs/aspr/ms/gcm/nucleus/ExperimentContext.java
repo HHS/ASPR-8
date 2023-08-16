@@ -110,7 +110,7 @@ public final class ExperimentContext {
 	/**
 	 * Returns the list of meta data for the given scenario if it is available.
 	 */
-	public List<String> getScenarioMetaData(int scenarioId){
+	public List<String> getScenarioMetaData(int scenarioId) {
 		return experimentStateManager.getScenarioMetaData(scenarioId);
 	}
 
