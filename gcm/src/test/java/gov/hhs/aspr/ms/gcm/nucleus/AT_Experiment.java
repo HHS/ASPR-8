@@ -83,7 +83,7 @@ public class AT_Experiment {
 		Experiment.builder()//
 				.addExperimentContextConsumer(c -> {
 					c.subscribeToOutput(Object.class, (c2, s, e) -> {
-						List<String> scenarioMetaData = c2.getScenarioMetaData(s).get();
+						List<String> scenarioMetaData = c2.getScenarioMetaData(s);
 						MultiKey.Builder builder = MultiKey.builder();
 						for (String scenarioMetaDatum : scenarioMetaData) {
 							builder.addKey(scenarioMetaDatum);
@@ -134,7 +134,7 @@ public class AT_Experiment {
 		Consumer<ExperimentContext> integerOutputHandler = (c) -> {
 			c.subscribeToOutput(Integer.class, (c2, s, e) -> {
 				MultiKey.Builder builder = MultiKey.builder();
-				List<String> metaData = c2.getScenarioMetaData(s).get();
+				List<String> metaData = c2.getScenarioMetaData(s);
 				builder.addKey("Integer Output Handler");
 				for (String metaDatum : metaData) {
 					builder.addKey(metaDatum);
