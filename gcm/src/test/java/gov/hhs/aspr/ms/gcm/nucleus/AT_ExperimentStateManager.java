@@ -24,7 +24,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTag;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.wrappers.MutableBoolean;
@@ -665,7 +664,7 @@ public class AT_ExperimentStateManager {
 
 	@Test
 	@UnitTestMethod(target = ExperimentStateManager.class, name = "getStatusCount", args = {
-			ScenarioStatus.class }, tags = { UnitTag.CLASS_PROXY })
+			ScenarioStatus.class })
 	public void testGetStatusCount() {
 		/*
 		 * We will have 10 scenarios spanning the various ScenarioStatus types
@@ -1034,7 +1033,7 @@ public class AT_ExperimentStateManager {
 
 	@Test
 	@UnitTestMethod(target = ExperimentStateManager.Builder.class, name = "setContinueFromProgressLog", args = {
-			boolean.class }, tags = { UnitTag.CLASS_PROXY })
+			boolean.class })
 	public void testSetContinueFromProgressLog() {
 
 		Set<Integer> previouslyCompletedScenarios = new LinkedHashSet<>();
@@ -1124,7 +1123,7 @@ public class AT_ExperimentStateManager {
 
 	@Test
 	@UnitTestMethod(target = ExperimentStateManager.Builder.class, name = "addExplicitScenarioId", args = {
-			Integer.class }, tags = { UnitTag.CLASS_PROXY })
+			Integer.class })
 	public void testAddExplicitScenarioId() {
 		// we fill the progress log with 0 and 3 as PREVIOUSLY_SUCCEEDED
 		Set<Integer> previouslyCompleteScenarios = new LinkedHashSet<>();
