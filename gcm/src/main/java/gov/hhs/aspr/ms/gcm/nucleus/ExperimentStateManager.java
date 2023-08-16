@@ -46,29 +46,28 @@ public final class ExperimentStateManager {
 	private Map<Integer, ScenarioRecord> scenarioRecords = new LinkedHashMap<>();
 
 	/**
-	 * Updates the scenario's status. Announces the opening of the scenario to
-	 * subscribed experiment context consumers.
+	 * Updates the scenario's status to RUNNING and sets the meta data for the
+	 * scenario. Announces the opening of the scenario to subscribed experiment
+	 * context consumers. Should be preceded by openExperiment.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID}if
-	 *                           the scenario
-	 *                           id is null</li>
+	 *                           the scenario id is null</li>
 	 *                           <li>{@linkplain NucleusError#NULL_META_DATA}if the
-	 *                           meta data
-	 *                           is null</li>
+	 *                           meta data is null</li>
 	 *                           <li>{@linkplain NucleusError#NULL_META_DATA}if the
-	 *                           meta data
-	 *                           contains a null datum</li>
+	 *                           meta data contains a null datum</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}if
-	 *                           the
-	 *                           scenario is not known</li>
+	 *                           the scenario is not known</li>
 	 *                           <li>{@linkplain NucleusError#SCENARIO_CANNOT_BE_EXECUTED}if
 	 *                           the scenario's current status is not
 	 *                           {@linkplain Scenario#READY}</li>
-	 *                           </ul>
 	 */
 	public synchronized void openScenario(Integer scenarioId, List<String> metaData) {
+
+		if (scenarioId == null) {
+			throw new ContractException(NucleusError.NULL_SCENARIO_ID);
+		}
 
 		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
 		if (scenarioRecord == null) {
@@ -90,6 +89,7 @@ public final class ExperimentStateManager {
 		}
 
 		scenarioRecord.scenarioStatus = ScenarioStatus.RUNNING;
+		scenarioRecord.metaData = new ArrayList<>();
 		scenarioRecord.metaData.addAll(metaData);
 
 		for (BiConsumer<ExperimentContext, Integer> consumer : simOpenConsumers) {
@@ -101,20 +101,15 @@ public final class ExperimentStateManager {
 
 	/**
 	 * Announces the closure of the scenario to subscribed experiment context
-	 * consumers. Records the scenario in the scenario progress file if the file
-	 * is active and the scenario was successful(i.e. the simulation executed
-	 * without throwing an exception).
+	 * consumers. Records the scenario in the scenario progress file if the file is
+	 * active.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
-	 *                           the
-	 *                           scenario id is null</li>
+	 *                           the scenario id is null</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}
-	 *                           if the
-	 *                           scenario id is not in the range [0,scenario
+	 *                           if the scenario id is not in the range [0,scenario
 	 *                           count)</li>
-	 *                           </ul>
 	 */
 	public synchronized void closeScenarioAsSuccess(Integer scenarioId) {
 
@@ -151,21 +146,16 @@ public final class ExperimentStateManager {
 	}
 
 	/**
-	 * Announces the closure of the scenario to subscribed experiment context
-	 * consumers. Records the scenario in the scenario progress file if the file
-	 * is active and the scenario was successful(i.e. the simulation executed
-	 * without throwing an exception).
+	 * Announces the closure of the scenario to the subscribed experiment context
+	 * consumers. Records the failure status of the scenario and its failure cause.
+	 * Failed scenarios are not reported to the progress log.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
-	 *                           the
-	 *                           scenario id is null</li>
+	 *                           the scenario id is null</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}
-	 *                           if the
-	 *                           scenario id is not in the range [0,scenario
+	 *                           if the scenario id is not in the range [0,scenario
 	 *                           count)</li>
-	 *                           </ul>
 	 */
 	public synchronized void closeScenarioAsFailure(Integer scenarioId, Exception exception) {
 
@@ -189,8 +179,9 @@ public final class ExperimentStateManager {
 	}
 
 	/**
-	 * Returns the current status for the given scenario id if the scenario
-	 * exists.
+	 * 
+	 * Returns the current status for the given scenario id if the scenario exists.
+	 * 
 	 */
 	public synchronized Optional<ScenarioStatus> getScenarioStatus(int scenarioId) {
 		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
@@ -234,15 +225,16 @@ public final class ExperimentStateManager {
 	}
 
 	/**
-	 * Returns the list of meta data for the given scenario if it is available.
+	 * Returns the list of currently available meta data for the given scenario id.
+	 * Note that READY and SKIPPED scenarios will not have associated meta data.
 	 */
-	public synchronized Optional<List<String>> getScenarioMetaData(Integer scenarioId) {
+	public synchronized List<String> getScenarioMetaData(Integer scenarioId) {
 		ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
-		List<String> result = null;
+		List<String> result = new ArrayList<>();
 		if (scenarioRecord != null) {
-			result = new ArrayList<>(scenarioRecord.metaData);
+			result.addAll(scenarioRecord.metaData);
 		}
-		return Optional.ofNullable(result);
+		return result;
 	}
 
 	/**
@@ -304,7 +296,7 @@ public final class ExperimentStateManager {
 	}
 
 	private static class Data {
-		private Integer scenarioCount;
+		private Integer scenarioCount = 0;
 		private Path progressLogFile;
 		private List<String> experimentMetaData = new ArrayList<>();
 		private List<Consumer<ExperimentContext>> contextConsumers = new ArrayList<>();
@@ -320,7 +312,7 @@ public final class ExperimentStateManager {
 			experimentMetaData.addAll(data.experimentMetaData);
 			contextConsumers.addAll(data.contextConsumers);
 			continueFromProgressLog = data.continueFromProgressLog;
-			explicitScenarioIds.addAll(explicitScenarioIds);
+			explicitScenarioIds.addAll(data.explicitScenarioIds);
 		}
 	}
 
@@ -341,6 +333,39 @@ public final class ExperimentStateManager {
 
 		}
 
+		/**
+		 * Builds the ExperimentStateManager from the collected data.
+		 * 
+		 * @throws ContractException
+		 * 
+		 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}
+		 *                           if an explicit scenario id is not in the span of
+		 *                           the experiment's scenario ids</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_PROGRESS_FILE}
+		 *                           if continue from progress file was chosen, but the
+		 *                           path to the file is null</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#NON_EXISTANT_SCEANARIO_PROGRESS}
+		 *                           if continue from progress file was chosen, but the
+		 *                           path to the file does not exist</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#UNREADABLE_SCEANARIO_PROGRESS}
+		 *                           if continue from progress file was chosen, but the
+		 *                           path lead to a non-file</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#UNREADABLE_SCEANARIO_PROGRESS}
+		 *                           if the lines of the file cannot be loaded</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#INCOMPATIBLE_SCEANARIO_PROGRESS}
+		 *                           if the header line of the file does not match the
+		 *                           expected header line for the current
+		 *                           experiment</li>
+		 * 
+		 *                           <li>{@linkplain NucleusError#INCOMPATIBLE_SCEANARIO_PROGRESS}
+		 *                           if a scenario id is encountered that is not valid
+		 *                           for the the current experiment</li>
+		 */
 		public ExperimentStateManager build() {
 			ExperimentStateManager result = new ExperimentStateManager(new Data(data));
 			result.init();
@@ -365,8 +390,7 @@ public final class ExperimentStateManager {
 		}
 
 		/**
-		 * Marks the scenario to be explicitly run. All other scenarios will be
-		 * ignored.
+		 * Marks the scenario to be explicitly run. All other scenarios will be ignored.
 		 */
 		public Builder addExplicitScenarioId(Integer scenarioId) {
 			data.explicitScenarioIds.add(scenarioId);
@@ -374,12 +398,14 @@ public final class ExperimentStateManager {
 		}
 
 		/**
-		 * Sets the list of string meta data for the experiment. These meta data
-		 * are descriptors of the scenario meta data produced by each execution
-		 * of the simulation.
+		 * Sets the list of string meta data for the experiment. These meta data are
+		 * descriptors of the scenario meta data produced by each execution of the
+		 * simulation.
 		 * 
 		 * @throws ContractException
-		 *                           <ul>
+		 *                           <li>{@linkplain NucleusError#NULL_META_DATA} if the
+		 *                           experiment meta data is null</li>
+		 * 
 		 *                           <li>{@linkplain NucleusError#NULL_META_DATA} if the
 		 *                           experiment meta data is null</li>
 		 * 
@@ -401,11 +427,12 @@ public final class ExperimentStateManager {
 		}
 
 		/**
-		 * Adds a experiment context consumer that will be initialized at the
-		 * start of the experiment.
+		 * Adds a experiment context consumer that will be initialized at the start of
+		 * the experiment.
 		 * 
-		 * @throws ContractException {@linkplain NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
-		 *                           if the context consumer is null
+		 * @throws ContractException
+		 *                           <li>{@linkplain NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
+		 *                           if the context consumer is null</li>
 		 */
 		public Builder addExperimentContextConsumer(Consumer<ExperimentContext> contextConsumer) {
 			if (contextConsumer == null) {
@@ -457,13 +484,12 @@ public final class ExperimentStateManager {
 		}
 
 		/*
-		 * If there are any explicit scenario ids, adjust the status of the
-		 * sceanrios
+		 * If there are any explicit scenario ids, adjust the status of the sceanrios
 		 */
 		if (!data.explicitScenarioIds.isEmpty()) {
 			/*
-			 * Force the explicit scenarios to READY. Explicitly selected
-			 * scenarios must be executed.
+			 * Force the explicit scenarios to READY. Explicitly selected scenarios must be
+			 * executed.
 			 */
 			for (int id : data.explicitScenarioIds) {
 				ScenarioRecord scenarioRecord = scenarioRecords.get(id);
@@ -471,8 +497,8 @@ public final class ExperimentStateManager {
 			}
 
 			/*
-			 * Any remaining scenarios that are currently marked READY are now
-			 * marked SKIPPED
+			 * Any remaining scenarios that are currently marked READY are now marked
+			 * SKIPPED
 			 */
 			for (int id = 0; id < data.scenarioCount; id++) {
 				ScenarioRecord scenarioRecord = scenarioRecords.get(id);
@@ -485,9 +511,8 @@ public final class ExperimentStateManager {
 		}
 
 		/*
-		 * refresh the progress file as needed -- some of the
-		 * PREVIOUSLY_SUCCEEDED may have been marked as READY since explicitly
-		 * included scenarios are always run
+		 * refresh the progress file as needed -- some of the PREVIOUSLY_SUCCEEDED may
+		 * have been marked as READY since explicitly included scenarios are always run
 		 */
 		writeProgressFile();
 
@@ -527,8 +552,7 @@ public final class ExperimentStateManager {
 	private void readProgressFile() {
 
 		/*
-		 * if the client does not want to continue from the progress log, we
-		 * return.
+		 * if the client does not want to continue from the progress log, we return.
 		 */
 		if (!data.continueFromProgressLog) {
 			return;
@@ -562,18 +586,17 @@ public final class ExperimentStateManager {
 		}
 
 		/*
-		 * Corruption of lines in this file is expected since it may not have
-		 * been closed properly. We will default to not loading input
-		 * gracefully.
+		 * Corruption of lines in this file is expected since it may not have been
+		 * closed properly. We will default to not loading input gracefully.
 		 */
 		if (lines.isEmpty()) {
 			return;
 		}
 
 		/*
-		 * If the header line does not match the current meta data, then we will
-		 * throw an exception since the client may not want the existing file to
-		 * be overwritten
+		 * If the header line does not match the current meta data, then we will throw
+		 * an exception since the client may not want the existing file to be
+		 * overwritten
 		 */
 		List<String> expectedHeader = new ArrayList<>();
 		expectedHeader.add(SCENARIO_LABEL);
@@ -609,8 +632,8 @@ public final class ExperimentStateManager {
 			ScenarioRecord scenarioRecord = scenarioRecords.get(scenarioId);
 
 			/*
-			 * If the scenario is not recognized, then we throw an exception so
-			 * that the file is not overwritten
+			 * If the scenario is not recognized, then we throw an exception so that the
+			 * file is not overwritten
 			 */
 			if (scenarioRecord == null) {
 				throw new ContractException(NucleusError.INCOMPATIBLE_SCEANARIO_PROGRESS,
@@ -618,10 +641,10 @@ public final class ExperimentStateManager {
 			}
 
 			// record the scenario status and meta data
+			scenarioRecord.scenarioStatus = ScenarioStatus.PREVIOUSLY_SUCCEEDED;
 
 			scenarioRecord.metaData = new ArrayList<>();
 			for (int j = 1; j < entries.size(); j++) {
-				scenarioRecord.scenarioStatus = ScenarioStatus.PREVIOUSLY_SUCCEEDED;
 				scenarioRecord.metaData.add(entries.get(j));
 			}
 			scenarioRecords.put(scenarioId, scenarioRecord);
@@ -634,8 +657,8 @@ public final class ExperimentStateManager {
 			return;
 		}
 		/*
-		 * We will clear out the old content from the file and replace it with
-		 * the items in the experiment progress log.
+		 * We will clear out the old content from the file and replace it with the items
+		 * in the experiment progress log.
 		 */
 		final CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
 		OutputStream out;
@@ -675,52 +698,18 @@ public final class ExperimentStateManager {
 	}
 
 	/**
-	 * Announces the opening of the experiment to subscribed experiment context
-	 * consumers. Opens the experiment progress file if it is being used. Can
-	 * only be called once.
-	 *
+	 * Invokes all context consumers. Announces the opening of the experiment to
+	 * subscribed experiment context consumers. Can only be called once.
+	 * 
 	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_PROGRESS_FILE}
-	 *                           if
-	 *                           continue from progress file was chosen, but the
-	 *                           path to the
-	 *                           file is null</li>
-	 *                           <li>{@linkplain NucleusError#NON_EXISTANT_SCEANARIO_PROGRESS}
-	 *                           if continue from progress file was chosen, but the
-	 *                           path to
-	 *                           the file does not exist</li>
-	 *                           <li>{@linkplain NucleusError#UNREADABLE_SCEANARIO_PROGRESS}
-	 *                           if continue from progress file was chosen, but the
-	 *                           path lead
-	 *                           to a non-file</li>
-	 *                           <li>{@linkplain NucleusError#UNREADABLE_SCEANARIO_PROGRESS}
-	 *                           if the lines of the file cannot be loaded</li>
-	 *                           <li>{@linkplain NucleusError#INCOMPATIBLE_SCEANARIO_PROGRESS}
-	 *                           if the header line of the file does not match the
-	 *                           expected
-	 *                           header line for the current experiment</li>
-	 *                           <li>{@linkplain NucleusError#INCOMPATIBLE_SCEANARIO_PROGRESS}
-	 *                           if a scenario id is encountered that is not valid
-	 *                           for the the
-	 *                           current experiment</li>
 	 *                           <li>{@linkplain NucleusError#DUPLICATE_EXPERIMENT_OPEN}
-	 *                           if
-	 *                           the experiment status manager is not currently in
-	 *                           the ready
-	 *                           state</li>
-	 *                           </ul>
+	 *                           if invoked more that once</li>
 	 */
 	public synchronized void openExperiment() {
 		if (experimentStatus != ExperimentStatus.READY) {
 			throw new ContractException(NucleusError.DUPLICATE_EXPERIMENT_OPEN);
 		}
 		experimentStatus = ExperimentStatus.OPENED;
-
-		// if (data.continueFromProgressLog) {
-		// readProgressFile();
-		// }
-		// writeProgressFile();
 
 		// handshake with the consumers
 		for (Consumer<ExperimentContext> consumer : data.contextConsumers) {
@@ -737,9 +726,10 @@ public final class ExperimentStateManager {
 	 * Announces the closure of the experiment to subscribed experiment context
 	 * consumers. Closes the experiment progress file if it is being used.
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#UNCLOSABLE_EXPERIMENT}
+	 * @throws ContractException
+	 *                           <li>{@linkplain NucleusError#UNCLOSABLE_EXPERIMENT}
 	 *                           if the experiment status manager is not currently
-	 *                           in the open state
+	 *                           in the open state</li>
 	 */
 	public synchronized void closeExperiment() {
 
@@ -803,19 +793,15 @@ public final class ExperimentStateManager {
 	 * Returns a non-threadsafe consumer of output that will distribute output
 	 * objects to the appropriate class-mapped output consumers. Each simulation
 	 * instance running a scenario should have its own instance of this consumer
-	 * that is confined to the thread running the simulation. This limits the
-	 * thread collisions to the specific output consumer end points.
+	 * that is confined to the thread running the simulation. This limits the thread
+	 * collisions to the specific output consumer end points.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
-	 *                           the
-	 *                           scenario id is null</li>
+	 *                           the scenario id is null</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}
-	 *                           if the
-	 *                           scenario id is not in the range [0,scenario
+	 *                           if the scenario id is not in the range [0,scenario
 	 *                           count)</li>
-	 *                           </ul>
 	 */
 	public synchronized Consumer<Object> getOutputConsumer(Integer scenarioId) {
 		if (scenarioId == null) {

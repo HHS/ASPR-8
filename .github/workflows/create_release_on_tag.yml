@@ -11,7 +11,8 @@ name: Create Release
 on: 
   push:
     tags:
-    - '*'
+    - 'v*'
+    branches: ["main"]
 
 jobs:
   create-release:
@@ -35,7 +36,7 @@ jobs:
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build GCM
-      run: mvn clean package --file gcm/pom.xml
+      run: mvn clean install -Prelease --file gcm/pom.xml
     - name: Get Version
       run: |
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
@@ -43,4 +44,7 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "gcm/target/gcm-${{ env.version }}.jar,gcm/target/gcm-${{ env.version }}-sources.jar"
-        prerelease: endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC')
+        prerelease: ${{ endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC') }}
+        name: "v${{ env.version }}"
+        tag: "v${{ env.version }}"
+        generateReleaseNotes: true
