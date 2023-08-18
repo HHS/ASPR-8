@@ -9,15 +9,13 @@ import java.util.function.Supplier;
  * with Objects and returns a default value when no value has been previously
  * set for a particular index. This allows this container to return the default
  * value for indices outside of the range of the internal array.
- * 
- *
  */
 public final class ObjectValueContainer {
 
 	private Object[] elements;
 
 	private final Object defaultValue;
-	
+
 	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
 
 	/**
@@ -25,11 +23,11 @@ public final class ObjectValueContainer {
 	 * initial capacity. The default value may be null.
 	 * 
 	 * @throws IllegalArgumentException
-	 *                                  <li>if capacity is negative
+	 *                                  <li>if capacity is negative</li>
 	 */
 	public ObjectValueContainer(Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		elements = new Object[0];
-		this.defaultValue = defaultValue;		
+		this.defaultValue = defaultValue;
 		this.indexIteratorSupplier = indexIteratorSupplier;
 	}
 
@@ -70,7 +68,7 @@ public final class ObjectValueContainer {
 	 */
 	private void grow(int capacity) {
 		int oldCapacity = elements.length;
-		int newCapacity = Math.max(capacity, elements.length + (elements.length >> 2));		
+		int newCapacity = Math.max(capacity, elements.length + (elements.length >> 2));
 		elements = Arrays.copyOf(elements, newCapacity);
 		if (defaultValue != null) {
 			for (int i = oldCapacity; i < newCapacity; i++) {
@@ -104,20 +102,20 @@ public final class ObjectValueContainer {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		boolean first = true;
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			Integer index = iterator.next();
 			Object value = getValue(index);
-			if(value == null) {
+			if (value == null) {
 				continue;
 			}
-			if(first) {
+			if (first) {
 				first = false;
-			}else {
+			} else {
 				sb.append(", ");
 			}
 			sb.append(index);
 			sb.append("=");
-			sb.append(value);			
+			sb.append(value);
 		}
 		sb.append("]");
 		return sb.toString();

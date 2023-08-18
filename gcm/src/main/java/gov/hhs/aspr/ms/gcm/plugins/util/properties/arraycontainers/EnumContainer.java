@@ -7,8 +7,6 @@ import java.util.function.Supplier;
  * A container for retaining enum values from a single enumeration class indexed
  * by int index. It is designed to generally require approximately 1 byte per
  * index rather than a 4 or 8 byte object reference.
- * 
- *
  */
 public final class EnumContainer {
 
@@ -28,27 +26,29 @@ public final class EnumContainer {
 	 */
 	private final Class<?> enumClass;
 	private final Supplier<Iterator<Integer>> indexIteratorSupplier;
+
 	/**
 	 * Constructs an instance of EnumContainer.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>if the class is null
-	 *             <li>if the class is not an enumeration             
-	 *             <li>if the default is not null and not a member of the enumeration
+	 *                                  <li>if the class is null</li>
+	 *                                  <li>if the class is not an enumeration</li>
+	 *                                  <li>if the default is not null and not a
+	 *                                  member of the enumeration</li>
 	 */
 	public EnumContainer(Class<?> c, Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (c == null) {
 			throw new IllegalArgumentException("null class reference");
 		}
-		
+
 		if (!Enum.class.isAssignableFrom(c)) {
 			throw new IllegalArgumentException("cannot construct from class " + c.getName());
 		}
-		
-		if (defaultValue!=null && defaultValue.getClass() != c) {
+
+		if (defaultValue != null && defaultValue.getClass() != c) {
 			throw new IllegalArgumentException("default value " + defaultValue + " does not match enum class " + c);
 		}
-		
+
 		this.indexIteratorSupplier = indexIteratorSupplier;
 
 		enumClass = c;
@@ -58,15 +58,14 @@ public final class EnumContainer {
 		intValueContainer = new IntValueContainer(e.ordinal(), null);
 	}
 
-	
-
 	/**
 	 * Set the value at the given index.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>if the index is negative
-	 *             <li>if the value is null
-	 *             <li>if the value is not a member of the enumeration
+	 *                                  <li>if the index is negative</li>
+	 *                                  <li>if the value is null</li>
+	 *                                  <li>if the value is not a member of the
+	 *                                  enumeration</li>
 	 */
 	public void setValue(int index, Object value) {
 
@@ -98,7 +97,7 @@ public final class EnumContainer {
 	 * Set the value at the given index.
 	 * 
 	 * @throws ArrayIndexOutOfBoundsException
-	 *             <li>if the index is negative
+	 *                                        <li>if the index is negative</li>
 	 */
 	public Object getValue(int index) {
 		/*
@@ -110,11 +109,11 @@ public final class EnumContainer {
 		 */
 		return objectValueContainer.getValue(ordinal);
 	}
-	
+
 	public int getCapacity() {
 		return intValueContainer.getCapacity();
 	}
-	
+
 	public void setCapacity(int capacity) {
 		intValueContainer.setCapacity(capacity);
 	}
@@ -135,7 +134,7 @@ public final class EnumContainer {
 			} else {
 				sb.append(", ");
 			}
-			
+
 			sb.append(index);
 			sb.append("=");
 			sb.append(value);
@@ -144,17 +143,16 @@ public final class EnumContainer {
 		sb.append(']');
 		return sb.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("EnumContainer [values=");		
-		builder.append(getElementsString());		
+		builder.append("EnumContainer [values=");
+		builder.append(getElementsString());
 		builder.append(", enumClass=");
 		builder.append(enumClass);
 		builder.append("]");
 		return builder.toString();
 	}
-
 
 }

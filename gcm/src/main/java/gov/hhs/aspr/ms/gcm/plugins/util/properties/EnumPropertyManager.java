@@ -9,8 +9,6 @@ import util.errors.ContractException;
 /**
  * Implementor of IndexedPropertyManager that compresses Enum property values
  * into a byte-based data structure of the various int-like primitives.
- * 
- *
  */
 public final class EnumPropertyManager implements IndexedPropertyManager {
 	/*
@@ -23,34 +21,38 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
-	 *             initial size is negative</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
-	 *             the property definition is null</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE} if the
-	 *             property definition's type is not an enumeration</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
+	 *                           if the initial size is negative</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+	 *                           if the property definition is null</li>
+	 *                           <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
+	 *                           if the property definition's type is not an
+	 *                           enumeration</li>
+	 *                           </ul>
 	 */
-	public EnumPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+	public EnumPropertyManager(PropertyDefinition propertyDefinition,
+			Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		
+
 		Object defaultValue = null;
 		if (propertyDefinition.getDefaultValue().isPresent()) {
 			defaultValue = propertyDefinition.getDefaultValue().get();
 		}
 
 		if (!Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "cannot construct from class " + propertyDefinition.getClass().getName());
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,
+					"cannot construct from class " + propertyDefinition.getClass().getName());
 		}
 
-		enumContainer = new EnumContainer(propertyDefinition.getType(),defaultValue, indexIteratorSupplier);
+		enumContainer = new EnumContainer(propertyDefinition.getType(), defaultValue, indexIteratorSupplier);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getPropertyValue(int id) {
-		if(id<0) {
+		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		return (T) enumContainer.getValue(id);
@@ -71,7 +73,7 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 		}
 		enumContainer.setCapacity(enumContainer.getCapacity() + count);
 	}
-	
+
 	@Override
 	public void removeId(int id) {
 		if (id < 0) {
@@ -87,7 +89,5 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

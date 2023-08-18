@@ -12,8 +12,6 @@ import util.errors.ContractException;
  * float in an array. Returns a default float value for every non-negative int
  * index value until the value is explicitly set by an invocation to the set()
  * method.
- * 
- *
  */
 public final class FloatValueContainer {
 	/*
@@ -50,10 +48,8 @@ public final class FloatValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public float getValue(int index) {
 		if (index < 0) {
@@ -101,7 +97,6 @@ public final class FloatValueContainer {
 	 * 
 	 * @param defaultValue
 	 * @param capacity
-	 * 
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
 	public FloatValueContainer(float defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
@@ -113,10 +108,8 @@ public final class FloatValueContainer {
 	/**
 	 * Sets the value at the index to the given value
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void setValue(int index, float value) {
 		if (index < 0) {
@@ -137,7 +130,7 @@ public final class FloatValueContainer {
 		sb.append('[');
 
 		while (iterator.hasNext()) {
-			
+
 			if (first) {
 				first = false;
 			} else {
@@ -145,7 +138,7 @@ public final class FloatValueContainer {
 			}
 			Integer index = iterator.next();
 			float value = getValue(index);
-			
+
 			sb.append(index);
 			sb.append("=");
 			sb.append(value);

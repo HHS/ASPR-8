@@ -10,8 +10,6 @@ import util.errors.ContractException;
 /**
  * Implementor of IndexedPropertyManager that compresses Byte, Short, Integer or
  * Long property values into a byte-based array data structure.
- * 
- *
  */
 public final class IntPropertyManager implements IndexedPropertyManager {
 
@@ -22,8 +20,8 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 	private IntValueContainer intValueContainer;
 
 	/*
-	 * The particular IntValueType for this property manager as determined by
-	 * the class type associated with the corresponding property definition.
+	 * The particular IntValueType for this property manager as determined by the
+	 * class type associated with the corresponding property definition.
 	 */
 	private IntValueType intValueType;
 
@@ -32,20 +30,21 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
-	 *             initial size is negative</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
-	 *             the property definition is null</li> 
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
-	 *             if the property definition's type is not a Byte, Short,
-	 *             Integer or Long</li>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
+	 *                           if the initial size is negative</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+	 *                           if the property definition is null</li>
+	 *                           <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
+	 *                           if the property definition's type is not a Byte,
+	 *                           Short, Integer or Long</li>
+	 *                           </ul>
 	 */
-	public IntPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+	public IntPropertyManager(PropertyDefinition propertyDefinition,
+			Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		
-		
+
 		long longDefaultValue = 0L;
 		if (propertyDefinition.getType() == Byte.class) {
 			intValueType = IntValueType.BYTE;
@@ -56,11 +55,12 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 		} else if (propertyDefinition.getType() == Long.class) {
 			intValueType = IntValueType.LONG;
 		} else {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition type of Byte, Short, Integer or Long");
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,
+					"Requires a property definition type of Byte, Short, Integer or Long");
 		}
 		if (propertyDefinition.getDefaultValue().isPresent()) {
 			Object defaultValue = propertyDefinition.getDefaultValue().get();
-			
+
 			switch (intValueType) {
 			case BYTE:
 				Byte b = (Byte) defaultValue;
@@ -146,7 +146,7 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 		}
 		intValueContainer.setCapacity(intValueContainer.getCapacity() + count);
 	}
-	
+
 	@Override
 	public void removeId(int id) {
 		if (id < 0) {
@@ -164,7 +164,5 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }
