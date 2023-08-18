@@ -3,11 +3,9 @@ package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 import net.jcip.annotations.ThreadSafe;
 
 /**
- * Marker interface for the unique report labels. Report items are marked
- * with a report label that allows an output manager to determine the final
- * disposition of the report item. Report labels must be thread-safe.
- * 
- *
+ * Marker interface for the unique report labels. Report items are marked with a
+ * report label that allows an output manager to determine the final disposition
+ * of the report item. Report labels must be thread-safe.
  */
 @ThreadSafe
 public interface ReportLabel {
@@ -16,7 +14,7 @@ public interface ReportLabel {
 
 	@Override
 	public boolean equals(Object obj);
-	
+
 	@Override
 	public String toString();
 }

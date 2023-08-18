@@ -13,8 +13,6 @@ import util.errors.ContractException;
 /**
  * An experiment-level output management utility for writing report items to
  * multiple files.
- * 
- *
  */
 public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
@@ -24,8 +22,6 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	/**
 	 * Builder class for NIOReportItemHandlerImpl
-	 * 
-	 *
 	 */
 	public static class Builder {
 
@@ -38,13 +34,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 * Add a report by class reference to the NIOReportItemHandler
 		 * 
 		 * @throws ContractException
-		 * 
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is null</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_PATH} if the path
-		 *             is null</li>
-		 * 
-		 * 
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+		 *                           the report label is null</li>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_PATH} if
+		 *                           the path is null</li>
 		 */
 		public Builder addReport(final ReportLabel reportLabel, final Path path) {
 			if (path == null) {
@@ -81,13 +74,12 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		}
 
 		/**
-		 * Builds the NIOReportItemHandlerImpl from the information gathered and
-		 * resets the internal state of this builder.
+		 * Builds the NIOReportItemHandlerImpl from the information gathered and resets
+		 * the internal state of this builder.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#PATH_COLLISION} if multiple
-		 *             reports are assigned the same path</li>
-		 * 
+		 *                           <li>{@linkplain ReportError#PATH_COLLISION} if
+		 *                           multiple reports are assigned the same path</li>
 		 */
 		public NIOReportItemHandler build() {
 			validate();
@@ -95,8 +87,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		}
 
 		/**
-		 * Sets the display of experiment columns in all reports. Default value
-		 * is true.
+		 * Sets the display of experiment columns in all reports. Default value is true.
 		 */
 		public Builder setDisplayExperimentColumnsInReports(final boolean displayExperimentColumnsInReports) {
 			data.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
@@ -185,11 +176,13 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		synchronized (lineWriterMap) {
 			for (final ReportLabel reportLabel : reportMap.keySet()) {
 				final Path path = reportMap.get(reportLabel);
-				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports, delimiter);
+				final LineWriter lineWriter = new LineWriter(experimentContext, path, displayExperimentColumnsInReports,
+						delimiter);
 				lineWriterMap.put(reportLabel, lineWriter);
 			}
 			if (experimentReportPath != null) {
-				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, delimiter);
+				this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath,
+						delimiter);
 			}
 		}
 	}
@@ -203,17 +196,19 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	 * removed.</li>
 	 * <li>Simulation Output : directs report items to the appropriate file
 	 * writer</li>
-	 * <li>Simulation Close : ensures all files are flushed so that the content
-	 * of each file is complete for each closed scenario</li>
+	 * <li>Simulation Close : ensures all files are flushed so that the content of
+	 * each file is complete for each closed scenario</li>
 	 * <li>Experiment Close : closes all file writers</li>
 	 * </ul>
 	 *
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown during file
-	 *             initialization</li>
-	 *             <li>if the simulation run is continuing from a progress log
-	 *             and the path is not a regular file (path does not exist)
-	 *             during file initialization</li>
+	 *                          <li>if an {@link IOException} is thrown during file
+	 *                          </li> initialization</li>
+	 *                          <li>if the simulation run is continuing from a
+	 *                          progress log</li> and the path is not a regular file
+	 *                          (path does not exist) during file
+	 *                          initialization</li>
+	 *                          </ul>
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {

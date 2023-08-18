@@ -25,8 +25,6 @@ import net.jcip.annotations.ThreadSafe;
  * header of the output file on the first report item. If the writer is resuming
  * from a previous experiment, the header remains at originally written.
  * Supports continuation of experiment progress across multiple experiment runs.
- * 
- *
  */
 @ThreadSafe
 public final class LineWriter {
@@ -41,21 +39,25 @@ public final class LineWriter {
 	private boolean headerWritten;
 
 	/**
-	 * Creates this {@link NIOHeaderedOutputItemHandler} The path to the file
-	 * that may or may not exist and may contain some complete or partial
-	 * content from a previous execution of the experiment. If not empty, this
-	 * file must have a header, be tab delimited and have as its first column be
-	 * the scenario id. Partial lines at the end of the file due to an
-	 * ungraceful halt to the previous execution are tolerated. If the file does
-	 * not exist, then its parent directory must exist.
+	 * Creates this {@link NIOHeaderedOutputItemHandler} The path to the file that
+	 * may or may not exist and may contain some complete or partial content from a
+	 * previous execution of the experiment. If not empty, this file must have a
+	 * header, be tab delimited and have as its first column be the scenario id.
+	 * Partial lines at the end of the file due to an ungraceful halt to the
+	 * previous execution are tolerated. If the file does not exist, then its parent
+	 * directory must exist.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown during file initialization</li>
-	 *             <li>if the simulation run is continuing from a progress log and
-	 *             the path is not a regular file (path does not exist) during
-	 *             file initialization</li>
+	 *                          <li>if an {@link IOException} is thrown during file
+	 *                          initialization</li>
+	 *                          <li>if the simulation run is continuing from a
+	 *                          progress log and</li> the path is not a regular file
+	 *                          (path does not exist) during file
+	 *                          initialization</li>
+	 *                          </ul>
 	 */
-	public LineWriter(final ExperimentContext experimentContext, final Path path, final boolean displayExperimentColumnsInReports, String delimiter) {
+	public LineWriter(final ExperimentContext experimentContext, final Path path,
+			final boolean displayExperimentColumnsInReports, String delimiter) {
 
 		if (Files.exists(path)) {
 			if (!Files.isRegularFile(path)) {
@@ -77,15 +79,15 @@ public final class LineWriter {
 	}
 
 	/*
-	* The path must correspond to an existing regular file.
+	 * The path must correspond to an existing regular file.
 	 */
 	private void initializeWithPreviousContent(Path path, ExperimentContext experimentContext) {
 
 		try {
 
 			/*
-			 * Remove the old file and write to the file the header and any
-			 * retained lines from the previous execution.
+			 * Remove the old file and write to the file the header and any retained lines
+			 * from the previous execution.
 			 */
 			Path tempPath = path.getParent().resolve("temp.txt");
 			Files.deleteIfExists(tempPath);
@@ -93,18 +95,16 @@ public final class LineWriter {
 			OutputStream out = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
 			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
 			Stream<String> lines = Files.lines(path);
-			boolean[] header = new boolean[] {true};
+			boolean[] header = new boolean[] { true };
 			lines.forEach((line) -> {
 				if (!header[0]) {
 					String[] fields = line.split(delimiter);
 					/*
-					 * It is possible that the last line of a file was only
-					 * partially written because neither the writer's close
-					 * or flush was called during an abrupt shutdown. We
-					 * expect that such cases will not correspond to
-					 * successfully completed simulation execution, but must
-					 * ensure that the parsing of the scenario and
-					 * replication ids can still be performed
+					 * It is possible that the last line of a file was only partially written
+					 * because neither the writer's close or flush was called during an abrupt
+					 * shutdown. We expect that such cases will not correspond to successfully
+					 * completed simulation execution, but must ensure that the parsing of the
+					 * scenario and replication ids can still be performed
 					 */
 					if (fields.length > 1) {
 						int scenarioId = Integer.parseInt(fields[0]);
@@ -148,8 +148,8 @@ public final class LineWriter {
 
 		try {
 			/*
-			 * Remove the old file and write to the file the header and any
-			 * retained lines from the previous execution.
+			 * Remove the old file and write to the file the header and any retained lines
+			 * from the previous execution.
 			 */
 			Files.deleteIfExists(path);
 			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
@@ -165,7 +165,8 @@ public final class LineWriter {
 	 * Closes the writer, flushing all buffered outputs.
 	 * 
 	 * @throws RuntimeException
-	 * <li>if an {@link IOException} is thrown</li>
+	 *                          <li>if an {@link IOException} is thrown</li>
+	 *                          </ul>
 	 */
 	public void close() {
 
@@ -180,7 +181,7 @@ public final class LineWriter {
 	 * Writes the report item to file recorded under the given scenario.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown</li> 
+	 *                          <li>if an {@link IOException} is thrown</li>
 	 */
 	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
 
@@ -227,22 +228,22 @@ public final class LineWriter {
 			}
 			sb.append(lineSeparator);
 			writer.write(sb.toString());
-		} catch (IOException e) {			
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * Flushes buffered output. Generally used to force the last the full
-	 * reporting of a closed scenario.
+	 * Flushes buffered output. Generally used to force the last the full reporting
+	 * of a closed scenario.
 	 * 
 	 * @throws RuntimeException
-	 *             <li>if an {@link IOException} is thrown</li> 
+	 *                          <li>if an {@link IOException} is thrown</li>
 	 */
 	public void flush() {
 		try {
 			writer.flush();
-		} catch (IOException e) {			
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
