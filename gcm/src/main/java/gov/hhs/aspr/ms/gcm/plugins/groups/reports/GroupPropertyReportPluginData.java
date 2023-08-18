@@ -125,27 +125,24 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		}
 
 		/**
-		 * Returns a GroupPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a GroupPropertyReportPluginData created from the collected inputs
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is not assigned</li>
+		 *                           the report label is not assigned</li>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is not assigned</li>
-		 * 
-		 * 
+		 *                           the report period is not assigned</li>
+		 *                           </ul>
 		 */
 		public GroupPropertyReportPluginData build() {
 			return new GroupPropertyReportPluginData(data);
 		}
 
 		/**
-		 * Sets the default policy for inclusion of group properties in the
-		 * report. This policy is used when a group property has not been
-		 * explicitly included or excluded. Defaulted to true.
+		 * Sets the default policy for inclusion of group properties in the report. This
+		 * policy is used when a group property has not been explicitly included or
+		 * excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
 			data.defaultInclusionPolicy = include;
@@ -156,12 +153,12 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 * Selects the given group property id to be included in the report.
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           the
-		 *                           group property id is null</li>
+		 *                           the group property id is null</li>
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
-		 *                           the
-		 *                           group type id is null</li>
+		 *                           the group type id is null</li>
+		 *                           </ul>
 		 */
 		public Builder includeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			if (groupTypeId == null) {
@@ -187,12 +184,12 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 * Selects the given group property id to be excluded from the report
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           the
-		 *                           group property id is null</li>
+		 *                           the group property id is null</li>
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
-		 *                           the
-		 *                           group type id is null</li>
+		 *                           the group type id is null</li>
+		 *                           </ul>
 		 */
 		public Builder excludeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 			if (groupPropertyId == null) {
@@ -217,10 +214,8 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		@Override
 		public Builder setReportLabel(ReportLabel reportLabel) {
@@ -231,10 +226,8 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 *                           report period is null
 		 */
 		@Override
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
@@ -259,11 +252,8 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the included group property values for the given group type id
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
-	 *                           the
-	 *                           group type id is null</li>
+	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 *                           group type id is null
 	 */
 	public Set<GroupPropertyId> getIncludedProperties(GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {
@@ -280,11 +270,8 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the included group property values for the given group type id
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_GROUP_TYPE_ID}
-	 *                           if the
-	 *                           group type id is null</li>
+	 * @throws ContractException {@linkplain PropertyError#NULL_GROUP_TYPE_ID} if
+	 *                           the group type id is null
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
 		Set<GroupTypeId> result = new LinkedHashSet<>();
@@ -296,11 +283,8 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the excluded group property values for the given group type id
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
-	 *                           the
-	 *                           group type id is null</li>
+	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 *                           group type id is null
 	 */
 	public Set<GroupPropertyId> getExcludedProperties(GroupTypeId groupTypeId) {
 		if (groupTypeId == null) {

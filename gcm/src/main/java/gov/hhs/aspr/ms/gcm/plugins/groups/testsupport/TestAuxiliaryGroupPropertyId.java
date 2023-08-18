@@ -10,77 +10,68 @@ import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 
-	GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(true)//
-								.build()), //
-	GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(true)//
+					.build()), //
+	GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					.setDefaultValue(0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_1, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(0.0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
 
-	GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								// .setDefaultValue(0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					// .setDefaultValue(0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_2, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(0.0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(false)//
+					.build() //
 	), //
-	GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					.setDefaultValue(0)//
+					.setPropertyValueMutability(false)//
+					.build() //
 	), //
-	GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(
-			TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(TestAuxiliaryGroupTypeId.GROUP_AUX_TYPE_3, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(0.0)//
+					.setPropertyValueMutability(false)//
+					.build() //
 	);//
 
 	private final PropertyDefinition propertyDefinition;
@@ -93,7 +84,8 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 		return propertyDefinition;
 	}
 
-	private TestAuxiliaryGroupPropertyId(TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId, PropertyDefinition propertyDefinition) {
+	private TestAuxiliaryGroupPropertyId(TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId,
+			PropertyDefinition propertyDefinition) {
 		this.testAuxiliaryGroupTypeId = testAuxiliaryGroupTypeId;
 		this.propertyDefinition = propertyDefinition;
 	}
@@ -108,11 +100,11 @@ public enum TestAuxiliaryGroupPropertyId implements GroupPropertyId {
 
 	/**
 	 * Returns the TestAuxiliaryGroupPropertyId associated with the given
-	 * TestAuxiliaryGroupTypeId
-	 * 
-	 * Preconditions: The TestAuxiliaryGroupTypeId should not be null
+	 * TestAuxiliaryGroupTypeId Preconditions: The TestAuxiliaryGroupTypeId should
+	 * not be null
 	 */
-	public static Set<TestAuxiliaryGroupPropertyId> getTestGroupPropertyIds(TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId) {
+	public static Set<TestAuxiliaryGroupPropertyId> getTestGroupPropertyIds(
+			TestAuxiliaryGroupTypeId testAuxiliaryGroupTypeId) {
 		Set<TestAuxiliaryGroupPropertyId> result = new LinkedHashSet<>();
 		for (TestAuxiliaryGroupPropertyId testGroupPropertyId : TestAuxiliaryGroupPropertyId.values()) {
 			if (testGroupPropertyId.testAuxiliaryGroupTypeId == testAuxiliaryGroupTypeId) {

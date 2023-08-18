@@ -27,11 +27,11 @@ public final class GroupTypesForPersonFilter extends Filter {
 			throw new ContractException(PartitionError.NULL_EQUALITY_OPERATOR);
 		}
 	}
-	
+
 	public Equality getEquality() {
 		return equality;
 	}
-	
+
 	public int getGroupTypeCount() {
 		return groupTypeCount;
 	}
@@ -58,19 +58,23 @@ public final class GroupTypesForPersonFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupTypeCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipAdditionEvent event) {
 		return Optional.of(event.personId());
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipRemovalEvent event) {
 		return Optional.of(event.personId());
 	}
 
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::additionRequiresRefresh));
-		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::removalRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class,
+				this::additionRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class,
+				this::removalRequiresRefresh));
 
 		return result;
 	}
@@ -112,7 +116,5 @@ public final class GroupTypesForPersonFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

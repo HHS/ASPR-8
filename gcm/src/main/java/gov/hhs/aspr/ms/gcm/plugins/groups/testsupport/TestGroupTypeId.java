@@ -16,9 +16,8 @@ public enum TestGroupTypeId implements GroupTypeId {
 	GROUP_TYPE_1, GROUP_TYPE_2, GROUP_TYPE_3;
 
 	/**
-	 * Returns a randomly selected member of this enumeration.
-	 * 
-	 * Precondition: The random generator must not be null
+	 * Returns a randomly selected member of this enumeration. Precondition: The
+	 * random generator must not be null
 	 */
 	public static TestGroupTypeId getRandomGroupTypeId(final RandomGenerator randomGenerator) {
 		return TestGroupTypeId.values()[randomGenerator.nextInt(TestGroupTypeId.values().length)];
@@ -47,15 +46,15 @@ public enum TestGroupTypeId implements GroupTypeId {
 		return new GroupTypeId() {
 		};
 	}
-	
-	public static List<TestGroupTypeId> getTestGroupTypeIds(){
+
+	public static List<TestGroupTypeId> getTestGroupTypeIds() {
 		return Arrays.asList(TestGroupTypeId.values());
 	}
-	
-	public static List<TestGroupTypeId> getShuffledTestGroupTypeIds(RandomGenerator randomGenerator){
+
+	public static List<TestGroupTypeId> getShuffledTestGroupTypeIds(RandomGenerator randomGenerator) {
 		List<TestGroupTypeId> result = getTestGroupTypeIds();
 		Random random = new Random(randomGenerator.nextLong());
-		Collections.shuffle(result,random);
+		Collections.shuffle(result, random);
 		return result;
 	}
 

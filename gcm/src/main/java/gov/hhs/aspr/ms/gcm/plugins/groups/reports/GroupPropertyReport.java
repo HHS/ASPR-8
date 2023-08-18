@@ -23,22 +23,10 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
  * A periodic Report that displays the number of groups having particular values
  * for each group property for a given group type. Only non-zero person counts
  * are reported. The report is further limited to the
- * (GroupType,GroupPropertyId) pairs added to the builder.
- * 
- *
- *
- * Fields
- *
- * GroupType -- the group type of group
- *
- * Property -- the group property identifier
- *
- * Value -- the value of the property
- *
- * GroupCount -- the number of groups having the property value for the given
- * group type
- *
- *
+ * (GroupType,GroupPropertyId) pairs added to the builder. Fields GroupType --
+ * the group type of group Property -- the group property identifier Value --
+ * the value of the property GroupCount -- the number of groups having the
+ * property value for the given group type
  */
 public final class GroupPropertyReport extends PeriodicReport {
 
@@ -46,8 +34,10 @@ public final class GroupPropertyReport extends PeriodicReport {
 		super(groupPropertyReportPluginData.getReportLabel(), groupPropertyReportPluginData.getReportPeriod());
 
 		for (GroupTypeId groupTypeId : groupPropertyReportPluginData.getGroupTypeIds()) {
-			includedProperties.put(groupTypeId, new LinkedHashSet<>(groupPropertyReportPluginData.getIncludedProperties(groupTypeId)));
-			excludedProperties.put(groupTypeId, new LinkedHashSet<>(groupPropertyReportPluginData.getExcludedProperties(groupTypeId)));
+			includedProperties.put(groupTypeId,
+					new LinkedHashSet<>(groupPropertyReportPluginData.getIncludedProperties(groupTypeId)));
+			excludedProperties.put(groupTypeId,
+					new LinkedHashSet<>(groupPropertyReportPluginData.getExcludedProperties(groupTypeId)));
 		}
 		includeNewProperties = groupPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
@@ -68,11 +58,11 @@ public final class GroupPropertyReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-																	.add("group_type")//
-																	.add("property")//
-																	.add("value")//
-																	.add("group_count")//
-																	.build();//
+					.add("group_type")//
+					.add("property")//
+					.add("value")//
+					.add("group_count")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -81,14 +71,13 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * Decrement the number of groups for the given
 	 * (GroupTypeId,GroupPropertyId,property value) triplet
 	 */
-	private void decrement(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private void decrement(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count--;
 	}
 
 	@Override
 	protected void flush(ReportContext reportContext) {
-
-		
 
 		for (final GroupTypeId groupTypeId : groupTypeMap.keySet()) {
 			final Map<GroupPropertyId, Map<Object, Counter>> propertyIdMap = groupTypeMap.get(groupTypeId);
@@ -116,11 +105,11 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * Returns the counter corresponding to the given group type, group property
-	 * id and group property value. Adds the counter if it does not already
-	 * exist
+	 * Returns the counter corresponding to the given group type, group property id
+	 * and group property value. Adds the counter if it does not already exist
 	 */
-	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		Map<GroupPropertyId, Map<Object, Counter>> map1 = groupTypeMap.get(groupTypeId);
 		if (map1 == null) {
 			map1 = new LinkedHashMap<>();
@@ -143,7 +132,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * Increment the number of groups for the given
 	 * (GroupTypeId,GroupPropertyId,property value) triplet
 	 */
-	private void increment(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private void increment(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count++;
 	}
 
@@ -196,8 +186,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
 		// if X is true then we don't add the property
@@ -288,7 +278,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	}
 
-	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext, GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
+	private void handleGroupPropertyDefinitionEvent(ReportContext reportContext,
+			GroupPropertyDefinitionEvent groupPropertyDefinitionEvent) {
 
 		final GroupTypeId groupTypeId = groupPropertyDefinitionEvent.groupTypeId();
 		final GroupPropertyId groupPropertyId = groupPropertyDefinitionEvent.groupPropertyId();
@@ -303,7 +294,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handleGroupPropertyUpdateEvent(ReportContext reportContext, GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
+	private void handleGroupPropertyUpdateEvent(ReportContext reportContext,
+			GroupPropertyUpdateEvent groupPropertyUpdateEvent) {
 
 		final GroupId groupId = groupPropertyUpdateEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
@@ -330,7 +322,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handleGroupImminentRemovalEvent(ReportContext reportContext, GroupImminentRemovalEvent groupImminentRemovalEvent) {
+	private void handleGroupImminentRemovalEvent(ReportContext reportContext,
+			GroupImminentRemovalEvent groupImminentRemovalEvent) {
 		final GroupId groupId = groupImminentRemovalEvent.groupId();
 		final GroupTypeId groupTypeId = groupsDataManager.getGroupType(groupId);
 

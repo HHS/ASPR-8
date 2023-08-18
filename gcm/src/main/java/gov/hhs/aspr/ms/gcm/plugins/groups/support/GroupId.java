@@ -3,25 +3,21 @@ package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
-
 /**
  * Identifier for all groups
- * 
- *
  */
 @Immutable
-public final class GroupId implements Comparable<GroupId>{
+public final class GroupId implements Comparable<GroupId> {
 
 	private final int id;
 
 	/**
 	 * Constructs the groupId
 	 * 
-	 * @throws ContractException
-	 * <li>{@linkplain GroupError#NEGATIVE_GROUP_ID} </li>
+	 * @throws ContractException {@linkplain GroupError#NEGATIVE_GROUP_ID}
 	 */
 	public GroupId(int id) {
-		if(id<0) {
+		if (id < 0) {
 			throw new ContractException(GroupError.NEGATIVE_GROUP_ID);
 		}
 		this.id = id;
@@ -33,7 +29,7 @@ public final class GroupId implements Comparable<GroupId>{
 
 	@Override
 	public int compareTo(GroupId groupId) {
-		return Integer.compare(id,groupId.id);
+		return Integer.compare(id, groupId.id);
 	}
 
 	@Override
@@ -55,8 +51,8 @@ public final class GroupId implements Comparable<GroupId>{
 		}
 		return true;
 	}
-	
-	@Override	
+
+	@Override
 	public String toString() {
 		return Integer.toString(id);
 	}

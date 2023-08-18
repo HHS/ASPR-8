@@ -41,12 +41,10 @@ import util.wrappers.MultiKey;
  * A static test support class for the {@linkplain GroupsPlugin}. Provides
  * convenience methods for obtaining standarized PluginData for the listed
  * Plugin.
- * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
  * set needed to adequately test this Plugin that can be utilized with
  * </p>
- * 
  * {@link TestSimulation#execute}
  */
 public final class GroupsTestPluginFactory {
@@ -89,15 +87,14 @@ public final class GroupsTestPluginFactory {
         /**
          * Returns a list of plugins containing a Groups, People, Stocastics and a Test
          * Plugin built from the contributed PluginDatas.
-         * 
          * <li>GroupsPlugin is defaulted to one formed from
-         * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}
+         * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}</li>
          * <li>PeoplePlugin is defaulted to one formed from
-         * {@link GroupsTestPluginFactory#getStandardPeoplePluginData}
+         * {@link GroupsTestPluginFactory#getStandardPeoplePluginData}</li>
          * <li>StochasticsPlugin is defaulted to one formed from
-         * {@link GroupsTestPluginFactory#getStandardStochasticsPluginData}
+         * {@link GroupsTestPluginFactory#getStandardStochasticsPluginData}</li>
          * <li>TestPlugin is formed from the TestPluginData passed into
-         * {@link GroupsTestPluginFactory#factory}
+         * {@link GroupsTestPluginFactory#factory}</li>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -208,26 +205,24 @@ public final class GroupsTestPluginFactory {
      * Returns a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link GroupsPlugin} by generating:
      * <ul>
-     * <li>{@link GroupsPluginData}
-     * <li>{@link PeoplePluginData}
-     * <li>{@link StochasticsPluginData}
+     * <li>{@link GroupsPluginData}</li>
+     * <li>{@link PeoplePluginData}</li>
+     * <li>{@link StochasticsPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
      * <li>{@link #getStandardGroupsPluginData},
      * <li>{@link #getStandardPeoplePluginData},
-     * <li>{@link #getStandardStochasticsPluginData}
+     * <li>{@link #getStandardStochasticsPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
      * <li>{@link Factory#setGroupsPluginData},
      * <li>{@link Factory#setPeoplePluginData},
-     * <li>{@link Factory#setStochasticsPluginData}
+     * <li>{@link Factory#setStochasticsPluginData}</li>
      * </ul>
-     * 
      * <li>via the {@link Factory#getPlugins()} method.
      *
-     * 
      * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
      *                           testPluginData is null
      */
@@ -244,23 +239,22 @@ public final class GroupsTestPluginFactory {
      * Creates a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link GroupsPlugin} by generating:
      * <ul>
-     * <li>{@link GroupsPluginData}
-     * <li>{@link PeoplePluginData}
-     * <li>{@link StochasticsPluginData}
+     * <li>{@link GroupsPluginData}</li>
+     * <li>{@link PeoplePluginData}</li>
+     * <li>{@link StochasticsPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
      * <li>{@link #getStandardGroupsPluginData},
      * <li>{@link #getStandardPeoplePluginData},
-     * <li>{@link #getStandardStochasticsPluginData}
+     * <li>{@link #getStandardStochasticsPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
      * <li>{@link Factory#setGroupsPluginData},
      * <li>{@link Factory#setPeoplePluginData},
-     * <li>{@link Factory#setStochasticsPluginData}
+     * <li>{@link Factory#setStochasticsPluginData}</li>
      * </ul>
-     * 
      * <li>via the {@link Factory#getPlugins()} method.
      *
      * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
@@ -283,20 +277,20 @@ public final class GroupsTestPluginFactory {
      * testing the GroupsPlugin
      * <li>The resulting GroupsPluginData will include:
      * <ul>
-     * <li>Every GroupTypeId included in {@link TestGroupTypeId}
-     * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}
+     * <li>Every GroupTypeId included in {@link TestGroupTypeId}</li>
+     * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}</li>
      * <ul>
-     * <li>along with the groupTypeId and propertyDefinition for each
+     * <li>along with the groupTypeId and propertyDefinition for each</li>
      * </ul>
-     * <li>A number of groups equal to the passed in groupCount
+     * <li>A number of groups equal to the passed in groupCount</li>
      * <ul>
-     * <li>each group will get a random groupTypeId based on a RandomGenerator
-     * seeded by the passed in seed
-     * <li>every GroupPropertyId included in {@link TestGroupPropertyId} with a
-     * randomPropertyValue obtained from each based on the same RandomGenerator
+     * <li>each group will get a random groupTypeId based on a RandomGenerator</li>
+     * seeded by the passed in seed</li>
+     * <li>every GroupPropertyId included in {@link TestGroupPropertyId} with a</li>
+     * randomPropertyValue obtained from each based on the same RandomGenerator</li>
      * </ul>
      * <li>an average group membership based on the passed in membershipCount and
-     * passed in people.
+     * </li> passed in people.
      * <ul>
      * <li>This is determined based on the above RandomGenerator.
      * </ul>
@@ -366,7 +360,7 @@ public final class GroupsTestPluginFactory {
      * testing the GroupsPlugin
      * <li>The resulting PeoplePluginData will include:
      * <ul>
-     * <li>a number of people equal to the passed in intialPopulation
+     * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
      */
     public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
@@ -384,7 +378,7 @@ public final class GroupsTestPluginFactory {
      * <li>The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-     * in seed
+     * </li> in seed</li>
      * </ul>
      */
     public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

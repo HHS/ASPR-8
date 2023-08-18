@@ -17,8 +17,6 @@ import util.errors.ContractException;
 
 /**
  * A plugin providing a group data manager to the simulation.
- * 
- *
  */
 public final class GroupsPlugin {
 
@@ -52,7 +50,8 @@ public final class GroupsPlugin {
 			return this;
 		}
 
-		public Builder setGroupPopulationReportPluginData(GroupPopulationReportPluginData groupPopulationReportPluginData) {
+		public Builder setGroupPopulationReportPluginData(
+				GroupPopulationReportPluginData groupPopulationReportPluginData) {
 			data.groupPopulationReportPluginData = groupPopulationReportPluginData;
 			return this;
 		}
@@ -65,9 +64,8 @@ public final class GroupsPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PersonPropertyError#NULL_GROUP_PLUGIN_DATA}
-		 *             if the groupsPluginData is null</li>
+		 * @throws ContractException {@linkplain PersonPropertyError#NULL_GROUP_PLUGIN_DATA}
+		 *                           if the groupsPluginData is null
 		 */
 		public Plugin getGroupsPlugin() {
 
@@ -90,13 +88,15 @@ public final class GroupsPlugin {
 						GroupsPluginData pluginData = c.getPluginData(GroupsPluginData.class).get();
 						c.addDataManager(new GroupsDataManager(pluginData));
 
-						Optional<GroupPopulationReportPluginData> optional1 = c.getPluginData(GroupPopulationReportPluginData.class);
+						Optional<GroupPopulationReportPluginData> optional1 = c
+								.getPluginData(GroupPopulationReportPluginData.class);
 						if (optional1.isPresent()) {
 							GroupPopulationReportPluginData groupPopulationReportPluginData = optional1.get();
 							c.addReport(new GroupPopulationReport(groupPopulationReportPluginData)::init);
 						}
 
-						Optional<GroupPropertyReportPluginData> optional2 = c.getPluginData(GroupPropertyReportPluginData.class);
+						Optional<GroupPropertyReportPluginData> optional2 = c
+								.getPluginData(GroupPropertyReportPluginData.class);
 						if (optional2.isPresent()) {
 							GroupPropertyReportPluginData groupPropertyReportPluginData = optional2.get();
 							c.addReport(new GroupPropertyReport(groupPropertyReportPluginData)::init);

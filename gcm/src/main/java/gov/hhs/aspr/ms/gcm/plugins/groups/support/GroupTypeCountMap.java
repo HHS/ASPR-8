@@ -15,8 +15,6 @@ import util.errors.ContractException;
  * number of such groups a particular person is contained in. These are used to
  * match people in a {@link Partition} who are associated with some specific
  * numbers of groups of specific group types.
- * 
- *
  */
 @Immutable
 public final class GroupTypeCountMap {
@@ -54,16 +52,16 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Returns an unmodifiable set of the {@link GroupTypeId} values contained
-	 * in this {@link GroupTypeCountMap}
+	 * Returns an unmodifiable set of the {@link GroupTypeId} values contained in
+	 * this {@link GroupTypeCountMap}
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
 		return groupTypeIds;
 	}
 
 	/**
-	 * Two {@link GroupTypeCountMap} objects are considered equal if the
-	 * POSITIVE values associated with their group type ids are equal.
+	 * Two {@link GroupTypeCountMap} objects are considered equal if the POSITIVE
+	 * values associated with their group type ids are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -114,10 +112,7 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Standard builder class for group type count maps. All inputs are
-	 * optional.
-	 * 
-	 *
+	 * Standard builder class for group type count maps. All inputs are optional.
 	 */
 	@NotThreadSafe
 	public static class Builder {
@@ -134,11 +129,12 @@ public final class GroupTypeCountMap {
 		 * Sets the count for the given group type id
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
-		 *             groupTypeId is null</li>
-		 *             <li>{@linkplain GroupError#NEGATIVE_GROUP_COUNT}if the
-		 *             count is negative</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
+		 *                           groupTypeId is null</li>
+		 *                           <li>{@linkplain GroupError#NEGATIVE_GROUP_COUNT}if
+		 *                           the count is negative</li>
+		 *                           </ul>
 		 */
 		public Builder setCount(GroupTypeId groupTypeId, int count) {
 			if (groupTypeId == null) {
@@ -153,11 +149,9 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Returns a standard string implementation of the form:
-	 * 
-	 * GroupTypeCountMap [GROUP_TYPE_1=2, GROUP_TYPE_2=1]
-	 * 
-	 * that includes only non-zero group type counts.
+	 * Returns a standard string implementation of the form: GroupTypeCountMap
+	 * [GROUP_TYPE_1=2, GROUP_TYPE_2=1] that includes only non-zero group type
+	 * counts.
 	 */
 	@Override
 	public String toString() {

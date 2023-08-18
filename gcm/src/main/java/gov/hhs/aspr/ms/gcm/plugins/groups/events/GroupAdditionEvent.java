@@ -6,7 +6,6 @@ import net.jcip.annotations.Immutable;
 
 /**
  * An event indicating that a group has been created
- *
  */
 @Immutable
 public record GroupAdditionEvent(GroupId groupId) implements Event {

@@ -52,8 +52,7 @@ public class GroupPropertyDimension implements Dimension {
                 return false;
             }
             Data other = (Data) obj;
-            return Objects.equals(groupId, other.groupId)
-                    && Objects.equals(groupPropertyId, other.groupPropertyId)
+            return Objects.equals(groupId, other.groupId) && Objects.equals(groupPropertyId, other.groupPropertyId)
                     && Objects.equals(values, other.values);
         }
 
@@ -68,7 +67,6 @@ public class GroupPropertyDimension implements Dimension {
 
     /**
      * Builder class for GroupPropertyDimension
-     *
      */
     public static class Builder {
 
@@ -85,9 +83,9 @@ public class GroupPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the group property id was not assigned</li>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
-         *                           the groupId was not assigned</li>
-         * 
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+         *                           groupId was not assigned</li>
+         *                           </ul>
          */
         public GroupPropertyDimension build() {
             validate();
@@ -107,11 +105,8 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Sets the group id for the dimension. Defaults to null.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
-         *                           the groupId is null</li>
-         * 
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_ID} if the
+         *                           groupId is null
          */
         public Builder setGroupId(GroupId groupId) {
             validateGroupId(groupId);
@@ -122,11 +117,8 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Sets the group property for the dimension. Defaults to null.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-         *                           the property id is null</li>
-         * 
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           property id is null
          */
         public Builder setGroupPropertyId(GroupPropertyId groupPropertyId) {
             validateGroupPropertyId(groupPropertyId);
@@ -137,11 +129,8 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-         *                           if the value is null</li>
-         * 
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+         *                           the value is null
          */
         public Builder addValue(Object value) {
             validateValue(value);

@@ -52,16 +52,15 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		}
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is not assigned</li>
+		 *                           the report label is not assigned</li>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is not assigned</li>
+		 *                           the report period is not assigned</li>
+		 *                           </ul>
 		 */
 		@Override
 		public GroupPopulationReportPluginData build() {
@@ -71,10 +70,8 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		@Override
 		public Builder setReportLabel(ReportLabel reportLabel) {
@@ -85,10 +82,8 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 *                           report period is null
 		 */
 		@Override
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
