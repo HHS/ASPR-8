@@ -8,8 +8,9 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
 
     /**
      * @throws ContractException
-     * <li> {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID} if the value is null </li> 
-     * 
+     *                           <li>
+     *                           {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+     *                           if the value is null</li>
      */
     public SimpleRandomNumberGeneratorId(Object value) {
         if (value == null) {
@@ -34,8 +35,8 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     }
 
     /**
-     * Two {@link SimpleGlobalPropertyId} instances are equal if and only if
-     * their inputs are equal.
+     * Two {@link SimpleGlobalPropertyId} instances are equal if and only if their
+     * inputs are equal.
      */
     @Override
     public boolean equals(Object obj) {
@@ -55,9 +56,10 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
         }
         return true;
     }
+
     /**
-	 * Returns the string representation of the generator's input
-	 */
+     * Returns the string representation of the generator's input
+     */
     @Override
     public String toString() {
         return value.toString();

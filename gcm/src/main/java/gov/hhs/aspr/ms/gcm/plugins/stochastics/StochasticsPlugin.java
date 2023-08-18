@@ -7,25 +7,22 @@ import net.jcip.annotations.ThreadSafe;
 import util.errors.ContractError;
 
 /**
- *
  * <p>
  * <b>Summary</b> A nucleus plugin for managing random number generators. The
  * plugin provides a general random generator as well as a set of random
  * generators mapped to a set of identifiers. All random generators are
  * implemented by org.apache.commons.math3.random.Well44497b
  * </p>
- *
  * <p>
  * <b>Plugin Datas</b>
  * <ul>
- * <li><b>Stochastics Plugin Data</b>: Provides initial state for the data manager</li>
+ * <li><b>Stochastics Plugin Data</b>: Provides initial state for the data
+ * manager</li>
  * </ul>
  * </p>
- *
  * <p>
  * <b>Events </b> The plugin supports no events.
  ** </p>
- *
  * <p>
  * <b>Data Managers</b>
  * <ul>
@@ -33,19 +30,12 @@ import util.errors.ContractError;
  * various related capabilities.
  * </ul>
  * </p>
- *
- * 
- *
  * <p>
  * <b>Reports</b> The plugin defines no reports
  * </p>
- *
  * <p>
  * <b>Actors: </b>No actors provided.
  * </p>
- *
- *
- *
  * <p>
  * <b>Support classes</b>
  * <ul>
@@ -55,12 +45,9 @@ import util.errors.ContractError;
  * values</li>
  * </ul>
  * </p>
- *
  * <p>
  * <b>Required Plugins</b> This plugin has no plugin dependencies
  * </p>
- *
- *
  */
 @ThreadSafe
 public final class StochasticsPlugin {
@@ -70,17 +57,17 @@ public final class StochasticsPlugin {
 	}
 
 	/**
-	 * Returns a plugin that will add a StochasticsDataManager to the simulation
-	 * at initialization
+	 * Returns a plugin that will add a StochasticsDataManager to the simulation at
+	 * initialization
 	 */
 	public static Plugin getStochasticsPlugin(StochasticsPluginData stochasticsPluginData) {
 
-		return Plugin	.builder()//
-						.addPluginData(stochasticsPluginData)//
-						.setPluginId(StochasticsPluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							StochasticsPluginData pluginData = c.getPluginData(StochasticsPluginData.class).get();
-							c.addDataManager(new StochasticsDataManager(pluginData));
-						}).build();//
+		return Plugin.builder()//
+				.addPluginData(stochasticsPluginData)//
+				.setPluginId(StochasticsPluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					StochasticsPluginData pluginData = c.getPluginData(StochasticsPluginData.class).get();
+					c.addDataManager(new StochasticsDataManager(pluginData));
+				}).build();//
 	}
 }

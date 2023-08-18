@@ -160,7 +160,5 @@ public class WellState {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
 
 }

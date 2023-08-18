@@ -15,8 +15,6 @@ import util.errors.ContractException;
 
 /**
  * A thread-safe container for the initial state of random generators.
- *
- *
  */
 @ThreadSafe
 public final class StochasticsPluginData implements PluginData {
@@ -69,8 +67,7 @@ public final class StochasticsPluginData implements PluginData {
 			}
 			Data other = (Data) obj;
 			/*
-			 * We exclude: locked -- both should be locked when equals is
-			 * invoked
+			 * We exclude: locked -- both should be locked when equals is invoked
 			 */
 			if (randomNumberGeneratorIds == null) {
 				if (other.randomNumberGeneratorIds != null) {
@@ -113,8 +110,6 @@ public final class StochasticsPluginData implements PluginData {
 
 	/**
 	 * Builder class for StochasticsPluginData
-	 * 
-	 *
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
@@ -148,9 +143,8 @@ public final class StochasticsPluginData implements PluginData {
 		 * RandomNumberGeneratorId values. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain StochasticsError#NULL_SEED} if the seed
-		 *             was not set</li>
-		 * 
+		 *                           <li>{@linkplain StochasticsError#NULL_SEED} if the
+		 *                           seed was not set</li>
 		 */
 		public StochasticsPluginData build() {
 
@@ -166,11 +160,12 @@ public final class StochasticsPluginData implements PluginData {
 		 * Adds the given RandomNumberGeneratorId to this builder.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
-		 *             if the id is null</li>
-		 * 
-		 *             <li>{@linkplain StochasticsError#NULL_WELL_STATE} if the
-		 *             well state is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+		 *                           if the id is null</li>
+		 *                           <li>{@linkplain StochasticsError#NULL_WELL_STATE}
+		 *                           if the well state is null</li>
+		 *                           </ul>
 		 */
 		public Builder addRNG(RandomNumberGeneratorId randomNumberGeneratorId, WellState wellState) {
 			ensureDataMutability();
@@ -220,10 +215,8 @@ public final class StochasticsPluginData implements PluginData {
 	/**
 	 * Returns the well state for the give RandomNumberGeneratorId
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the randomNumberGeneratorId is not known</li>
+	 * @throws ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           if the randomNumberGeneratorId is not known
 	 */
 	public WellState getWellState(RandomNumberGeneratorId randomNumberGeneratorId) {
 
@@ -237,10 +230,8 @@ public final class StochasticsPluginData implements PluginData {
 	/**
 	 * Returns the main well state
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the randomNumberGeneratorId is not known</li>
+	 * @throws ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           if the randomNumberGeneratorId is not known
 	 */
 	public WellState getWellState() {
 		return data.wellState;

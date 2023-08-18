@@ -62,7 +62,5 @@ public class Well extends Well44497b {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

@@ -4,8 +4,6 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Marker interface for random number generator identifiers
- * 
- *
  */
 @ThreadSafe
 public interface RandomNumberGeneratorId {

@@ -17,7 +17,6 @@ import util.errors.ContractException;
 
 /**
  * A mutable data manager for random number generators.
- * 
  */
 public final class StochasticsDataManager extends DataManager {
 
@@ -26,9 +25,9 @@ public final class StochasticsDataManager extends DataManager {
 	private Well randomGenerator;
 
 	/**
-	 * Returns the general, non-identified, random number generator was
-	 * initialized with the current base seed value that was initialized from
-	 * the {@linkplain StochasticsPluginData} or reset via
+	 * Returns the general, non-identified, random number generator was initialized
+	 * with the current base seed value that was initialized from the
+	 * {@linkplain StochasticsPluginData} or reset via
 	 * {@linkplain StochasticsDataManager#resetSeeds(long)}
 	 */
 	public Well getRandomGenerator() {
@@ -41,9 +40,10 @@ public final class StochasticsDataManager extends DataManager {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the random number generator is null</li>
-	 *             <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the random number generator is unknown</li>
+	 *                           if the random number generator is null</li>
+	 *                           <li>{@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           if the random number generator is unknown</li>
+	 *                           </ul>
 	 */
 	public Well getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		validateRandomNumberGeneratorId(randomNumberGeneratorId);
@@ -61,7 +61,7 @@ public final class StochasticsDataManager extends DataManager {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns true if and only if the random generator id is known
 	 */
@@ -75,13 +75,16 @@ public final class StochasticsDataManager extends DataManager {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the randomNumberGeneratorId is null</li>
-	 *             <li>{@linkplain StochasticsError#RANDOM_NUMBER_GENERATOR_ID_ALREADY_EXISTS}
-	 *             if the randomNumberGeneratorId was previously added</li>
-	 *             <li>{@linkplain StochasticsError#NULL_WELL_STATE} if the
-	 *             wellstate is null</li>
+	 *                           if the randomNumberGeneratorId is null</li>
+	 *                           <li>{@linkplain StochasticsError#RANDOM_NUMBER_GENERATOR_ID_ALREADY_EXISTS}
+	 *                           if the randomNumberGeneratorId was previously
+	 *                           added</li>
+	 *                           <li>{@linkplain StochasticsError#NULL_WELL_STATE}
+	 *                           if the wellstate is null</li>
+	 *                           </ul>
 	 */
-	public RandomGenerator addRandomNumberGenerator(RandomNumberGeneratorId randomNumberGeneratorId, WellState wellState) {
+	public RandomGenerator addRandomNumberGenerator(RandomNumberGeneratorId randomNumberGeneratorId,
+			WellState wellState) {
 		validateNewRandomNumberGeneratorId(randomNumberGeneratorId);
 		validateWellStateNotNull(wellState);
 		Well result = new Well(wellState);
@@ -116,8 +119,8 @@ public final class StochasticsDataManager extends DataManager {
 	/**
 	 * Creates the StochasticsDataManager from the given
 	 * {@linkplain StochasticsPluginData} Random generators associated with
-	 * predefined ids in the StochasticsPluginData are generated in the same
-	 * manner as the method
+	 * predefined ids in the StochasticsPluginData are generated in the same manner
+	 * as the method
 	 * {@linkplain StochasticsDataManager#getRandomGeneratorFromId(RandomNumberGeneratorId)}
 	 */
 	public StochasticsDataManager(StochasticsPluginData stochasticsPluginData) {
@@ -125,7 +128,7 @@ public final class StochasticsDataManager extends DataManager {
 		// create RandomGenerators for each of the ids using a hash built from
 		// the id and the replication seed
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = stochasticsPluginData.getRandomNumberGeneratorIds();
-		randomGenerator = new Well(stochasticsPluginData.getWellState());		
+		randomGenerator = new Well(stochasticsPluginData.getWellState());
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			WellState wellState = stochasticsPluginData.getWellState(randomNumberGeneratorId);
 			randomGeneratorMap.put(randomNumberGeneratorId, new Well(wellState));
@@ -149,7 +152,7 @@ public final class StochasticsDataManager extends DataManager {
 			Well wellRNG = randomGeneratorMap.get(randomNumberGeneratorId);
 			builder.addRNG(randomNumberGeneratorId, wellRNG.getWellState());
 		}
-		builder.setMainRNGState(randomGenerator.getWellState());		
+		builder.setMainRNGState(randomGenerator.getWellState());
 		dataManagerContext.releaseOutput(builder.build());
 	}
 
@@ -163,7 +166,5 @@ public final class StochasticsDataManager extends DataManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
-	
+
 }
