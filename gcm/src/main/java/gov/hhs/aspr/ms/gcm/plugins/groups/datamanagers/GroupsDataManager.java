@@ -165,15 +165,14 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>{@linkplain GroupImminentRemovalEvent}</li>
 	 * <li>{@linkplain GroupPropertyUpdateEvent}</li>
 	 * </ul>
-	 * 
 	 * <li>Adds groups, group memberships, group properties from the
 	 * {@linkplain GroupsPluginData}</li>
 	 * <li>Subscribes to the following events:</li>
 	 * <ul>
 	 * <li>{@linkplain PersonRemovalEvent} Removes the person from all groups by
-	 * scheduling the removal for the current time. This allows references and
-	 * group memberships to remain long enough for resolvers, agents and reports to
-	 * have final reference to the person while still associated with any relevant
+	 * scheduling the removal for the current time. This allows references and group
+	 * memberships to remain long enough for resolvers, agents and reports to have
+	 * final reference to the person while still associated with any relevant
 	 * groups.</li>
 	 * </ul>
 	 * 
@@ -337,25 +336,29 @@ public final class GroupsDataManager extends DataManager {
 			}
 		}
 
-		
-//		for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
-//			final Set<GroupPropertyId> propertyIds = groupsPluginData.getGroupPropertyIds(groupTypeId);
-//			for (final GroupPropertyId groupPropertyId : propertyIds) {
-//				final PropertyDefinition propertyDefinition = groupsPluginData.getGroupPropertyDefinition(groupTypeId,
-//						groupPropertyId);
-//				if (propertyDefinition.getDefaultValue().isEmpty()) {
-//					nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
-//							nonDefaultBearingPropertyIds.size());
-//				}
-//
-//				Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
-//				map.put(groupPropertyId, propertyDefinition);
-//
-//				Map<GroupPropertyId, IndexedPropertyManager> managerMap = groupPropertyManagerMap.get(groupTypeId);
-//				final IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(propertyDefinition, 0);
-//				managerMap.put(groupPropertyId, indexedPropertyManager);
-//			}
-//		}
+		// for (final GroupTypeId groupTypeId : groupsPluginData.getGroupTypeIds()) {
+		// final Set<GroupPropertyId> propertyIds =
+		// groupsPluginData.getGroupPropertyIds(groupTypeId);
+		// for (final GroupPropertyId groupPropertyId : propertyIds) {
+		// final PropertyDefinition propertyDefinition =
+		// groupsPluginData.getGroupPropertyDefinition(groupTypeId,
+		// groupPropertyId);
+		// if (propertyDefinition.getDefaultValue().isEmpty()) {
+		// nonDefaultBearingPropertyIds.get(groupTypeId).put(groupPropertyId,
+		// nonDefaultBearingPropertyIds.size());
+		// }
+		//
+		// Map<GroupPropertyId, PropertyDefinition> map =
+		// groupPropertyDefinitions.get(groupTypeId);
+		// map.put(groupPropertyId, propertyDefinition);
+		//
+		// Map<GroupPropertyId, IndexedPropertyManager> managerMap =
+		// groupPropertyManagerMap.get(groupTypeId);
+		// final IndexedPropertyManager indexedPropertyManager =
+		// getIndexedPropertyManager(propertyDefinition, 0);
+		// managerMap.put(groupPropertyId, indexedPropertyManager);
+		// }
+		// }
 		for (GroupTypeId groupTypeId : nonDefaultBearingPropertyIds.keySet()) {
 			Map<GroupPropertyId, Integer> map = nonDefaultBearingPropertyIds.get(groupTypeId);
 			nonDefaultChecks.put(groupTypeId, new boolean[map.size()]);
