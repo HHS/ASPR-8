@@ -938,19 +938,19 @@ public class Simulation {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#REPEATED_EXECUTION} if
-	 *                           execute is invoked more than once
+	 *                           execute is invoked more than once</li>
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
 	 *                           contributed plugins contain dependencies on plugins
-	 *                           that have not been added to the simulation
+	 *                           that have not been added to the simulation</li>
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
-	 *                           contributed plugins contain duplicate plugin ids
+	 *                           contributed plugins contain duplicate plugin ids</li>
 	 *                           <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES}
 	 *                           if the contributed plugins form a circular chain of
-	 *                           dependencies
+	 *                           dependencies</li>
 	 *                           <li>{@link NucleusError#DATA_MANAGER_INITIALIZATION_FAILURE}
 	 *                           if a data manager does not invoke
 	 *                           {@linkplain DataManager#init(DataManagerContext)}
-	 *                           in its override of init().
+	 *                           in its override of init().</li>
 	 *                           </ul>
 	 */
 	public void execute() {

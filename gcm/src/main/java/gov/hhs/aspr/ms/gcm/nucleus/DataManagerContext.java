@@ -30,14 +30,14 @@ public final class DataManagerContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past *
+	 *                           scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
@@ -59,14 +59,14 @@ public final class DataManagerContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past *
+	 *                           scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(Plan<DataManagerContext> plan) {
@@ -177,13 +177,13 @@ public final class DataManagerContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
 	 *                           event class
-	 *                           is null
+	 *                           is null</li>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
 	 *                           event
-	 *                           consumer is null
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
 	 *                           if the
-	 *                           data manager is already subscribed
+	 *                           data manager is already subscribed</li>
 	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<DataManagerContext, T> eventConsumer) {
@@ -250,13 +250,13 @@ public final class DataManagerContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
-	 *                           actorId is null
+	 *                           actorId is null</li>
 	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
 	 *                           actor id is
-	 *                           negative
+	 *                           negative</li>
 	 *                           <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the
 	 *                           actor id
-	 *                           does not correspond to a known actor
+	 *                           does not correspond to a known actor</li>
 	 *                           </ul>
 	 */
 	public void removeActor(final ActorId actorId) {

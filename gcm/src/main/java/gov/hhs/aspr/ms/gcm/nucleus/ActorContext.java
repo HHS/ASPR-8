@@ -41,14 +41,14 @@ public final class ActorContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past
+	 *                           scheduled for a time in the past</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
@@ -68,14 +68,14 @@ public final class ActorContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past
+	 *                           scheduled for a time in the past</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(final Plan<ActorContext> plan) {
@@ -128,10 +128,10 @@ public final class ActorContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_FILTER} if the
 	 *                           event
-	 *                           filter is null
+	 *                           filter is null</li>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
 	 *                           event
-	 *                           consumer is null
+	 *                           consumer is null</li>
 	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
@@ -211,13 +211,13 @@ public final class ActorContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
-	 *                           actorId is null
+	 *                           actorId is null</li>
 	 *                           <li>{@link NucleusError#NEGATIVE_ACTOR_ID} if the
 	 *                           actor id is
-	 *                           negative
+	 *                           negative</li>
 	 *                           <li>{@link NucleusError#UNKNOWN_ACTOR_ID} if the
 	 *                           actor id
-	 *                           does not correspond to a known actor
+	 *                           does not correspond to a known actor</li>
 	 *                           </ul>
 	 */
 	public void removeActor(ActorId actorId) {

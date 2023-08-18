@@ -35,14 +35,14 @@ public final class ReportContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past *
+	 *                           scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
@@ -62,14 +62,14 @@ public final class ReportContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is
-	 *                           scheduled for a time in the past *
+	 *                           scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is
 	 *                           added to the simulation after event processing is
-	 *                           finished
+	 *                           finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(Plan<ReportContext> plan) {
@@ -86,7 +86,7 @@ public final class ReportContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
 	 *                           key is
-	 *                           null
+	 *                           null</li>
 	 *                           </ul>
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
@@ -143,13 +143,13 @@ public final class ReportContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
 	 *                           event class
-	 *                           is null
+	 *                           is null</li>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
 	 *                           event
-	 *                           consumer is null
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
 	 *                           if the
-	 *                           data manager is already subscribed
+	 *                           data manager is already subscribed</li>
 	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {

@@ -21,6 +21,8 @@ public class DataManager {
 	 * simulation. All data manager descendant classes that override this method
 	 * must invoke the super.
 	 * 
+	 * <br>
+	 * @param dataManagerContext
 	 * @throws ContractException {@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *                           if init() is invoked more than once
 	 */
