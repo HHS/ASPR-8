@@ -38,25 +38,21 @@ public final class GlobalPropertiesPlugin {
 
 		/**
 		 * Returns the global plugin.
-		 *
 		 * <p>
 		 * Uses GlobalsPluginId.PLUGIN_ID as its id
 		 * </p>
-		 * 
 		 * <p>
 		 * Depends on plugins:
 		 * <ul>
 		 * <li>Report Plugin</li>
 		 * </ul>
 		 * </p>
-		 * 
 		 * <p>
 		 * Provides data mangers:
 		 * <ul>
 		 * <li>{@linkplain GlobalPropertiesDataManager}</li>
 		 * </ul>
 		 * </p>
-		 * 
 		 * <p>
 		 * Provides reports:
 		 * <ul>
@@ -64,11 +60,8 @@ public final class GlobalPropertiesPlugin {
 		 * </ul>
 		 * </p>
 		 * 
-		 * 
-		 * @throws ContractException
-		 *                           {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+		 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
 		 *                           if the global plugin data is null
-		 * 
 		 */
 		public Plugin getGlobalPropertiesPlugin() {
 			validate();

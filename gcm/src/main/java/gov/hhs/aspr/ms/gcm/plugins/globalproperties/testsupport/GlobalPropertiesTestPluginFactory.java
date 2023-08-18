@@ -25,12 +25,10 @@ import util.random.RandomGeneratorProvider;
  * A static test support class for the {@linkplain GlobalPropertiesPlugin}.
  * Provides convenience methods for obtaining standarized PluginData for the
  * listed Plugin.
- * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
  * set needed to adequately test this Plugin that can be utilized with
  * </p>
- * 
  * {@link TestSimulation#execute}
  */
 public final class GlobalPropertiesTestPluginFactory {
@@ -63,11 +61,11 @@ public final class GlobalPropertiesTestPluginFactory {
         /**
          * Returns a list of plugins containing a GlobalProperties and a Test Plugin
          * built from the contributed PluginDatas.
-         * 
          * <li>GlobalPropertiesPlugin is defaulted to one formed from
          * {@link GlobalPropertiesTestPluginFactory#getStandardGlobalPropertiesPluginData}
+         * </li>
          * <li>TestPlugin is formed from the TestPluginData passed into
-         * {@link GlobalPropertiesTestPluginFactory#factory}
+         * {@link GlobalPropertiesTestPluginFactory#factory}</li>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -126,15 +124,15 @@ public final class GlobalPropertiesTestPluginFactory {
      * Returns a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
      * <ul>
-     * <li>{@link GlobalPropertiesPluginData}
+     * <li>{@link GlobalPropertiesPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
-     * <li>{@link #getStandardGlobalPropertiesPluginData}
+     * <li>{@link #getStandardGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
-     * <li>{@link Factory#setGlobalPropertiesPluginData}
+     * <li>{@link Factory#setGlobalPropertiesPluginData}</li>
      * </ul>
      * <li>via the {@link Factory#getPlugins()} method.
      * 
@@ -152,15 +150,15 @@ public final class GlobalPropertiesTestPluginFactory {
      * Returns a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link GlobalPropertiesPlugin} by generating:
      * <ul>
-     * <li>{@link GlobalPropertiesPluginData}
+     * <li>{@link GlobalPropertiesPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
-     * <li>{@link #getStandardGlobalPropertiesPluginData}
+     * <li>{@link #getStandardGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
-     * <li>{@link Factory#setGlobalPropertiesPluginData}
+     * <li>{@link Factory#setGlobalPropertiesPluginData}</li>
      * </ul>
      * <li>via the {@link Factory#getPlugins()} method.
      * 
@@ -184,7 +182,7 @@ public final class GlobalPropertiesTestPluginFactory {
      * <ul>
      * <li>Every GlobalPropertyId included in {@link TestGlobalPropertyId}
      * <ul>
-     * <li>with the defined propertyDefinition for each
+     * <li>with the defined propertyDefinition for each</li>
      * </ul>
      * </ul>
      */
