@@ -36,14 +36,11 @@ import util.random.RandomGeneratorProvider;
  * A static test support class for the {@linkplain RegionsPlugin}. Provides
  * convenience methods for obtaining standarized PluginData for the listed
  * Plugin.
- * 
  * <p>
  * Also contains factory methods to obtain a list of plugins that is the minimal
  * set needed to adequately test this Plugin that can be utilized with
  * </p>
- * 
  * {@link TestSimulation#execute}
- * 
  */
 public final class RegionsTestPluginFactory {
 
@@ -82,14 +79,13 @@ public final class RegionsTestPluginFactory {
         /**
          * Returns a list of plugins containing a People, Regions, Stochastics and Test
          * Plugin built from the contributed PluginDatas.
-         * 
          * {@link RegionsTestPluginFactory#getStandardRegionsPluginData}
          * <li>PeoplePlugin is defaulted to one formed from
-         * {@link RegionsTestPluginFactory#getStandardPeoplePluginData}
+         * {@link RegionsTestPluginFactory#getStandardPeoplePluginData}</li>
          * <li>StochasticsPlugin is defaulted to one formed from
-         * {@link RegionsTestPluginFactory#getStandardStochasticsPluginData}
+         * {@link RegionsTestPluginFactory#getStandardStochasticsPluginData}</li>
          * <li>TestPlugin is formed from the TestPluginData passed into
-         * {@link RegionsTestPluginFactory#factory}
+         * {@link RegionsTestPluginFactory#factory}</li>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -197,21 +193,21 @@ public final class RegionsTestPluginFactory {
      * Creates a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link RegionsPlugin} by generating:
      * <ul>
-     * <li>{@link RegionsPluginData}
-     * <li>{@link PeoplePluginData}
-     * <li>{@link StochasticsPluginData}
+     * <li>{@link RegionsPluginData}</li>
+     * <li>{@link PeoplePluginData}</li>
+     * <li>{@link StochasticsPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
      * <li>{@link #getStandardPeoplePluginData},
      * <li>{@link #getStandardRegionsPluginData},
-     * <li>{@link #getStandardStochasticsPluginData}
+     * <li>{@link #getStandardStochasticsPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
      * <li>{@link Factory#setPeoplePluginData},
      * <li>{@link Factory#setRegionsPluginData},
-     * <li>{@link Factory#setStochasticsPluginData}
+     * <li>{@link Factory#setStochasticsPluginData}</li>
      * </ul>
      * <li>via the {@link Factory#getPlugins()} method.
      * 
@@ -231,21 +227,21 @@ public final class RegionsTestPluginFactory {
      * Creates a Factory that facilitates the creation of a minimal set of plugins
      * needed to adequately test the {@link RegionsPlugin} by generating:
      * <ul>
-     * <li>{@link RegionsPluginData}
-     * <li>{@link PeoplePluginData}
-     * <li>{@link StochasticsPluginData}
+     * <li>{@link RegionsPluginData}</li>
+     * <li>{@link PeoplePluginData}</li>
+     * <li>{@link StochasticsPluginData}</li>
      * </ul>
      * <li>either directly (by default) via
      * <ul>
      * <li>{@link #getStandardPeoplePluginData},
      * <li>{@link #getStandardRegionsPluginData},
-     * <li>{@link #getStandardStochasticsPluginData}
+     * <li>{@link #getStandardStochasticsPluginData}</li>
      * </ul>
-     * <li>or explicitly set via
+     * <li>or explicitly set via</li>
      * <ul>
      * <li>{@link Factory#setPeoplePluginData},
      * <li>{@link Factory#setRegionsPluginData},
-     * <li>{@link Factory#setStochasticsPluginData}
+     * <li>{@link Factory#setStochasticsPluginData}</li>
      * </ul>
      * <li>via the {@link Factory#getPlugins()} method.
      * 
@@ -269,16 +265,16 @@ public final class RegionsTestPluginFactory {
      * testing the RegionsPlugin
      * <li>The resulting RegionsPluginData will include:
      * <ul>
-     * <li>Every RegionId in {@link TestRegionId}
-     * <li>Every RegionPropertyId in {@link TestRegionPropertyId}
+     * <li>Every RegionId in {@link TestRegionId}</li>
+     * <li>Every RegionPropertyId in {@link TestRegionPropertyId}</li>
      * <ul>
      * <li>along with the propertyDefinition for each.
      * <li>If the propertyDefinition has a default value, that value is used.
      * Otherwise a randomPropertyValue is set using a RandomGenerator seeded by the
      * passed in seed via {@link TestRegionPropertyId#getRandomPropertyValue}
      * </ul>
-     * <li>the passed in timeTrackingPolicy
-     * <li>Every person in the passed in list will be added to a RegionId
+     * <li>the passed in timeTrackingPolicy</li>
+     * <li>Every person in the passed in list will be added to a RegionId</li>
      * <ul>
      * <li>starting with RegionId_1 and looping through all possible RegionIds in
      * {@link TestRegionId}
@@ -298,7 +294,7 @@ public final class RegionsTestPluginFactory {
             regionPluginBuilder.defineRegionProperty(testRegionPropertyId, propertyDefinition);
             boolean hasDeaultValue = propertyDefinition.getDefaultValue().isPresent();
 
-            if(!hasDeaultValue) {
+            if (!hasDeaultValue) {
                 for (TestRegionId regionId : TestRegionId.values()) {
                     regionPluginBuilder.setRegionPropertyValue(regionId, testRegionPropertyId,
                             testRegionPropertyId.getRandomPropertyValue(randomGenerator));
@@ -347,7 +343,7 @@ public final class RegionsTestPluginFactory {
      * testing the RegionsPlugin
      * <li>The resulting PeoplePluginData will include:
      * <ul>
-     * <li>a number of people equal to the passed in intialPopulation
+     * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
      */
     public static PeoplePluginData getStandardPeoplePluginData(int initialPopulation) {
@@ -364,7 +360,7 @@ public final class RegionsTestPluginFactory {
      * <li>The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-     * in seed
+     * in seed</li></li>
      * </ul>
      */
     public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

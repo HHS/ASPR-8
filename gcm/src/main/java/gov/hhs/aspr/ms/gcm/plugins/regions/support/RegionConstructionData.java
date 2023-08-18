@@ -35,8 +35,6 @@ public class RegionConstructionData {
 
 	/**
 	 * Static builder class for {@link RegionConstructionData}
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Data data = new Data();
@@ -54,9 +52,8 @@ public class RegionConstructionData {
 		/**
 		 * Builds the Region Construction Data from the given inputs.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
-		 *             id was not set</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id was not set
 		 */
 		public RegionConstructionData build() {
 			validate();
@@ -66,9 +63,8 @@ public class RegionConstructionData {
 		/**
 		 * Sets the region id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
-		 *             id is null</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null
 		 */
 		public Builder setRegionId(RegionId regionId) {
 			if (regionId == null) {
@@ -81,9 +77,8 @@ public class RegionConstructionData {
 		/**
 		 * Adds an auxiliary value to be used by observers of region addition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_AUXILIARY_DATA} if the
-		 *             value is null</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
+		 *                           value is null
 		 */
 		public Builder addValue(Object value) {
 			if (value == null) {
@@ -97,15 +92,12 @@ public class RegionConstructionData {
 		 * Sets a region property value
 		 * 
 		 * @throws ContractException
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             region property id is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             value is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the region property was previously set</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the region property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the value is null</li>
+		 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if the region property was previously set</li>
 		 */
 		public Builder setRegionPropertyValue(RegionPropertyId regionPropertyId, Object value) {
 			if (regionPropertyId == null) {

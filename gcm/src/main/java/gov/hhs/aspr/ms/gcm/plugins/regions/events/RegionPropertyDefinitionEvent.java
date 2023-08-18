@@ -8,17 +8,17 @@ import util.errors.ContractException;
 
 /**
  * Event indicating the addition of a region property
- *
  */
 @Immutable
-public record RegionPropertyDefinitionEvent(
-		RegionPropertyId regionPropertyId) implements Event {
+public record RegionPropertyDefinitionEvent(RegionPropertyId regionPropertyId) implements Event {
 
 	/**
 	 * Constructs the event
 	 *
-	 * @throws ContractException <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *                           region property id is null</li>
+	 * @throws ContractException
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the region property id is null</li>
+	 *                           </ul>
 	 */
 	public RegionPropertyDefinitionEvent {
 		if (regionPropertyId == null) {

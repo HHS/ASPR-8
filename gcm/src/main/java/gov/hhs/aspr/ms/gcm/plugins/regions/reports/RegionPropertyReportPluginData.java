@@ -1,4 +1,5 @@
 package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -86,21 +87,20 @@ public final class RegionPropertyReportPluginData implements PluginData {
             return true;
         }
 
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Data [reportLabel=");
-			builder.append(reportLabel);
-			builder.append(", includedProperties=");
-			builder.append(includedProperties);
-			builder.append(", excludedProperties=");
-			builder.append(excludedProperties);
-			builder.append(", defaultInclusionPolicy=");
-			builder.append(defaultInclusionPolicy);			
-			builder.append("]");
-			return builder.toString();
-		}
-
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Data [reportLabel=");
+            builder.append(reportLabel);
+            builder.append(", includedProperties=");
+            builder.append(includedProperties);
+            builder.append(", excludedProperties=");
+            builder.append(excludedProperties);
+            builder.append(", defaultInclusionPolicy=");
+            builder.append(defaultInclusionPolicy);
+            builder.append("]");
+            return builder.toString();
+        }
 
     }
 
@@ -113,8 +113,6 @@ public final class RegionPropertyReportPluginData implements PluginData {
 
     /**
      * Builder class for the report
-     *
-     *
      */
     public final static class Builder implements PluginDataBuilder {
         private Builder(Data data) {
@@ -143,16 +141,15 @@ public final class RegionPropertyReportPluginData implements PluginData {
         private Data data;
 
         /**
-         * Returns a RegionPropertyPluginData created from the collected
-         * inputs
+         * Returns a RegionPropertyPluginData created from the collected inputs
          *
          * @throws ContractException
-         *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-         *             report label is not assigned</li>
-         *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the
-         *             report period is not assigned</li>
-         *
-         *
+         *                           <ul>
+         *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+         *                           the report label is not assigned</li>
+         *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
+         *                           the report period is not assigned</li>
+         *                           </ul>
          */
         public RegionPropertyReportPluginData build() {
 
@@ -165,9 +162,9 @@ public final class RegionPropertyReportPluginData implements PluginData {
         }
 
         /**
-         * Sets the default policy for inclusion of region properties in the
-         * report. This policy is used when a region property has not been
-         * explicitly included or excluded. Defaulted to true.
+         * Sets the default policy for inclusion of region properties in the report.
+         * This policy is used when a region property has not been explicitly included
+         * or excluded. Defaulted to true.
          */
         public Builder setDefaultInclusion(boolean include) {
             ensureDataMutability();
@@ -178,9 +175,8 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Selects the given region property id to be included in the report.
          *
-         * @throws ContractException
-         *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-         *             person property id is null</li>
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           person property id is null
          */
         public Builder includeRegionProperty(RegionPropertyId regionPropertyId) {
             ensureDataMutability();
@@ -195,9 +191,8 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Selects the given region property id to be excluded from the report
          *
-         * @throws ContractException
-         *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-         *             person property id is null</li>
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           person property id is null
          */
         public Builder excludeRegionProperty(RegionPropertyId regionPropertyId) {
             ensureDataMutability();
@@ -212,9 +207,8 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Sets the report label
          *
-         * @throws ContractException
-         *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-         *             report label is null</li>
+         * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+         *                           report label is null
          */
         public Builder setReportLabel(ReportLabel reportLabel) {
             ensureDataMutability();
@@ -280,13 +274,13 @@ public final class RegionPropertyReportPluginData implements PluginData {
         return true;
     }
 
-	@Override
-	public String toString() {
-		StringBuilder builder2 = new StringBuilder();
-		builder2.append("RegionPropertyReportPluginData [data=");
-		builder2.append(data);
-		builder2.append("]");
-		return builder2.toString();
-	}
-    
+    @Override
+    public String toString() {
+        StringBuilder builder2 = new StringBuilder();
+        builder2.append("RegionPropertyReportPluginData [data=");
+        builder2.append(data);
+        builder2.append("]");
+        return builder2.toString();
+    }
+
 }

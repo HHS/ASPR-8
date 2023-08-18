@@ -6,11 +6,10 @@ public final class SimpleRegionId implements RegionId {
 	/**
 	 * Creates a region id from the given value
 	 * 
-	 * @throws NullPointerException
-	 *             if the value is null
+	 * @throws NullPointerException if the value is null
 	 */
 	public SimpleRegionId(Object value) {
-		if (value == null) {			
+		if (value == null) {
 			throw new NullPointerException("null value for simple region id");
 		}
 		this.value = value;
@@ -19,7 +18,7 @@ public final class SimpleRegionId implements RegionId {
 	public Object getValue() {
 		return this.value;
 	}
-	
+
 	/**
 	 * Standard implementation
 	 */
@@ -32,8 +31,8 @@ public final class SimpleRegionId implements RegionId {
 	}
 
 	/**
-	 * Two {@link SimpleREGIONId} instances are equal if and only if their
-	 * inputs are equal.
+	 * Two {@link SimpleREGIONId} instances are equal if and only if their inputs
+	 * are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

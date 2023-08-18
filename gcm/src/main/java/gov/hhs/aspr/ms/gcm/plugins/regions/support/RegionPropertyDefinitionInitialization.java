@@ -14,7 +14,6 @@ import util.errors.ContractException;
 /**
  * A class for defining a person property with an associated property id and
  * property values for extant people.
- * 
  */
 @Immutable
 public final class RegionPropertyDefinitionInitialization {
@@ -77,18 +76,19 @@ public final class RegionPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the PersonPropertyDefinitionInitialization from the
-		 * collected data
+		 * Constructs the PersonPropertyDefinitionInitialization from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if no property definition was assigned to the
-		 *             builder</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
-		 *             property id was assigned to the builder</li>
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
-		 *             collected property value is incompatible with the
-		 *             property definition</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if no property definition was assigned to the
+		 *                           builder</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           no property id was assigned to the builder</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+		 *                           if a collected property value is incompatible with
+		 *                           the property definition</li>
+		 *                           </ul>
 		 */
 		public RegionPropertyDefinitionInitialization build() {
 			validate();
@@ -98,9 +98,8 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Sets the property id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           property id is null
 		 */
 		public Builder setRegionPropertyId(RegionPropertyId regionPropertyId) {
 			if (regionPropertyId == null) {
@@ -113,9 +112,8 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if the property definition is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -129,10 +127,12 @@ public final class RegionPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_OWNER} if the
-		 *             property owner is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             property value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_OWNER}
+		 *                           if the property owner is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder addPropertyValue(RegionId regionId, Object value) {
 			if (regionId == null) {
@@ -164,9 +164,9 @@ public final class RegionPropertyDefinitionInitialization {
 
 	/**
 	 * Returns the list of (region,value) pairs collected by the builder in the
-	 * order of their addition. All pairs have non-null entries and the values
-	 * are compatible with the contained property definition. Duplicate
-	 * assignments of values to the same owner may be present.
+	 * order of their addition. All pairs have non-null entries and the values are
+	 * compatible with the contained property definition. Duplicate assignments of
+	 * values to the same owner may be present.
 	 */
 	public List<Pair<RegionId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);

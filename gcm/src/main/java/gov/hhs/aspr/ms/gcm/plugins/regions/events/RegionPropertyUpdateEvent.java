@@ -6,8 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record RegionPropertyUpdateEvent(RegionId regionId,
-										RegionPropertyId regionPropertyId,
-										Object previousPropertyValue,
-										Object currentPropertyValue) implements Event {
+public record RegionPropertyUpdateEvent(RegionId regionId, RegionPropertyId regionPropertyId,
+		Object previousPropertyValue, Object currentPropertyValue) implements Event {
 }
