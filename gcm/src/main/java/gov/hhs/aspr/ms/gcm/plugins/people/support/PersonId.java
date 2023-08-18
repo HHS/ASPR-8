@@ -5,8 +5,6 @@ import util.errors.ContractException;
 
 /**
  * Identifier for all people
- * 
- *
  */
 @Immutable
 public final class PersonId implements Comparable<PersonId> {
@@ -16,9 +14,7 @@ public final class PersonId implements Comparable<PersonId> {
 	/**
 	 * Consructs the person id
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PersonError#NEGATIVE_PERSON_ID}</li>
+	 * @throws ContractException {@linkplain PersonError#NEGATIVE_PERSON_ID}
 	 */
 	public PersonId(int id) {
 		if (id < 0) {

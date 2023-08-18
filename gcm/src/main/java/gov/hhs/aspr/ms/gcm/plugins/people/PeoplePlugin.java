@@ -6,8 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
- * 
- *
  */
 
 public final class PeoplePlugin {
@@ -18,31 +16,25 @@ public final class PeoplePlugin {
 
 	/**
 	 * Returns the people plugin.
-	 *
 	 * <p>
 	 * Uses PeoplePluginId.PLUGIN_ID as its id
 	 * </p>
-	 * 
 	 * <p>
 	 * Depends on plugins: none
-	 * 
 	 * <p>
-	 * Provides data mangers:
-	 * <ul>
-	 * <li>{@linkplain PeopleDataManager}</li>
-	 * </ul>
+	 * Provides data mangers: {@linkplain PeopleDataManager}
 	 * </p>
 	 */
 	public static Plugin getPeoplePlugin(PeoplePluginData peoplePluginData) {
 
-		return Plugin	.builder()//
-						.addPluginData(peoplePluginData)//
-						.setPluginId(PeoplePluginId.PLUGIN_ID)//
-						.setInitializer((c) -> {
-							PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class).get();
-							c.addDataManager(new PeopleDataManager(pluginData));							
-						})//
-						.build();
+		return Plugin.builder()//
+				.addPluginData(peoplePluginData)//
+				.setPluginId(PeoplePluginId.PLUGIN_ID)//
+				.setInitializer((c) -> {
+					PeoplePluginData pluginData = c.getPluginData(PeoplePluginData.class).get();
+					c.addDataManager(new PeopleDataManager(pluginData));
+				})//
+				.build();
 	}
 
 }

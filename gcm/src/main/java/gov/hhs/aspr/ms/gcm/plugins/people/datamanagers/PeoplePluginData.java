@@ -15,18 +15,16 @@ import util.errors.ContractException;
 /**
  * An immutable container of the initial state of people containing person ids.
  * All other person initialization data is provided by other plugins.
- * 
- *
  */
 @Immutable
 public final class PeoplePluginData implements PluginData {
 
 	/*
-	 * The person ids are calculated when the data is being locked and are
-	 * retained here instead of in the PeoplePluginData instance for efficiency.
-	 * We do not copy the person ids in the copy constructor of the data class
-	 * since we will be setting the locked to false and will just have to
-	 * recalculate the person ids later.
+	 * The person ids are calculated when the data is being locked and are retained
+	 * here instead of in the PeoplePluginData instance for efficiency. We do not
+	 * copy the person ids in the copy constructor of the data class since we will
+	 * be setting the locked to false and will just have to recalculate the person
+	 * ids later.
 	 */
 	private static class Data {
 		private int personCount = -1;
@@ -62,9 +60,9 @@ public final class PeoplePluginData implements PluginData {
 		@Override
 		public boolean equals(Object obj) {
 			/*
-			 * This boilerplate implementation works since the person ranges are
-			 * sorted and joined during the build process, leaving the person
-			 * ranges unambiguously ordered.
+			 * This boilerplate implementation works since the person ranges are sorted and
+			 * joined during the build process, leaving the person ranges unambiguously
+			 * ordered.
 			 */
 			if (this == obj) {
 				return true;
@@ -139,8 +137,8 @@ public final class PeoplePluginData implements PluginData {
 				/*
 				 * Copy the person ranges and sort them by their low values.
 				 * 
-				 * These entries can overlap, so we will rebuild them so that
-				 * all overlaps are gone
+				 * These entries can overlap, so we will rebuild them so that all overlaps are
+				 * gone
 				 * 
 				 */
 				List<PersonRange> list = new ArrayList<>(data.personRanges);
@@ -162,9 +160,9 @@ public final class PeoplePluginData implements PluginData {
 				int high;
 
 				/*
-				 * Count is the number of person id values we will be recording
-				 * It will be used to set the size of the person ids array list
-				 * so that it won't have wasted allocations
+				 * Count is the number of person id values we will be recording It will be used
+				 * to set the size of the person ids array list so that it won't have wasted
+				 * allocations
 				 */
 				int count = 0;
 				for (PersonRange personRange : list) {
@@ -188,8 +186,7 @@ public final class PeoplePluginData implements PluginData {
 				}
 
 				/*
-				 * The last values of a and b may not have been converted onto
-				 * the second list
+				 * The last values of a and b may not have been converted onto the second list
 				 */
 				if (a >= 0) {
 					count += (b - a + 1);
@@ -224,14 +221,13 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the PeopleInitialData resulting from the person ids collected
-		 * by this builder.
-		 * 
+		 * Returns the PeopleInitialData resulting from the person ids collected by this
+		 * builder.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#INVALID_PERSON_COUNT} if the
-		 *             person count does not exceed all person range values</li>
-		 * 
+		 *                           <li>{@linkplain PersonError#INVALID_PERSON_COUNT}
+		 *                           if the person count does not exceed all person
+		 *                           range values</li>
 		 */
 		public PeoplePluginData build() {
 			validate();
@@ -243,9 +239,8 @@ public final class PeoplePluginData implements PluginData {
 		 * Adds a person range. Overlapping person ranges are tolerated.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_PERSON_ID} if the person
-		 *             id is null</li>
-		 * 
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
 		 */
 		public Builder addPersonRange(PersonRange personRange) {
 			ensureDataMutability();
@@ -255,12 +250,11 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the person count. Defaults to one more than the maximum person
-		 * id of any of the person ranges added. If no person ranges are added,
-		 * the default is zero. This reflects the number of person id values
-		 * that have been issued. Note that this is not the same as the number
-		 * of people and will be greater than the highest id value of any
-		 * existing person.
+		 * Sets the person count. Defaults to one more than the maximum person id of any
+		 * of the person ranges added. If no person ranges are added, the default is
+		 * zero. This reflects the number of person id values that have been issued.
+		 * Note that this is not the same as the number of people and will be greater
+		 * than the highest id value of any existing person.
 		 */
 		public Builder setPersonCount(int personCount) {
 			ensureDataMutability();
@@ -270,9 +264,7 @@ public final class PeoplePluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the time for the last person added to the population. Defaults
-		 * to zero.
-		 *		 
+		 * Sets the time for the last person added to the population. Defaults to zero.
 		 */
 		public Builder setAssignmentTime(double assignmentTime) {
 			ensureDataMutability();
@@ -342,9 +334,9 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	/**
-	 * Returns the number of person id values that have been issued. Note that
-	 * this is not the same as the number of people and will be greater than the
-	 * highest id value of any existing person.
+	 * Returns the number of person id values that have been issued. Note that this
+	 * is not the same as the number of people and will be greater than the highest
+	 * id value of any existing person.
 	 */
 	public int getPersonCount() {
 		return data.personCount;

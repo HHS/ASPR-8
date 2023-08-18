@@ -11,14 +11,15 @@ import util.errors.ContractException;
  * imminently, but all references to the person will still function at the time
  * this event is received. No further events or plans should be generated that
  * reference the person.
- *
  */
 @Immutable
 public record PersonImminentRemovalEvent(PersonId personId) implements Event {
 	/**
 	 * Constructs the event from the give person id
 	 *
-	 * @throws ContractException <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
+	 * @throws ContractException
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
+	 *                           </ul>
 	 */
 	public PersonImminentRemovalEvent {
 		if (personId == null) {
