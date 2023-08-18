@@ -14,7 +14,7 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	 * Creates a global property id from the given value. The value must implement a
 	 * proper equals contract.
 	 * 
-	 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+	 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 	 *                           the value is null
 	 */
 	public SimpleGlobalPropertyId(Object value) {

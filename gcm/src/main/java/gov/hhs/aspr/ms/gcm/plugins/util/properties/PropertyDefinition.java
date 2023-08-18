@@ -95,7 +95,7 @@ public final class PropertyDefinition {
 		/**
 		 * Builds the property definition
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_TYPE}
 		 *                           if the class type of the definition is not assigned
 		 *                           or null</li>

@@ -79,7 +79,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 * Constructs the MaterialsProducerPropertyDefinitionInitialization from the
 		 * collected data
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was assigned to the
@@ -99,7 +99,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		/**
 		 * Sets the materials producer property id
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           materials producer propertyId id is null
 		 */
 		public Builder setMaterialsProducerPropertyId(MaterialsProducerPropertyId materialsProducerPropertyId) {
@@ -113,7 +113,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -127,7 +127,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		/**
 		 * Adds a property value
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the material producer id is null</li>

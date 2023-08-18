@@ -114,7 +114,7 @@ public class SimulationState {
         /**
          * Builds the SimulationState from the collected data
          * 
-         * @throws ContractException
+         * @throws util.errors.ContractException
          *                           <ul>
          *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
          *                           if the planning queue arrival id does not exceed
@@ -142,7 +142,7 @@ public class SimulationState {
          * Sets the base date that synchronizes with simulation time zero. Defaults to
          * the current date.
          * 
-         * @throws ContractException {@linkplain NucleusError#NULL_BASE_DATE} if the
+         * @throws util.errors.ContractException {@linkplain NucleusError#NULL_BASE_DATE} if the
          *                           base date is null
          */
         public Builder setBaseDate(LocalDate localDate) {
@@ -156,7 +156,7 @@ public class SimulationState {
         /**
          * Adds a PlanQueueData used for plan queue reconstruction
          * 
-         * @throws ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA} if
+         * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA} if
          *                           the plan queue data is null
          */
         public Builder addPlanQueueData(PlanQueueData planQueueData) {

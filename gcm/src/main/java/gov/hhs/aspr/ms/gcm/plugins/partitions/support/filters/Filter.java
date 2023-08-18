@@ -18,7 +18,7 @@ public abstract class Filter {
 	/**
 	 * Returns a filter that is the conjunction of this and the given filter.
 	 * 
-	 * @throws ContractException {@linkplain PartitionError#NULL_FILTER} if the
+	 * @throws util.errors.ContractException {@linkplain PartitionError#NULL_FILTER} if the
 	 *                           filter is null
 	 */
 	public final Filter and(Filter filter) {
@@ -28,7 +28,7 @@ public abstract class Filter {
 	/**
 	 * Returns a filter that is the disjunction of this and the given filter.
 	 * 
-	 * @throws ContractException {@linkplain PartitionError#NULL_FILTER} if the
+	 * @throws util.errors.ContractException {@linkplain PartitionError#NULL_FILTER} if the
 	 *                           filter is null
 	 */
 	public final Filter or(Filter filter) {
@@ -45,7 +45,7 @@ public abstract class Filter {
 	/**
 	 * Evaluates the person against the filter.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SIMULATION_CONTEXT}
 	 *                           if the context is null</li>

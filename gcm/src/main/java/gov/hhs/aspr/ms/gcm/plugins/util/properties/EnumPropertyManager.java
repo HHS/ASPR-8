@@ -19,7 +19,7 @@ public final class EnumPropertyManager implements IndexedPropertyManager {
 	/**
 	 * Constructs this EnumPropertyManager.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
 	 *                           if the initial size is negative</li>

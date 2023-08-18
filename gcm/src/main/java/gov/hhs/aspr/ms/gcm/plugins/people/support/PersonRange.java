@@ -16,7 +16,7 @@ public class PersonRange implements Comparable<PersonRange> {
 	/**
 	 * Constructs an inclusive range of person id values
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NEGATIVE_PERSON_ID} if
 	 *                           a negative id is used</li>

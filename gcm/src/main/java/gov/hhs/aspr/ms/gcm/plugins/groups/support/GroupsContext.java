@@ -13,7 +13,7 @@ public interface GroupsContext {
 	/**
 	 * Returns the data manager from the given class reference
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
 	 *                           if data manager class is null</li>

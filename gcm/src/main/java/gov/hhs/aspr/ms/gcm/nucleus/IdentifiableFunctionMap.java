@@ -44,7 +44,7 @@ public final class IdentifiableFunctionMap<N> {
 		/**
 		 * Puts the function at the id, replacing any existing function.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
 		 *                           the function id is null</li>
@@ -70,7 +70,7 @@ public final class IdentifiableFunctionMap<N> {
 	/**
 	 * Gets the function associated with the given id
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
 	 *                           the function id is null</li>

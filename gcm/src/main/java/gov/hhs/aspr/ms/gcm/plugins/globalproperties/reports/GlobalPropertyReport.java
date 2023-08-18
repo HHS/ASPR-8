@@ -93,7 +93,7 @@ public final class GlobalPropertyReport {
 	}
 
 	/**
-	 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+	 * @throws util.errors.ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
 	 *                           if the plugin data is null
 	 */
 	public GlobalPropertyReport(GlobalPropertyReportPluginData globalPropertyReportPluginData) {

@@ -44,7 +44,7 @@ public final class AttributeDefinition {
 		/**
 		 * Builds the attribute definition
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE}
 		 *                           if the class type of the definition is not assigned
 		 *                           or null</li>

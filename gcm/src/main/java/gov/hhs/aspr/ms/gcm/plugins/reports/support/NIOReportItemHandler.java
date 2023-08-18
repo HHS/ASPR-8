@@ -33,7 +33,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		/**
 		 * Add a report by class reference to the NIOReportItemHandler
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 		 *                           the report label is null</li>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_PATH} if
@@ -77,7 +77,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 * Builds the NIOReportItemHandlerImpl from the information gathered and resets
 		 * the internal state of this builder.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain ReportError#PATH_COLLISION} if
 		 *                           multiple reports are assigned the same path</li>
 		 */

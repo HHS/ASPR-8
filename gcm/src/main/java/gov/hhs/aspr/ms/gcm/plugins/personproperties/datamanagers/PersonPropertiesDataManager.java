@@ -106,7 +106,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Constructs the person property data manager from the given plugin data
 	 *
-	 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+	 * @throws util.errors.ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
 	 *                           if the plugin data is null
 	 */
 	public PersonPropertiesDataManager(PersonPropertiesPluginData personPropertiesPluginData) {
@@ -130,7 +130,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Defines a new person property
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION_INITIALIZATION}
 	 *                           if the property definition initialization is
 	 *                           null</li></li>
@@ -151,7 +151,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Expands the capacity of data structures to hold people by the given count.
 	 * Used to more efficiently prepare for multiple population additions.
 	 *
-	 * @throws ContractException {@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
+	 * @throws util.errors.ContractException {@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
 	 *                           if the count is negative
 	 */
 	public void expandCapacity(final int count) {
@@ -193,7 +193,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id and
 	 * person id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -217,7 +217,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -237,7 +237,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id and
 	 * property value.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -262,7 +262,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
 	 * property id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -313,7 +313,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the list(no duplicates) people who have the given person property
 	 * value.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -382,7 +382,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the number of people who have the given person property value.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -433,7 +433,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given person property id
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -464,7 +464,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns the time when the person's property was last assigned or zero if the
 	 * value has never been assigned.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
@@ -489,7 +489,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Returns true if and only if the property assignment times are being tracked
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -505,7 +505,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the default property definition time
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
@@ -521,7 +521,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the current value of the person's property
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>

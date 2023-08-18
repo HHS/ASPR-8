@@ -37,7 +37,7 @@ public final class StochasticsDataManager extends DataManager {
 	/**
 	 * Returns the random generator associated with the given id.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the random number generator is null</li>
@@ -72,7 +72,7 @@ public final class StochasticsDataManager extends DataManager {
 	/**
 	 * Adds a new RNG.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the randomNumberGeneratorId is null</li>

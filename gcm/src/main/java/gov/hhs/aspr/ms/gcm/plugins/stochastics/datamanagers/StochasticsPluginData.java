@@ -142,7 +142,7 @@ public final class StochasticsPluginData implements PluginData {
 		 * Returns the StochasticsInitialData formed from the collected
 		 * RandomNumberGeneratorId values. Clears the builder's state.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain StochasticsError#NULL_SEED} if the
 		 *                           seed was not set</li>
 		 */
@@ -159,7 +159,7 @@ public final class StochasticsPluginData implements PluginData {
 		/**
 		 * Adds the given RandomNumberGeneratorId to this builder.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
 		 *                           if the id is null</li>
@@ -215,7 +215,7 @@ public final class StochasticsPluginData implements PluginData {
 	/**
 	 * Returns the well state for the give RandomNumberGeneratorId
 	 * 
-	 * @throws ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 * @throws util.errors.ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the randomNumberGeneratorId is not known
 	 */
 	public WellState getWellState(RandomNumberGeneratorId randomNumberGeneratorId) {
@@ -230,7 +230,7 @@ public final class StochasticsPluginData implements PluginData {
 	/**
 	 * Returns the main well state
 	 * 
-	 * @throws ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 * @throws util.errors.ContractException {@linkplain StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the randomNumberGeneratorId is not known
 	 */
 	public WellState getWellState() {

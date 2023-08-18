@@ -50,7 +50,7 @@ public final class ExperimentStateManager {
 	 * scenario. Announces the opening of the scenario to subscribed experiment
 	 * context consumers. Should be preceded by openExperiment.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID}if
 	 *                           the scenario id is null</li>
@@ -106,7 +106,7 @@ public final class ExperimentStateManager {
 	 * consumers. Records the scenario in the scenario progress file if the file is
 	 * active.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
 	 *                           the scenario id is null</li>
@@ -154,7 +154,7 @@ public final class ExperimentStateManager {
 	 * consumers. Records the failure status of the scenario and its failure cause.
 	 * Failed scenarios are not reported to the progress log.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
 	 *                           the scenario id is null</li>
@@ -340,7 +340,7 @@ public final class ExperimentStateManager {
 		/**
 		 * Builds the ExperimentStateManager from the collected data.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#UNKNOWN_SCENARIO_ID}
 		 *                           if an explicit scenario id is not in the span of
@@ -400,7 +400,7 @@ public final class ExperimentStateManager {
 		 * descriptors of the scenario meta data produced by each execution of the
 		 * simulation.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_META_DATA} if the
 		 *                           experiment meta data is null</li>
@@ -427,7 +427,7 @@ public final class ExperimentStateManager {
 		 * Adds a experiment context consumer that will be initialized at the start of
 		 * the experiment.
 		 * 
-		 * @throws ContractException {@linkplain NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
+		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 		 *                           if the context consumer is null
 		 */
 		public Builder addExperimentContextConsumer(Consumer<ExperimentContext> contextConsumer) {
@@ -697,7 +697,7 @@ public final class ExperimentStateManager {
 	 * Invokes all context consumers. Announces the opening of the experiment to
 	 * subscribed experiment context consumers. Can only be called once.
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#DUPLICATE_EXPERIMENT_OPEN}
+	 * @throws util.errors.ContractException {@linkplain NucleusError#DUPLICATE_EXPERIMENT_OPEN}
 	 *                           if invoked more that once
 	 */
 	public synchronized void openExperiment() {
@@ -721,7 +721,7 @@ public final class ExperimentStateManager {
 	 * Announces the closure of the experiment to subscribed experiment context
 	 * consumers. Closes the experiment progress file if it is being used.
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#UNCLOSABLE_EXPERIMENT} if
+	 * @throws util.errors.ContractException {@linkplain NucleusError#UNCLOSABLE_EXPERIMENT} if
 	 *                           the experiment status manager is not currently in
 	 *                           the open state
 	 */
@@ -790,7 +790,7 @@ public final class ExperimentStateManager {
 	 * that is confined to the thread running the simulation. This limits the thread
 	 * collisions to the specific output consumer end points.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_SCENARIO_ID} if
 	 *                           the scenario id is null</li>

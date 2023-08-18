@@ -55,7 +55,7 @@ public abstract class GroupLabeler implements Labeler {
 	/**
 	 * Returns the label for the given person id
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>

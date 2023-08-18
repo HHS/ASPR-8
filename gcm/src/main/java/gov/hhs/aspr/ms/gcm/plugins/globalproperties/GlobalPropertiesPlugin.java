@@ -60,7 +60,7 @@ public final class GlobalPropertiesPlugin {
 		 * </ul>
 		 * </p>
 		 * 
-		 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+		 * @throws util.errors.ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
 		 *                           if the global plugin data is null
 		 */
 		public Plugin getGlobalPropertiesPlugin() {

@@ -127,7 +127,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Returns a GroupPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 		 *                           the report label is not assigned</li>
@@ -152,7 +152,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Selects the given group property id to be included in the report.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the group property id is null</li>
@@ -183,7 +183,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Selects the given group property id to be excluded from the report
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the group property id is null</li>
@@ -214,7 +214,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is null
 		 */
 		@Override
@@ -226,7 +226,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
 		 *                           report period is null
 		 */
 		@Override
@@ -252,7 +252,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the included group property values for the given group type id
 	 * 
-	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
 	 *                           group type id is null
 	 */
 	public Set<GroupPropertyId> getIncludedProperties(GroupTypeId groupTypeId) {
@@ -270,7 +270,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the included group property values for the given group type id
 	 * 
-	 * @throws ContractException {@linkplain PropertyError#NULL_GROUP_TYPE_ID} if
+	 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
@@ -283,7 +283,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the excluded group property values for the given group type id
 	 * 
-	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+	 * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
 	 *                           group type id is null
 	 */
 	public Set<GroupPropertyId> getExcludedProperties(GroupTypeId groupTypeId) {

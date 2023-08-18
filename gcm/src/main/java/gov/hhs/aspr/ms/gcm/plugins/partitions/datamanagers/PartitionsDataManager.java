@@ -90,7 +90,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * Returns the list of person identifiers in the population partition for the
 	 * given key.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
@@ -107,7 +107,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * given key. A person is included if every label in the label set is equal to
 	 * the corresponding label for the person.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
@@ -144,7 +144,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * under the given label set. A person is counted if every label in the label
 	 * set is equal to the corresponding label for the person.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
@@ -170,7 +170,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * label in the label set is equal to the corresponding label for the person.
 	 * All values will be positive.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
@@ -193,7 +193,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * Returns a randomly selected person from the given population partition using
 	 * the given PartitionSampler.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
@@ -225,7 +225,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * labelSetFunction must be consistent with the partition definition used to
 	 * create this population partition. No precondition tests will be performed.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -247,7 +247,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * Returns true if and only if the person is contained in the population
 	 * partition corresponding to the key.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PersonError.NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@link PersonError.UNKNOWN_PERSON_ID} if the
@@ -271,7 +271,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * corresponding to the key. A person is counted if every label in the label set
 	 * is equal to the corresponding label for the person.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@link PersonError.NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@link PersonError.UNKNOWN_PERSON_ID} if the
@@ -452,7 +452,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * Adds a population partition for the given key and component id. The key must
 	 * not duplicate an existing key.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PartitionError#NULL_PARTITION} if
 	 *                           the partition is null</li>
@@ -571,7 +571,7 @@ public final class PartitionsDataManager extends DataManager {
 		/**
 		 * Returns the data manager from the given class reference
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
 		 *                           if data manager class is null</li>

@@ -73,7 +73,7 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Returns the GlobalPropertyDimension from the collected data.
          * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *                           global property id was not assigned
          */
         public GlobalPropertyDimension build() {
@@ -90,7 +90,7 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Sets the global property for the dimension. Defaults to null.
          * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *                           global property id is null
          */
         public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
@@ -102,7 +102,7 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
          *                           the value is null
          */
         public Builder addValue(Object value) {

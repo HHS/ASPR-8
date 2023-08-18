@@ -17,7 +17,7 @@ public record MaterialsProducerPropertyDefinitionEvent(MaterialsProducerProperty
 	/**
 	 * Creates the event.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID if
 	 *                           the property id is null</li>
 	 *                           </ul>

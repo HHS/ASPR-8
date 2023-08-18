@@ -77,7 +77,7 @@ public final class LabelSet {
 		 * Sets the label value for the given label id. Replaces any existing label
 		 * value for the same id.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PartitionError#NULL_PARTITION_LABEL_DIMENSION}
 		 *                           if the dimension is null</li>

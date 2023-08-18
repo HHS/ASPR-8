@@ -52,7 +52,7 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Returns a PersonPropertyReportPluginData created from the collected inputs
 			 * 
-			 * @throws ContractException <ul><li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+			 * @throws util.errors.ContractException <ul><li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 			 *                           the report label is not assigned</li>
 			 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
 			 *                           the report period is not assigned</li>
@@ -67,7 +67,7 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Sets the report label
 			 * 
-			 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if
+			 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if
 			 *                           the report label is null
 */
 			@Override
@@ -79,7 +79,7 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Sets the report period id
 			 * 
-			 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if
+			 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if
 			 *                           the report period is null
 */
 			@Override

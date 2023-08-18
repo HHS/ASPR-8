@@ -57,7 +57,7 @@ public final class PersonConstructionData {
 		/**
 		 * Adds a value to the builder.
 		 * 
-		 * @throws ContractException {@linkplain PersonError#NULL_AUXILIARY_DATA} if the
+		 * @throws util.errors.ContractException {@linkplain PersonError#NULL_AUXILIARY_DATA} if the
 		 *                           value is null
 		 */
 		public Builder add(Object value) {

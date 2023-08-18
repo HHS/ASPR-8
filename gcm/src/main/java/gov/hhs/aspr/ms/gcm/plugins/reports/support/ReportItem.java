@@ -33,7 +33,7 @@ public final class ReportItem {
 		 * Adds an entry's string value to the report item. Order should follow the
 		 * order in the {@link ReportHeader}
 		 * 
-		 * @throws ContractException if the entry is null
+		 * @throws util.errors.ContractException if the entry is null
 		 */
 		public Builder addValue(final Object entry) {
 			if (entry == null) {
@@ -61,7 +61,7 @@ public final class ReportItem {
 		/**
 		 * Builds the {@link ReportItem} from the colleced data.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_HEADER} if
 		 *                           the collected report header is null</li>

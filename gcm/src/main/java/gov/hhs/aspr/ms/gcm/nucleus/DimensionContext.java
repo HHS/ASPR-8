@@ -46,7 +46,7 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		 * Given a plugin Data, will add it and its clone builder to the internal map in
 		 * this class
 		 * 
-		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
+		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
 		 *                           plugin data builder is null
 		 */
 		public <T extends PluginData> PluginDataBuilder add(T t) {
@@ -96,7 +96,7 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	/**
 	 * Returns the stored item matching the given class reference.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
 	 *                           if more than one plugin data matches the given

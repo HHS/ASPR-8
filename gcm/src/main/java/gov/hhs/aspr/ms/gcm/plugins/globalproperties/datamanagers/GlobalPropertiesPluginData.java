@@ -39,7 +39,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * Returns the {@link GlobalPropertiesPluginData} from the collected information
 		 * supplied to this builder. Clears the builder's state.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
 		 *                           if a global property value was associated with a
@@ -71,7 +71,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		/**
 		 * Defines a global property Duplicate inputs override previous inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the global property id is null</li>
@@ -106,7 +106,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * Sets the global property value that overrides the default value of the
 		 * corresponding property definition. Duplicate inputs override previous inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}if
 		 *                           the global property id is null</li>
@@ -323,7 +323,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the {@link PropertyDefinition} for the given
 	 * {@link GlobalPropertyId}.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -339,7 +339,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	/**
 	 * Returns the creation time for the given {@link GlobalPropertyId}.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -367,7 +367,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	/**
 	 * Returns the optional property value for the given property id
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -385,7 +385,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	/**
 	 * Returns the optional property assignment time for the given property id
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>

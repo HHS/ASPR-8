@@ -365,7 +365,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Constructs the data manager.
 	 *
-	 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+	 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
 	 *                           if the material plugin data is null
 	 */
 	public MaterialsDataManager(MaterialsPluginData materialsPluginData) {
@@ -380,7 +380,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * event. Sets batch properties found in the batch construction info. Generates
 	 * a corresponding {@linkplain BatchAdditionEvent} event
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is unknown</li></li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_CONSTRUCTION_INFO}
@@ -411,7 +411,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Adds a new material type
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
@@ -425,7 +425,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Add a material producer
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is already
 	 *                           present</li></li>
@@ -461,7 +461,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Creates a stage. Generates a corresponding {@linkplain StageAdditionEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is unknown</li></li>
 	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -511,7 +511,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain BatchAdditionEvent} and {@linkplain StageImminentRemovalEvent}
 	 * events
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
 	 *                           if the material id is unknown</li></li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -547,7 +547,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain MaterialsProducerResourceUpdateEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -571,7 +571,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Defines a new batch property
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
 	 *                           if the material id is unknown</li>
 	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
@@ -591,7 +591,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Defines a new person property
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION}
 	 *                           if the materials producer property definition
 	 *                           initialization is null</li></li>
@@ -625,7 +625,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the amount of material in the batch.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -642,7 +642,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the type of material in the batch.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -658,7 +658,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer identifier of the batch
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -675,7 +675,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the property definition for the given {@link MaterialId} and
 	 * {@link BatchPropertyId}
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
@@ -698,7 +698,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the {@link BatchPropertyId} values for the given {@link MaterialId}
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the materials id is null</li>
@@ -721,7 +721,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the value of the batch property. It is the caller's responsibility to
 	 * validate the inputs.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -750,7 +750,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the stage id the batch. Returns null if the batch is not in a stage.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -849,7 +849,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyUpdateEvent} events. Matches on the materials
 	 * producer id and materials producer property id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -889,7 +889,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the materials
 	 * producer id and resource id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -919,7 +919,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the resource
 	 * id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
@@ -965,7 +965,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the stage id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -986,7 +986,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the destination
 	 * materials producer id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1008,7 +1008,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the source
 	 * materials producer id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -1054,7 +1054,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link StageOfferUpdateEvent}
 	 * events. Matches on the stage id.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
@@ -1072,7 +1072,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of batch ids matching the materials producer where
 	 * the batches are not staged.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1094,7 +1094,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of batch ids matching the materials producer and
 	 * material id where the batches are not staged.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1148,7 +1148,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the property definition for the given
 	 * {@link MaterialsProducerPropertyId}
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the materials producer property id is null</li>
@@ -1179,7 +1179,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the value of the materials producer property.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1209,7 +1209,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer resource level.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1233,7 +1233,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of stage ids owned by the material producer where
 	 * the stage is being offered.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1256,7 +1256,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage .
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -1277,7 +1277,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage and material type.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -1305,7 +1305,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer id for the stage.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -1321,7 +1321,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -2232,7 +2232,7 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns true if and only if the stage is offered.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -2289,7 +2289,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * producer's inventory. Generates a corresponding
 	 * {@linkplain StageMembershipRemovalEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -2307,7 +2307,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Removes a batch frominventory, placing it on a stage. Generates a
 	 * corresponding {@linkplain StageMembershipAdditionEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -2416,7 +2416,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Removes the given batch. Generates a corresponding
 	 * {@linkplain BatchImminentRemovalEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -2433,7 +2433,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Generates the corresponding {@linkplain BatchImminentRemovalEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -2451,7 +2451,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Set a batch's property value. Generates a corresponding
 	 * {@linkplain BatchPropertyUpdateEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -2479,7 +2479,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Assigns a property value to a materials producer. Generates a corresponding
 	 * {@linkplain MaterialsProducerPropertyUpdateEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
@@ -2507,7 +2507,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * Sets the offer state of a stage. Generates a corresponding
 	 * {@linkplain StageOfferUpdateEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID } if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
@@ -2529,7 +2529,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * material type and material producer. Generates a corresponding
 	 * {@linkplain BatchAmountUpdateEvent} for each batch.
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the source batch id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
@@ -2575,7 +2575,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain StageMaterialsProducerUpdateEvent}
 	 * {@linkplain StageOfferUpdateEvent}
 	 *
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID } if
 	 *                           the stage id is null</li>
 	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
@@ -2599,7 +2599,7 @@ public final class MaterialsDataManager extends DataManager {
 	 * a corresponding {@linkplain RegionResourceAdditionEvent} and
 	 * {@linkplain MaterialsProducerResourceUpdateEvent}
 	 *
-	 * @throws ContractException *</li>
+	 * @throws util.errors.ContractException *</li>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}

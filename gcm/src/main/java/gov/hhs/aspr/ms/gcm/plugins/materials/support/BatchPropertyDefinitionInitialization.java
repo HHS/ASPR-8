@@ -84,7 +84,7 @@ public final class BatchPropertyDefinitionInitialization {
 		/**
 		 * Constructs the BatchPropertyDefinitionInitialization from the collected data
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was assigned to the
@@ -106,7 +106,7 @@ public final class BatchPropertyDefinitionInitialization {
 		/**
 		 * Sets the batch property id
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           property id is null
 		 */
 		public Builder setPropertyId(BatchPropertyId batchPropertyId) {
@@ -120,7 +120,7 @@ public final class BatchPropertyDefinitionInitialization {
 		/**
 		 * Sets the material id
 		 * 
-		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
@@ -134,7 +134,7 @@ public final class BatchPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -148,7 +148,7 @@ public final class BatchPropertyDefinitionInitialization {
 		/**
 		 * Adds a property value
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 		 *                           the batch id is null</li>

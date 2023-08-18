@@ -73,7 +73,7 @@ public final class GroupConstructionInfo {
 		/**
 		 * Builds the {@link GroupConstructionInfo} from the collected data
 		 * 
-		 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if no
+		 * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if no
 		 *                           group type id was collected
 		 */
 		public GroupConstructionInfo build() {
@@ -84,7 +84,7 @@ public final class GroupConstructionInfo {
 		/**
 		 * Sets the group type id
 		 * 
-		 * @throws ContractException if the group type id is null
+		 * @throws util.errors.ContractException if the group type id is null
 		 */
 		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
 			if (groupTypeId == null) {
@@ -97,7 +97,7 @@ public final class GroupConstructionInfo {
 		/**
 		 * Sets the group property value.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the group property id is null</li>

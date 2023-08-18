@@ -28,7 +28,7 @@ public final class IntPropertyManager implements IndexedPropertyManager {
 	/**
 	 * Constructs this IntPropertyManager.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
 	 *                           if the initial size is negative</li>

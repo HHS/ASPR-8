@@ -118,7 +118,7 @@ public final class PlanQueueData {
 		/**
 		 * Returns the PlanQueueData built from the contributed data.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_PLAN_DATA} if the
 		 *                           plan data is null</li>

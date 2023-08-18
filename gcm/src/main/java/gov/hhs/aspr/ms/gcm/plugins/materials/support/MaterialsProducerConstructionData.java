@@ -55,7 +55,7 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Builds the MaterialsProducerConstructionData from the given inputs.
 		 * 
-		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerConstructionData build() {
@@ -66,7 +66,7 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Sets the materials producer id
 		 * 
-		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
@@ -81,7 +81,7 @@ public class MaterialsProducerConstructionData {
 		 * Adds an auxiliary value to be used by observers of materials producer
 		 * addition
 		 * 
-		 * @throws ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
+		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
 		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {
@@ -95,7 +95,7 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Sets a materials producer property value
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the materials producer property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
@@ -122,7 +122,7 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Sets a materials producer resource level
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
 		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}

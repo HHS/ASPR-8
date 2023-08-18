@@ -22,7 +22,7 @@ public final class PluginContext {
 	/**
 	 * Adds a data manager to the simulation.
 	 * 
-	 * @throws ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
+	 * @throws util.errors.ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
 	 *                           if plugin initialization is over
 	 */
 	public void addDataManager(DataManager dataManager) {
@@ -32,7 +32,7 @@ public final class PluginContext {
 	/**
 	 * Adds an actor to the simulation.
 	 * 
-	 * @throws ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
+	 * @throws util.errors.ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
 	 *                           if plugin initialization is over
 	 */
 	public ActorId addActor(Consumer<ActorContext> init) {
@@ -42,7 +42,7 @@ public final class PluginContext {
 	/**
 	 * Adds a report to the simulation.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
 	 *                           if plugin initialization is over</li>
@@ -57,7 +57,7 @@ public final class PluginContext {
 	/**
 	 * Returns the plugin data object associated with the given class reference
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
 	 *                           if the class reference is null</li>
@@ -73,7 +73,7 @@ public final class PluginContext {
 	/**
 	 * Returns the plugin data objects associated with the given class reference
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
+	 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
 	 *                           the class reference is null
 	 */
 	public <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {

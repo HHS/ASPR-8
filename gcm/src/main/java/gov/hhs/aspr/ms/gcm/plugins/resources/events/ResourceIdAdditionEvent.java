@@ -15,7 +15,7 @@ public record ResourceIdAdditionEvent(ResourceId resourceId, boolean timeTrackin
 	/**
 	 * Constructs the event
 	 *
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 */

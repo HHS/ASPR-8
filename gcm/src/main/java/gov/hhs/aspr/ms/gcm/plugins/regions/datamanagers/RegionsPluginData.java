@@ -230,7 +230,7 @@ public class RegionsPluginData implements PluginData {
 		 * Returns the {@link RegionInitialData} from the collected information supplied
 		 * to this builder.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a
 		 *                           region property value was associated with a region
 		 *                           id that was not properly added with an initial
@@ -266,7 +266,7 @@ public class RegionsPluginData implements PluginData {
 		 * Sets the region property value that overrides the default value of the
 		 * corresponding property definition
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li>if
 		 *                           the region id is null
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
@@ -309,7 +309,7 @@ public class RegionsPluginData implements PluginData {
 		 * Sets the person's region. Should be used exclusively when time tracking will
 		 * be set to false.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
 		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
@@ -335,7 +335,7 @@ public class RegionsPluginData implements PluginData {
 		 * Sets the person's region and region arrival time. Should be used exclusively
 		 * when time tracking will be set to true.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}if the
 		 *                           person id is null</li>
 		 *                           <li>{@linkplain RegionError#NON_FINITE_TIME}if the
@@ -366,7 +366,7 @@ public class RegionsPluginData implements PluginData {
 		 * Sets the tracking policy for region arrival times. Defaults to false. Must be
 		 * set to true if people are added with arrival times.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 */
 		public Builder setPersonRegionArrivalTracking(boolean trackRegionArrivalTimes) {
 			ensureDataMutability();
@@ -377,7 +377,7 @@ public class RegionsPluginData implements PluginData {
 		/**
 		 * Adds the region id and its associated agent initial behavior.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li>if
 		 *                           the region id is null
 		 */
@@ -391,7 +391,7 @@ public class RegionsPluginData implements PluginData {
 		/**
 		 * Defines a region property
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 		 *                           if the region property id is null
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
@@ -494,7 +494,7 @@ public class RegionsPluginData implements PluginData {
 	 * Returns the {@link PropertyDefinition} for the given
 	 * {@link RegionPropertyId}.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
 	 *                           if the region property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
@@ -522,7 +522,7 @@ public class RegionsPluginData implements PluginData {
 	 * Returns the property value for the given {@link RegionId} and
 	 * {@link RegionPropertyId}.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID}</li> if
 	 *                           the region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li>
@@ -585,7 +585,7 @@ public class RegionsPluginData implements PluginData {
 	/**
 	 * Returns the {@link RegionId} for the given {@link PersonId}.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 	 *                           the person id is null
 	 */
@@ -603,7 +603,7 @@ public class RegionsPluginData implements PluginData {
 	/**
 	 * Returns the region arrival time for the given {@link PersonId}.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
 	 *                           the person id is null
 	 */

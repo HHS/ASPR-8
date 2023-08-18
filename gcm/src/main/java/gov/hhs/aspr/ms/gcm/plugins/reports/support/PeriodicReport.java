@@ -16,7 +16,7 @@ public abstract class PeriodicReport {
 	/**
 	 * Creates the periodic report from the given report period
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
 	 *                           the report period is null</li>
@@ -108,7 +108,7 @@ public abstract class PeriodicReport {
 	 * contents with the first flush scheduled for one time period from simulation
 	 * start. Descendant implementors of PeriodicReport must invoke super.init().
 	 * 
-	 * @throws ContractException if the report context is null
+	 * @throws util.errors.ContractException if the report context is null
 	 */
 	public final void init(ReportContext reportContext) {
 

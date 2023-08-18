@@ -12,7 +12,7 @@ public interface PluginDataBuilderContainer {
 	 * matching is performed against all plugin data builders in this container. A
 	 * ContractException is thrown if there is not exactly one matching instance.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
 	 *                           if more than one plugin data builder matches the

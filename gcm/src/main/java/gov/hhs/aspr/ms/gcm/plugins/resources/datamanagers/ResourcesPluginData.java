@@ -273,7 +273,7 @@ public final class ResourcesPluginData implements PluginData {
 		/**
 		 * Returns the ResourceInitialData built from the collected data.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 		 *                           if a resource tracking policy was collected for a
 		 *                           resource that was not added</li>
@@ -315,7 +315,7 @@ public final class ResourcesPluginData implements PluginData {
 		 * Adds the given resouce id with default time value. Sets the time tracking
 		 * policy for a resource. Duplicate inputs override previous inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
@@ -335,7 +335,7 @@ public final class ResourcesPluginData implements PluginData {
 		/**
 		 * Defines a resource property Duplicate inputs override previous inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
@@ -361,7 +361,7 @@ public final class ResourcesPluginData implements PluginData {
 		/**
 		 * Sets a resource property value. Duplicate inputs override previous inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
@@ -391,7 +391,7 @@ public final class ResourcesPluginData implements PluginData {
 		 * Sets a person's initial resource level. Duplicate inputs override previous
 		 * inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
@@ -427,7 +427,7 @@ public final class ResourcesPluginData implements PluginData {
 		 * Sets a person's initial resource time. Duplicate inputs override previous
 		 * inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
@@ -463,7 +463,7 @@ public final class ResourcesPluginData implements PluginData {
 		 * Sets a region's initial resource level. Duplicate inputs override previous
 		 * inputs.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 		 *                           region id is null</li>
@@ -635,7 +635,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the property definition associated with the resource id and resource
 	 * property id.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
@@ -660,7 +660,7 @@ public final class ResourcesPluginData implements PluginData {
 	/**
 	 * Returns the resource property id associated with the resource.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
@@ -695,7 +695,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * resource property id. Returns the default value of the associated property
 	 * definition if now value was assigned.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
@@ -726,7 +726,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns an unmodifiable list of the initial resource levels for the given
 	 * resource id. May contain null, may be empty.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -746,7 +746,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns an unmodifiable list of the initial resource levels for the given
 	 * resource id. May contain null, may be empty.
 	 * 
-	 * @throws ContractException </li>
+	 * @throws util.errors.ContractException </li>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -777,7 +777,7 @@ public final class ResourcesPluginData implements PluginData {
 	/**
 	 * Returns the resource ids
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
@@ -794,7 +794,7 @@ public final class ResourcesPluginData implements PluginData {
 	 * Returns the region's initial resource level. Returns 0 if no value was
 	 * assigned during the build process.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li></li>
@@ -818,7 +818,7 @@ public final class ResourcesPluginData implements PluginData {
 	/**
 	 * Returns the tracking policy associated with the resource.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>

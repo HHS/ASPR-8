@@ -42,7 +42,7 @@ public final class ReportHeader {
 		/**
 		 * Add a string to the list of strings in the header in the order added.
 		 * 
-		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_HEADER_STRING}
+		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_HEADER_STRING}
 		 *                           if the header string is null
 		 */
 		public Builder add(String headerString) {

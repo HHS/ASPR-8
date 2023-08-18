@@ -58,7 +58,7 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Builds the Region addition event from the inputs
 		 * 
-		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_REGION_ID} if the
 		 *                           region id was not set
 		 */
 		public RegionAdditionEvent build() {
@@ -69,7 +69,7 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Sets the region id
 		 * 
-		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_REGION_ID} if the
 		 *                           region id is null
 		 */
 		public Builder setRegionId(RegionId regionId) {
@@ -83,7 +83,7 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Adds an auxiliary value to be used by observers of region addition
 		 * 
-		 * @throws ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
+		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
 		 *                           value is null
 		 */
 		public Builder addValue(Object value) {

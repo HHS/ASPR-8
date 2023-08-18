@@ -15,7 +15,7 @@ public final class SimpleReportLabel implements ReportLabel {
 	 * Creates a ReportLabel from a value. The value must implement a proper equals
 	 * contract and be immutable.
 	 * 
-	 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+	 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 	 *                           value is null
 	 */
 	public SimpleReportLabel(Object value) {

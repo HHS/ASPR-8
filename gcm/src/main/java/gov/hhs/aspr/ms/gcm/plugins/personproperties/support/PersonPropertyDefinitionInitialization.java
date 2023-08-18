@@ -82,7 +82,7 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Constructs the PersonPropertyDefinitionInitialization from the collected data
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was assigned to the
@@ -102,7 +102,7 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Sets the property id
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           property id is null
 		 */
 		public Builder setPersonPropertyId(PersonPropertyId propertyId) {
@@ -116,7 +116,7 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -138,7 +138,7 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Adds a property value
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PERSON_ID} if
 		 *                           the person id is null</li>

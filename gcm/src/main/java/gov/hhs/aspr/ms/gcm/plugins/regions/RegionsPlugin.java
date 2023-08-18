@@ -43,7 +43,7 @@ public final class RegionsPlugin {
 		/**
 		 * Builds the RegionsPlugin from the collected inputs
 		 * 
-		 * @throws ContractException {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
+		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
 		 *                           the regionsPluginData is null
 		 */
 		public Plugin getRegionsPlugin() {

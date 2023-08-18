@@ -78,7 +78,7 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Constructs the PersonPropertyDefinitionInitialization from the collected data
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was assigned to the
@@ -98,7 +98,7 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Sets the property id
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           property id is null
 		 */
 		public Builder setRegionPropertyId(RegionPropertyId regionPropertyId) {
@@ -112,7 +112,7 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -126,7 +126,7 @@ public final class RegionPropertyDefinitionInitialization {
 		/**
 		 * Adds a property value
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_OWNER}
 		 *                           if the property owner is null</li>

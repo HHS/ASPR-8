@@ -47,7 +47,7 @@ public final class ResourcesPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
+		 * @throws util.errors.ContractException {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
 		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getResourcesPlugin() {

@@ -243,7 +243,7 @@ public final class PersonResourceReport extends PeriodicReport {
 	private PeopleDataManager peopleDataManager;
 
 	/**
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if a resource id passed to the constructor is

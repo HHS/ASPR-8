@@ -224,7 +224,7 @@ public final class PeoplePluginData implements PluginData {
 		 * Returns the PeopleInitialData resulting from the person ids collected by this
 		 * builder.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PersonError#INVALID_PERSON_COUNT}
 		 *                           if the person count does not exceed all person
 		 *                           range values</li>
@@ -238,7 +238,7 @@ public final class PeoplePluginData implements PluginData {
 		/**
 		 * Adds a person range. Overlapping person ranges are tolerated.
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
 		 */

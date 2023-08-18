@@ -50,7 +50,7 @@ public final class PersonPropertiesPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+		 * @throws util.errors.ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
 		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getPersonPropertyPlugin() {

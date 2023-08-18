@@ -93,7 +93,7 @@ public final class AttributeFilter extends Filter {
 	/**
 	 * Validates this attribute filter
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li>
 	 *                           if the filter's attribute id is null

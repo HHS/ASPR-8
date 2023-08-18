@@ -74,7 +74,7 @@ public class RegionPropertyDimension implements Dimension {
         /**
          * Returns the RegionPropertyDimension from the collected data.
          * 
-         * @throws ContractException
+         * @throws util.errors.ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the region property id was not assigned</li>
@@ -99,7 +99,7 @@ public class RegionPropertyDimension implements Dimension {
         /**
          * Sets the group id for the dimension. Defaults to null.
          * 
-         * @throws ContractException
+         * @throws util.errors.ContractException
          *                           <ul>
          *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
          *                           regionId is null</li>
@@ -113,7 +113,7 @@ public class RegionPropertyDimension implements Dimension {
         /**
          * Sets the region property for the dimension. Defaults to null.
          * 
-         * @throws ContractException
+         * @throws util.errors.ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the property id is null</li>
@@ -127,7 +127,7 @@ public class RegionPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws ContractException
+         * @throws util.errors.ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
          *                           if the value is null</li>

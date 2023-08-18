@@ -28,7 +28,7 @@ public final class ActorContext {
 	 * Activity associated with the consumer should be limited to querying data
 	 * state and releasing output.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 * @throws util.errors.ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
 	 *                           the consumer is null
 	 */
 	public void subscribeToSimulationClose(Consumer<ActorContext> consumer) {
@@ -38,7 +38,7 @@ public final class ActorContext {
 	/**
 	 * Schedules a plan that will be executed at the given time.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
@@ -63,7 +63,7 @@ public final class ActorContext {
 	/**
 	 * Schedules a plan.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
@@ -84,7 +84,7 @@ public final class ActorContext {
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 * @throws util.errors.ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
 	public Optional<Plan<ActorContext>> getPlan(final Object key) {
@@ -94,7 +94,7 @@ public final class ActorContext {
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 * @throws util.errors.ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
 	public Optional<Plan<ActorContext>> removePlan(final Object key) {
@@ -120,7 +120,7 @@ public final class ActorContext {
 	 * are processed by the event filter. If the event passes the filter the event
 	 * will be consumed by the supplied event consumer.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_FILTER} if the
 	 *                           event filter is null</li>
@@ -135,7 +135,7 @@ public final class ActorContext {
 	/**
 	 * Unsubscribes the current actor from the given event filter.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_EVENT_FILTER} if the event
+	 * @throws util.errors.ContractException {@link NucleusError#NULL_EVENT_FILTER} if the event
 	 *                           filter is null
 	 */
 	public <T extends Event> void unsubscribe(EventFilter<T> eventFilter) {
@@ -167,7 +167,7 @@ public final class ActorContext {
 	 * consumer of ActorContext is invoked after event resolution is finished and
 	 * before time progresses.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 * @throws util.errors.ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
 	 *                           the actor context consumer is null
 	 */
 	public ActorId addActor(Consumer<ActorContext> consumer) {
@@ -201,7 +201,7 @@ public final class ActorContext {
 	/**
 	 * Removes the given actor from the simulation.
 	 * 
-	 * @throws ContractException
+	 * @throws util.errors.ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_ACTOR_ID} if the
 	 *                           actorId is null</li>

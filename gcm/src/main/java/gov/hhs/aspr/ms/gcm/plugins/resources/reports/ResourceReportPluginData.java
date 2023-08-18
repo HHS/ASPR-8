@@ -115,7 +115,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		/**
 		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws ContractException
+		 * @throws util.errors.ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 		 *                           the report label is not assigned</li>
@@ -140,7 +140,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		/**
 		 * Selects the given resource id to be included in the report.
 		 * 
-		 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 * @throws util.errors.ContractException {@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *                           resource id is null
 		 */
 		public Builder includeResource(ResourceId resourceId) {
@@ -155,7 +155,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		/**
 		 * Selects the given resource id to be excluded from the report
 		 * 
-		 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 * @throws util.errors.ContractException {@linkplain ResourceError#NULL_RESOURCE_ID} if the
 		 *                           resource id is null
 		 */
 		public Builder excludeResource(ResourceId resourceId) {
@@ -170,7 +170,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
@@ -181,7 +181,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
 		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {

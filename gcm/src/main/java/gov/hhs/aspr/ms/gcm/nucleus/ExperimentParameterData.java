@@ -69,7 +69,7 @@ public final class ExperimentParameterData {
 		 * is running the experiment. Setting the thread count to zero causes the
 		 * simulations to execute in the main thread.
 		 *
-		 * @throws ContractException {@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
+		 * @throws util.errors.ContractException {@linkplain NucleusError#NEGATIVE_THREAD_COUNT} if
 		 *                           the thread count is negative
 		 */
 		public Builder setThreadCount(final int threadCount) {
