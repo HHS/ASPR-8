@@ -33,10 +33,8 @@ public final class PrioritizedPlanData {
 
 	/**
 	 * Returns the string representation of a prioritized plan data in the form
-	 * 
-	 * PrioritizedPlanData [planData=X, priority=1234]
-	 * 
-	 * where X= the relevant plan data's toString()
+	 * PrioritizedPlanData [planData=X, priority=1234] where X= the relevant plan
+	 * data's toString()
 	 */
 	@Override
 	public String toString() {

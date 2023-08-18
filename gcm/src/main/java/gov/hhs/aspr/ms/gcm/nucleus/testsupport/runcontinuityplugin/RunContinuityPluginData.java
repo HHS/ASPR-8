@@ -69,8 +69,7 @@ public class RunContinuityPluginData implements PluginData {
 		}
 
 		/**
-		 * Builds the {@linkplain RunContinuityPluginData} from the collected
-		 * data.
+		 * Builds the {@linkplain RunContinuityPluginData} from the collected data.
 		 */
 		public RunContinuityPluginData build() {
 
@@ -147,8 +146,8 @@ public class RunContinuityPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns true if the completion count is greater than or equal to the
-	 * number of contained consumers.
+	 * Returns true if the completion count is greater than or equal to the number
+	 * of contained consumers.
 	 */
 	public boolean allPlansComplete() {
 		return data.completionCount >= data.consumers.size();

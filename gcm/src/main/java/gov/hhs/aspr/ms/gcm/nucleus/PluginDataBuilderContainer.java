@@ -9,8 +9,8 @@ public interface PluginDataBuilderContainer {
 
 	/**
 	 * Returns the stored item matching the given class reference. Class reference
-	 * matching is performed against all plugin data builders in this container.
-	 * A ContractException is thrown if there is not exactly one matching instance.
+	 * matching is performed against all plugin data builders in this container. A
+	 * ContractException is thrown if there is not exactly one matching instance.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>

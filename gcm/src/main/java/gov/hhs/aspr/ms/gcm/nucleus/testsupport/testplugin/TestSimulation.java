@@ -49,9 +49,9 @@ public class TestSimulation {
 		}
 
 		/**
-		 * If true and an output consumer is also assigned then the simulation
-		 * will produce plugins and a SimulationTime that reflect the final
-		 * state of the simulation. Defaults to false.
+		 * If true and an output consumer is also assigned then the simulation will
+		 * produce plugins and a SimulationTime that reflect the final state of the
+		 * simulation. Defaults to false.
 		 */
 		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
@@ -67,8 +67,8 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Set the simulation time. Defaults to the current date and a start
-		 * time of zero.
+		 * Set the simulation time. Defaults to the current date and a start time of
+		 * zero.
 		 * 
 		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
 		 *                           simulation time is null
@@ -96,8 +96,7 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Add a plugin initializer to this builder for inclusion in the
-		 * simulation
+		 * Add a plugin initializer to this builder for inclusion in the simulation
 		 * 
 		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
 		 *                           null
@@ -116,8 +115,8 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Returns an Engine instance that is initialized with the plugins and
-		 * output consumer collected by this builder.
+		 * Returns an Engine instance that is initialized with the plugins and output
+		 * consumer collected by this builder.
 		 */
 		public TestSimulation build() {
 			return new TestSimulation(new Data(data));

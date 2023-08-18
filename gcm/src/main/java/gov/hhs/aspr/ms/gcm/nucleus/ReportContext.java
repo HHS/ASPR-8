@@ -29,20 +29,18 @@ public final class ReportContext {
 
 	/**
 	 * Schedules a passive plan that will be executed at the given time. Passive
-	 * plans are not required to execute and the simulation will terminate if
-	 * only passive plans remain on the planning schedule.
+	 * plans are not required to execute and the simulation will terminate if only
+	 * passive plans remain on the planning schedule.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
-	 *                           plan is
-	 *                           scheduled for a time in the past *</li>
+	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
-	 *                           the plan is
-	 *                           added to the simulation after event processing is
-	 *                           finished</li>
+	 *                           the plan is added to the simulation after event
+	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
@@ -64,12 +62,10 @@ public final class ReportContext {
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
-	 *                           plan is
-	 *                           scheduled for a time in the past *</li>
+	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
-	 *                           the plan is
-	 *                           added to the simulation after event processing is
-	 *                           finished</li>
+	 *                           the plan is added to the simulation after event
+	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
 	public void addPlan(Plan<ReportContext> plan) {
@@ -82,26 +78,24 @@ public final class ReportContext {
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
-	 * @throws ContractException
-	 *                           {@link NucleusError#NULL_PLAN_KEY} if the plan
-	 *                           key is
-	 *                           null
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 *                           is null
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
 		return simulation.getReportPlan(key);
 	}
 
 	/**
-	 * Returns true if and only if the reports should output their state as a
-	 * plugin data instances at the end of the simulation.
+	 * Returns true if and only if the reports should output their state as a plugin
+	 * data instances at the end of the simulation.
 	 */
 	public boolean stateRecordingIsScheduled() {
 		return simulation.stateRecordingIsScheduled();
 	}
 
 	/**
-	 * Returns the scheduled simulation halt time. Negative values indicate
-	 * there is no scheduled halt time.
+	 * Returns the scheduled simulation halt time. Negative values indicate there is
+	 * no scheduled halt time.
 	 */
 	public double getScheduledSimulationHaltTime() {
 		return simulation.getScheduledSimulationHaltTime();
@@ -118,16 +112,15 @@ public final class ReportContext {
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan
-	 *                           key is null
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 *                           is null
 	 */
 	public Optional<Plan<ReportContext>> removePlan(final Object key) {
 		return simulation.removeReportPlan(key);
 	}
 
 	/**
-	 * Returns a list of the current plan keys associated with the current
-	 * report
+	 * Returns a list of the current plan keys associated with the current report
 	 */
 	public List<Object> getPlanKeys() {
 		return simulation.getReportPlanKeys();
@@ -140,14 +133,11 @@ public final class ReportContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
-	 *                           event class
-	 *                           is null</li>
+	 *                           event class is null</li>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CONSUMER} if the
-	 *                           event
-	 *                           consumer is null</li>
+	 *                           event consumer is null</li>
 	 *                           <li>{@link NucleusError#DUPLICATE_EVENT_SUBSCRIPTION}
-	 *                           if the
-	 *                           data manager is already subscribed</li>
+	 *                           if the data manager is already subscribed</li>
 	 *                           </ul>
 	 */
 	public <T extends Event> void subscribe(Class<T> eventClass, BiConsumer<ReportContext, T> eventConsumer) {
@@ -155,11 +145,11 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Unsubscribes the report from events of the given type for all phases of
-	 * event handling.
+	 * Unsubscribes the report from events of the given type for all phases of event
+	 * handling.
 	 * 
-	 * @throws ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the
-	 *                            event class is null
+	 * @throws ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the event
+	 *                            class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeReportFromEvent(eventClass);
@@ -181,12 +171,10 @@ public final class ReportContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS}
-	 *                           if the
-	 *                           class reference is null</li>
+	 *                           if the class reference is null</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_DATA_VIEW} if
-	 *                           the class
-	 *                           reference does not correspond to a contained data
-	 *                           view</li>
+	 *                           the class reference does not correspond to a
+	 *                           contained data view</li>
 	 *                           </ul>
 	 */
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
@@ -202,10 +190,10 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Sets a function for converting plan data instances into consumers of
-	 * actor context that will be used to convert stored plans from a previous
-	 * simulation execution into current plans. Only used during the
-	 * initialization of the simulation before time flows.
+	 * Sets a function for converting plan data instances into consumers of actor
+	 * context that will be used to convert stored plans from a previous simulation
+	 * execution into current plans. Only used during the initialization of the
+	 * simulation before time flows.
 	 */
 	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
 			Function<T, Consumer<ReportContext>> conversionFunction) {

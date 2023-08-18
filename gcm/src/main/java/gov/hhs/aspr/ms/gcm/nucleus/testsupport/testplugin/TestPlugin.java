@@ -13,8 +13,6 @@ import util.errors.ContractException;
  * Static test support plugin that is designed to work with a unit testing
  * framework. It provides for the injection of behavior into actors and data
  * managers to test various simulation behaviors in a function/system setting.
- * 
- *
  */
 public class TestPlugin {
 
@@ -23,14 +21,13 @@ public class TestPlugin {
 
 	/**
 	 * Initializes a simulation via the given context. Using a TestPluginData
-	 * retrieved from the context, this initializer adds test actor and test
-	 * data manager instances that are used in testing. It also creates an
+	 * retrieved from the context, this initializer adds test actor and test data
+	 * manager instances that are used in testing. It also creates an
 	 * TestPlanDataManager that is used internally to this plugin to help manage
 	 * plan distribution for the aforementioned actors and data managers.
 	 * 
-	 * @throws ContractException {@linkplain
-	 *                           NucleusError#NULL_PLUGIN_CONTEXT} if the
-	 *                           pluginContext is null
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_CONTEXT} if
+	 *                           the pluginContext is null
 	 */
 	private static void init(PluginContext pluginContext) {
 		if (pluginContext == null) {

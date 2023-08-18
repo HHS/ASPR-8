@@ -42,9 +42,9 @@ public class TestPlanDataManager extends DataManager {
 	}
 
 	/**
-	 * Initializes this data manager by subscribing to simulation close. On
-	 * close it releases a single TestScenarioReport that indicates success if
-	 * there was at least one plan and all plans were executed.
+	 * Initializes this data manager by subscribing to simulation close. On close it
+	 * releases a single TestScenarioReport that indicates success if there was at
+	 * least one plan and all plans were executed.
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -90,10 +90,9 @@ public class TestPlanDataManager extends DataManager {
 	}
 
 	/*
-	 * Return true if and only if all actions that are stored in this action
-	 * data view have been executed. Indicates that all injected behaviors in a
-	 * unit test were actually executed. RETURNS FALSE IF THERE WERE NO ACTIONS
-	 * STORED.
+	 * Return true if and only if all actions that are stored in this action data
+	 * view have been executed. Indicates that all injected behaviors in a unit test
+	 * were actually executed. RETURNS FALSE IF THERE WERE NO ACTIONS STORED.
 	 */
 	private void sendActionCompletionReport(DataManagerContext context) {
 		context.releaseOutput(new TestScenarioReport(allActionsExecuted()));

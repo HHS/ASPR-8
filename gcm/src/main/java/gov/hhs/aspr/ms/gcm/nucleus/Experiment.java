@@ -20,17 +20,14 @@ import util.errors.ContractException;
  * An experiment provides a means for executing the simulation over variants of
  * plugin data. Each such variant is referred to as a scenario. The scenarios
  * correspond to the cross product of a finite number of dimensions, with each
- * dimension having a finite number of variant levels.
- * 
- * For example: An experiment contains several plugins and correspondingly
- * several plugin data objects. The experiment has two dimensions. The first
- * dimension varies one of the plugin data objects with 5 new values. The second
- * dimension varies two values in two separate plugin data objects with 3 new
- * values each. There will be 15 resulting scenarios numbered 0 to 14
- * corresponding to each combination of altered inputs.
- * 
- * The experiment then executes the scenarios concurrently based on the number
- * of threads chosen for the execution.
+ * dimension having a finite number of variant levels. For example: An
+ * experiment contains several plugins and correspondingly several plugin data
+ * objects. The experiment has two dimensions. The first dimension varies one of
+ * the plugin data objects with 5 new values. The second dimension varies two
+ * values in two separate plugin data objects with 3 new values each. There will
+ * be 15 resulting scenarios numbered 0 to 14 corresponding to each combination
+ * of altered inputs. The experiment then executes the scenarios concurrently
+ * based on the number of threads chosen for the execution.
  */
 public final class Experiment {
 
@@ -97,12 +94,11 @@ public final class Experiment {
 		}
 
 		/**
-		 * Adds the output item handler to the experiment. Consumers of
-		 * experiment context must be thread safe.
+		 * Adds the output item handler to the experiment. Consumers of experiment
+		 * context must be thread safe.
 		 * 
 		 * @throws ContractException {@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
-		 *                           the
-		 *                           output item handler is null
+		 *                           the output item handler is null
 		 */
 		public Builder addExperimentContextConsumer(final Consumer<ExperimentContext> experimentContextConsumer) {
 			if (experimentContextConsumer == null) {
@@ -121,8 +117,8 @@ public final class Experiment {
 		}
 
 		/**
-		 * Builds an experiment from the collected plugins, dimensions and
-		 * output handlers.
+		 * Builds an experiment from the collected plugins, dimensions and output
+		 * handlers.
 		 */
 		public Experiment build() {
 			return new Experiment(new Data(data));
@@ -138,8 +134,8 @@ public final class Experiment {
 		}
 
 		/**
-		 * Set the simulation state. Defaults to the current date and a start
-		 * time of zero.
+		 * Set the simulation state. Defaults to the current date and a start time of
+		 * zero.
 		 * 
 		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
 		 *                           simulation time is null
@@ -195,8 +191,8 @@ public final class Experiment {
 	}
 
 	/*
-	 * A Callable implementor that runs the simulation in a thread from a
-	 * completion service.
+	 * A Callable implementor that runs the simulation in a thread from a completion
+	 * service.
 	 */
 	private static class SimulationCallable implements Callable<SimResult> {
 		private final ExperimentStateManager experimentStateManager;
@@ -210,8 +206,8 @@ public final class Experiment {
 		 * All construction arguments are thread safe implementations.
 		 */
 		private SimulationCallable(final Integer scenarioId, final ExperimentStateManager experimentStateManager,
-				final List<Plugin> plugins, final boolean produceSimulationStateOnHalt,
-				final Double simulationHaltTime, final SimulationState simulationState) {
+				final List<Plugin> plugins, final boolean produceSimulationStateOnHalt, final Double simulationHaltTime,
+				final SimulationState simulationState) {
 			this.scenarioId = scenarioId;
 			this.experimentStateManager = experimentStateManager;
 			this.plugins = new ArrayList<>(plugins);
@@ -221,10 +217,9 @@ public final class Experiment {
 		}
 
 		/**
-		 * Executes the simulation for a scenario. Returns a SimResult
-		 * indicating success/failure. If the simulation throws an exception it
-		 * is handled by printing a stack trace and reports a failure for the
-		 * scenario.
+		 * Executes the simulation for a scenario. Returns a SimResult indicating
+		 * success/failure. If the simulation throws an exception it is handled by
+		 * printing a stack trace and reports a failure for the scenario.
 		 */
 		@Override
 		public SimResult call() throws Exception {
@@ -343,9 +338,9 @@ public final class Experiment {
 	}
 
 	/*
-	 * Executes the experiment utilizing multiple threads. If the simulation
-	 * throws an exception it is caught and handled by reporting to standard
-	 * error that the failure occurred as well as printing a stack trace.
+	 * Executes the experiment utilizing multiple threads. If the simulation throws
+	 * an exception it is caught and handled by reporting to standard error that the
+	 * failure occurred as well as printing a stack trace.
 	 */
 	private void executeMultiThreaded(final ExecutorService executorService) throws Exception {
 
@@ -378,48 +373,38 @@ public final class Experiment {
 		final CompletionService<SimResult> completionService = new ExecutorCompletionService<>(executorService);
 
 		/*
-		 * Start the initial threads. Don't exceed the thread count or the job
-		 * count. Each time a thread is cleared, a new simulation will be
-		 * processed through the CompletionService until we run out of
-		 * simulations to run.
+		 * Start the initial threads. Don't exceed the thread count or the job count.
+		 * Each time a thread is cleared, a new simulation will be processed through the
+		 * CompletionService until we run out of simulations to run.
 		 */
 		int threadCount = data.experimentParameterData.getThreadCount();
 		while (jobIndex < (Math.min(threadCount, jobs.size()) - 1)) {
 			final Integer scenarioId = jobs.get(jobIndex);
 			List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-			completionService.submit(new SimulationCallable(
-					scenarioId,
-					experimentStateManager,
-					plugins,
+			completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins,
 					data.experimentParameterData.stateRecordingIsScheduled(),
-					data.experimentParameterData.getSimulationHaltTime().orElse(null),
-					data.simulationState));
+					data.experimentParameterData.getSimulationHaltTime().orElse(null), data.simulationState));
 			jobIndex++;
 		}
 
 		/*
-		 * While there are still jobs to be assigned to a thread, or jobs that
-		 * have not yet completed processing, we check to see if a new job needs
-		 * processing and see if a previous job has completed.
+		 * While there are still jobs to be assigned to a thread, or jobs that have not
+		 * yet completed processing, we check to see if a new job needs processing and
+		 * see if a previous job has completed.
 		 */
 		int jobCompletionCount = 0;
 		while (jobCompletionCount < jobs.size()) {
 			if (jobIndex < jobs.size()) {
 				final Integer scenarioId = jobs.get(jobIndex);
 				List<Plugin> plugins = getNewPluginInstancesFromScenarioId(scenarioId);
-				completionService.submit(new SimulationCallable(
-						scenarioId,
-						experimentStateManager,
-						plugins,
+				completionService.submit(new SimulationCallable(scenarioId, experimentStateManager, plugins,
 						data.experimentParameterData.stateRecordingIsScheduled(),
-						data.experimentParameterData.getSimulationHaltTime().orElse(null),
-						data.simulationState));
+						data.experimentParameterData.getSimulationHaltTime().orElse(null), data.simulationState));
 				jobIndex++;
 			}
 
 			/*
-			 * This call is blocking and waits for a job to complete and a
-			 * thread to clear.
+			 * This call is blocking and waits for a job to complete and a thread to clear.
 			 */
 			// try {
 			final SimResult simResult = completionService.take().get();
@@ -434,8 +419,7 @@ public final class Experiment {
 			}
 
 			/*
-			 * Once the blocking call returns, we increment the
-			 * jobCompletionCount
+			 * Once the blocking call returns, we increment the jobCompletionCount
 			 */
 			jobCompletionCount++;
 		}
@@ -443,9 +427,9 @@ public final class Experiment {
 	}
 
 	/*
-	 * Executes the experiment using the main thread. If the simulation throws
-	 * an exception it is caught and handled by reporting to standard error that
-	 * the failure occurred as well as printing a stack trace.
+	 * Executes the experiment using the main thread. If the simulation throws an
+	 * exception it is caught and handled by reporting to standard error that the
+	 * failure occurred as well as printing a stack trace.
 	 */
 	private void executeSingleThreaded() throws Exception {
 
@@ -506,12 +490,12 @@ public final class Experiment {
 		final DimensionContext.Builder contextBuilder = DimensionContext.builder();
 
 		/*
-		 * Set up a map that will allow us to associate with each plugin the new
-		 * plugin data data builder instances associated with that plugin.
+		 * Set up a map that will allow us to associate with each plugin the new plugin
+		 * data data builder instances associated with that plugin.
 		 * 
-		 * We need to avoid using the plugin as a key. Plugins contain plugin
-		 * datas, which may contain a huge amount of dataa and thus have
-		 * expensive hash code costs.
+		 * We need to avoid using the plugin as a key. Plugins contain plugin datas,
+		 * which may contain a huge amount of dataa and thus have expensive hash code
+		 * costs.
 		 */
 		Map<PluginId, List<PluginDataBuilder>> dataBuilderMap = new LinkedHashMap<>();
 		Map<PluginId, Plugin> pluginMap = new LinkedHashMap<>();
@@ -530,16 +514,16 @@ public final class Experiment {
 		final List<String> scenarioMetaData = new ArrayList<>();
 
 		/*
-		 * From the scenario id select the functions from each dimension. Have
-		 * the functions mutate the plugin builders and return meta data.
+		 * From the scenario id select the functions from each dimension. Have the
+		 * functions mutate the plugin builders and return meta data.
 		 */
 		int modulus = 1;
 		for (int i = 0; i < dimensionRecs.size(); i++) {
 			DimensionRec dimensionRec = dimensionRecs.get(i);
 
 			/*
-			 * Determine for the dimension the level within the dimension that
-			 * corresponds to the scenario id
+			 * Determine for the dimension the level within the dimension that corresponds
+			 * to the scenario id
 			 */
 			int levelCount = dimensionRec.getLevelCount();
 			final int level = (scenarioId / modulus) % levelCount;

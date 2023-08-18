@@ -116,17 +116,14 @@ public final class PlanQueueData {
 		}
 
 		/**
-		 * 
 		 * Returns the PlanQueueData built from the contributed data.
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_PLAN_DATA} if the
-		 *                           plan
-		 *                           data is null</li>
+		 *                           plan data is null</li>
 		 *                           <li>{@linkplain NucleusError#NULL_PLANNER} if the
-		 *                           planner
-		 *                           type is null</li>
+		 *                           planner type is null</li>
 		 *                           </ul>
 		 */
 		public PlanQueueData build() {

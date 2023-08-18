@@ -23,8 +23,7 @@ public final class PluginContext {
 	 * Adds a data manager to the simulation.
 	 * 
 	 * @throws ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
-	 *                           if
-	 *                           plugin initialization is over
+	 *                           if plugin initialization is over
 	 */
 	public void addDataManager(DataManager dataManager) {
 		simulation.addDataManagerForPlugin(dataManager);
@@ -34,8 +33,7 @@ public final class PluginContext {
 	 * Adds an actor to the simulation.
 	 * 
 	 * @throws ContractException {@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
-	 *                           if
-	 *                           plugin initialization is over
+	 *                           if plugin initialization is over
 	 */
 	public ActorId addActor(Consumer<ActorContext> init) {
 		return simulation.addActorForPlugin(init);
@@ -47,11 +45,9 @@ public final class PluginContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#PLUGIN_INITIALIZATION_CLOSED}
-	 *                           if
-	 *                           plugin initialization is over</li>
+	 *                           if plugin initialization is over</li>
 	 *                           <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null</li>
+	 *                           if the consumer is null</li>
 	 *                           <ul>
 	 */
 	public void addReport(Consumer<ReportContext> init) {
@@ -64,12 +60,10 @@ public final class PluginContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
-	 *                           if
-	 *                           the class reference is null</li>
+	 *                           if the class reference is null</li>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
-	 *                           if
-	 *                           more than one plugin data object matches the class
-	 *                           reference</li>
+	 *                           if more than one plugin data object matches the
+	 *                           class reference</li>
 	 *                           </ul>
 	 */
 	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
@@ -79,8 +73,7 @@ public final class PluginContext {
 	/**
 	 * Returns the plugin data objects associated with the given class reference
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
-	 *                           if
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
 	 *                           the class reference is null
 	 */
 	public <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {

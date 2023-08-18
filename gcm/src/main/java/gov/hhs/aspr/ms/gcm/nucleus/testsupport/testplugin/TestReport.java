@@ -7,14 +7,11 @@ import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 /**
  * Test Support report implementation designed to execute test-defined behaviors
  * from within the report. The report first registers its ReportId with its
- * alias
- * by registering it with the TestPlanDataManager. It then schedules the
+ * alias by registering it with the TestPlanDataManager. It then schedules the
  * ReportActionPlans that were stored in the TestPluginData that were associated
- * with its alias.
- * 
- * Alias identification exists for the convenience of the test implementor so
- * that tests can name reports and are not bound to the forced ordering pattern
- * implied by ReportId values.
+ * with its alias. Alias identification exists for the convenience of the test
+ * implementor so that tests can name reports and are not bound to the forced
+ * ordering pattern implied by ReportId values.
  */
 public final class TestReport {
 	private final Object alias;
@@ -27,8 +24,8 @@ public final class TestReport {
 	}
 
 	/**
-	 * Associates its ReportId. Schedules the ReprtActionPlans that were stored
-	 * in the ActionDataView that were associated with its alias.
+	 * Associates its ReportId. Schedules the ReprtActionPlans that were stored in
+	 * the ActionDataView that were associated with its alias.
 	 */
 	public void init(ReportContext reportContext) {
 		TestPlanDataManager testPlanDataManager = reportContext.getDataManager(TestPlanDataManager.class);

@@ -721,9 +721,9 @@ public final class ExperimentStateManager {
 	 * Announces the closure of the experiment to subscribed experiment context
 	 * consumers. Closes the experiment progress file if it is being used.
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#UNCLOSABLE_EXPERIMENT}
-	 *                           if the experiment status manager is not currently
-	 *                           in the open state
+	 * @throws ContractException {@linkplain NucleusError#UNCLOSABLE_EXPERIMENT} if
+	 *                           the experiment status manager is not currently in
+	 *                           the open state
 	 */
 	public synchronized void closeExperiment() {
 

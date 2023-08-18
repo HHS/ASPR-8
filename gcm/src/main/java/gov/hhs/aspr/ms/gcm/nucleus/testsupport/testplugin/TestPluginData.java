@@ -176,11 +176,9 @@ public class TestPluginData implements PluginData {
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
-		 *                           is
-		 *                           null</li>
+		 *                           is null</li>
 		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
-		 *                           action
-		 *                           plan is null</li>
+		 *                           action plan is null</li>
 		 *                           </ul>
 		 */
 		public Builder addTestActorPlan(final Object alias, TestActorPlan testActorPlan) {
@@ -211,11 +209,9 @@ public class TestPluginData implements PluginData {
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
-		 *                           is
-		 *                           null</li>
+		 *                           is null</li>
 		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
-		 *                           action
-		 *                           plan is null</li>
+		 *                           action plan is null</li>
 		 *                           </ul>
 		 */
 		public Builder addTestReportPlan(final Object alias, TestReportPlan testReportPlan) {
@@ -269,11 +265,9 @@ public class TestPluginData implements PluginData {
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
-		 *                           is
-		 *                           null</li>
+		 *                           is null</li>
 		 *                           <li>{@linkplain TestError#NULL_PLAN}if the actor
-		 *                           action
-		 *                           plan is null</li>
+		 *                           action plan is null</li>
 		 *                           </ul>
 		 */
 		public Builder addTestDataManagerPlan(final Object alias, TestDataManagerPlan testDataManagerPlan) {
@@ -300,8 +294,7 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds a plugin dependency
 		 * 
-		 * @throws ContractException {@linkplain TestError#NULL_PLUGIN_ID} if the
-		 *                           plugin
+		 * @throws ContractException {@linkplain TestError#NULL_PLUGIN_ID} if the plugin
 		 *                           id is null
 		 */
 		public Builder addPluginDependency(final PluginId pluginId) {
@@ -314,8 +307,8 @@ public class TestPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns a Builder that is initialized to contain the plans and suppliers
-	 * of data managers contained in this TestPluginData.
+	 * Returns a Builder that is initialized to contain the plans and suppliers of
+	 * data managers contained in this TestPluginData.
 	 */
 	@Override
 	public Builder getCloneBuilder() {

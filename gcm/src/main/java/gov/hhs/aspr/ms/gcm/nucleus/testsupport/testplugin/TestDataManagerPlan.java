@@ -50,8 +50,8 @@ public class TestDataManagerPlan {
 	}
 
 	/**
-	 * Package access. Executes the embedded action and marks this action plan
-	 * as executed.
+	 * Package access. Executes the embedded action and marks this action plan as
+	 * executed.
 	 */
 	void executeAction(final DataManagerContext dataManagerContext) {
 		try {

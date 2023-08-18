@@ -36,8 +36,7 @@ public final class EventFilter<T extends Event> {
 	 * Returns a new instance of the Builder class
 	 * 
 	 * @throws ContractException {@linkplain NucleusError#NULL_EVENT_CLASS } if the
-	 *                           class
-	 *                           reference is null
+	 *                           class reference is null
 	 */
 	public static <N extends Event> Builder<N> builder(Class<N> classReference) {
 		if (classReference == null) {
@@ -75,8 +74,7 @@ public final class EventFilter<T extends Event> {
 		 *                           <li>{@linkplain NucleusError#NULL_IDENTIFIABLE_FUNCTION}
 		 *                           if the identifiable function is null</li>
 		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_VALUE}
-		 *                           if the
-		 *                           target value is null</li>
+		 *                           if the target value is null</li>
 		 *                           </ul>
 		 */
 		public Builder<N> addFunctionValuePair(IdentifiableFunction<N> identifiableFunction, Object targetValue) {

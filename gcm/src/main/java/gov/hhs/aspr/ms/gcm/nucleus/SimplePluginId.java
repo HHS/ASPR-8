@@ -43,8 +43,7 @@ public class SimplePluginId implements PluginId {
 	}
 
 	/**
-	 * Simple Plugin Ids are equal if and only if their contained values are
-	 * equal
+	 * Simple Plugin Ids are equal if and only if their contained values are equal
 	 */
 	@Override
 	public boolean equals(Object obj) {

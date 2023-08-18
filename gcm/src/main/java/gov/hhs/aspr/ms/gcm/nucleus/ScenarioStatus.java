@@ -6,9 +6,8 @@ package gov.hhs.aspr.ms.gcm.nucleus;
  * execution, then the scenarios fully recorded in the scenario progress file
  * are marked as PREVIOUSLY_SUCCEEDED. If there are any explicitly added
  * scenarios, then only those scenarios can remain READY and all others are
- * marked
- * SKIPPED. As the experiment executes the READY scenarios, it updates the
- * scenario status of each to RUNNING until the corresponding simulation
+ * marked SKIPPED. As the experiment executes the READY scenarios, it updates
+ * the scenario status of each to RUNNING until the corresponding simulation
  * completes. If the simulation runs without throwing an exception, the scenario
  * is updated to SUCCEDED. Otherwise, it is updated to FAILED.
  */

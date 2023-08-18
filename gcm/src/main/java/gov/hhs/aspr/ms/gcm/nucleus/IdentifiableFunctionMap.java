@@ -21,8 +21,8 @@ public final class IdentifiableFunctionMap<N> {
 	}
 
 	/**
-	 * Returns a builder instance that will build an IdentifiableFunctionMap of
-	 * the given type
+	 * Returns a builder instance that will build an IdentifiableFunctionMap of the
+	 * given type
 	 */
 	public static <T> Builder<T> builder(Class<T> type) {
 		if (type == null) {
@@ -47,8 +47,7 @@ public final class IdentifiableFunctionMap<N> {
 		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
-		 *                           the
-		 *                           function id is null</li>
+		 *                           the function id is null</li>
 		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION} if the
 		 *                           function is null</li>
 		 *                           </ul>
@@ -74,11 +73,9 @@ public final class IdentifiableFunctionMap<N> {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
-	 *                           the
-	 *                           function id is null</li>
+	 *                           the function id is null</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_FUNCTION_ID}
-	 *                           if the
-	 *                           function id is not in this map</li>
+	 *                           if the function id is not in this map</li>
 	 *                           </ul>
 	 */
 	public IdentifiableFunction<N> get(Object id) {

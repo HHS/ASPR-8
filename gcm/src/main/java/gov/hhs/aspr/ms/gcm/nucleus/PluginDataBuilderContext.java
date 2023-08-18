@@ -28,8 +28,8 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		private Map<Class<?>, PluginDataBuilder> pluginDataBuilderMap = new LinkedHashMap<>();
 
 		/**
-		 * Returns the DimensionContext instance composed from the inputs to
-		 * this builder.
+		 * Returns the DimensionContext instance composed from the inputs to this
+		 * builder.
 		 */
 		public PluginDataBuilderContext build() {
 			PluginDataBuilderContext result = new PluginDataBuilderContext();

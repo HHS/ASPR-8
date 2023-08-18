@@ -51,9 +51,9 @@ public class TestActorPlan {
 
 	/**
 	 * TestActorPlans are equal if and only they return the same values for
-	 * 1)executed() and 2)getScheduledTime()This limited sense of
-	 * equality is present simply to provide some reasonable evidence that the
-	 * plugin data cloning method is working correctly for the test plugin data.
+	 * 1)executed() and 2)getScheduledTime()This limited sense of equality is
+	 * present simply to provide some reasonable evidence that the plugin data
+	 * cloning method is working correctly for the test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -91,8 +91,8 @@ public class TestActorPlan {
 	}
 
 	/**
-	 * Package access. Executes the embedded action and marks this action plan
-	 * as executed.
+	 * Package access. Executes the embedded action and marks this action plan as
+	 * executed.
 	 */
 	void executeAction(final ActorContext actorContext) {
 		try {

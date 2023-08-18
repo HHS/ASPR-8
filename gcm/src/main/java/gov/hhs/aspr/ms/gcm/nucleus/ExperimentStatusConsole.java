@@ -8,8 +8,7 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * A Consumer&lt;{@link ExperimentContext}> implementation that can be used in
- * an
- * Experiment for reporting experiment progress to the console.
+ * an Experiment for reporting experiment progress to the console.
  */
 @ThreadSafe
 public final class ExperimentStatusConsole implements Consumer<ExperimentContext> {
@@ -72,9 +71,9 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		}
 
 		/**
-		 * Sets the immediate error reporting policy. When true, simulation
-		 * exceptions will be written to the system error console with the
-		 * scenario id and the corresponding stack trace. Defaulted to false.
+		 * Sets the immediate error reporting policy. When true, simulation exceptions
+		 * will be written to the system error console with the scenario id and the
+		 * corresponding stack trace. Defaulted to false.
 		 */
 		public Builder setImmediateErrorReporting(final boolean immediateErrorReporting) {
 			statusConsoleState.setImmediateErrorReporting(immediateErrorReporting);
@@ -82,10 +81,10 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		}
 
 		/**
-		 * Sets the report scenario progress policy. When true, interim progress
-		 * of the scenarios are reported as 1)the number of scenarios completed,
-		 * 2)the percentage of scenarios completed and 3) as a projected
-		 * remaining time until experiment completion. Defaulted to true.
+		 * Sets the report scenario progress policy. When true, interim progress of the
+		 * scenarios are reported as 1)the number of scenarios completed, 2)the
+		 * percentage of scenarios completed and 3) as a projected remaining time until
+		 * experiment completion. Defaulted to true.
 		 */
 		public Builder setReportScenarioProgress(final boolean reportScenarioProgress) {
 			statusConsoleState.setReportScenarioProgress(reportScenarioProgress);
@@ -93,10 +92,9 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 		}
 
 		/**
-		 * Sets the maximum number of stack traces that are printed to the
-		 * console. This limit is applied independently to stack traces that are
-		 * immediately reported and those that are reported in the experiment
-		 * summary. Defaulted to 100.
+		 * Sets the maximum number of stack traces that are printed to the console. This
+		 * limit is applied independently to stack traces that are immediately reported
+		 * and those that are reported in the experiment summary. Defaulted to 100.
 		 */
 		public Builder setStackTraceReportLimit(int stackTraceReportLimit) {
 			statusConsoleState.setStackTraceReportLimit(stackTraceReportLimit);
@@ -117,8 +115,8 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 	}
 
 	/*
-	 * Returns a colon delimited string representation for the number of seconds
-	 * in the form HH:MM:SS
+	 * Returns a colon delimited string representation for the number of seconds in
+	 * the form HH:MM:SS
 	 */
 	private static String getTimeExpression(double seconds) {
 		int n = (int) Math.round(seconds);
@@ -229,15 +227,14 @@ public final class ExperimentStatusConsole implements Consumer<ExperimentContext
 				scenarioString = "scenario";
 			}
 			System.out.println(completionCount + " of " + experimentContext.getScenarioCount() + " " + scenarioString
-					+ ", " + percentComplete + "% complete. Expected experiment completion in "
-					+ timeExpression);
+					+ ", " + percentComplete + "% complete. Expected experiment completion in " + timeExpression);
 		}
 
 	}
 
 	/**
-	 * Initializes this ExperimentStatusConsole, which registers for simulation
-	 * and experiment close events.
+	 * Initializes this ExperimentStatusConsole, which registers for simulation and
+	 * experiment close events.
 	 */
 	@Override
 	public void accept(ExperimentContext experimentContext) {

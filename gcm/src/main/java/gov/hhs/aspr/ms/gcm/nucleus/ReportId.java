@@ -22,8 +22,8 @@ public final class ReportId {
 	}
 
 	/**
-	 * Returns string of the form "ReportId [X]" where the value of the actor id
-	 * is X
+	 * Returns string of the form "ReportId [X]" where the value of the actor id is
+	 * X
 	 */
 	@Override
 	public String toString() {

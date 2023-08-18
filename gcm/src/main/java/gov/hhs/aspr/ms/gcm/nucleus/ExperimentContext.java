@@ -27,8 +27,7 @@ public final class ExperimentContext {
 	 * Subscribes to the open of simulations
 	 * 
 	 * @throws ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null
+	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
 		experimentStateManager.subscribeToSimulationOpen(consumer);
@@ -38,8 +37,7 @@ public final class ExperimentContext {
 	 * Subscribes to the close of simulations
 	 * 
 	 * @throws ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null
+	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
 		experimentStateManager.subscribeToSimulationClose(consumer);
@@ -49,8 +47,7 @@ public final class ExperimentContext {
 	 * Subscribes to the open of the experiment
 	 * 
 	 * @throws ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null
+	 *                           if the consumer is null
 	 */
 	public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
 		experimentStateManager.subscribeToExperimentOpen(consumer);
@@ -60,8 +57,7 @@ public final class ExperimentContext {
 	 * Subscribes to the close of the experiment
 	 * 
 	 * @throws ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null
+	 *                           if the consumer is null
 	 */
 	public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
 		experimentStateManager.subscribeToExperimentClose(consumer);
@@ -73,11 +69,9 @@ public final class ExperimentContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null</li>
+	 *                           if the consumer is null</li>
 	 *                           <li>{@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
-	 *                           if
-	 *                           the consumer is null</li>
+	 *                           if the consumer is null</li>
 	 *                           </ul>
 	 */
 	public <T> void subscribeToOutput(Class<T> outputClass, TriConsumer<ExperimentContext, Integer, T> consumer) {
@@ -85,8 +79,7 @@ public final class ExperimentContext {
 	}
 
 	/**
-	 * Returns the current status for the given scenario id if the scenario
-	 * exists.
+	 * Returns the current status for the given scenario id if the scenario exists.
 	 */
 	public Optional<ScenarioStatus> getScenarioStatus(int scenarioId) {
 		return experimentStateManager.getScenarioStatus(scenarioId);

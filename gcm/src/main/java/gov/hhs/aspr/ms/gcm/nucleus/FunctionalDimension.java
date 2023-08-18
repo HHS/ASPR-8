@@ -48,11 +48,10 @@ public final class FunctionalDimension implements Dimension {
 
 		/**
 		 * Adds a level function to the dimension. Each such function consumes a
-		 * DimensionContext of PluginDataBuilders and returns a list of
-		 * scenario-level meta data that describes the changes performed on the
-		 * PluginDataBuilders. The list of meta data is aligned to the
-		 * experiment level meta data contained in the dimension and must
-		 * contain the same number of elements.
+		 * DimensionContext of PluginDataBuilders and returns a list of scenario-level
+		 * meta data that describes the changes performed on the PluginDataBuilders. The
+		 * list of meta data is aligned to the experiment level meta data contained in
+		 * the dimension and must contain the same number of elements.
 		 */
 		public Builder addLevel(Function<DimensionContext, List<String>> memberGenerator) {
 			data.levels.add(memberGenerator);
@@ -61,8 +60,8 @@ public final class FunctionalDimension implements Dimension {
 
 		/**
 		 * Adds an experiment-level string meta datum value that describes the
-		 * corresponding scenario-level meta data returned by the individual
-		 * levels of this dimension.
+		 * corresponding scenario-level meta data returned by the individual levels of
+		 * this dimension.
 		 */
 		public Builder addMetaDatum(String idValue) {
 			data.metaData.add(idValue);

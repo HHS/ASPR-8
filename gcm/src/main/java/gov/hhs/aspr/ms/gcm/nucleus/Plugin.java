@@ -112,22 +112,17 @@ public final class Plugin {
 		}
 
 		/**
-		 * Establishes that the plugin using this plugin context depends upon
-		 * the given plugin.
-		 * 
-		 * Plugin dependencies are gathered by nucleus and used to determine
-		 * that the simulation is well formed. Nucleus requires that: 1) there
-		 * are no duplicate plugins, 2)there are no null plugins, 3)there are no
-		 * missing plugins, and 4) the plugin dependencies form an acyclic,
-		 * directed graph.
-		 * 
-		 * Nucleus will initialize each plugin primarily in the order dictated
-		 * by this graph and secondarily in the order each plugin was
-		 * contributed to a simulation or experiment.
+		 * Establishes that the plugin using this plugin context depends upon the given
+		 * plugin. Plugin dependencies are gathered by nucleus and used to determine
+		 * that the simulation is well formed. Nucleus requires that: 1) there are no
+		 * duplicate plugins, 2)there are no null plugins, 3)there are no missing
+		 * plugins, and 4) the plugin dependencies form an acyclic, directed graph.
+		 * Nucleus will initialize each plugin primarily in the order dictated by this
+		 * graph and secondarily in the order each plugin was contributed to a
+		 * simulation or experiment.
 		 * 
 		 * @throws ContractException {@link NucleusError#NULL_PLUGIN_ID} if the plugin
-		 *                           id
-		 *                           is null
+		 *                           id is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
 			if (pluginId == null) {
@@ -138,11 +133,10 @@ public final class Plugin {
 		}
 
 		/**
-		 * Adds a plugin data object. Plugin data object must be thread-safe. It
-		 * is best practice for a plugin data to be properly immutable: 1) its
-		 * state cannot be altered after construction, 2) all its member fields
-		 * are declared final and 3) it does not pass any reference to itself
-		 * during its construction.
+		 * Adds a plugin data object. Plugin data object must be thread-safe. It is best
+		 * practice for a plugin data to be properly immutable: 1) its state cannot be
+		 * altered after construction, 2) all its member fields are declared final and
+		 * 3) it does not pass any reference to itself during its construction.
 		 * 
 		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
 		 *                           plugin data is null
@@ -156,14 +150,13 @@ public final class Plugin {
 		}
 
 		/**
-		 * Sets the consumer of plugin context that interacts with the
-		 * simulation by adding actors and data mangers to the simulation on the
-		 * simulation's startup. The initializer must be thread-safe. It is best
-		 * practice for the initializer to be stateless.
+		 * Sets the consumer of plugin context that interacts with the simulation by
+		 * adding actors and data mangers to the simulation on the simulation's startup.
+		 * The initializer must be thread-safe. It is best practice for the initializer
+		 * to be stateless.
 		 * 
 		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_INITIALIZER}
-		 *                           if
-		 *                           the initializer is null
+		 *                           if the initializer is null
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {
 			if (initializer == null) {
@@ -189,26 +182,26 @@ public final class Plugin {
 	}
 
 	/**
-	 * Returns the plugin id values of the other plugins that this plugin
-	 * depends on to function correctly. These dependencies for a directed
-	 * acyclic graph and determine the initialization order of plugins.
+	 * Returns the plugin id values of the other plugins that this plugin depends on
+	 * to function correctly. These dependencies for a directed acyclic graph and
+	 * determine the initialization order of plugins.
 	 */
 	public final Set<PluginId> getPluginDependencies() {
 		return new LinkedHashSet<>(data.pluginDependencies);
 	}
 
 	/**
-	 * Returns the set thread-safe plugin data objects collected by this
-	 * plugin's builder.
+	 * Returns the set thread-safe plugin data objects collected by this plugin's
+	 * builder.
 	 */
 	public final List<PluginData> getPluginDatas() {
 		return new ArrayList<>(data.pluginDatas);
 	}
 
 	/**
-	 * Returns a thread-safe consumer of plugin context. The initializer
-	 * interacts with the simulation by adding actors and data mangers to the
-	 * simulation on the simulation's startup.
+	 * Returns a thread-safe consumer of plugin context. The initializer interacts
+	 * with the simulation by adding actors and data mangers to the simulation on
+	 * the simulation's startup.
 	 */
 	public final Optional<Consumer<PluginContext>> getInitializer() {
 		return Optional.ofNullable(data.initializer);
@@ -226,11 +219,10 @@ public final class Plugin {
 	}
 
 	/**
-	 * Two Plugins are equal if and only if their plugin ids, plugin
-	 * dependencies and plugin datas are equal. INITIALIZERS ARE NOT COMPARED.
-	 * 
-	 * Initialization behavior can only be confirmed by executing the plugin via
-	 * a simulation instance.
+	 * Two Plugins are equal if and only if their plugin ids, plugin dependencies
+	 * and plugin datas are equal. INITIALIZERS ARE NOT COMPARED. Initialization
+	 * behavior can only be confirmed by executing the plugin via a simulation
+	 * instance.
 	 */
 	@Override
 	public boolean equals(Object obj) {

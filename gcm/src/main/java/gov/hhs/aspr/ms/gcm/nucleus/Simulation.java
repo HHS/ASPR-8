@@ -32,20 +32,15 @@ import util.path.Path;
 
 /**
  * An instance of the Simulation orchestrates the execution of a scenario from a
- * set of contributed plugins.
- * 
- * Plugins are loaded primarily based on the directed acyclic graph implied by
- * their dependencies and then secondarily on the order in which the plugins
- * were added to the experiment or simulation.
- * 
+ * set of contributed plugins. Plugins are loaded primarily based on the
+ * directed acyclic graph implied by their dependencies and then secondarily on
+ * the order in which the plugins were added to the experiment or simulation.
  * Each plugin contributes an initialization behavior that adds actors and data
  * managers to the simulation at simulation startup. The data managers are
  * initialized in the order they are added to the simulation. Actor
- * initialization then follows in a similar order.
- * 
- * After initialization is over, time flows based on the execution of planning.
- * Plans are collected from both actors and data managers. When no more plans
- * remain, the simulation halts.
+ * initialization then follows in a similar order. After initialization is over,
+ * time flows based on the execution of planning. Plans are collected from both
+ * actors and data managers. When no more plans remain, the simulation halts.
  */
 @NotThreadSafe
 public class Simulation {
@@ -100,27 +95,27 @@ public class Simulation {
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
-				case ACTOR:
-					builder.append(actorId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(actorPlan);
-					break;
-				case DATA_MANAGER:
-					builder.append(dataManagerId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(dataManagerPlan);
-					break;
-				case REPORT:
-					builder.append(reportId);
-					builder.append("\t");
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(reportPlan);
-					break;
-				default:
-					throw new RuntimeException("unhandled planner case");
+			case ACTOR:
+				builder.append(actorId);
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(actorPlan);
+				break;
+			case DATA_MANAGER:
+				builder.append(dataManagerId);
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(dataManagerPlan);
+				break;
+			case REPORT:
+				builder.append(reportId);
+				builder.append("\t");
+				builder.append(LINE_SEPARATOR);
+				builder.append("\t");
+				builder.append(reportPlan);
+				break;
+			default:
+				throw new RuntimeException("unhandled planner case");
 			}
 
 			builder.append(LINE_SEPARATOR);
@@ -178,8 +173,8 @@ public class Simulation {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if
-		 *                           the simulation time is null
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
@@ -192,8 +187,8 @@ public class Simulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
-		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin
-		 *                           is null
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
+		 *                           null
 		 */
 		public Builder addPlugin(Plugin plugin) {
 			if (plugin == null) {
@@ -842,45 +837,45 @@ public class Simulation {
 			// convert the plan data into a consumer
 			Planner planner = planQueueData.getPlanner();
 			switch (planner) {
-				case ACTOR:
-					planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-					planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
-					planRec.plan = Plan.builder(ActorContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.actorPlan)//
-							.build();
+			case ACTOR:
+				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
+				planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
+				planRec.plan = Plan.builder(ActorContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.actorPlan)//
+						.build();
 
-					break;
-				case DATA_MANAGER:
-					planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-					planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-							planQueueData.getPlanData());
-					planRec.plan = Plan.builder(DataManagerContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.dataManagerPlan)//
-							.build();
+				break;
+			case DATA_MANAGER:
+				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
+				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
+						planQueueData.getPlanData());
+				planRec.plan = Plan.builder(DataManagerContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.dataManagerPlan)//
+						.build();
 
-					break;
-				case REPORT:
-					planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-					planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
-					planRec.plan = Plan.builder(ReportContext.class)//
-							.setActive(planQueueData.isActive())//
-							.setKey(planQueueData.getKey())//
-							.setPlanData(planQueueData.getPlanData())//
-							.setTime(planQueueData.getTime())//
-							.setCallbackConsumer(planRec.reportPlan)//
-							.build();
+				break;
+			case REPORT:
+				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
+				planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
+				planRec.plan = Plan.builder(ReportContext.class)//
+						.setActive(planQueueData.isActive())//
+						.setKey(planQueueData.getKey())//
+						.setPlanData(planQueueData.getPlanData())//
+						.setTime(planQueueData.getTime())//
+						.setCallbackConsumer(planRec.reportPlan)//
+						.build();
 
-					break;
-				default:
-					throw new RuntimeException("unhandled case " + planner);
+				break;
+			default:
+				throw new RuntimeException("unhandled case " + planner);
 			}
 			planRec.arrivalId = planQueueData.getArrivalId();
 			planRec.isActive = planQueueData.isActive();
@@ -896,32 +891,32 @@ public class Simulation {
 				Map<Object, PlanRec> map;
 				if (planRec.key != null) {
 					switch (planner) {
-						case ACTOR:
-							map = actorPlanMap.get(planRec.actorId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								actorPlanMap.put(planRec.actorId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						case DATA_MANAGER:
-							map = dataManagerPlanMap.get(planRec.dataManagerId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								dataManagerPlanMap.put(planRec.dataManagerId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						case REPORT:
-							map = reportPlanMap.get(planRec.reportId);
-							if (map == null) {
-								map = new LinkedHashMap<>();
-								reportPlanMap.put(planRec.reportId, map);
-							}
-							map.put(planRec.key, planRec);
-							break;
-						default:
-							throw new RuntimeException("unhandled case " + planner);
+					case ACTOR:
+						map = actorPlanMap.get(planRec.actorId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							actorPlanMap.put(planRec.actorId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case DATA_MANAGER:
+						map = dataManagerPlanMap.get(planRec.dataManagerId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							dataManagerPlanMap.put(planRec.dataManagerId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					case REPORT:
+						map = reportPlanMap.get(planRec.reportId);
+						if (map == null) {
+							map = new LinkedHashMap<>();
+							reportPlanMap.put(planRec.reportId, map);
+						}
+						map.put(planRec.key, planRec);
+						break;
+					default:
+						throw new RuntimeException("unhandled case " + planner);
 					}
 				}
 			}
@@ -943,7 +938,8 @@ public class Simulation {
 	 *                           contributed plugins contain dependencies on plugins
 	 *                           that have not been added to the simulation</li>
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
-	 *                           contributed plugins contain duplicate plugin ids</li>
+	 *                           contributed plugins contain duplicate plugin
+	 *                           ids</li>
 	 *                           <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES}
 	 *                           if the contributed plugins form a circular chain of
 	 *                           dependencies</li>
@@ -1064,48 +1060,48 @@ public class Simulation {
 				activePlanCount--;
 			}
 			switch (planRec.planner) {
-				case ACTOR:
-					if (planRec.actorPlan != null) {
-						if (planRec.key != null) {
-							actorPlanMap.get(planRec.actorId).remove(planRec.key);
-						}
-						ActorContentRec actorContentRec = new ActorContentRec();
-						actorContentRec.actorId = planRec.actorId;
-						actorContentRec.plan = planRec.actorPlan;
-						actorQueue.add(actorContentRec);
-						executeActorQueue();
+			case ACTOR:
+				if (planRec.actorPlan != null) {
+					if (planRec.key != null) {
+						actorPlanMap.get(planRec.actorId).remove(planRec.key);
 					}
-					break;
-				case DATA_MANAGER:
-					if (planRec.dataManagerPlan != null) {
-						if (planRec.key != null) {
-							dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
-						}
-						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-						dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-						dataManagerContentRec.dataManagerId = planRec.dataManagerId;
-						dataManagerQueue.add(dataManagerContentRec);
-						executeDataManagerQueue();
-						executeActorQueue();
+					ActorContentRec actorContentRec = new ActorContentRec();
+					actorContentRec.actorId = planRec.actorId;
+					actorContentRec.plan = planRec.actorPlan;
+					actorQueue.add(actorContentRec);
+					executeActorQueue();
+				}
+				break;
+			case DATA_MANAGER:
+				if (planRec.dataManagerPlan != null) {
+					if (planRec.key != null) {
+						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
 					}
-					break;
+					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
+					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+					dataManagerQueue.add(dataManagerContentRec);
+					executeDataManagerQueue();
+					executeActorQueue();
+				}
+				break;
 
-				case REPORT:
-					if (planRec.reportPlan != null) {
-						if (planRec.key != null) {
-							reportPlanMap.get(planRec.reportId).remove(planRec.key);
-						}
-						ReportContentRec reportContentRec = new ReportContentRec();
-						reportContentRec.reportPlan = planRec.reportPlan;
-						reportContentRec.reportId = planRec.reportId;
-						reportQueue.add(reportContentRec);
-						executeReportQueue();
+			case REPORT:
+				if (planRec.reportPlan != null) {
+					if (planRec.key != null) {
+						reportPlanMap.get(planRec.reportId).remove(planRec.key);
 					}
+					ReportContentRec reportContentRec = new ReportContentRec();
+					reportContentRec.reportPlan = planRec.reportPlan;
+					reportContentRec.reportId = planRec.reportId;
+					reportQueue.add(reportContentRec);
+					executeReportQueue();
+				}
 
-					break;
+				break;
 
-				default:
-					throw new RuntimeException("unhandled planner type " + planRec.planner);
+			default:
+				throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
 
@@ -1168,17 +1164,17 @@ public class Simulation {
 								.setTime(planRec.time);//
 
 						switch (planRec.planner) {
-							case ACTOR:
-								planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
-								break;
-							case DATA_MANAGER:
-								planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
-								break;
-							case REPORT:
-								planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
-								break;
-							default:
-								throw new RuntimeException("unhandled case " + planRec.planner);
+						case ACTOR:
+							planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
+							break;
+						case DATA_MANAGER:
+							planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
+							break;
+						case REPORT:
+							planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
+							break;
+						default:
+							throw new RuntimeException("unhandled case " + planRec.planner);
 						}
 
 						PlanQueueData planQueueData = planQueueDataBuilder.build();
