@@ -28,63 +28,25 @@ import util.errors.ContractException;
 /**
  * A periodic Report that displays the creation, transfer or consumption of
  * resources within a region. Only activities with non-zero action counts are
- * reported.
- *
- *
- * Fields
- *
- * region -- the region identifier
- * 
- * resource -- the resource identifier
- *
- * activity -- the activity that leads to the creation, transfer or consumption
- * of a resource unit(s)
- *
- * actions -- the number of individual actions that were associated with the
- * activity
- *
- * items -- the number of units of the resource that were associated with the
- * activity
- *
- *
- *
- * Activities
- *
- * person_addition -- the addition of a person to the simulation
- *
- * person_departure -- the removal of a person from the simulation
- *
- * person_region_arrival -- the arrival of a person into the region from another
- * region
- *
- * person_region_departure -- the departure of a person from the region to
- * another region
- *
- * region_resource_addition -- the creation of a resource unit(s) on the region
- *
- * person_resource_addition -- the creation of a resource unit(s) on a
- * person(associate with simulation bootstrap)
- *
- * region_resource_removal -- the destruction of a resource unit(s) on the
- * region
- *
- * resource_transfer_into_region -- the transfer of units of resource from
- * another region
- *
- * resource_transfer_out_of_region -- the transfer of units of resource to
- * another region
- *
- * resource_transfer_from_person -- the return of resource units from a person
- * in the region to the region
- *
+ * reported. Fields region -- the region identifier resource -- the resource
+ * identifier activity -- the activity that leads to the creation, transfer or
+ * consumption of a resource unit(s) actions -- the number of individual actions
+ * that were associated with the activity items -- the number of units of the
+ * resource that were associated with the activity Activities person_addition --
+ * the addition of a person to the simulation person_departure -- the removal of
+ * a person from the simulation person_region_arrival -- the arrival of a person
+ * into the region from another region person_region_departure -- the departure
+ * of a person from the region to another region region_resource_addition -- the
+ * creation of a resource unit(s) on the region person_resource_addition -- the
+ * creation of a resource unit(s) on a person(associate with simulation
+ * bootstrap) region_resource_removal -- the destruction of a resource unit(s)
+ * on the region resource_transfer_into_region -- the transfer of units of
+ * resource from another region resource_transfer_out_of_region -- the transfer
+ * of units of resource to another region resource_transfer_from_person -- the
+ * return of resource units from a person in the region to the region
  * resource_transfer_to_person -- the distribution of resource units to a person
- * in the region from the region
- *
- * resource_removal_from_person -- the destruction of a resource unit(s) on a
- * person
- *
- *
- *
+ * in the region from the region resource_removal_from_person -- the destruction
+ * of a resource unit(s) on a person
  */
 public final class ResourceReport extends PeriodicReport {
 	private final boolean includeNewResourceIds;
@@ -102,12 +64,9 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	private static enum Activity {
-		PERSON_ARRIVAL("person_arrival"),
-		PERSON_DEPARTURE("person_departure"),
-		PERSON_REGION_ARRIVAL("person_region_arrival"),
-		PERSON_REGION_DEPARTURE("person_region_departure"),
-		REGION_RESOURCE_ADDITION("region_resource_addition"),
-		PERSON_RESOURCE_ADDITION("person_resource_addition"),
+		PERSON_ARRIVAL("person_arrival"), PERSON_DEPARTURE("person_departure"),
+		PERSON_REGION_ARRIVAL("person_region_arrival"), PERSON_REGION_DEPARTURE("person_region_departure"),
+		REGION_RESOURCE_ADDITION("region_resource_addition"), PERSON_RESOURCE_ADDITION("person_resource_addition"),
 		REGION_RESOURCE_REMOVAL("region_resource_removal"),
 		RESOURCE_TRANSFER_INTO_REGION("resource_transfer_into_region"),
 		RESOURCE_TRANSFER_OUT_OF_REGION("resource_transfer_out_of_region"),
@@ -134,9 +93,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	/*
-	 * The mapping of (Region, Resource, Activity) tuples to counters that
-	 * record the number of actions and the number of items handled across those
-	 * actions.
+	 * The mapping of (Region, Resource, Activity) tuples to counters that record
+	 * the number of actions and the number of items handled across those actions.
 	 */
 	private final Map<RegionId, Map<ResourceId, Map<Activity, Counter>>> regionMap = new LinkedHashMap<>();
 
@@ -148,19 +106,19 @@ public final class ResourceReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)	.add("region")//
-																	.add("resource")//
-																	.add("activity")//
-																	.add("actions")//
-																	.add("items")//
-																	.build();//
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder).add("region")//
+					.add("resource")//
+					.add("activity")//
+					.add("actions")//
+					.add("items")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
 	@Override
 	protected void flush(ReportContext reportContext) {
-		
+
 		for (final RegionId regionId : regionMap.keySet()) {
 
 			final Map<ResourceId, Map<Activity, Counter>> resourceMap = regionMap.get(regionId);
@@ -199,7 +157,8 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
+			PersonImminentRemovalEvent personImminentRemovalEvent) {
 
 		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
@@ -212,7 +171,8 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonResourceUpdateEvent(ReportContext reportContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
+	private void handlePersonResourceUpdateEvent(ReportContext reportContext,
+			PersonResourceUpdateEvent personResourceUpdateEvent) {
 
 		final PersonId personId = personResourceUpdateEvent.personId();
 		final ResourceId resourceId = personResourceUpdateEvent.resourceId();
@@ -232,7 +192,8 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext reportContext,
+			PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
@@ -246,7 +207,8 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+	private void handleResourceIdAdditionEvent(ReportContext reportContext,
+			ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 
 		if (addToCurrentResourceIds(resourceId)) {
@@ -261,7 +223,8 @@ public final class ResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleRegionResourceUpdateEvent(ReportContext reportContext, RegionResourceUpdateEvent regionResourceUpdateEvent) {
+	private void handleRegionResourceUpdateEvent(ReportContext reportContext,
+			RegionResourceUpdateEvent regionResourceUpdateEvent) {
 
 		ResourceId resourceId = regionResourceUpdateEvent.resourceId();
 		if (isCurrentProperty(resourceId)) {
@@ -281,7 +244,8 @@ public final class ResourceReport extends PeriodicReport {
 	/*
 	 * Increments the counter for the given tuple
 	 */
-	private void increment(final RegionId regionId, final ResourceId resourceId, final Activity activity, final long count) {
+	private void increment(final RegionId regionId, final ResourceId resourceId, final Activity activity,
+			final long count) {
 		final Map<ResourceId, Map<Activity, Counter>> resourceMap = regionMap.get(regionId);
 		final Map<Activity, Counter> activityMap = resourceMap.get(resourceId);
 		final Counter counter = activityMap.get(activity);
@@ -329,8 +293,8 @@ public final class ResourceReport extends PeriodicReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
 		// if X is true then we don't add the property
@@ -354,9 +318,10 @@ public final class ResourceReport extends PeriodicReport {
 	/**
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-	 *             resource id passed to the constructor is unknown
-	 *             <li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if a resource id passed to the constructor is
+	 *                           unknown</li>
+	 *                           <li></li>
 	 */
 	@Override
 	protected void prepare(final ReportContext reportContext) {

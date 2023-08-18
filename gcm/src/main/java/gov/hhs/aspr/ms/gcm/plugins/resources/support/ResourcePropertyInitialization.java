@@ -8,8 +8,6 @@ import util.errors.ContractException;
 
 /**
  * Immutable data class that represents the addition of a resource property
- * 
- *
  */
 
 public class ResourcePropertyInitialization {
@@ -70,15 +68,17 @@ public class ResourcePropertyInitialization {
 		 * Returns the ResourcePropertyInitialization formed from the inputs.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if no property definition was provided</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
-		 *             property id was provided</li>
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if no
-		 *             resource id was provided</li>
-		 *             <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if no property value was provided and the property
-		 *             definition does not contain a default value</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if no property definition was provided</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           no property id was provided</li>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           no resource id was provided</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if no property value was provided and the property
+		 *                           definition does not contain a default value</li>
+		 *                           </ul>
 		 */
 		public ResourcePropertyInitialization build() {
 			validate();
@@ -88,9 +88,8 @@ public class ResourcePropertyInitialization {
 		/**
 		 * Sets the resource id.
 		 *
-		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
+		 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_ID} if the
+		 *                           resource id is null
 		 */
 		public Builder setResourceId(ResourceId resourceId) {
 			if (resourceId == null) {
@@ -103,9 +102,8 @@ public class ResourcePropertyInitialization {
 		/**
 		 * Sets the resource property id.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           property id is null
 		 */
 		public Builder setResourcePropertyId(ResourcePropertyId resourcePropertyId) {
 			if (resourcePropertyId == null) {
@@ -118,9 +116,8 @@ public class ResourcePropertyInitialization {
 		/**
 		 * Sets the resource property definition.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if the property definition is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -131,12 +128,11 @@ public class ResourcePropertyInitialization {
 		}
 
 		/**
-		 * Sets the value of the global property that overrides any default
-		 * value provided by the property definition
+		 * Sets the value of the global property that overrides any default value
+		 * provided by the property definition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             value is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+		 *                           the value is null
 		 */
 		public Builder setValue(Object value) {
 			if (value == null) {

@@ -47,9 +47,8 @@ public final class ResourcesPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
-		 *             if the personPropertiesPluginData is null</li>
+		 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
+		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getResourcesPlugin() {
 
@@ -77,13 +76,15 @@ public final class ResourcesPlugin {
 				ResourcesPluginData pluginData = c.getPluginData(ResourcesPluginData.class).get();
 				c.addDataManager(new ResourcesDataManager(pluginData));
 
-				Optional<PersonResourceReportPluginData> optional1 = c.getPluginData(PersonResourceReportPluginData.class);
+				Optional<PersonResourceReportPluginData> optional1 = c
+						.getPluginData(PersonResourceReportPluginData.class);
 				if (optional1.isPresent()) {
 					PersonResourceReportPluginData personResourceReportPluginData = optional1.get();
 					c.addReport(new PersonResourceReport(personResourceReportPluginData)::init);
 				}
 
-				Optional<ResourcePropertyReportPluginData> optional2 = c.getPluginData(ResourcePropertyReportPluginData.class);
+				Optional<ResourcePropertyReportPluginData> optional2 = c
+						.getPluginData(ResourcePropertyReportPluginData.class);
 				if (optional2.isPresent()) {
 					ResourcePropertyReportPluginData resourcePropertyReportPluginData = optional2.get();
 					c.addReport(new ResourcePropertyReport(resourcePropertyReportPluginData)::init);
@@ -105,12 +106,14 @@ public final class ResourcesPlugin {
 			return this;
 		}
 
-		public Builder setPersonResourceReportPluginData(PersonResourceReportPluginData personResourceReportPluginData) {
+		public Builder setPersonResourceReportPluginData(
+				PersonResourceReportPluginData personResourceReportPluginData) {
 			data.personResourceReportPluginData = personResourceReportPluginData;
 			return this;
 		}
 
-		public Builder setResourcePropertyReportPluginData(ResourcePropertyReportPluginData resourcePropertyReportPluginData) {
+		public Builder setResourcePropertyReportPluginData(
+				ResourcePropertyReportPluginData resourcePropertyReportPluginData) {
 			data.resourcePropertyReportPluginData = resourcePropertyReportPluginData;
 			return this;
 		}

@@ -7,10 +7,8 @@ import net.jcip.annotations.Immutable;
 
 /**
  * An observation event indicating that a person's resource level has changed.
- *
  */
 @Immutable
-public record PersonResourceUpdateEvent(PersonId personId,
-										ResourceId resourceId, long previousResourceLevel,
-										long currentResourceLevel) implements Event {
+public record PersonResourceUpdateEvent(PersonId personId, ResourceId resourceId, long previousResourceLevel,
+		long currentResourceLevel) implements Event {
 }

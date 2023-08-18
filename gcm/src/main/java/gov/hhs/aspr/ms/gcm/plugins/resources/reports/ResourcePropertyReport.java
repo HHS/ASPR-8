@@ -11,20 +11,10 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
 
 /**
- * A Report that displays assigned resource property values over time.
- *
- *
- * Fields
- *
- * Time -- the time in days when the resource property was set
- *
- * Resource -- the resource identifier
- *
- * Property -- the resource property identifier
- *
- * Value -- the value of the resource property
- *
- *
+ * A Report that displays assigned resource property values over time. Fields
+ * Time -- the time in days when the resource property was set Resource -- the
+ * resource identifier Property -- the resource property identifier Value -- the
+ * value of the resource property
  */
 public final class ResourcePropertyReport {
 	private final ReportLabel reportLabel;
@@ -37,17 +27,18 @@ public final class ResourcePropertyReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			reportHeader = ReportHeader	.builder()//
-										.add("time")//
-										.add("resource")//
-										.add("property")//
-										.add("value")//
-										.build();//
+			reportHeader = ReportHeader.builder()//
+					.add("time")//
+					.add("resource")//
+					.add("property")//
+					.add("value")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
-	private void handleResourcePropertyUpdateEvent(ReportContext reportContext, ResourcePropertyUpdateEvent resourcePropertyUpdateEvent) {
+	private void handleResourcePropertyUpdateEvent(ReportContext reportContext,
+			ResourcePropertyUpdateEvent resourcePropertyUpdateEvent) {
 		ResourceId resourceId = resourcePropertyUpdateEvent.resourceId();
 		ResourcePropertyId resourcePropertyId = resourcePropertyUpdateEvent.resourcePropertyId();
 		Object currentPropertyValue = resourcePropertyUpdateEvent.currentPropertyValue();
@@ -64,8 +55,10 @@ public final class ResourcePropertyReport {
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-			for (final ResourcePropertyId resourcePropertyId : resourcesDataManager.getResourcePropertyIds(resourceId)) {
-				Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId, resourcePropertyId);
+			for (final ResourcePropertyId resourcePropertyId : resourcesDataManager
+					.getResourcePropertyIds(resourceId)) {
+				Object resourcePropertyValue = resourcesDataManager.getResourcePropertyValue(resourceId,
+						resourcePropertyId);
 				writeProperty(reportContext, resourceId, resourcePropertyId, resourcePropertyValue);
 			}
 		}
@@ -77,14 +70,16 @@ public final class ResourcePropertyReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void handleResourcePropertyAdditionEvent(ReportContext reportContext, ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent) {
+	private void handleResourcePropertyAdditionEvent(ReportContext reportContext,
+			ResourcePropertyDefinitionEvent resourcePropertyDefinitionEvent) {
 		ResourceId resourceId = resourcePropertyDefinitionEvent.resourceId();
 		ResourcePropertyId resourcePropertyId = resourcePropertyDefinitionEvent.resourcePropertyId();
 		Object resourcePropertyValue = resourcePropertyDefinitionEvent.resourcePropertyValue();
 		writeProperty(reportContext, resourceId, resourcePropertyId, resourcePropertyValue);
 	}
 
-	private void writeProperty(ReportContext reportContext, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
+	private void writeProperty(ReportContext reportContext, final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);

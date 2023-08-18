@@ -66,7 +66,5 @@ public final class ResourceInitialization {
 		}
 		return true;
 	}
-	
-	
 
 }

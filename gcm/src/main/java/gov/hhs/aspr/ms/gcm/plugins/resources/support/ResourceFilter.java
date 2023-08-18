@@ -25,7 +25,7 @@ public final class ResourceFilter extends Filter {
 		if (resourceId == null) {
 			throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 		}
-		
+
 		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
@@ -48,15 +48,15 @@ public final class ResourceFilter extends Filter {
 	public ResourceId getResourceId() {
 		return resourceId;
 	}
-	
+
 	public Equality getEquality() {
 		return equality;
 	}
-	
+
 	public long getResourceValue() {
 		return resourceValue;
 	}
-	
+
 	public ResourceFilter(final ResourceId resourceId, final Equality equality, final long resourceValue) {
 		this.resourceId = resourceId;
 		this.resourceValue = resourceValue;
@@ -78,7 +78,7 @@ public final class ResourceFilter extends Filter {
 		if (resourcesDataManager == null) {
 			resourcesDataManager = partitionsContext.getDataManager(ResourcesDataManager.class);
 		}
-		
+
 		final long level = resourcesDataManager.getPersonResourceLevel(resourceId, personId);
 		return equality.isCompatibleComparisonValue(Long.compare(level, resourceValue));
 	}
@@ -87,7 +87,8 @@ public final class ResourceFilter extends Filter {
 		if (event.resourceId().equals(resourceId)) {
 			long previousResourceLevel = event.previousResourceLevel();
 			long currentResourceLevel = event.currentResourceLevel();
-			if (equality.isCompatibleComparisonValue(Long.compare(previousResourceLevel, resourceValue)) != equality.isCompatibleComparisonValue(Long.compare(currentResourceLevel, resourceValue))) {
+			if (equality.isCompatibleComparisonValue(Long.compare(previousResourceLevel, resourceValue)) != equality
+					.isCompatibleComparisonValue(Long.compare(currentResourceLevel, resourceValue))) {
 				return Optional.of(event.personId());
 			}
 		}
@@ -97,7 +98,8 @@ public final class ResourceFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class,
+				this::requiresRefresh));
 		return result;
 	}
 
@@ -148,9 +150,5 @@ public final class ResourceFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
-	
-	
 
 }

@@ -8,12 +8,7 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
  * Enumeration that identifies resources for all tests
  */
 public enum TestResourceId implements ResourceId {
-	RESOURCE_1(true),
-	RESOURCE_2(false),
-	RESOURCE_3(true),
-	RESOURCE_4(false),
-	RESOURCE_5(true);
-		
+	RESOURCE_1(true), RESOURCE_2(false), RESOURCE_3(true), RESOURCE_4(false), RESOURCE_5(true);
 
 	private final boolean timeTrackingPolicy;
 
@@ -36,7 +31,7 @@ public enum TestResourceId implements ResourceId {
 		return new ResourceId() {
 		};
 	}
-	
+
 	public static int size() {
 		return values().length;
 	}
@@ -49,6 +44,5 @@ public enum TestResourceId implements ResourceId {
 		}
 		return next;
 	}
-
 
 }

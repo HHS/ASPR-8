@@ -27,22 +27,11 @@ import util.wrappers.MutableInteger;
 
 /**
  * A periodic Report that displays number of people who have/do not have any
- * units of a particular resource with a region.
- *
- *
- * Fields
- *
- * region -- the region identifier
- *
- * resource -- the resource identifier
- *
- * people_with_resource -- the number of people in the region who have at least
- * one unit of the given resource
- *
- * people_without_resource -- the number of people in the region pair who do not
- * have any units of the given resource
- *
- *
+ * units of a particular resource with a region. Fields region -- the region
+ * identifier resource -- the resource identifier people_with_resource -- the
+ * number of people in the region who have at least one unit of the given
+ * resource people_without_resource -- the number of people in the region pair
+ * who do not have any units of the given resource
  */
 public final class PersonResourceReport extends PeriodicReport {
 	public PersonResourceReport(PersonResourceReportPluginData personResourceReportPluginData) {
@@ -74,9 +63,9 @@ public final class PersonResourceReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			addTimeFieldHeaders(reportHeaderBuilder)//
-													.add("region")//
-													.add("resource")//
-													.add("people_with_resource");
+					.add("region")//
+					.add("resource")//
+					.add("people_with_resource");
 			reportHeaderBuilder.add("people_without_resource");
 			reportHeader = reportHeaderBuilder.build();
 		}
@@ -112,7 +101,6 @@ public final class PersonResourceReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		
 		for (final RegionId regionId : regionMap.keySet()) {
 			int populationCount = regionsDataManager.getRegionPopulationCount(regionId);
 			Map<ResourceId, MutableInteger> resourceMap = regionMap.get(regionId);
@@ -144,7 +132,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
+			PersonImminentRemovalEvent personImminentRemovalEvent) {
 
 		PersonId personId = personImminentRemovalEvent.personId();
 
@@ -158,7 +147,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonResourceUpdateEvent(ReportContext reportContext, PersonResourceUpdateEvent personResourceUpdateEvent) {
+	private void handlePersonResourceUpdateEvent(ReportContext reportContext,
+			PersonResourceUpdateEvent personResourceUpdateEvent) {
 		ResourceId resourceId = personResourceUpdateEvent.resourceId();
 		if (isCurrentProperty(resourceId)) {
 			PersonId personId = personResourceUpdateEvent.personId();
@@ -173,7 +163,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext reportContext,
+			PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
@@ -227,8 +218,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
 		// if X is true then we don't add the property
@@ -254,9 +245,10 @@ public final class PersonResourceReport extends PeriodicReport {
 	/**
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if a
-	 *             resource id passed to the constructor is unknown
-	 *             <li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if a resource id passed to the constructor is
+	 *                           unknown</li>
+	 *                           <li></li>
 	 */
 	@Override
 	protected void prepare(final ReportContext reportContext) {
@@ -324,7 +316,8 @@ public final class PersonResourceReport extends PeriodicReport {
 		}
 	}
 
-	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+	private void handleResourceIdAdditionEvent(ReportContext reportContext,
+			ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		if (addToCurrentResourceIds(resourceId)) {
 			for (PersonId personId : peopleDataManager.getPeople()) {
