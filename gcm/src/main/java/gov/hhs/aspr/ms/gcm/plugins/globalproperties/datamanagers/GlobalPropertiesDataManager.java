@@ -321,16 +321,16 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *                           <ul>
 	 *                           <li>{@link PropertyError.NULL_PROPERTY_ID} if the
 	 *                           global property id
-	 *                           is null
+	 *                           is null</li>
 	 *                           <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if
 	 *                           the global property
-	 *                           id is unknown
+	 *                           id is unknown</li>
 	 *                           <li>{@link PropertyError.NULL_PROPERTY_VALUE} if
 	 *                           the property value is
-	 *                           null
+	 *                           null</li>
 	 *                           <li>{@link PropertyError.IMMUTABLE_VALUE} if the
 	 *                           global property
-	 *                           definition indicates the property is not mutable
+	 *                           definition indicates the property is not mutable</li>
 	 *                           <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the
 	 *                           property value is
 	 *                           incompatible with the property definition
