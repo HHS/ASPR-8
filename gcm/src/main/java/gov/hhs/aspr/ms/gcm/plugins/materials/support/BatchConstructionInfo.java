@@ -11,8 +11,6 @@ import util.errors.ContractException;
 /**
  * Represents the information to fully specify a batch, but not its relationship
  * to stages
- * 
- *
  */
 @Immutable
 public class BatchConstructionInfo {
@@ -69,11 +67,12 @@ public class BatchConstructionInfo {
 		 * Builds the BatchConstructionInfo from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-		 *             material id was not set</li>
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id was not set</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
+		 *                           the material id was not set</li>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id was not set</li>
+		 *                           </ul>
 		 */
 		public BatchConstructionInfo build() {
 			validate();
@@ -84,10 +83,12 @@ public class BatchConstructionInfo {
 		 * Sets the amount. Defaulted to zero.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
-		 *             * if the amount is negative</li>
-		 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
-		 *             if the amount is not finite</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+		 *                           * if the amount is negative</li>
+		 *                           <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
+		 *                           if the amount is not finite</li>
+		 *                           </ul>
 		 */
 		public Builder setAmount(double amount) {
 			if (amount < 0) {
@@ -103,9 +104,8 @@ public class BatchConstructionInfo {
 		/**
 		 * Sets the material id. Defaulted to null.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-		 *             material id is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
 			if (materialId == null) {
@@ -119,9 +119,8 @@ public class BatchConstructionInfo {
 		 * Sets the materials producer id. Defaulted to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id is null</li>
-		 * 
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id is null</li>
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			if (materialsProducerId == null) {
@@ -135,12 +134,12 @@ public class BatchConstructionInfo {
 		 * Sets a property value;
 		 *
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             property value is null</li>
-		 *
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder setPropertyValue(BatchPropertyId batchPropertyId, Object propertyValue) {
 			if (batchPropertyId == null) {

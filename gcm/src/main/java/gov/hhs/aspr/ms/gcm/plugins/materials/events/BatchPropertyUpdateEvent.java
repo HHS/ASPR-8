@@ -9,10 +9,8 @@ import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
 @Immutable
-public record BatchPropertyUpdateEvent(BatchId batchId,
-									   BatchPropertyId batchPropertyId,
-									   Object previousPropertyValue,
-									   Object currentPropertyValue) implements Event {
+public record BatchPropertyUpdateEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object previousPropertyValue,
+		Object currentPropertyValue) implements Event {
 	public BatchPropertyUpdateEvent {
 		if (batchId == null) {
 			throw new ContractException(MaterialsError.NULL_BATCH_ID);
@@ -30,6 +28,5 @@ public record BatchPropertyUpdateEvent(BatchId batchId,
 			throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 		}
 	}
-
 
 }

@@ -12,8 +12,6 @@ import util.errors.ContractException;
 
 /**
  * An event indicating that a materials producer has been added
- * 
- *
  */
 @Immutable
 public class MaterialsProducerAdditionEvent implements Event {
@@ -42,8 +40,6 @@ public class MaterialsProducerAdditionEvent implements Event {
 
 	/**
 	 * Builder class for {@link RegionAdditionEvent}
-	 * 
-	 *
 	 */
 	public static class Builder {
 
@@ -61,9 +57,8 @@ public class MaterialsProducerAdditionEvent implements Event {
 		/**
 		 * Builds the Region addition event from the inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id was not set</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerAdditionEvent build() {
 			validate();
@@ -73,9 +68,8 @@ public class MaterialsProducerAdditionEvent implements Event {
 		/**
 		 * Sets the materials producer id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			if (materialsProducerId == null) {
@@ -89,9 +83,8 @@ public class MaterialsProducerAdditionEvent implements Event {
 		 * Adds an auxiliary value to be used by observers of materials producer
 		 * addition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
-		 *             the value is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
+		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {
 			if (value == null) {

@@ -17,81 +17,70 @@ import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
  * values with corresponding property definitions and associations to Test
  * Material Ids. Supports random selection, random property value generation and
  * generation of unique, unknown batch property ids.
- * 
- *
  */
 public enum TestBatchPropertyId implements BatchPropertyId {
 
-	BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_1, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(false)//
-								.build()), //
-	BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_1, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								// .setDefaultValue(0)//no default value
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK(TestMaterialId.MATERIAL_1, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(false)//
+					.build()), //
+	BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK(TestMaterialId.MATERIAL_1, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					// .setDefaultValue(0)//no default value
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_1, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								// .setDefaultValue(0.0)//no default
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK(TestMaterialId.MATERIAL_1, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					// .setDefaultValue(0.0)//no default
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(
-			TestMaterialId.MATERIAL_2, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK(TestMaterialId.MATERIAL_2, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK(
-			TestMaterialId.MATERIAL_2, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK(TestMaterialId.MATERIAL_2, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					.setDefaultValue(0)//
+					.setPropertyValueMutability(false)//
+					.build() //
 	), //
-	BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(
-			TestMaterialId.MATERIAL_2, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK(TestMaterialId.MATERIAL_2, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(0.0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_3, //
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_3_1_BOOLEAN_MUTABLE_NO_TRACK(TestMaterialId.MATERIAL_3, //
+			PropertyDefinition.builder()//
+					.setType(Boolean.class)//
+					.setDefaultValue(false)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_3, //
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	BATCH_PROPERTY_3_2_INTEGER_MUTABLE_NO_TRACK(TestMaterialId.MATERIAL_3, //
+			PropertyDefinition.builder()//
+					.setType(Integer.class)//
+					.setDefaultValue(0)//
+					.setPropertyValueMutability(true)//
+					.build() //
 	), //
-	BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(
-			TestMaterialId.MATERIAL_3, //
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	BATCH_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK(TestMaterialId.MATERIAL_3, //
+			PropertyDefinition.builder()//
+					.setType(Double.class)//
+					.setDefaultValue(0.0)//
+					.setPropertyValueMutability(false)//
+					.build() //
 	);//
 
 	private final PropertyDefinition propertyDefinition;
@@ -118,7 +107,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 
 	/**
 	 * Returns the TestBatchPropertyIds associated with the given TestMaterialId
-	 * 
 	 * Preconditions: The TestMaterialId should not be null
 	 */
 	public static Set<TestBatchPropertyId> getTestBatchPropertyIds(TestMaterialId testMaterialId) {
@@ -142,10 +130,11 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 	}
 
 	/**
-	 * Returns a TestBatchPropertyId that is associated with the given material
-	 * id and whose associated property definition is marked as mutable.
+	 * Returns a TestBatchPropertyId that is associated with the given material id
+	 * and whose associated property definition is marked as mutable.
 	 */
-	public static TestBatchPropertyId getRandomMutableBatchPropertyId(final TestMaterialId testMaterialId, final RandomGenerator randomGenerator) {
+	public static TestBatchPropertyId getRandomMutableBatchPropertyId(final TestMaterialId testMaterialId,
+			final RandomGenerator randomGenerator) {
 		Set<TestBatchPropertyId> set = getTestBatchPropertyIds(testMaterialId);
 		int count = 1;
 		TestBatchPropertyId selectedTestBatchPropertyId = null;
@@ -159,8 +148,6 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 		return selectedTestBatchPropertyId;
 
 	}
-
-	
 
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
@@ -192,14 +179,15 @@ public enum TestBatchPropertyId implements BatchPropertyId {
 
 		}
 	}
-	public static List<TestBatchPropertyId> getBatchPropertyIds(){
-		return Arrays.asList(TestBatchPropertyId.values());		
+
+	public static List<TestBatchPropertyId> getBatchPropertyIds() {
+		return Arrays.asList(TestBatchPropertyId.values());
 	}
-	
-	public static List<TestBatchPropertyId> getBatchPropertyIds(RandomGenerator randomGenerator){
+
+	public static List<TestBatchPropertyId> getBatchPropertyIds(RandomGenerator randomGenerator) {
 		List<TestBatchPropertyId> result = getBatchPropertyIds();
 		Random random = new Random(randomGenerator.nextLong());
-		Collections.shuffle(result,random);
+		Collections.shuffle(result, random);
 		return result;
 	}
 }

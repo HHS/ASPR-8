@@ -25,28 +25,12 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 /**
  * A Report that displays the state of batches over time. The batch properties
  * included in this report are limited to those present during initialization.
- *
- *
- * Fields
- *
- * Time -- the time in days when batch state was updated
- *
- * Batch -- the batch identifier
- *
- * Stage -- the stage associated with the batch
- *
- * MaterialsProducer -- the materials producer of the owner of the batch
- * 
- * Offered -- the offered state of the batch
- * 
- * Material -- the material of the batch
- * 
- * Amount -- the amount of material in the batch
- * 
- * Material.PropertyId -- multiple columns for the batch properties selected for
- * the report
- * 
- *
+ * Fields Time -- the time in days when batch state was updated Batch -- the
+ * batch identifier Stage -- the stage associated with the batch
+ * MaterialsProducer -- the materials producer of the owner of the batch Offered
+ * -- the offered state of the batch Material -- the material of the batch
+ * Amount -- the amount of material in the batch Material.PropertyId -- multiple
+ * columns for the batch properties selected for the report
  */
 public final class BatchStatusReport {
 
@@ -117,13 +101,13 @@ public final class BatchStatusReport {
 	 */
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeader.Builder builder = ReportHeader	.builder()//
-														.add("time")//
-														.add("batch")//
-														.add("materials_producer")//
-														.add("stage")//
-														.add("material")//
-														.add("amount");//
+			ReportHeader.Builder builder = ReportHeader.builder()//
+					.add("time")//
+					.add("batch")//
+					.add("materials_producer")//
+					.add("stage")//
+					.add("material")//
+					.add("amount");//
 			Set<MaterialId> materialIds = materialsDataManager.getMaterialIds();
 			for (MaterialId materialId : materialIds) {
 				Set<BatchPropertyId> batchPropertyIds = materialsDataManager.getBatchPropertyIds(materialId);
@@ -168,14 +152,16 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private void handleBatchImminentRemovalEvent(ReportContext reportContext, BatchImminentRemovalEvent batchImminentRemovalEvent) {
+	private void handleBatchImminentRemovalEvent(ReportContext reportContext,
+			BatchImminentRemovalEvent batchImminentRemovalEvent) {
 		BatchId batchId = batchImminentRemovalEvent.batchId();
 		BatchRecord batchRecord = batchRecords.remove(batchId);
 		batchRecord.time = reportContext.getTime();
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private void handleBatchAmountUpdateEvent(ReportContext reportContext, BatchAmountUpdateEvent batchAmountUpdateEvent) {
+	private void handleBatchAmountUpdateEvent(ReportContext reportContext,
+			BatchAmountUpdateEvent batchAmountUpdateEvent) {
 		BatchId batchId = batchAmountUpdateEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
 		batchRecord.amount = batchAmountUpdateEvent.currentAmount();
@@ -183,7 +169,8 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private void handleStageMembershipAdditionEvent(ReportContext reportContext, StageMembershipAdditionEvent stageMembershipAdditionEvent) {
+	private void handleStageMembershipAdditionEvent(ReportContext reportContext,
+			StageMembershipAdditionEvent stageMembershipAdditionEvent) {
 		BatchId batchId = stageMembershipAdditionEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
 		batchRecord.stageId = stageMembershipAdditionEvent.stageId();
@@ -191,7 +178,8 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private void handleStageMembershipRemovalEvent(ReportContext reportContext, StageMembershipRemovalEvent stageMembershipRemovalEvent) {
+	private void handleStageMembershipRemovalEvent(ReportContext reportContext,
+			StageMembershipRemovalEvent stageMembershipRemovalEvent) {
 		BatchId batchId = stageMembershipRemovalEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
 		batchRecord.stageId = null;
@@ -199,10 +187,12 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
-	private void handleBatchPropertyUpdateEvent(ReportContext reportContext, BatchPropertyUpdateEvent batchPropertyUpdateEvent) {
+	private void handleBatchPropertyUpdateEvent(ReportContext reportContext,
+			BatchPropertyUpdateEvent batchPropertyUpdateEvent) {
 		BatchId batchId = batchPropertyUpdateEvent.batchId();
 		BatchRecord batchRecord = batchRecords.get(batchId);
-		batchRecord.propertyValues.put(batchPropertyUpdateEvent.batchPropertyId(), batchPropertyUpdateEvent.currentPropertyValue());
+		batchRecord.propertyValues.put(batchPropertyUpdateEvent.batchPropertyId(),
+				batchPropertyUpdateEvent.currentPropertyValue());
 		batchRecord.time = reportContext.getTime();
 		reportBatch(reportContext, batchRecord);
 	}

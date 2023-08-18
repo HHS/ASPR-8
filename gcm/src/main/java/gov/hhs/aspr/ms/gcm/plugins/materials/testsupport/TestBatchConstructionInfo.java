@@ -8,14 +8,16 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 
 public class TestBatchConstructionInfo {
 
-	private TestBatchConstructionInfo(){}
+	private TestBatchConstructionInfo() {
+	}
 
-	public static BatchConstructionInfo getBatchConstructionInfo(MaterialsProducerId materialsProducerId, MaterialId materialId, double amount, RandomGenerator randomGenerator) {
+	public static BatchConstructionInfo getBatchConstructionInfo(MaterialsProducerId materialsProducerId,
+			MaterialId materialId, double amount, RandomGenerator randomGenerator) {
 		BatchConstructionInfo.Builder builder = //
-				BatchConstructionInfo	.builder()//
-										.setMaterialId(materialId)//
-										.setMaterialsProducerId(materialsProducerId)//
-										.setAmount(amount);//
+				BatchConstructionInfo.builder()//
+						.setMaterialId(materialId)//
+						.setMaterialsProducerId(materialsProducerId)//
+						.setAmount(amount);//
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
 			if (testBatchPropertyId.getTestMaterialId().equals(materialId)) {
 				if (testBatchPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {

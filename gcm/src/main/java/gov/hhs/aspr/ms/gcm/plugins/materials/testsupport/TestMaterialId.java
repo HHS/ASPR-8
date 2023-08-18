@@ -7,8 +7,6 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 /**
  * A test support enumeration that contains a variety of material id values.
  * Supports random selection and generation of unique, unknown material ids.
- * 
- *
  */
 public enum TestMaterialId implements MaterialId {
 	MATERIAL_1, MATERIAL_2, MATERIAL_3;
@@ -30,7 +28,8 @@ public enum TestMaterialId implements MaterialId {
 	private TestMaterialId next;
 
 	/**
-	 * Returns the next member of this enumeration in the natural order with roll over.
+	 * Returns the next member of this enumeration in the natural order with roll
+	 * over.
 	 */
 	public TestMaterialId next() {
 		if (next == null) {

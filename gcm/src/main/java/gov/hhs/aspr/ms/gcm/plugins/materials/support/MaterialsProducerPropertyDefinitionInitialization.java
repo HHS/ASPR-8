@@ -14,10 +14,6 @@ import util.errors.ContractException;
 /**
  * A class for defining a material producer property with an associated property
  * id and property values for extant materials producers.
- * 
- * 
- *
- * 
  */
 @Immutable
 public final class MaterialsProducerPropertyDefinitionInitialization {
@@ -52,8 +48,6 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 
 	/**
 	 * Builder class for a MaterialsProducerPropertyDefinitionInitialization
-	 * 
-	 *
 	 */
 	public final static class Builder {
 
@@ -82,20 +76,20 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the MaterialsProducerPropertyDefinitionInitialization from
-		 * the collected data
+		 * Constructs the MaterialsProducerPropertyDefinitionInitialization from the
+		 * collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if no property definition was assigned to the
-		 *             builder</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
-		 *             property id was assigned to the builder</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
-		 *             collected property value is incompatible with the
-		 *             property definition</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if no property definition was assigned to the
+		 *                           builder</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           no property id was assigned to the builder</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+		 *                           if a collected property value is incompatible with
+		 *                           the property definition</li>
+		 *                           </ul>
 		 */
 		public MaterialsProducerPropertyDefinitionInitialization build() {
 			validate();
@@ -105,9 +99,8 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		/**
 		 * Sets the materials producer property id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             materials producer propertyId id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           materials producer propertyId id is null
 		 */
 		public Builder setMaterialsProducerPropertyId(MaterialsProducerPropertyId materialsProducerPropertyId) {
 			if (materialsProducerPropertyId == null) {
@@ -120,9 +113,8 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if the property definition is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -136,10 +128,12 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the material producer id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             property value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the material producer id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder addPropertyValue(MaterialsProducerId materialsProducerId, Object value) {
 			if (materialsProducerId == null) {
@@ -171,10 +165,9 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 
 	/**
 	 * Returns the list of (MaterialsProducerId,value) pairs collected by the
-	 * builder in the order of their addition. All pairs have non-null entries
-	 * and the values are compatible with the contained property definition.
-	 * Duplicate assignments of values to the same materials producer may be
-	 * present.
+	 * builder in the order of their addition. All pairs have non-null entries and
+	 * the values are compatible with the contained property definition. Duplicate
+	 * assignments of values to the same materials producer may be present.
 	 */
 	public List<Pair<MaterialsProducerId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);

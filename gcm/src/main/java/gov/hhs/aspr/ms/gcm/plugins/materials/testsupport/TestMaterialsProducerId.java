@@ -5,10 +5,9 @@ import org.apache.commons.math3.random.RandomGenerator;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 
 /**
- * A test support enumeration that contains a variety of materials producer id values.
- * Supports random selection and generation of unique, unknown material producer ids.
- * 
- *
+ * A test support enumeration that contains a variety of materials producer id
+ * values. Supports random selection and generation of unique, unknown material
+ * producer ids.
  */
 public enum TestMaterialsProducerId implements MaterialsProducerId {
 	MATERIALS_PRODUCER_1, MATERIALS_PRODUCER_2, MATERIALS_PRODUCER_3;

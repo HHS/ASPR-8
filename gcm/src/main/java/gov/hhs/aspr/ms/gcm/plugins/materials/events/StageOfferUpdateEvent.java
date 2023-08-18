@@ -5,6 +5,6 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record StageOfferUpdateEvent(StageId stageId, boolean previousOfferState,
-									boolean currentOfferState) implements Event {
+public record StageOfferUpdateEvent(StageId stageId, boolean previousOfferState, boolean currentOfferState)
+		implements Event {
 }

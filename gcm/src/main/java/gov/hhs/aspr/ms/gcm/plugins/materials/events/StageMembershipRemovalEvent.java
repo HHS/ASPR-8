@@ -6,6 +6,5 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record StageMembershipRemovalEvent(BatchId batchId,
-										  StageId stageId) implements Event {
+public record StageMembershipRemovalEvent(BatchId batchId, StageId stageId) implements Event {
 }
