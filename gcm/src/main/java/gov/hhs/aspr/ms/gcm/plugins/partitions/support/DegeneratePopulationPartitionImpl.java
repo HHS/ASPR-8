@@ -40,14 +40,14 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
 	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
-	 *                           if the partition contains labelers</li>
-	 *
-	 * @throws RuntimeException
-	 *                           <li>if context is null</li>
-	 *                           <li>if partition is null</li>
-	 *                           <li>if the partition contains labelers</li>
+	 *                               <ul>
+	 *                               <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
+	 *                               if the partition contains labelers</li>
+	 * @throws RuntimeException</li>
+	 *                               <li>if context is null</li>
+	 *                               <li>if partition is null</li>
+	 *                               <li>if the partition contains labelers</li>
+	 *                               </ul>
 	 */
 	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
 			boolean supportRunContinuity) {
@@ -140,9 +140,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 	/**
 	 * Returns a map whose single key is an empty label set and whose single value
-	 * is the number of people in the population partition.
-	 * 
-	 * Precondition: the label set should be empty or null.
+	 * is the number of people in the population partition. Precondition: the label
+	 * set should be empty or null.
 	 */
 	@Override
 	public Map<LabelSet, Integer> getPeopleCountMap(LabelSet labelSet) {

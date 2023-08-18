@@ -28,9 +28,6 @@ import util.errors.ContractException;
 
 /**
  * Primary implementor for {@link PopulationPartition}
- *
- *
- *
  */
 public final class PopulationPartitionImpl implements PopulationPartition {
 
@@ -69,9 +66,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		/*
-		 * We are using the older Arrays.equals and Arrays.hashCode since it
-		 * suffices for our use case and uses half the runtime of the newer deep
-		 * versions
+		 * We are using the older Arrays.equals and Arrays.hashCode since it suffices
+		 * for our use case and uses half the runtime of the newer deep versions
 		 */
 		public void calculateHashCode() {
 			hashCode = Arrays.hashCode(keys);
@@ -314,19 +310,20 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private double[] weights;
 
 	private Key[] weightedKeys;
-	
+
 	private final PeopleDataManager peopleDataManager;
-	
+
 	/**
 	 * Constructs a PopulationPartitionImpl
 	 * 
-	 *
 	 * @throws RuntimeException
-	 *             <li>if context is null</li>
-	 *             <li>if partition is null</li>
-	 *             <li>if the partition contains labelers</li>
+	 *                          <li>if context is null</li>
+	 *                          <li>if partition is null</li>
+	 *                          <li>if the partition contains labelers</li>
+	 *                          </ul>
 	 */
-	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,boolean supportRunContinuity) {
+	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
+			boolean supportRunContinuity) {
 		this.supportRunContinuity = supportRunContinuity;
 		this.partitionsContext = partitionsContext;
 
@@ -341,7 +338,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		filter = partition.getFilter().orElse(new TrueFilter());
 		for (final FilterSensitivity<? extends Event> filterSensitivity : filter.getFilterSensitivities()) {
-			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap.get(filterSensitivity.getEventClass());
+			List<FilterSensitivity<? extends Event>> list = eventClassToFilterSensitivityMap
+					.get(filterSensitivity.getEventClass());
 			if (list == null) {
 				list = new ArrayList<>();
 				eventClassToFilterSensitivityMap.put(filterSensitivity.getEventClass(), list);
@@ -387,8 +385,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				final PersonId personId = peopleDataManager.getBoxedPersonId(i).get();
 				if (filter.evaluate(partitionsContext, personId)) {
 					/*
-					 * By contract, we know that the person id should not
-					 * already be a member of this container
+					 * By contract, we know that the person id should not already be a member of
+					 * this container
 					 */
 					addPerson(personId);
 				}
@@ -398,8 +396,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Preconditions: The personId is not null, is not currently a member and
-	 * passes the filter
+	 * Preconditions: The personId is not null, is not currently a member and passes
+	 * the filter
 	 */
 	private void addPerson(final PersonId personId) {
 
@@ -426,7 +424,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext,supportRunContinuity);
+			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext,
+					supportRunContinuity);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			final LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -448,8 +447,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Allocates the weights array to the given size or 50% larger than the
-	 * current size, whichever is largest. Size must be non-negative
+	 * Allocates the weights array to the given size or 50% larger than the current
+	 * size, whichever is largest. Size must be non-negative
 	 */
 	private void allocateWeights(final int size) {
 		if (weights == null) {
@@ -465,7 +464,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireWeightsLock() {
 		if (weightsAreLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access weighted sampling during the execution of a previous weighted sampling");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION,
+					"cannot access weighted sampling during the execution of a previous weighted sampling");
 		}
 		weightsAreLocked = true;
 	}
@@ -474,7 +474,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void aquireEventHandlingLock() {
 		if (eventHandlingLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot access event handling during the execution of an event");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION,
+					"cannot access event handling during the execution of an event");
 		}
 		eventHandlingLocked = true;
 	}
@@ -486,8 +487,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	public void attemptPersonAddition(final PersonId personId) {
 		if (filter.evaluate(partitionsContext, personId)) {
 			/*
-			 * By contract, we know that the person id should not already be a
-			 * member of this container
+			 * By contract, we know that the person id should not already be a member of
+			 * this container
 			 */
 			addPerson(personId);
 		}
@@ -495,7 +496,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	/**
 	 * Precondition: Person must exist
-	 *
 	 */
 	@Override
 	public void attemptPersonRemoval(final PersonId personId) {
@@ -562,11 +562,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Returns the index in the weights array that is the first to meet or
-	 * exceed the target value. Assumes a strictly increasing set of values for
-	 * indices 0 through keyCount. Decreasing values are strictly prohibited.
-	 * Consecutive equal values may return an ambiguous result. The target value
-	 * must not exceed weights[peopleCount].
+	 * Returns the index in the weights array that is the first to meet or exceed
+	 * the target value. Assumes a strictly increasing set of values for indices 0
+	 * through keyCount. Decreasing values are strictly prohibited. Consecutive
+	 * equal values may return an ambiguous result. The target value must not exceed
+	 * weights[peopleCount].
 	 *
 	 */
 	private int findTargetIndex(final double targetValue, final int keyCount) {
@@ -611,8 +611,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Returns the key for the personId, if the person is already a member of
-	 * this partition. Otherwise, return null.
+	 * Returns the key for the personId, if the person is already a member of this
+	 * partition. Otherwise, return null.
 	 */
 	private Key getKeyForPerson(final PersonId personId) {
 
@@ -691,11 +691,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/**
-	 *
-	 *
 	 * Precondition: the population partition query must match the population
 	 * partition definition
-	 *
 	 */
 	@Override
 	public List<PersonId> getPeople(final LabelSet labelSet) {
@@ -793,7 +790,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		PersonId personId = null;
 
 		// can the filter state have possibly changed?
-		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap.get(event.getClass());
+		final List<FilterSensitivity<? extends Event>> filterSensitivities = eventClassToFilterSensitivityMap
+				.get(event.getClass());
 		if (filterSensitivities != null) {
 			for (final FilterSensitivity<? extends Event> filterSensitivity : filterSensitivities) {
 				final Optional<PersonId> optionalPersonId = filterSensitivity.requiresRefresh(partitionsContext, event);
@@ -806,7 +804,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final boolean filterSensitivityFound = personId != null;
 
 		// determine the sensitivity of the labelers
-		final List<LabelerSensitivity<? extends Event>> eventlabelerSensitivities = eventClassToLabelerSensitivityMap.get(event.getClass());
+		final List<LabelerSensitivity<? extends Event>> eventlabelerSensitivities = eventClassToLabelerSensitivityMap
+				.get(event.getClass());
 
 		int labelerSensitivityCount = 0;
 		if (eventlabelerSensitivities != null) {
@@ -823,10 +822,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		/*
-		 * If neither the filter nor the labelers are sensitive to the event,
-		 * then the person id will be null and we know that the person's
-		 * membership in this partition and possible cell assignment will not
-		 * have changed.
+		 * If neither the filter nor the labelers are sensitive to the event, then the
+		 * person id will be null and we know that the person's membership in this
+		 * partition and possible cell assignment will not have changed.
 		 */
 		if (personId == null) {
 			return;
@@ -835,8 +833,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		aquireEventHandlingLock();
 
 		/*
-		 * At this point we must have found the person. We must determine the
-		 * key associated with their current place in this population partition.
+		 * At this point we must have found the person. We must determine the key
+		 * associated with their current place in this population partition.
 		 */
 		Key currentKeyForPerson = null;
 
@@ -908,9 +906,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		/*
-		 * If either the person is new to this partition or the the person needs
-		 * to be re-evaluated by the filter, then we will have the filter
-		 * evaluate the person.
+		 * If either the person is new to this partition or the the person needs to be
+		 * re-evaluated by the filter, then we will have the filter evaluate the person.
 		 */
 		final boolean personIsCurrentlyInPartition = currentKeyForPerson != null;
 
@@ -925,8 +922,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (personShouldBeInPartition) {
 			if (personIsCurrentlyInPartition) {
 				/*
-				 * does their key need to be updated? if so, calculate the new
-				 * key and move the person, updating labeler managers as well
+				 * does their key need to be updated? if so, calculate the new key and move the
+				 * person, updating labeler managers as well
 				 */
 				// personShouldBeInPartition == true
 				// personIsCurrentlyInPartition == true
@@ -959,11 +956,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				// personIsCurrentlyInPartition == false
 
 				/*
-				 * Generate a full key for the person and add them into the
-				 * partition cell and then exit much like an add person.
+				 * Generate a full key for the person and add them into the partition cell and
+				 * then exit much like an add person.
 				 * 
-				 * We know that the person is not currently a member of this
-				 * population partition and thus it is safe to add them.
+				 * We know that the person is not currently a member of this population
+				 * partition and thus it is safe to add them.
 				 * 
 				 */
 				addPerson(personId);
@@ -1021,7 +1018,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext,supportRunContinuity));
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext, supportRunContinuity));
 			final LabelSet labelSet = getLabelSet(cleanedNewKey);
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}
@@ -1034,9 +1031,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			labelSetInfoMap.remove(currentKey);
 		}
 		/*
-		 * We use unsafe add since we know that the person id is not already a
-		 * member of the people container associated with the new key as it is
-		 * not equal to the old key
+		 * We use unsafe add since we know that the person id is not already a member of
+		 * the people container associated with the new key as it is not equal to the
+		 * old key
 		 */
 		keyToPeopleMap.get(cleanedNewKey).unsafeAdd(personId);
 
@@ -1055,7 +1052,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private void releaseEventHandlingLock() {
 		if (!eventHandlingLocked) {
-			throw new ContractException(NucleusError.ACCESS_VIOLATION, "cannot release event handling lock when the lock is not present");
+			throw new ContractException(NucleusError.ACCESS_VIOLATION,
+					"cannot release event handling lock when the lock is not present");
 		}
 		eventHandlingLocked = false;
 	}
@@ -1063,8 +1061,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	/**
 	 * Returns a randomly chosen person identifier from the partition consistent
 	 * with the partition sampler info. Note that the sampler must be consistent
-	 * with the partition definition used to create this population partition.
-	 * No precondition tests will be performed.
+	 * with the partition definition used to create this population partition. No
+	 * precondition tests will be performed.
 	 */
 	@Override
 	public Optional<PersonId> samplePartition(final PartitionSampler partitionSampler) {
@@ -1073,7 +1071,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		RandomGenerator randomGenerator;
-		final RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().orElse(null);
+		final RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId()
+				.orElse(null);
 		if (randomNumberGeneratorId == null) {
 			randomGenerator = stochasticsDataManager.getRandomGenerator();
 		} else {
@@ -1084,7 +1083,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		final LabelSet labelSet = partitionSampler.getLabelSet().orElse(LabelSet.builder().build());
 
-		final LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction().orElse(this::getDefaultWeight);
+		final LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction()
+				.orElse(this::getDefaultWeight);
 
 		Key selectedKey = null;
 
@@ -1097,8 +1097,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			keyIterator = getKeyIterator(labelSet);
 			allocateWeights(keyIterator.size());
 			/*
-			 * Initialize the sum of the weights to zero and set the index in
-			 * the weights and weightedKeys to zero.
+			 * Initialize the sum of the weights to zero and set the index in the weights
+			 * and weightedKeys to zero.
 			 */
 			double sum = 0;
 			int weightsLength = 0;
@@ -1130,14 +1130,13 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			}
 
 			/*
-			 * If at least one identifierKey was accepted for selection, then we
-			 * attempt a random selection.
+			 * If at least one identifierKey was accepted for selection, then we attempt a
+			 * random selection.
 			 */
 			if (weightsLength > 0) {
 				/*
-				 * Although the individual weights may have been finite, if the
-				 * sum of those weights is not finite no legitimate selection
-				 * can be made
+				 * Although the individual weights may have been finite, if the sum of those
+				 * weights is not finite no legitimate selection can be made
 				 */
 				if (!Double.isFinite(sum)) {
 					throw new ContractException(PartitionError.MALFORMED_PARTITION_SAMPLE_WEIGHTING_FUNCTION);
@@ -1156,14 +1155,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		/*
-		 * We know that the selected key will correspond to a non-empty people
-		 * container that includes at least one person who is not the excluded
-		 * person. This is due to 1) People containers that become empty are
-		 * removed and 2) the key selection algorithm above will adjust the
-		 * weight of a key to zero if the corresponding container contains only
-		 * the excluded person. Zero weighted keys are ignored and thus the
-		 * selected key cannot be associated with the excluded person alone.
-		 * Therefore, the person selection process will eventually terminate.
+		 * We know that the selected key will correspond to a non-empty people container
+		 * that includes at least one person who is not the excluded person. This is due
+		 * to 1) People containers that become empty are removed and 2) the key
+		 * selection algorithm above will adjust the weight of a key to zero if the
+		 * corresponding container contains only the excluded person. Zero weighted keys
+		 * are ignored and thus the selected key cannot be associated with the excluded
+		 * person alone. Therefore, the person selection process will eventually
+		 * terminate.
 		 */
 		final PeopleContainer peopleContainer = keyToPeopleMap.get(selectedKey);
 		PersonId selectedPerson = null;
@@ -1189,14 +1188,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {		
+	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId) {
 		if (isEmpty()) {
 			return Optional.empty();
-		}				
+		}
 		Key keyForPerson = getKeyForPerson(personId);
-		if(keyForPerson == null) {
+		if (keyForPerson == null) {
 			return Optional.empty();
 		}
 		LabelSet labelSet = labelSetInfoMap.get(keyForPerson);

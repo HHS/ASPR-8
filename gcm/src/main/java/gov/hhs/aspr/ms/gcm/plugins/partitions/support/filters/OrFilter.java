@@ -17,10 +17,8 @@ public final class OrFilter extends Filter {
 	/**
 	 * Constructs a filter that is the disjunction of two filters.
 	 * 
-	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PartitionError#NULL_FILTER} if either filter
-	 *             is null</li>
+	 * @throws ContractException {@linkplain PartitionError#NULL_FILTER} if either
+	 *                           filter is null
 	 */
 	public OrFilter(Filter a, Filter b) {
 		if (a == null) {
@@ -32,11 +30,11 @@ public final class OrFilter extends Filter {
 		this.a = a;
 		this.b = b;
 	}
-	
+
 	public Filter getFirstFilter() {
 		return a;
 	}
-	
+
 	public Filter getSecondFilter() {
 		return b;
 	}
@@ -58,7 +56,7 @@ public final class OrFilter extends Filter {
 		a.validate(partitionsContext);
 		b.validate(partitionsContext);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return a.hashCode() + b.hashCode();
@@ -86,6 +84,5 @@ public final class OrFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
 }

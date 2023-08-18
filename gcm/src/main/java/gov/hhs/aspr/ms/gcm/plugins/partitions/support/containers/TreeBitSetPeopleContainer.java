@@ -12,12 +12,10 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import util.errors.ContractException;
 
-
 /**
  * PeopleContainer implementor that uses a BitSet to record a boolean value of
  * true for each person contained. Uses ~1.3 bits for each person in the ENTIRE
  * POPULATION OF THE SIMULATION.
- * 
  */
 public class TreeBitSetPeopleContainer implements PeopleContainer {
 
@@ -37,15 +35,14 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 
 	private final PeopleDataManager peopleDataManager;
 
-	
 	/**
 	 * Constructs the people container
 	 * 
-	 * @throws ContractException
-	 * <li>{@linkplain PartitionError#NULL_PERSON_DATA_VIEW} if the person data view is null</li>
+	 * @throws ContractException {@linkplain PartitionError#NULL_PERSON_DATA_VIEW}
+	 *                           if the person data view is null
 	 */
 	public TreeBitSetPeopleContainer(PeopleDataManager personDataManger) {
-		if(personDataManger==null) {
+		if (personDataManger == null) {
 			throw new ContractException(PartitionError.NULL_PERSON_DATA_VIEW);
 		}
 		blockSize = 63;
@@ -252,8 +249,8 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	public boolean remove(PersonId personId) {
 		int value = personId.getValue();
 		/*
-		 * If the person is not contained, then don't try to remove them. This
-		 * protects us from removals that are >= exclusizeMaxId.
+		 * If the person is not contained, then don't try to remove them. This protects
+		 * us from removals that are >= exclusizeMaxId.
 		 */
 		if (bitSet.get(value)) {
 			bitSet.set(value, false);
@@ -301,37 +298,36 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 
 	@Override
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
-		if(size==0) {
+		if (size == 0) {
 			return null;
 		}
-		
+
 		int index = randomGenerator.nextInt(size);
 
 		/*
-		 * We need to use an integer that is at least one, so we add one to the
-		 * selected index. We will reduce this amount until it reaches zero.
+		 * We need to use an integer that is at least one, so we add one to the selected
+		 * index. We will reduce this amount until it reaches zero.
 		 */
 		int targetCount = index + 1;
 
 		/*
-		 * Find the mid point of the tree. Think of the tree array as a triangle
-		 * with a single root node at the top. This will be the first array
-		 * element in the last row(last half) in the tree. This is the row that
-		 * maps to the blocks in the bitset.
+		 * Find the mid point of the tree. Think of the tree array as a triangle with a
+		 * single root node at the top. This will be the first array element in the last
+		 * row(last half) in the tree. This is the row that maps to the blocks in the
+		 * bitset.
 		 */
 		int treeIndex = 1;
 
 		/*
-		 * Walk downward in the tree. If we move to the right, we have to reduce
-		 * the target value.
+		 * Walk downward in the tree. If we move to the right, we have to reduce the
+		 * target value.
 		 */
 		while (treeIndex < blockStartingIndex) {
 			// move to the left child
 			treeIndex = treeIndex << 1;
 			/*
-			 * If the left child is less than the target count, then reduce the
-			 * target count by the number in the left child and move to the
-			 * right child
+			 * If the left child is less than the target count, then reduce the target count
+			 * by the number in the left child and move to the right child
 			 */
 			int nodeValue = get(treeIndex);
 			if (nodeValue < targetCount) {
@@ -340,16 +336,15 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			}
 		}
 		/*
-		 * We have arrived at the element of the tree array that corresponds to
-		 * the desired block in the bitset. We will need to determine the
-		 * positions to scan in the bitset
+		 * We have arrived at the element of the tree array that corresponds to the
+		 * desired block in the bitset. We will need to determine the positions to scan
+		 * in the bitset
 		 */
 		// int bitSetStartIndex = (treeIndex - midTreeIndex) << BLOCK_POWER;
 		int bitSetStartIndex = (treeIndex - blockStartingIndex) * blockSize;
 		int bitSetStopIndex = bitSetStartIndex + blockSize;
 		/*
-		 * Finally, we scan the bits and reduce the target count until it
-		 * reaches zero.
+		 * Finally, we scan the bits and reduce the target count until it reaches zero.
 		 */
 		for (int i = bitSetStartIndex; i < bitSetStopIndex; i++) {
 			if (bitSet.get(i)) {

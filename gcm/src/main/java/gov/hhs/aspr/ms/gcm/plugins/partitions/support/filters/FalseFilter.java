@@ -54,7 +54,5 @@ public final class FalseFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
 
 }

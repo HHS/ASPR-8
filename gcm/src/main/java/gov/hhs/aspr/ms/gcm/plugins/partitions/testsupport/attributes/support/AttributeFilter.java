@@ -47,14 +47,17 @@ public final class AttributeFilter extends Filter {
 		}
 	}
 
-	private void validateValueCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Object value) {
+	private void validateValueCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId,
+			final AttributeDefinition attributeDefinition, final Object value) {
 		if (!attributeDefinition.getType().isAssignableFrom(value.getClass())) {
 			throw new ContractException(AttributeError.INCOMPATIBLE_VALUE,
-					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName() + " and does not match definition of " + attributeId);
+					"Attribute value " + value + " is not of type " + attributeDefinition.getType().getName()
+							+ " and does not match definition of " + attributeId);
 		}
 	}
 
-	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId, final AttributeDefinition attributeDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final AttributeId attributeId,
+			final AttributeDefinition attributeDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -64,7 +67,8 @@ public final class AttributeFilter extends Filter {
 		}
 
 		if (!Comparable.class.isAssignableFrom(attributeDefinition.getType())) {
-			throw new ContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Values for " + attributeId + " are not comparable via " + equality);
+			throw new ContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE,
+					"Values for " + attributeId + " are not comparable via " + equality);
 		}
 	}
 
@@ -91,25 +95,22 @@ public final class AttributeFilter extends Filter {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li> if the
-	 *             filter's attribute id is null
-	 * 
-	 *             <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li> if
-	 *             the filter's attribute id is unknown
-	 * 
-	 *             <li>{@linkplain PartitionError.NULL_EQUALITY_OPERATOR}</li>if
-	 *             the filter's equality operator is null
-	 * 
-	 *             <li>{@linkplain AttributeError.NULL_ATTRIBUTE_VALUE}</li>if
-	 *             the filter's value is null
-	 * 
-	 *             <li>{@linkplain AttributeError.INCOMPATIBLE_VALUE}</li>if the
-	 *             filter's value is incompatible with the attribute definition
-	 *             associated with the filter's attribute id.
-	 * 
-	 *             <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
-	 *             the filter's value is not a COMPARABLE when the filter's
-	 *             equality operator is not EQUALS or NOT_EQUALS.
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li>
+	 *                           if the filter's attribute id is null
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li>
+	 *                           if the filter's attribute id is unknown
+	 *                           <li>{@linkplain PartitionError.NULL_EQUALITY_OPERATOR}</li>if
+	 *                           the filter's equality operator is null
+	 *                           <li>{@linkplain AttributeError.NULL_ATTRIBUTE_VALUE}</li>if
+	 *                           the filter's value is null
+	 *                           <li>{@linkplain AttributeError.INCOMPATIBLE_VALUE}</li>if
+	 *                           the filter's value is incompatible with the
+	 *                           attribute definition associated with the filter's
+	 *                           attribute id.
+	 *                           <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
+	 *                           the filter's value is not a COMPARABLE when the
+	 *                           filter's equality operator is not EQUALS or
+	 *                           NOT_EQUALS.
 	 */
 	@Override
 	public void validate(PartitionsContext partitionsContext) {
@@ -167,9 +168,8 @@ public final class AttributeFilter extends Filter {
 
 	/**
 	 * Returns a single filter sensitivity for AttributeUpdateEvent events. This
-	 * sensitivity will require refreshes for events with the same attribute id
-	 * and where the event where the event has different previous and current
-	 * values.
+	 * sensitivity will require refreshes for events with the same attribute id and
+	 * where the event where the event has different previous and current values.
 	 */
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
@@ -231,7 +231,5 @@ public final class AttributeFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

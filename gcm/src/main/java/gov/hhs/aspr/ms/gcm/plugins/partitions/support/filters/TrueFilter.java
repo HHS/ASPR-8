@@ -54,6 +54,5 @@ public final class TrueFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
+
 }

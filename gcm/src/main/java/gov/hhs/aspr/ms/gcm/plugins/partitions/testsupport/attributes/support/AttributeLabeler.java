@@ -18,17 +18,15 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
  * {@linkplain AttributeId}, the event that stimulates a label update is
  * {@linkplain AttributeUpdateEvent} and the labeling function is composed from
  * the given Function.
- * 
- *
  */
 public abstract class AttributeLabeler implements Labeler {
 
 	private final AttributeId attributeId;
-	
+
 	private AttributesDataManager attributesDataManager;
 
 	protected abstract Object getLabelFromValue(Object value);
-	
+
 	public AttributeLabeler(AttributeId attributeId) {
 		this.attributeId = attributeId;
 	}
@@ -52,15 +50,13 @@ public abstract class AttributeLabeler implements Labeler {
 	}
 
 	/**
-	 * Returns the label for the person
-	 * 
-	 * precondition: the context should not be null
+	 * Returns the label for the person precondition: the context should not be null
 	 * 
 	 * @throwsContractException
-	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
-	 *                          the person id is null
-	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the person id is unknown
+	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                          person id is null</li>
+	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                          the person id is unknown
 	 */
 	@Override
 	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {

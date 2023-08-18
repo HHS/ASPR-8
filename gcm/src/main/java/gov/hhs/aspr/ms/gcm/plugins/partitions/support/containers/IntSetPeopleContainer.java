@@ -10,13 +10,12 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 /**
  * PeopleContainer implementor that uses hash-bucketed ArrayLists and an
  * array-based tree to contain the people. Uses ~ 45 bits per person contained.
- * 
  */
 public final class IntSetPeopleContainer implements PeopleContainer {
 
 	/**
-	 * The general best practice bucket depth for ArrayIntSets containing
-	 * millions of entries.
+	 * The general best practice bucket depth for ArrayIntSets containing millions
+	 * of entries.
 	 */
 	public final static float DEFAULT_TARGET_DEPTH = 80;
 
@@ -28,10 +27,10 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	private int[] tree;
 
 	/*
-	 * An array that is the same length as the values array that tracks the
-	 * maximum size each ArrayList instance in values has reached during its
-	 * life-span. This value is used to trigger an occasional rebuild of these
-	 * ArrayLists to reduce instance size.
+	 * An array that is the same length as the values array that tracks the maximum
+	 * size each ArrayList instance in values has reached during its life-span. This
+	 * value is used to trigger an occasional rebuild of these ArrayLists to reduce
+	 * instance size.
 	 */
 	// private int[] maxSizes;
 	private static enum MaxMode {
@@ -92,7 +91,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 				}
 				break;
 			default:
-				
+
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 
@@ -107,7 +106,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 				sMaxSizes[index] = (short) size;
 				break;
 			default:
-				
+
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 		}
@@ -123,7 +122,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			case SHORT:
 				return sMaxSizes[index];
 			default:
-				
+
 				throw new RuntimeException("unhandled case " + maxMode);
 			}
 		}
@@ -137,25 +136,25 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	private int size;
 
 	/*
-	 * The targeted list depth that is used to determine the number of
-	 * buckets(i.e. the length of the values array) in this set.
+	 * The targeted list depth that is used to determine the number of buckets(i.e.
+	 * the length of the values array) in this set.
 	 */
 	private final float targetDepth;
 
 	/**
-	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance
-	 * of duplicate values.
+	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
+	 * duplicate values.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>the target depth is not positive
+	 *                                  <li>the target depth is not positive</li>
 	 */
 	public IntSetPeopleContainer() {
 		this.targetDepth = DEFAULT_TARGET_DEPTH;
 	}
 
 	/*
-	 * Grows the values and maxSizes arrays to achieve an average bucket depth
-	 * that closer to the target bucket depth.
+	 * Grows the values and maxSizes arrays to achieve an average bucket depth that
+	 * closer to the target bucket depth.
 	 */
 	@SuppressWarnings("unchecked")
 	private void grow() {
@@ -193,8 +192,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 		 */
 		List<PersonId>[] newValues = new List[newSize];
 		/*
-		 * Rebuild the maxSizes array to the correct length. The old values in
-		 * the maxSizes array can be forgotten.
+		 * Rebuild the maxSizes array to the correct length. The old values in the
+		 * maxSizes array can be forgotten.
 		 */
 		// maxSizes = new int[newValues.length];
 		maxSizeManager = new MaxSizeManager(newValues.length);
@@ -208,15 +207,14 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			if (list != null) {
 				for (PersonId value : list) {
 					/*
-					 * Since the length of the values array is always a power of
-					 * 2, we can use a bit-wise math trick to calculate the
-					 * modulus of value with values.length to derive the index
-					 * of the bucket where the value should be stored.
+					 * Since the length of the values array is always a power of 2, we can use a
+					 * bit-wise math trick to calculate the modulus of value with values.length to
+					 * derive the index of the bucket where the value should be stored.
 					 */
 					int index = value.getValue() & (newValues.length - 1);
 					/*
-					 * Get the list where the value should be stored or create
-					 * it if it does not yet exist.
+					 * Get the list where the value should be stored or create it if it does not yet
+					 * exist.
 					 */
 					List<PersonId> newList = newValues[index];
 					if (newList == null) {
@@ -236,16 +234,15 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 					newList.add(value);
 				}
 				/*
-				 * Null out the ArrayList instance to encourage the GC to
-				 * collect the list now.
+				 * Null out the ArrayList instance to encourage the GC to collect the list now.
 				 * 
 				 */
 				buckets[i] = null;
 			}
 		}
 		/*
-		 * We no longer need the old values array, so we replace it with the new
-		 * values array.
+		 * We no longer need the old values array, so we replace it with the new values
+		 * array.
 		 */
 		buckets = newValues;
 		/*
@@ -266,8 +263,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			return false;
 		}
 		/*
-		 * We have show that the person id is not contained so we can invoke the
-		 * unsafe add
+		 * We have show that the person id is not contained so we can invoke the unsafe
+		 * add
 		 */
 		return unsafeAdd(personId);
 	}
@@ -279,8 +276,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			grow();
 		}
 		/*
-		 * The bucket index is value % values.length, but this is a bit faster
-		 * since we know the values array length is a power of two.
+		 * The bucket index is value % values.length, but this is a bit faster since we
+		 * know the values array length is a power of two.
 		 */
 		int index = personId.getValue() & (buckets.length - 1);
 
@@ -332,8 +329,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			return false;
 		}
 		/*
-		 * The bucket index is value % values.length, but this is a bit faster
-		 * since we know the values array length is a power of two.
+		 * The bucket index is value % values.length, but this is a bit faster since we
+		 * know the values array length is a power of two.
 		 */
 		int index = personId.getValue() & (buckets.length - 1);
 		/*
@@ -348,9 +345,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 		if (list.remove(personId)) {
 			size--;
 			/*
-			 * If the list is now less than half its maxSize in the past, then
-			 * we should rebuild the list and record the new maxSize for the
-			 * list.
+			 * If the list is now less than half its maxSize in the past, then we should
+			 * rebuild the list and record the new maxSize for the list.
 			 */
 			// decrement the values int the tree
 			int treeIndex = index + buckets.length;
@@ -369,8 +365,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 				}
 			}
 			/*
-			 * If the averageDepth is less than half the target depth then we
-			 * should shrink. (size/values.length)*2<targetDepth
+			 * If the averageDepth is less than half the target depth then we should shrink.
+			 * (size/values.length)*2<targetDepth
 			 * 
 			 */
 			if (size * 2 < targetDepth * buckets.length) {
@@ -397,25 +393,25 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 
 	@Override
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
-		
-		if(size==0) {
+
+		if (size == 0) {
 			return null;
 		}
 
 		int targetCount = randomGenerator.nextInt(size);
 
 		/*
-		 * Find the mid point of the tree. Think of the tree array as a triangle
-		 * with a single root node at the top. This will be the first array
-		 * element in the last row(last half) in the tree. This is the row that
-		 * maps to the blocks in the bitset.
+		 * Find the mid point of the tree. Think of the tree array as a triangle with a
+		 * single root node at the top. This will be the first array element in the last
+		 * row(last half) in the tree. This is the row that maps to the blocks in the
+		 * bitset.
 		 */
 		int midTreeIndex = buckets.length;
 		int treeIndex = 1;
 
 		/*
-		 * Walk downward in the tree. If we move to the right, we have to reduce
-		 * the target value.
+		 * Walk downward in the tree. If we move to the right, we have to reduce the
+		 * target value.
 		 */
 		while (treeIndex < midTreeIndex) {
 			// move to the left child
@@ -429,8 +425,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			}
 		}
 		/*
-		 * We have arrived at the element of the tree array that corresponds to
-		 * desired bucket
+		 * We have arrived at the element of the tree array that corresponds to desired
+		 * bucket
 		 */
 		List<PersonId> targetList = buckets[treeIndex - midTreeIndex];
 		return targetList.get(targetCount);

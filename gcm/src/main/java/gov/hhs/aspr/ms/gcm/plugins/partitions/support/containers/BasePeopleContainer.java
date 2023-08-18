@@ -11,7 +11,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 /**
  * Implementor of PeopleContainer that acts as a dynamic switching mechanism
  * between the two lower-level PeopleContainer implementors
- * 
  */
 public class BasePeopleContainer implements PeopleContainer {
 	/*
@@ -50,14 +49,14 @@ public class BasePeopleContainer implements PeopleContainer {
 	/*
 	 * Switches the internal container between BooleanPeopleContainer and
 	 * SetPeopleContainer as needed whenever the appropriate threshold has been
-	 * crossed. If the size of the container is less than 0.5% of the total
-	 * world population, then the SetPeopleContainer should be chosen. If the
-	 * size of the container is greater than 1% of the total world population,
-	 * then the BooleanPeopleContainer should be chosen. By setting two separate
-	 * thresholds, we avoid modality thrash.
+	 * crossed. If the size of the container is less than 0.5% of the total world
+	 * population, then the SetPeopleContainer should be chosen. If the size of the
+	 * container is greater than 1% of the total world population, then the
+	 * BooleanPeopleContainer should be chosen. By setting two separate thresholds,
+	 * we avoid modality thrash.
 	 * 
-	 * If supportRunContinuity is true, then the mode remains fixed at
-	 * TREE_BIT_SET without regard to the relative size of the cell
+	 * If supportRunContinuity is true, then the mode remains fixed at TREE_BIT_SET
+	 * without regard to the relative size of the cell
 	 */
 	private void determineMode(int size) {
 		if (supportRunContinuity) {
@@ -72,8 +71,8 @@ public class BasePeopleContainer implements PeopleContainer {
 				internalPeopleContainer = new IntSetPeopleContainer();
 				for (PersonId personId : people) {
 					/*
-					 * We use unsafe add as it faster and we know that the
-					 * person id cannot already be contained
+					 * We use unsafe add as it faster and we know that the person id cannot already
+					 * be contained
 					 */
 					internalPeopleContainer.unsafeAdd(personId);
 				}
@@ -136,8 +135,8 @@ public class BasePeopleContainer implements PeopleContainer {
 	}
 
 	/*
-	 * Returns a randomly selected person if this container has any people.
-	 * Returns null otherwise.
+	 * Returns a randomly selected person if this container has any people. Returns
+	 * null otherwise.
 	 */
 	@Override
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {

@@ -16,7 +16,7 @@ public enum TestAttributeId implements AttributeId {
 	BOOLEAN_1(AttributeDefinition.builder().setType(Boolean.class).setDefaultValue(true).build());
 
 	private final AttributeDefinition attributeDefinition;
-	
+
 	public AttributeDefinition getAttributeDefinition() {
 		return attributeDefinition;
 	}
@@ -24,25 +24,26 @@ public enum TestAttributeId implements AttributeId {
 	private TestAttributeId(AttributeDefinition attributeDefinition) {
 		this.attributeDefinition = attributeDefinition;
 	}
-	
+
 	public static AttributeId getUnknownAttributeId() {
-		return new AttributeId() {};
+		return new AttributeId() {
+		};
 	}
-	
+
 	public static TestAttributeId getRandomAttributeId(RandomGenerator randomGenerator) {
 		int index = randomGenerator.nextInt(TestAttributeId.values().length);
 		return TestAttributeId.values()[index];
 	}
-	
+
 	public Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
 		switch (this) {
-		case INT_0,INT_1:
+		case INT_0, INT_1:
 			return randomGenerator.nextInt();
 		case DOUBLE_0, DOUBLE_1:
 			return randomGenerator.nextDouble();
 		case BOOLEAN_0, BOOLEAN_1:
-			return randomGenerator.nextBoolean();		
-		default:			
+			return randomGenerator.nextBoolean();
+		default:
 			throw new RuntimeException("unhandled case: " + this);
 
 		}

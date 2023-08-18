@@ -14,7 +14,6 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import util.errors.ContractException;
 
 /**
- *
  * A nucleus plugin for the management of population partitions. A population
  * partition represents a filtered and partitioned subset of the people in the
  * simulation.
@@ -35,11 +34,9 @@ public final class PartitionsPlugin {
 
 	/**
 	 * Returns the partitions plugin.
-	 *
 	 * <p>
 	 * Uses PartitionsPluginId.PLUGIN_ID as its id
 	 * </p>
-	 * 
 	 * <p>
 	 * Depends on plugins:
 	 * <ul>
@@ -47,14 +44,9 @@ public final class PartitionsPlugin {
 	 * <li>People Plugin</li>
 	 * </ul>
 	 * </p>
-	 * 
 	 * <p>
-	 * Provides data mangers:
-	 * <ul>
-	 * <li>{@linkplain PartitionsDataManager}</li>
-	 * </ul>
+	 * Provides data mangers: {@linkplain PartitionsDataManager}
 	 * </p>
-	 * 
 	 * <p>
 	 * Provides no actors:
 	 * </p>
@@ -75,12 +67,12 @@ public final class PartitionsPlugin {
 		 * Builds the PartitionsPlugin from the collected inputs
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PartitionError#NULL_PARTITION_PLUGIN_DATA}
-		 *             if the partitionsPluginData is null</li>
-		 *             
-		 *              <li>{@linkplain NucleusError#NULL_PLUGIN_ID}
-		 *             if an included plugin dependency id null</li>
-		 *            
+		 *                           <ul>
+		 *                           <li>{@linkplain PartitionError#NULL_PARTITION_PLUGIN_DATA}
+		 *                           if the partitionsPluginData is null</li>
+		 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_ID} if an
+		 *                           included plugin dependency id null</li>
+		 *                           </ul>
 		 */
 		public Plugin getPartitionsPlugin() {
 
@@ -96,7 +88,7 @@ public final class PartitionsPlugin {
 
 			builder.setInitializer((c) -> {
 				PartitionsPluginData partitionsPluginData = c.getPluginData(PartitionsPluginData.class).get();
-				
+
 				c.addDataManager(new PartitionsDataManager(partitionsPluginData));
 			});//
 

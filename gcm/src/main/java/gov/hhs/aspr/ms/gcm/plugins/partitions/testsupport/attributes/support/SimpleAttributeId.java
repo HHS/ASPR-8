@@ -1,15 +1,12 @@
 package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support;
 
-
-
 public final class SimpleAttributeId implements AttributeId {
 	private final Object value;
 
 	/**
 	 * Creates an attribute id from the given value
 	 * 
-	 * @throws RuntimeException
-	 *             if the value is null
+	 * @throws RuntimeException if the value is null
 	 */
 	public SimpleAttributeId(Object value) {
 		if (value == null) {
@@ -30,8 +27,8 @@ public final class SimpleAttributeId implements AttributeId {
 	}
 
 	/**
-	 * Two {@link SimpleAttributeId} instances are equal if and only if their
-	 * inputs are equal.
+	 * Two {@link SimpleAttributeId} instances are equal if and only if their inputs
+	 * are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

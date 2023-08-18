@@ -11,10 +11,10 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.Att
  */
 public final class FunctionalAttributeLabeler extends AttributeLabeler {
 	private final Function<Object, Object> labelingFunction;
-	
+
 	public FunctionalAttributeLabeler(AttributeId attributeId, Function<Object, Object> labelingFunction) {
 		super(attributeId);
-		
+
 		this.labelingFunction = labelingFunction;
 	}
 

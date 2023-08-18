@@ -4,8 +4,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 /**
  * Enumeration used by various filters to perform equality comparisons
- *
- *
  */
 public enum Equality {
 	LESS_THAN {
@@ -24,7 +22,7 @@ public enum Equality {
 
 	EQUAL {
 		@Override
-		public boolean isCompatibleComparisonValue(final int comparisonValue) {			
+		public boolean isCompatibleComparisonValue(final int comparisonValue) {
 			return comparisonValue == 0;
 		}
 	},
@@ -78,7 +76,7 @@ public enum Equality {
 			throw new RuntimeException("unhandled case " + equality);
 		}
 	}
-	
+
 	public static Equality getRandomEquality(RandomGenerator randomGenerator) {
 		int index = randomGenerator.nextInt(Equality.values().length);
 		return Equality.values()[index];

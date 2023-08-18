@@ -7,8 +7,6 @@ import util.errors.ContractException;
  * A thread-safe, immutable class that defines an attribute, but does not
  * indicate the role that attribute is playing or the identifier of the
  * attribute.
- *
- *
  */
 @ThreadSafe
 public final class AttributeDefinition {
@@ -30,13 +28,11 @@ public final class AttributeDefinition {
 			type = data.type;
 			defaultValue = data.defaultValue;
 		}
-		
+
 	}
 
 	/**
 	 * Builder class for {@linkplain AttributeDefinition}
-	 * 
-	 *
 	 */
 	public static class Builder {
 
@@ -49,17 +45,14 @@ public final class AttributeDefinition {
 		 * Builds the attribute definition
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE} if
-		 *             the class type of the definition is not assigned or
-		 *             null</li>
-		 * 
-		 *             <li>{@linkplain AttributeError#NULL_DEFAULT_VALUE}if the
-		 *             default value null</li>
-		 * 
-		 *             <li>{@linkplain AttributeError#INCOMPATIBLE_DEFAULT_VALUE}if
-		 *             the class type is not a super-type of the default
-		 *             value</li>
-		 * 
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE}
+		 *                           if the class type of the definition is not assigned
+		 *                           or null</li>
+		 *                           <li>{@linkplain AttributeError#NULL_DEFAULT_VALUE}if
+		 *                           the default value null</li>
+		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_DEFAULT_VALUE}if
+		 *                           the class type is not a super-type of the default
+		 *                           value</li>
 		 */
 		public AttributeDefinition build() {
 			return new AttributeDefinition(new Data(data));
@@ -116,7 +109,6 @@ public final class AttributeDefinition {
 
 	/**
 	 * Returns that class type of this definition.
-	 *
 	 */
 	public Class<?> getType() {
 		return type;
@@ -135,8 +127,7 @@ public final class AttributeDefinition {
 	}
 
 	/**
-	 * Attribute definitions are equal if they have the same type and default
-	 * value.
+	 * Attribute definitions are equal if they have the same type and default value.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -161,9 +152,7 @@ public final class AttributeDefinition {
 	}
 
 	/**
-	 * Standard string representation in the form:
-	 * 
-	 * AttributeDefinition
+	 * Standard string representation in the form: AttributeDefinition
 	 * [type=someType,mapOption=mapOption,defaultValue=someValue]
 	 */
 	@Override
@@ -176,7 +165,5 @@ public final class AttributeDefinition {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

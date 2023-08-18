@@ -9,7 +9,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 /**
  * Interface for abstracting the details of how people ids are stored as either
  * a Set or a Boolean container.
- * 
  */
 public interface PeopleContainer {
 
@@ -24,16 +23,15 @@ public interface PeopleContainer {
 	public boolean safeAdd(PersonId personId);
 
 	/**
-	 * Returns true if and only if the person was successfully added. To use
-	 * unsafe adding, the caller MUST guarantee that the person id being added
-	 * does not already exist in this people container. Depending on the
-	 * implementor, this can reduce the time for addition significantly.
+	 * Returns true if and only if the person was successfully added. To use unsafe
+	 * adding, the caller MUST guarantee that the person id being added does not
+	 * already exist in this people container. Depending on the implementor, this
+	 * can reduce the time for addition significantly.
 	 */
 	public boolean unsafeAdd(PersonId personId);
 
 	/**
 	 * Returns true if and only if the person was successfully removed.
-	 * 
 	 * Precondition: The person cannot be null.
 	 */
 	public boolean remove(PersonId personId);
@@ -49,10 +47,8 @@ public interface PeopleContainer {
 	public boolean contains(PersonId personId);
 
 	/**
-	 * Returns a randomly selected person if this container has any people.
-	 * Returns null otherwise.
-	 * 
-	 * Precondition : random generator cannot be null
+	 * Returns a randomly selected person if this container has any people. Returns
+	 * null otherwise. Precondition : random generator cannot be null
 	 */
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator);
 }
