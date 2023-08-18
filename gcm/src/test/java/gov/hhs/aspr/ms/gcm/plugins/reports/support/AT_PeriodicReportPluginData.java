@@ -52,12 +52,13 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Returns a PersonPropertyReportPluginData created from the collected inputs
 			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+			 * @throws ContractException <ul><li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 			 *                           the report label is not assigned</li>
 			 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
 			 *                           the report period is not assigned</li>
-			 */
+			 *
+</ul>
+*/
 			@Override
 			public LocalPeriodicReportPluginData build() {
 				return new LocalPeriodicReportPluginData(data);
@@ -66,10 +67,9 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Sets the report label
 			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-			 *                           the report label is null</li>
-			 */
+			 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if
+			 *                           the report label is null
+*/
 			@Override
 			public Builder setReportLabel(ReportLabel reportLabel) {
 				super.setReportLabel(reportLabel);
@@ -79,10 +79,9 @@ public class AT_PeriodicReportPluginData {
 			/**
 			 * Sets the report period id
 			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-			 *                           the report period is null</li>
-			 */
+			 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if
+			 *                           the report period is null
+*/
 			@Override
 			public Builder setReportPeriod(ReportPeriod reportPeriod) {
 				super.setReportPeriod(reportPeriod);
