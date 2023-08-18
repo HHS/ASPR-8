@@ -65,7 +65,7 @@ public final class TestPluginFactory {
 	 * <ul>
 	 * <li>{@link TestPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.</li>
+	 * via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
@@ -83,7 +83,7 @@ public final class TestPluginFactory {
 	 * <ul>
 	 * <li>{@link TestPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.</li>
+	 * via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null

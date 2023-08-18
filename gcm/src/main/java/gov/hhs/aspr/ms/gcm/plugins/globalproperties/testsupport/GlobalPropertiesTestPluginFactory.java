@@ -126,15 +126,15 @@ public final class GlobalPropertiesTestPluginFactory {
      * <ul>
      * <li>{@link GlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>either directly (by default) via
+     * either directly (by default) via
      * <ul>
      * <li>{@link #getStandardGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>or explicitly set via</li>
+     * or explicitly set via
      * <ul>
      * <li>{@link Factory#setGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>via the {@link Factory#getPlugins()} method.
+     * via the {@link Factory#getPlugins()} method.
      * 
      * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
      *                           testPluginData is null
@@ -152,15 +152,15 @@ public final class GlobalPropertiesTestPluginFactory {
      * <ul>
      * <li>{@link GlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>either directly (by default) via
+     * either directly (by default) via
      * <ul>
      * <li>{@link #getStandardGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>or explicitly set via</li>
+     * or explicitly set via
      * <ul>
      * <li>{@link Factory#setGlobalPropertiesPluginData}</li>
      * </ul>
-     * <li>via the {@link Factory#getPlugins()} method.
+     * via the {@link Factory#getPlugins()} method.
      * 
      * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
      *                           if consumer is null

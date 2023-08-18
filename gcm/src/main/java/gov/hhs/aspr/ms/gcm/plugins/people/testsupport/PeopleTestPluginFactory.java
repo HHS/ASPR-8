@@ -125,17 +125,17 @@ public class PeopleTestPluginFactory {
 	 * <li>{@link PeoplePluginData}</li>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
@@ -154,17 +154,17 @@ public class PeopleTestPluginFactory {
 	 * <li>{@link PeoplePluginData}</li>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardPeoplePluginData},
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setPeoplePluginData},
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null

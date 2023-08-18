@@ -181,21 +181,21 @@ public class PartitionsTestPluginFactory {
 	 * <li>{@link PeoplePluginData}</li>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardAttributesPluginData}</li>
 	 * <li>{@link #getStandardPartitionsPlugin}</li>
 	 * <li>{@link #getStandardPeoplePluginData}</li>
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setAttributesPluginData}</li>
 	 * <li>{@link Factory#setPartitionsPlugin}</li>
 	 * <li>{@link Factory#setPeoplePluginData}</li>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
@@ -216,21 +216,21 @@ public class PartitionsTestPluginFactory {
 	 * <li>{@link PeoplePluginData}</li>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardAttributesPluginData}</li>
 	 * <li>{@link #getStandardPartitionsPlugin}</li>
 	 * <li>{@link #getStandardPeoplePluginData}</li>
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setAttributesPluginData}</li>
 	 * <li>{@link Factory#setPartitionsPlugin}</li>
 	 * <li>{@link Factory#setPeoplePluginData}</li>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 *
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null

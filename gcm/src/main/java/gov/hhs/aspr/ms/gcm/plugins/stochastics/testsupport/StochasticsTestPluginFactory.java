@@ -102,11 +102,11 @@ public class StochasticsTestPluginFactory {
 	 * <ul>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
@@ -129,11 +129,11 @@ public class StochasticsTestPluginFactory {
 	 * <ul>
 	 * <li>{@link StochasticsPluginData}</li>
 	 * </ul>
-	 * <li>either directly (by default) via
+	 * either directly (by default) via
 	 * <ul>
 	 * <li>{@link #getStandardStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>or explicitly set via</li>
+	 * or explicitly set via
 	 * <ul>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
