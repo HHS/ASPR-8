@@ -143,8 +143,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		private Data data;
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
 		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is not assigned
@@ -160,9 +159,9 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to true.
+		 * Sets the default policy for inclusion of person properties in the report.
+		 * This policy is used when a person property has not been explicitly included
+		 * or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
 			ensureDataMutability();

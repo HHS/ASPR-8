@@ -15,15 +15,9 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import util.errors.ContractException;
 
 /**
- * A Report that displays assigned global property values over time.
- *
- * Fields
- *
- * Time -- the time in days when the global property was set
- *
- * Property -- the global property identifier
- *
- * Value -- the value of the global property
+ * A Report that displays assigned global property values over time. Fields Time
+ * -- the time in days when the global property was set Property -- the global
+ * property identifier Value -- the value of the global property
  */
 public final class GlobalPropertyReport {
 
@@ -76,8 +70,8 @@ public final class GlobalPropertyReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
 		// if X is true then we don't add the property
@@ -149,8 +143,7 @@ public final class GlobalPropertyReport {
 		}
 
 		/*
-		 * We initialize the reporting with the current state of each global
-		 * property
+		 * We initialize the reporting with the current state of each global property
 		 */
 		for (final GlobalPropertyId globalPropertyId : currentProperties) {
 			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);

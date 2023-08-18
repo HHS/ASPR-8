@@ -68,16 +68,13 @@ public class GlobalPropertyInitialization {
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was provided</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           no
-		 *                           property id was provided</li>
+		 *                           no property id was provided</li>
 		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *                           if no property value was provided and the property
 		 *                           definition does not contain a default value</li>
 		 *                           <li>(@linkplain PropertyError#INCOMPATIBLE_VALUE)
-		 *                           if the
-		 *                           property value type is not compatible with the
-		 *                           property
-		 *                           definition</li>
+		 *                           if the property value type is not compatible with
+		 *                           the property definition</li>
 		 *                           </ul>
 		 */
 		public GlobalPropertyInitialization build() {
@@ -114,8 +111,8 @@ public class GlobalPropertyInitialization {
 		}
 
 		/**
-		 * Sets the value of the global property that overrides any default
-		 * value provided by the property definition
+		 * Sets the value of the global property that overrides any default value
+		 * provided by the property definition
 		 * 
 		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 		 *                           the value is null

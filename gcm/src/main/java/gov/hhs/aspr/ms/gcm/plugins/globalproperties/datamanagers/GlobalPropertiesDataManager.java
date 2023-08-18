@@ -264,8 +264,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Initializes the global properties data manager
 	 * 
-	 * @throws ContractException {@linkplain PropertyError#INCOMPATIBLE_DEF_TIME}
-	 *                           if the Global Properties Plugin Data contains a
+	 * @throws ContractException {@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if
+	 *                           the Global Properties Plugin Data contains a
 	 *                           property definition with a creation time that
 	 *                           exceeds the current simulation time
 	 */
@@ -320,21 +320,17 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link PropertyError.NULL_PROPERTY_ID} if the
-	 *                           global property id
-	 *                           is null</li>
+	 *                           global property id is null</li>
 	 *                           <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if
-	 *                           the global property
-	 *                           id is unknown</li>
+	 *                           the global property id is unknown</li>
 	 *                           <li>{@link PropertyError.NULL_PROPERTY_VALUE} if
-	 *                           the property value is
-	 *                           null</li>
+	 *                           the property value is null</li>
 	 *                           <li>{@link PropertyError.IMMUTABLE_VALUE} if the
-	 *                           global property
-	 *                           definition indicates the property is not mutable</li>
+	 *                           global property definition indicates the property
+	 *                           is not mutable</li>
 	 *                           <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the
-	 *                           property value is
-	 *                           incompatible with the property definition
-	 *                           </blockquote></li>
+	 *                           property value is incompatible with the property
+	 *                           definition </blockquote></li>
 	 *                           </ul>
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {

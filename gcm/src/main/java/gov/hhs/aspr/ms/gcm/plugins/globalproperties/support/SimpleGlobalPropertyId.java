@@ -40,8 +40,8 @@ public final class SimpleGlobalPropertyId implements GlobalPropertyId {
 	}
 
 	/**
-	 * Two {@link SimpleGlobalPropertyId} instances are equal if and only if
-	 * their inputs are equal.
+	 * Two {@link SimpleGlobalPropertyId} instances are equal if and only if their
+	 * inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {

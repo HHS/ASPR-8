@@ -73,8 +73,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *                           if the global property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the global property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null</li>
 		 *                           </ul>
@@ -325,8 +325,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *                           if the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is known</li>
 	 *                           </ul>
@@ -341,8 +341,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *                           if the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is known</li>
 	 *                           </ul>
@@ -369,8 +369,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *                           if the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is known</li>
 	 *                           </ul>
@@ -387,8 +387,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-	 *                           if the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is known</li>
 	 *                           </ul>

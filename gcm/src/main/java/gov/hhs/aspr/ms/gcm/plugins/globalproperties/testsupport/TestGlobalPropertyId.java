@@ -17,46 +17,40 @@ import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
  */
 public enum TestGlobalPropertyId implements GlobalPropertyId {
 
-	GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Boolean.class)//
-					.setDefaultValue(false)//
-					.setPropertyValueMutability(true)//
-					.build() //
+	GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE(PropertyDefinition.builder()//
+			.setType(Boolean.class)//
+			.setDefaultValue(false)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_2_INTEGER_MUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Integer.class)//
-					.setDefaultValue(0)//
-					.setPropertyValueMutability(true)//
-					.build() //
+	GLOBAL_PROPERTY_2_INTEGER_MUTABLE(PropertyDefinition.builder()//
+			.setType(Integer.class)//
+			.setDefaultValue(0)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_3_DOUBLE_MUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Double.class)//
-					.setPropertyValueMutability(true)//
-					.build() //
+	GLOBAL_PROPERTY_3_DOUBLE_MUTABLE(PropertyDefinition.builder()//
+			.setType(Double.class)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Boolean.class)//
-					.setDefaultValue(false)//
-					.setPropertyValueMutability(false)//
-					.build() //
+	GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Boolean.class)//
+			.setDefaultValue(false)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Integer.class)//
-					.setDefaultValue(0)//
-					.setPropertyValueMutability(false)//
-					.build() //
+	GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Integer.class)//
+			.setDefaultValue(0)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE(
-			PropertyDefinition.builder()//
-					.setType(Double.class)//
-					.setDefaultValue(0.0)//
-					.setPropertyValueMutability(false)//
-					.build() //
+	GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Double.class)//
+			.setDefaultValue(0.0)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	);//
 
 	/**
@@ -83,26 +77,26 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	@SuppressWarnings("unchecked")
 	public <T> T getRandomPropertyValue(final RandomGenerator randomGenerator) {
 		switch (this) {
-			case GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE:
-				Boolean b1 = randomGenerator.nextBoolean();
-				return (T) b1;
-			case GLOBAL_PROPERTY_2_INTEGER_MUTABLE:
-				Integer i2 = randomGenerator.nextInt();
-				return (T) i2;
-			case GLOBAL_PROPERTY_3_DOUBLE_MUTABLE:
-				Double d3 = randomGenerator.nextDouble();
-				return (T) d3;
-			case GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE:
-				Boolean b4 = randomGenerator.nextBoolean();
-				return (T) b4;
-			case GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE:
-				Integer i5 = randomGenerator.nextInt();
-				return (T) i5;
-			case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
-				Double d6 = randomGenerator.nextDouble();
-				return (T) d6;
-			default:
-				throw new RuntimeException("unhandled case: " + this);
+		case GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE:
+			Boolean b1 = randomGenerator.nextBoolean();
+			return (T) b1;
+		case GLOBAL_PROPERTY_2_INTEGER_MUTABLE:
+			Integer i2 = randomGenerator.nextInt();
+			return (T) i2;
+		case GLOBAL_PROPERTY_3_DOUBLE_MUTABLE:
+			Double d3 = randomGenerator.nextDouble();
+			return (T) d3;
+		case GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE:
+			Boolean b4 = randomGenerator.nextBoolean();
+			return (T) b4;
+		case GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE:
+			Integer i5 = randomGenerator.nextInt();
+			return (T) i5;
+		case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
+			Double d6 = randomGenerator.nextDouble();
+			return (T) d6;
+		default:
+			throw new RuntimeException("unhandled case: " + this);
 
 		}
 	}

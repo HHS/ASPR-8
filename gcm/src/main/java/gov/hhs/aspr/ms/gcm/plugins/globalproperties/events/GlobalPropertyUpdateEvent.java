@@ -9,7 +9,6 @@ import net.jcip.annotations.Immutable;
  * changed.
  */
 @Immutable
-public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId,
-		Object previousPropertyValue,
+public record GlobalPropertyUpdateEvent(GlobalPropertyId globalPropertyId, Object previousPropertyValue,
 		Object currentPropertyValue) implements Event {
 }
