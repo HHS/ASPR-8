@@ -9,18 +9,18 @@ import util.errors.ContractException;
 /**
  * An event released by the people data manager whenever a person property
  * definition is added to the simulation.
- *
  */
 
 @Immutable
-public record PersonPropertyDefinitionEvent(
-		PersonPropertyId personPropertyId) implements Event {
+public record PersonPropertyDefinitionEvent(PersonPropertyId personPropertyId) implements Event {
 
 	/**
 	 * Creates the event.
 	 *
-	 * @throws ContractException <li>{@linkplain PropertyError#NULL_PROPERTY_ID if
+	 * @throws ContractException
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID if
 	 *                           the property id is null</li>
+	 *                           </ul>
 	 */
 	public PersonPropertyDefinitionEvent {
 

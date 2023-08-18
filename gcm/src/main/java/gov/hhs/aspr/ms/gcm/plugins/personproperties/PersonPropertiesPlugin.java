@@ -17,8 +17,6 @@ import util.errors.ContractException;
 
 /**
  * A plugin providing a person property management to the simulation.
- * 
- *
  */
 @ThreadSafe
 public final class PersonPropertiesPlugin {
@@ -52,9 +50,8 @@ public final class PersonPropertiesPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
-		 *             if the personPropertiesPluginData is null</li>
+		 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getPersonPropertyPlugin() {
 
@@ -74,15 +71,18 @@ public final class PersonPropertiesPlugin {
 				PersonPropertiesPluginData pluginData = c.getPluginData(PersonPropertiesPluginData.class).get();
 				c.addDataManager(new PersonPropertiesDataManager(pluginData));
 
-				Optional<PersonPropertyReportPluginData> optional1 = c.getPluginData(PersonPropertyReportPluginData.class);
+				Optional<PersonPropertyReportPluginData> optional1 = c
+						.getPluginData(PersonPropertyReportPluginData.class);
 				if (optional1.isPresent()) {
 					PersonPropertyReportPluginData personPropertyReportPluginData = optional1.get();
 					c.addReport(new PersonPropertyReport(personPropertyReportPluginData)::init);
 				}
 
-				Optional<PersonPropertyInteractionReportPluginData> optional2 = c.getPluginData(PersonPropertyInteractionReportPluginData.class);
+				Optional<PersonPropertyInteractionReportPluginData> optional2 = c
+						.getPluginData(PersonPropertyInteractionReportPluginData.class);
 				if (optional2.isPresent()) {
-					PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = optional2.get();
+					PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = optional2
+							.get();
 					c.addReport(new PersonPropertyInteractionReport(personPropertyInteractionReportPluginData)::init);
 				}
 
@@ -96,12 +96,14 @@ public final class PersonPropertiesPlugin {
 			return this;
 		}
 
-		public Builder setPersonPropertyReportPluginData(PersonPropertyReportPluginData personPropertyReportPluginData) {
+		public Builder setPersonPropertyReportPluginData(
+				PersonPropertyReportPluginData personPropertyReportPluginData) {
 			data.personPropertyReportPluginData = personPropertyReportPluginData;
 			return this;
 		}
 
-		public Builder setPersonPropertyInteractionReportPluginData(PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData) {
+		public Builder setPersonPropertyInteractionReportPluginData(
+				PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData) {
 			data.personPropertyInteractionReportPluginData = personPropertyInteractionReportPluginData;
 			return this;
 		}

@@ -48,8 +48,7 @@ public class PersonPropertyDimension implements Dimension {
                 return false;
             }
             Data other = (Data) obj;
-            return Objects.equals(personPropertyId, other.personPropertyId)
-                    && Objects.equals(values, other.values)
+            return Objects.equals(personPropertyId, other.personPropertyId) && Objects.equals(values, other.values)
                     && trackTimes == other.trackTimes;
         }
 
@@ -64,10 +63,11 @@ public class PersonPropertyDimension implements Dimension {
 
     /**
      * Builder class for PersonPropertyDimension
-     *
      */
     public static class Builder {
-    	private Builder() {}
+        private Builder() {
+        }
+
         private Data data = new Data();
 
         /**
@@ -77,7 +77,6 @@ public class PersonPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the person property id was not assigned
-         * 
          */
         public PersonPropertyDimension build() {
             validate();
@@ -105,7 +104,6 @@ public class PersonPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the id is null
-         * 
          */
         public Builder setPersonPropertyId(PersonPropertyId personPropertyId) {
             validatePersonPropertyId(personPropertyId);
@@ -120,7 +118,6 @@ public class PersonPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
          *                           if the value is null
-         * 
          */
         public Builder addValue(Object value) {
             validateValue(value);
@@ -159,11 +156,9 @@ public class PersonPropertyDimension implements Dimension {
                 .getPersonPropertyDefinition(data.personPropertyId);
         double existingTime = personPropertiesPluginData.getPropertyDefinitionTime(data.personPropertyId);
 
-        PropertyDefinition newPropDef = PropertyDefinition.builder()
-                .setDefaultValue(value)
+        PropertyDefinition newPropDef = PropertyDefinition.builder().setDefaultValue(value)
                 .setPropertyValueMutability(existingPropDef.propertyValuesAreMutable())
-                .setType(existingPropDef.getType())
-                .build();
+                .setType(existingPropDef.getType()).build();
 
         builder.definePersonProperty(data.personPropertyId, newPropDef, existingTime, data.trackTimes);
 

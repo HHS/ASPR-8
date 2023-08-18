@@ -24,7 +24,8 @@ public final class PersonPropertyFilter extends Filter {
 	private final Equality equality;
 	private PersonPropertiesDataManager personPropertiesDataManager;
 
-	private void validatePersonPropertyId(PartitionsContext partitionsContext, final PersonPropertyId personPropertyId) {
+	private void validatePersonPropertyId(PartitionsContext partitionsContext,
+			final PersonPropertyId personPropertyId) {
 
 		if (personPropertiesDataManager == null) {
 			personPropertiesDataManager = partitionsContext.getDataManager(PersonPropertiesDataManager.class);
@@ -51,14 +52,17 @@ public final class PersonPropertyFilter extends Filter {
 		}
 	}
 
-	private void validateValueCompatibility(PartitionsContext partitionsContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(PartitionsContext partitionsContext, final Object propertyId,
+			final PropertyDefinition propertyDefinition, final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 			throw new ContractException(PropertyError.INCOMPATIBLE_VALUE,
-					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName()
+							+ " and does not match definition of " + propertyId);
 		}
 	}
 
-	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(PartitionsContext partitionsContext, final Object propertyId,
+			final PropertyDefinition propertyDefinition, final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -68,23 +72,25 @@ public final class PersonPropertyFilter extends Filter {
 		}
 
 		if (!Comparable.class.isAssignableFrom(propertyDefinition.getType())) {
-			throw new ContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE, "Property values for " + propertyId + " are not comparable via " + equality);
+			throw new ContractException(PartitionError.NON_COMPARABLE_ATTRIBUTE,
+					"Property values for " + propertyId + " are not comparable via " + equality);
 		}
 	}
 
 	public PersonPropertyId getPersonPropertyId() {
 		return personPropertyId;
 	}
-	
+
 	public Equality getEquality() {
 		return equality;
 	}
-	
+
 	public Object getPersonPropertyValue() {
 		return personPropertyValue;
 	}
-	
-	public PersonPropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
+
+	public PersonPropertyFilter(final PersonPropertyId personPropertyId, final Equality equality,
+			final Object personPropertyValue) {
 		this.personPropertyId = personPropertyId;
 		this.personPropertyValue = personPropertyValue;
 		this.equality = equality;
@@ -102,7 +108,8 @@ public final class PersonPropertyFilter extends Filter {
 		validatePersonPropertyId(partitionsContext, personPropertyId);
 		validateEquality(partitionsContext, equality);
 		validatePersonPropertyValueNotNull(partitionsContext, personPropertyValue);
-		final PropertyDefinition propertyDefinition = personPropertiesDataManager.getPersonPropertyDefinition(personPropertyId);
+		final PropertyDefinition propertyDefinition = personPropertiesDataManager
+				.getPersonPropertyDefinition(personPropertyId);
 		validateValueCompatibility(partitionsContext, personPropertyId, propertyDefinition, personPropertyValue);
 		validateEqualityCompatibility(partitionsContext, personPropertyId, propertyDefinition, equality);
 	}
@@ -163,7 +170,8 @@ public final class PersonPropertyFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::requiresRefresh));
+		result.add(new FilterSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class,
+				this::requiresRefresh));
 		return result;
 	}
 

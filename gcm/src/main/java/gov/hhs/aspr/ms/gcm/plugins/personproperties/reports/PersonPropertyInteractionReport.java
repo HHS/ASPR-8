@@ -25,32 +25,24 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 /**
  * A periodic Report that displays the number of people exhibiting a tuple of
  * person property values for a given region. Only non-zero person counts are
- * reported.
- *
- *
- * Fields
- *
- * region -- the region identifier
- *
- * [propertyIds] -- the tuple of property field values
- *
- * person count -- the number of people having the tuple of property values
- * within the region pair
- *
- *
+ * reported. Fields region -- the region identifier [propertyIds] -- the tuple
+ * of property field values person count -- the number of people having the
+ * tuple of property values within the region pair
  */
 public final class PersonPropertyInteractionReport extends PeriodicReport {
 
-	public PersonPropertyInteractionReport(PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData) {
-		super(personPropertyInteractionReportPluginData.getReportLabel(), personPropertyInteractionReportPluginData.getReportPeriod());
+	public PersonPropertyInteractionReport(
+			PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData) {
+		super(personPropertyInteractionReportPluginData.getReportLabel(),
+				personPropertyInteractionReportPluginData.getReportPeriod());
 		for (PersonPropertyId personPropertyId : personPropertyInteractionReportPluginData.getPersonPropertyIds()) {
 			propertyIds.add(personPropertyId);
 		}
 	}
 
 	/*
-	 * Represents a count of people in a particular region and having a
-	 * particular tuple of property values.
+	 * Represents a count of people in a particular region and having a particular
+	 * tuple of property values.
 	 */
 	private static class Counter {
 		int count;
@@ -61,8 +53,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	/*
 	 * Map of <Region, Map<Property Value, ... Map<Property Value,Counter>...>>
 	 * 
-	 * A map of map of map... that starts with regions, each property id in
-	 * order and ends with Counter
+	 * A map of map of map... that starts with regions, each property id in order
+	 * and ends with Counter
 	 */
 	private final Map<Object, Object> regionMap = new LinkedHashMap<>();
 
@@ -95,10 +87,11 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 	/*
 	 * Decrements the Counter for the given region and person property values
-	 * associated with the person with the old property value being used instead
-	 * of the current property value.
+	 * associated with the person with the old property value being used instead of
+	 * the current property value.
 	 */
-	private void decrementOldPropertyValue(final Object regionId, final PersonId personId, final Object oldPropertyId, final Object oldPropertyValue) {
+	private void decrementOldPropertyValue(final Object regionId, final PersonId personId, final Object oldPropertyId,
+			final Object oldPropertyValue) {
 		getCounter(regionId, personId, oldPropertyId, oldPropertyValue).count--;
 	}
 
@@ -119,17 +112,18 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	/*
-	 * Selects the counter that is accounting for the people in the region who
-	 * have the same tuple of property values that the given person currently
-	 * has. If the selectedPropertyId is not null, then the formerPropertyValue
-	 * is used instead for forming the tuple. This is done to select the counter
-	 * for the previous property value so that the counter may decremented.
+	 * Selects the counter that is accounting for the people in the region who have
+	 * the same tuple of property values that the given person currently has. If the
+	 * selectedPropertyId is not null, then the formerPropertyValue is used instead
+	 * for forming the tuple. This is done to select the counter for the previous
+	 * property value so that the counter may decremented.
 	 */
-	private Counter getCounter(final Object regionId, final PersonId personId, final Object selectedPropertyId, final Object formerPropertyValue) {
+	private Counter getCounter(final Object regionId, final PersonId personId, final Object selectedPropertyId,
+			final Object formerPropertyValue) {
 
 		/*
-		 * First, push through the region map with the region to arrive at a
-		 * nested map of maps for the properties
+		 * First, push through the region map with the region to arrive at a nested map
+		 * of maps for the properties
 		 */
 		@SuppressWarnings("unchecked")
 		Map<Object, Object> propertyValueMap = (Map<Object, Object>) regionMap.get(regionId);
@@ -139,17 +133,17 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 
 		/*
-		 * Push downward through the mapping layers until all property values
-		 * have been used. The last layer will have Counters as its values.
+		 * Push downward through the mapping layers until all property values have been
+		 * used. The last layer will have Counters as its values.
 		 */
 		final int n = propertyIds.size();
 		for (int i = 0; i < n; i++) {
 			final PersonPropertyId personPropertyId = propertyIds.get(i);
 			Object personPropertyValue;
 			/*
-			 * When this method is being used to decrement a counter for a
-			 * previous value of a property, we select the former property value
-			 * instead of the current property value.
+			 * When this method is being used to decrement a counter for a previous value of
+			 * a property, we select the former property value instead of the current
+			 * property value.
 			 */
 			if (personPropertyId.equals(selectedPropertyId)) {
 				personPropertyValue = formerPropertyValue;
@@ -158,8 +152,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			}
 
 			/*
-			 * The last map level has Counters as its values. All other levels
-			 * will have maps as their values.
+			 * The last map level has Counters as its values. All other levels will have
+			 * maps as their values.
 			 */
 			if (i == (n - 1)) {
 				Counter counter = (Counter) propertyValueMap.get(personPropertyValue);
@@ -186,7 +180,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		increment(regionId, personId);
 	}
 
-	private void handlePersonPropertyUpdateEvent(ReportContext reportContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	private void handlePersonPropertyUpdateEvent(ReportContext reportContext,
+			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.personPropertyId();
 		if (propertyIds.contains(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.personId();
@@ -197,13 +192,15 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
+			PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		decrement(regionId, personId);
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext reportContext,
+			PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId sourceRegionId = personRegionUpdateEvent.previousRegionId();
 		final Object regionId = personRegionUpdateEvent.currentRegionId();
@@ -236,11 +233,10 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
-		
 
 		/*
-		 * Validate the client's property ids and ignore any that are not known
-		 * to the environment
+		 * Validate the client's property ids and ignore any that are not known to the
+		 * environment
 		 */
 		final Set<PersonPropertyId> validPersonPropertyIds = personPropertiesDataManager.getPersonPropertyIds();
 
@@ -252,7 +248,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 
 		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
-		
 
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
@@ -270,11 +265,11 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-
 	/*
 	 * Flushes the positive counters recursively.
 	 */
-	private void propertyFlush(ReportContext reportContext, final Object regionId, final Map<Object, Object> map, final Object[] personPropertyValues, final int level) {
+	private void propertyFlush(ReportContext reportContext, final Object regionId, final Map<Object, Object> map,
+			final Object[] personPropertyValues, final int level) {
 
 		for (final Object personPropertyValue : map.keySet()) {
 			personPropertyValues[level] = personPropertyValue;
