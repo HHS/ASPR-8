@@ -83,11 +83,9 @@ public final class ReportContext {
 	 * Retrieves a plan stored for the given key.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN_KEY} if the plan
+	 *                           {@link NucleusError#NULL_PLAN_KEY} if the plan
 	 *                           key is
-	 *                           null</li>
-	 *                           </ul>
+	 *                           null
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
 		return simulation.getReportPlan(key);

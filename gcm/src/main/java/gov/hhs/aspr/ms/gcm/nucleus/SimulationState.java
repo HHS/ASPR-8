@@ -118,13 +118,11 @@ public class SimulationState {
          *                           <ul>
          *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
          *                           if the planning queue arrival id does not exceed
-         *                           the
-         *                           arrival id values for all stored PlanQueueData</li>
-         * 
+         *                           the arrival id values for all stored
+         *                           PlanQueueData</li>
          *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_TIME}
-         *                           if the
-         *                           simulation start time is exceeded by any time value
-         *                           stored for a plan</li>
+         *                           if the simulation start time is exceeded by any
+         *                           time value stored for a plan</li>
          *                           </ul>
          */
         public SimulationState build() {
@@ -133,8 +131,7 @@ public class SimulationState {
         }
 
         /**
-         * Sets the time (floating point days) of simulation start. Defaults to
-         * zero.
+         * Sets the time (floating point days) of simulation start. Defaults to zero.
          */
         public Builder setStartTime(double startTime) {
             data.startTime = startTime;
@@ -142,8 +139,8 @@ public class SimulationState {
         }
 
         /**
-         * Sets the base date that synchronizes with simulation time zero.
-         * Defaults to the current date.
+         * Sets the base date that synchronizes with simulation time zero. Defaults to
+         * the current date.
          * 
          * @throws ContractException {@linkplain NucleusError#NULL_BASE_DATE} if the
          *                           base date is null
@@ -159,9 +156,8 @@ public class SimulationState {
         /**
          * Adds a PlanQueueData used for plan queue reconstruction
          * 
-         * @throws ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA}
-         *                           if the
-         *                           plan queue data is null
+         * @throws ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA} if
+         *                           the plan queue data is null
          */
         public Builder addPlanQueueData(PlanQueueData planQueueData) {
             if (planQueueData == null) {
@@ -202,8 +198,8 @@ public class SimulationState {
     }
 
     /**
-     * Returns the planning queue arrival id that should be used as the first
-     * free arrival id.
+     * Returns the planning queue arrival id that should be used as the first free
+     * arrival id.
      */
     public long getPlanningQueueArrivalId() {
         return data.planningQueueArrivalId;
