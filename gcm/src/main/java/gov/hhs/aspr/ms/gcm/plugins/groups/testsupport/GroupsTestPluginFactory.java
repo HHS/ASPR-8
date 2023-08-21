@@ -275,7 +275,7 @@ public final class GroupsTestPluginFactory {
     /**
      * Returns a standardized GroupsPluginData that is minimally adequate for
      * testing the GroupsPlugin
-     * <li>The resulting GroupsPluginData will include:
+     * The resulting GroupsPluginData will include:
      * <ul>
      * <li>Every GroupTypeId included in {@link TestGroupTypeId}</li>
      * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}</li>
@@ -290,7 +290,7 @@ public final class GroupsTestPluginFactory {
      * randomPropertyValue obtained from each based on the same RandomGenerator</li>
      * </ul>
      * <li>an average group membership based on the passed in membershipCount and
-     * </li> passed in people.
+     *  passed in people.</li>
      * <ul>
      * <li>This is determined based on the above RandomGenerator.
      * </ul>
@@ -358,7 +358,7 @@ public final class GroupsTestPluginFactory {
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
      * testing the GroupsPlugin
-     * <li>The resulting PeoplePluginData will include:
+     * The resulting PeoplePluginData will include:
      * <ul>
      * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
@@ -375,10 +375,10 @@ public final class GroupsTestPluginFactory {
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
      * testing the GroupsPlugin
-     * <li>The resulting StochasticsPluginData will include:
+     * The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-     * </li> in seed</li>
+     * in seed</li>
      * </ul>
      */
     public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

@@ -161,7 +161,7 @@ public class AttributesPluginData implements PluginData {
 		/**
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 		 *                           if a person attribute value was recorded for an
 		 *                           unknown attribute id</li>
@@ -181,7 +181,7 @@ public class AttributesPluginData implements PluginData {
 		/**
 		 * Adds an attribute definition.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 		 *                           if the attribute id is null</li>
@@ -203,7 +203,7 @@ public class AttributesPluginData implements PluginData {
 		/**
 		 * Sets the person's attribute value. Duplicate inputs override previous inputs.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
@@ -265,7 +265,7 @@ public class AttributesPluginData implements PluginData {
 	/**
 	 * Returns the attribute definition for the given attribute id
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
@@ -353,7 +353,7 @@ public class AttributesPluginData implements PluginData {
 	 * list. Each object in the list corresponds to a PersonId in ascending order
 	 * starting from zero.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>

@@ -32,7 +32,7 @@ public final class ReportContext {
 	 * plans are not required to execute and the simulation will terminate if only
 	 * passive plans remain on the planning schedule.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
@@ -57,7 +57,7 @@ public final class ReportContext {
 	/**
 	 * Schedules a plan.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
@@ -78,7 +78,7 @@ public final class ReportContext {
 	/**
 	 * Retrieves a plan stored for the given key.
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
 	public Optional<Plan<ReportContext>> getPlan(final Object key) {
@@ -112,7 +112,7 @@ public final class ReportContext {
 	/**
 	 * Removes and returns the plan associated with the given key.
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
+	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
 	public Optional<Plan<ReportContext>> removePlan(final Object key) {
@@ -130,7 +130,7 @@ public final class ReportContext {
 	 * Subscribes the report to events of the given type for the purpose of
 	 * execution of data changes.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EVENT_CLASS} if the
 	 *                           event class is null</li>
@@ -148,7 +148,7 @@ public final class ReportContext {
 	 * Unsubscribes the report from events of the given type for all phases of event
 	 * handling.
 	 * 
-	 * @throws util.errors.ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the event
+	 * @throws ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the event
 	 *                            class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
@@ -158,7 +158,7 @@ public final class ReportContext {
 	/**
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
+	 * @throws ContractException {@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationClose(Consumer<ReportContext> consumer) {
@@ -168,7 +168,7 @@ public final class ReportContext {
 	/**
 	 * Returns the DataManger instance from the given class reference
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS}
 	 *                           if the class reference is null</li>

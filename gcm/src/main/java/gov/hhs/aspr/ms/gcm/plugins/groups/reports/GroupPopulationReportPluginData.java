@@ -54,7 +54,7 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		/**
 		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 		 *                           the report label is not assigned</li>
@@ -70,7 +70,7 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is null
 		 */
 		@Override
@@ -82,7 +82,7 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
 		 *                           report period is null
 		 */
 		@Override

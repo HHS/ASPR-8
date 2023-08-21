@@ -48,7 +48,7 @@ public final class FloatValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws util.errors.ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
 	 *                           is negative
 	 */
 	public float getValue(int index) {
@@ -108,7 +108,7 @@ public final class FloatValueContainer {
 	/**
 	 * Sets the value at the index to the given value
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
 	 *                           is negative
 	 */
 	public void setValue(int index, float value) {

@@ -16,7 +16,7 @@ public final class NotFilter extends Filter {
 	/**
 	 * Constructs a filter that negates another filter.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PartitionError#NULL_FILTER} if the
+	 * @throws ContractException {@linkplain PartitionError#NULL_FILTER} if the
 	 *                           filter is null
 	 */
 	public NotFilter(Filter a) {

@@ -173,7 +173,7 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds an actor action plan associated with the alias
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
 		 *                           is null</li>
@@ -206,7 +206,7 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds an report action plan associated with the alias
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
 		 *                           is null</li>
@@ -240,7 +240,7 @@ public class TestPluginData implements PluginData {
 		 * Adds a test data manager to the test plugin via a supplier of
 		 * TestDataManager. The supplier must be threadsafe.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@link TestError#NULL_ALIAS} is the alias is
 		 *                           null</li>
@@ -262,7 +262,7 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds an data manager action plan associated with the alias
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain TestError#NULL_ALIAS} if the alias
 		 *                           is null</li>
@@ -294,7 +294,7 @@ public class TestPluginData implements PluginData {
 		/**
 		 * Adds a plugin dependency
 		 * 
-		 * @throws util.errors.ContractException {@linkplain TestError#NULL_PLUGIN_ID} if the plugin
+		 * @throws ContractException {@linkplain TestError#NULL_PLUGIN_ID} if the plugin
 		 *                           id is null
 		 */
 		public Builder addPluginDependency(final PluginId pluginId) {

@@ -33,11 +33,11 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		/**
 		 * Add a report by class reference to the NIOReportItemHandler
 		 * 
-		 * @throws util.errors.ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the report label is null</li>
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_PATH} if
-		 *                           the path is null</li>
+		 * @throws ContractException
+		 *                                       <li>{@linkplain ReportError#NULL_REPORT_LABEL}
+		 *                                       if the report label is null</li>
+		 *                                       <li>{@linkplain ReportError#NULL_REPORT_PATH}
+		 *                                       if the path is null</li>
 		 */
 		public Builder addReport(final ReportLabel reportLabel, final Path path) {
 			if (path == null) {
@@ -77,9 +77,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 * Builds the NIOReportItemHandlerImpl from the information gathered and resets
 		 * the internal state of this builder.
 		 * 
-		 * @throws util.errors.ContractException
-		 *                           <li>{@linkplain ReportError#PATH_COLLISION} if
-		 *                           multiple reports are assigned the same path</li>
+		 * @throws ContractException
+		 *                                       <li>{@linkplain ReportError#PATH_COLLISION}
+		 *                                       if multiple reports are assigned the
+		 *                                       same path</li>
 		 */
 		public NIOReportItemHandler build() {
 			validate();
@@ -202,10 +203,11 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	 * </ul>
 	 *
 	 * @throws RuntimeException
+	 *                          <ul>
 	 *                          <li>if an {@link IOException} is thrown during file
-	 *                          </li> initialization</li>
+	 *                          initialization</li>
 	 *                          <li>if the simulation run is continuing from a
-	 *                          progress log</li> and the path is not a regular file
+	 *                          progress log and the path is not a regular file
 	 *                          (path does not exist) during file
 	 *                          initialization</li>
 	 *                          </ul>

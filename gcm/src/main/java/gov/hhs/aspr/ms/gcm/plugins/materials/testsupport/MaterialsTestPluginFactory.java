@@ -384,7 +384,7 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Returns a standardized MaterialsPluginData that is minimally adequate for
 	 * testing the MaterialsPlugin
-	 * <li>The resulting MaterialsPluginData will include:
+	 * The resulting MaterialsPluginData will include:
 	 * <ul>
 	 * <li>Every MaterialId included in {@link TestMaterialId}</li>
 	 * <ul>
@@ -522,7 +522,7 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Returns a standardized ResourcesPluginData that is minimally adequate for
 	 * testing the MaterialsPlugin
-	 * <li>The resulting ResourcesPluginData will include:
+	 * The resulting ResourcesPluginData will include:
 	 * <ul>
 	 * <li>Every ResourceId included in {@link TestResourceId} along with the
 	 * defined timeTrackingPolicy for each</li></li>
@@ -557,7 +557,7 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the MaterialsPlugin
-	 * <li>The resulting PeoplePluginData will be empty</li>
+	 * The resulting PeoplePluginData will be empty</li>
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>
@@ -570,7 +570,7 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Returns a standardized RegionsPluginData that is minimally adequate for
 	 * testing the MaterialsPlugin
-	 * <li>The resulting RegionsPluginData will include:
+	 * The resulting RegionsPluginData will include:
 	 * <ul>
 	 * <li>Every RegionId included in {@link TestRegionId}</li>
 	 * </ul>
@@ -586,7 +586,7 @@ public class MaterialsTestPluginFactory {
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the MaterialsPlugin
-	 * <li>The resulting StochasticsPluginData will include:
+	 * The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
 	 * in seed</li></li>

@@ -160,7 +160,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Adds a new region id
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_CONSTRUCTION_DATA}
 	 *                           if the region construction data is null</li></li>
 	 *                           <li>{@linkplain RegionError#DUPLICATE_REGION_ID} if
@@ -227,7 +227,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Adds a new region property
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_DEFINITION_INITIALIZATION}
 	 *                           if the region property definition initialization is
@@ -318,7 +318,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Expands the capacity of data structures to hold people by the given count.
 	 * Used to more efficiently prepare for multiple population additions.
 	 *
-	 * @throws util.errors.ContractException {@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
+	 * @throws ContractException {@linkplain PersonError#NEGATIVE_GROWTH_PROJECTION}
 	 *                           if the count is negative
 	 */
 	public void expandCapacity(final int count) {
@@ -337,7 +337,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns as a List the person identifiers of the people in the given region.
 	 * List elements are unique.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           c id is null</li>
@@ -370,7 +370,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns the region associated with the given person id.
 	 *
-	 * @throwsContractException
+	 * @throws ContractException
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                          person id is null</li>
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -386,7 +386,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns the time when then person arrived at their current region.
 	 *
-	 * @throwsContractException
+	 * @throws ContractException
 	 *                          <ul>
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                          person id is null</li>
@@ -426,7 +426,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns the number of people currently in the given region.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
@@ -441,7 +441,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given {@link RegionPropertyId}
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
@@ -468,7 +468,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Returns the value of the region property.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
@@ -529,7 +529,7 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 * Precondition : the person must exist and be stored in this manager
 	 *
-	 * @throws util.errors.ContractException <li>{@linkplain PersonError.NULL_PERSON_ID} if the
+	 * @throws ContractException <li>{@linkplain PersonError.NULL_PERSON_ID} if the
 	 * person id is null</li> <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the
 	 * person id is unknown</li>
 	 *
@@ -547,7 +547,7 @@ public final class RegionsDataManager extends DataManager {
 	/**
 	 * Initializes the state of regions related data from the RegionsPluginData.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a
 	 *                           person in the people plugin does not have an
 	 *                           assigned region id in the region plugin data</li>
@@ -968,7 +968,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the arrival region id.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -987,7 +987,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the departure region id.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -1006,7 +1006,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link PersonRegionUpdateEvent}
 	 * events. Matches on the person id.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain PersonError.NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if
@@ -1043,7 +1043,7 @@ public final class RegionsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionPropertyUpdateEvent} events. Matches on the region id.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
 	 *                           <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}
@@ -1063,7 +1063,7 @@ public final class RegionsDataManager extends DataManager {
 	 * {@link RegionPropertyUpdateEvent} events. Matches on the region property id
 	 * and region id.
 	 *
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain RegionError.NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if

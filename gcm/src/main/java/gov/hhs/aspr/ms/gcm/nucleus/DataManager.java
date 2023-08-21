@@ -22,7 +22,7 @@ public class DataManager {
 	 * must invoke the super. <br>
 	 * 
 	 * @param dataManagerContext
-	 * @throws util.errors.ContractException {@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
+	 * @throws ContractException {@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *                           if init() is invoked more than once
 	 */
 	public void init(DataManagerContext dataManagerContext) {

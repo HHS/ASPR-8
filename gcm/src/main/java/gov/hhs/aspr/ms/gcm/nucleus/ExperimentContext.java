@@ -26,7 +26,7 @@ public final class ExperimentContext {
 	/**
 	 * Subscribes to the open of simulations
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
+	 * @throws ContractException {@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationOpen(BiConsumer<ExperimentContext, Integer> consumer) {
@@ -36,7 +36,7 @@ public final class ExperimentContext {
 	/**
 	 * Subscribes to the close of simulations
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
+	 * @throws ContractException {@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null
 	 */
 	public void subscribeToSimulationClose(BiConsumer<ExperimentContext, Integer> consumer) {
@@ -46,7 +46,7 @@ public final class ExperimentContext {
 	/**
 	 * Subscribes to the open of the experiment
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
+	 * @throws ContractException {@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null
 	 */
 	public void subscribeToExperimentOpen(Consumer<ExperimentContext> consumer) {
@@ -56,7 +56,7 @@ public final class ExperimentContext {
 	/**
 	 * Subscribes to the close of the experiment
 	 * 
-	 * @throws util.errors.ContractException {@link NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER}
+	 * @throws ContractException {@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null
 	 */
 	public void subscribeToExperimentClose(Consumer<ExperimentContext> consumer) {
@@ -66,7 +66,7 @@ public final class ExperimentContext {
 	/**
 	 * Subscribes the output handler to output of the given type.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_EXPERIMENT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null</li>

@@ -37,7 +37,7 @@ public final class RunContinuityPlugin {
 		/**
 		 * Builds the RunContinuityPlugin from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain RunContinuityError#NULL_RUN_CONTINUITY_PLUGN_DATA}
+		 * @throws ContractException {@linkplain RunContinuityError#NULL_RUN_CONTINUITY_PLUGN_DATA}
 		 *                           if the runContinuityPluginData is null
 		 */
 		public Plugin build() {

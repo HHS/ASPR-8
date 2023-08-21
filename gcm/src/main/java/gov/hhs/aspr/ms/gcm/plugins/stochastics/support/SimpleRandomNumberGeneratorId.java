@@ -7,7 +7,7 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     private final Object value;
 
     /**
-     * @throws util.errors.ContractException
+     * @throws ContractException
      *                           <li>
      *                           {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
      *                           if the value is null</li>

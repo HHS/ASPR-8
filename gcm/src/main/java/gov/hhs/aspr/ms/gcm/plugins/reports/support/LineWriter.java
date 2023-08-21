@@ -48,10 +48,11 @@ public final class LineWriter {
 	 * directory must exist.
 	 * 
 	 * @throws RuntimeException
+	 *                          <ul>
 	 *                          <li>if an {@link IOException} is thrown during file
 	 *                          initialization</li>
 	 *                          <li>if the simulation run is continuing from a
-	 *                          progress log and</li> the path is not a regular file
+	 *                          progress log and the path is not a regular file
 	 *                          (path does not exist) during file
 	 *                          initialization</li>
 	 *                          </ul>

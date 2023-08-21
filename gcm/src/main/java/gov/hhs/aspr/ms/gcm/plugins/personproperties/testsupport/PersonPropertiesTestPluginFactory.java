@@ -303,7 +303,7 @@ public class PersonPropertiesTestPluginFactory {
     /**
      * Returns a standardized PersonPropertiesPluginData that is minimally adequate
      * for testing the PersonPropertiesPlugin.
-     * <li>The resulting PersonPropertiesPluginData will include:
+     * The resulting PersonPropertiesPluginData will include:
      * <ul>
      * <li>Every PersonPropertyId included in {@link TestPersonPropertyId}</li>
      * <ul>
@@ -363,7 +363,7 @@ public class PersonPropertiesTestPluginFactory {
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
      * testing the PersonPropertiesPlugin
-     * <li>The resulting PeoplePluginData will include:
+     * The resulting PeoplePluginData will include:
      * <ul>
      * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
@@ -379,7 +379,7 @@ public class PersonPropertiesTestPluginFactory {
     /**
      * Returns a standardized RegionsPluginData that is minimally adequate for
      * testing the PersonPropertiesPlugin
-     * <li>The resulting RegionsPluginData will include:
+     * The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId included in {@link TestRegionId}</li>
      * <li>Every person in the list of passed in people.
@@ -409,7 +409,7 @@ public class PersonPropertiesTestPluginFactory {
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
      * testing the PersonPropertiesPlugin
-     * <li>The resulting StochasticsPluginData will include:
+     * The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
      * in seed</li></li>

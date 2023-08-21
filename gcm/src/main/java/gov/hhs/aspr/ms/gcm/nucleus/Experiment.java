@@ -97,7 +97,7 @@ public final class Experiment {
 		 * Adds the output item handler to the experiment. Consumers of experiment
 		 * context must be thread safe.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
+		 * @throws ContractException {@linkplain NucleusError#NULL_OUTPUT_HANDLER} if
 		 *                           the output item handler is null
 		 */
 		public Builder addExperimentContextConsumer(final Consumer<ExperimentContext> experimentContextConsumer) {
@@ -137,7 +137,7 @@ public final class Experiment {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
 		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {

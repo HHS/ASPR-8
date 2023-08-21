@@ -39,7 +39,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	/**
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                               <ul>
 	 *                               <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
 	 *                               if the partition contains labelers</li>

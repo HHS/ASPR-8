@@ -249,7 +249,7 @@ public class PartitionsTestPluginFactory {
 	/**
 	 * Returns a standardized AttributesPluginData that is minimally adequate for
 	 * testing the PartitionsPlugin
-	 * <li>The resulting AttributesPluginData will include:
+	 * The resulting AttributesPluginData will include:
 	 * <ul>
 	 * <li>Every AttributeId included in {@link TestAttributeId}</li>
 	 * <ul>
@@ -268,7 +268,7 @@ public class PartitionsTestPluginFactory {
 	/**
 	 * Returns a Standardized PartitionsPlugin that is minimally adequate for
 	 * testing the PartitionsPlugin
-	 * <li>The resulting PartitionsPlugin will include:
+	 * The resulting PartitionsPlugin will include:
 	 * <ul>
 	 * <li>the basic PartitionsPlugin from
 	 * {@link PartitionsPlugin#getPartitionsPlugin}</li>
@@ -286,7 +286,7 @@ public class PartitionsTestPluginFactory {
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the PartitionsPlugin
-	 * <li>The resulting PeoplePluginData will include:
+	 * The resulting PeoplePluginData will include:
 	 * <ul>
 	 * <li>a number of people equal to the passed in intialPopulation</li>
 	 * </ul>
@@ -303,7 +303,7 @@ public class PartitionsTestPluginFactory {
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the PartitionsPlugin
-	 * <li>The resulting StochasticsPluginData will include:
+	 * The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
 	 * in seed</li></li>

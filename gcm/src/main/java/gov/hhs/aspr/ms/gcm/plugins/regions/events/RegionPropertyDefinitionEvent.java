@@ -15,7 +15,7 @@ public record RegionPropertyDefinitionEvent(RegionPropertyId regionPropertyId) i
 	/**
 	 * Constructs the event
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
 	 *                           </ul>

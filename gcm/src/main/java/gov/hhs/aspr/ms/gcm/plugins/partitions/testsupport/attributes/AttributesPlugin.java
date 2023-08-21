@@ -76,7 +76,7 @@ public final class AttributesPlugin {
 	/**
 	 * Constructs this plugin
 	 * 
-	 * @throws util.errors.ContractException {@linkplain AttributeError#NULL_ATTRIBUTE_INITIAL_DATA}
+	 * @throws ContractException {@linkplain AttributeError#NULL_ATTRIBUTE_INITIAL_DATA}
 	 *                           if the initial data is null
 	 */
 	public static Plugin getAttributesPlugin(AttributesPluginData attributesPluginData) {

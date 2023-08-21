@@ -83,7 +83,7 @@ public final class GroupPropertyDefinitionInitialization {
 		/**
 		 * Constructs the PropertyDefinitionInitialization from the collected data
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was assigned to the
@@ -105,7 +105,7 @@ public final class GroupPropertyDefinitionInitialization {
 		/**
 		 * Sets the group property id
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           property id is null
 		 */
 		public Builder setPropertyId(GroupPropertyId groupPropertyId) {
@@ -119,7 +119,7 @@ public final class GroupPropertyDefinitionInitialization {
 		/**
 		 * Sets the group type id
 		 * 
-		 * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+		 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
 		 *                           group type id is null
 		 */
 		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
@@ -133,7 +133,7 @@ public final class GroupPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -147,7 +147,7 @@ public final class GroupPropertyDefinitionInitialization {
 		/**
 		 * Adds a property value
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
 		 *                           group id is null</li>

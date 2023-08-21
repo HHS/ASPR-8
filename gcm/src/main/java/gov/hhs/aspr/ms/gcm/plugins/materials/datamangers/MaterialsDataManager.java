@@ -365,8 +365,8 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Constructs the data manager.
 	 *
-	 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
-	 *                           if the material plugin data is null
+	 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+	 *                                       if the material plugin data is null
 	 */
 	public MaterialsDataManager(MaterialsPluginData materialsPluginData) {
 		if (materialsPluginData == null) {
@@ -380,26 +380,30 @@ public final class MaterialsDataManager extends DataManager {
 	 * event. Sets batch properties found in the batch construction info. Generates
 	 * a corresponding {@linkplain BatchAdditionEvent} event
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li></li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_CONSTRUCTION_INFO}
-	 *                           if the batch construction info in the event is
-	 *                           null</li></li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id in the batch construction info
-	 *                           is unknown</li></li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the batch construction info contains an unknown
-	 *                           batch property id</li></li>
-	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
-	 *                           if the batch construction info contains a batch
-	 *                           property value that is incompatible with the
-	 *                           corresponding property def</li></li>
-	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-	 *                           if the batch construction does not contain a batch
-	 *                           property value assignment for a batch property that
-	 *                           does not have a default value</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li></li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_CONSTRUCTION_INFO}
+	 *                                       if the batch construction info in the
+	 *                                       event is null</li></li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id in the batch
+	 *                                       construction info is unknown</li></li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the batch construction info contains
+	 *                                       an unknown batch property id</li></li>
+	 *                                       <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                                       if the batch construction info contains
+	 *                                       a batch property value that is
+	 *                                       incompatible with the corresponding
+	 *                                       property def</li></li>
+	 *                                       <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                                       if the batch construction does not
+	 *                                       contain a batch property value
+	 *                                       assignment for a batch property that
+	 *                                       does not have a default value</li>
 	 */
 	public BatchId addBatch(BatchConstructionInfo batchConstructionInfo) {
 
@@ -411,12 +415,13 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Adds a new material type
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-	 *                           the material id is null</li>
-	 *                           <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL}
-	 *                           if the material id is already present</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIAL_ID}
+	 *                                       if the material id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#DUPLICATE_MATERIAL}
+	 *                                       if the material id is already
+	 *                                       present</li>
 	 */
 	public void addMaterialId(MaterialId materialId) {
 		dataManagerContext.releaseMutationEvent(new MaterialIdAdditionMutationEvent(materialId));
@@ -425,19 +430,24 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Add a material producer
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is already
-	 *                           present</li></li>
-	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-	 *                           if the materialsProducerConstructionData does not
-	 *                           contain a property value for any corresponding
-	 *                           materials producer property definition that lacks a
-	 *                           default value</li></li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the materialsProducerConstructionData contains a
-	 *                           property value assignment for an unknown materials
-	 *                           producer property id.</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#DUPLICATE_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is already
+	 *                                       present</li></li>
+	 *                                       <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                                       if the
+	 *                                       materialsProducerConstructionData does
+	 *                                       not contain a property value for any
+	 *                                       corresponding materials producer
+	 *                                       property definition that lacks a
+	 *                                       default value</li></li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the
+	 *                                       materialsProducerConstructionData
+	 *                                       contains a property value assignment
+	 *                                       for an unknown materials producer
+	 *                                       property id.</li>
 	 */
 	public void addMaterialsProducer(MaterialsProducerConstructionData materialsProducerConstructionData) {
 		dataManagerContext
@@ -461,11 +471,14 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Creates a stage. Generates a corresponding {@linkplain StageAdditionEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li></li>
-	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li></li>
+	 *                                       <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
 	 */
 	public StageId addStage(final MaterialsProducerId materialsProducerId) {
 		StageId stageId = new StageId(nextStageRecordId++);
@@ -511,27 +524,30 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain BatchAdditionEvent} and {@linkplain StageImminentRemovalEvent}
 	 * events
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id is unknown</li></li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           stage id is unknown</li></li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the stage is offered</li></li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO}
-	 *                           if the stage conversion info in the event is
-	 *                           null</li></li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the batch construction info contains an unknown
-	 *                           batch property id</li></li>
-	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
-	 *                           if the batch construction info contains a batch
-	 *                           property value that is incompatible with the
-	 *                           corresponding property def</li></li>
-	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-	 *                           if the batch construction does not contain a batch
-	 *                           property value assignment for a batch property that
-	 *                           does not have a default value</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id is unknown</li></li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if stage id is unknown</li></li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the stage is offered</li></li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_CONVERSION_INFO}
+	 *                                       if the stage conversion info in the
+	 *                                       event is null</li></li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the batch construction info contains
+	 *                                       an unknown batch property id</li></li>
+	 *                                       <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                                       if the batch construction info contains
+	 *                                       a batch property value that is
+	 *                                       incompatible with the corresponding
+	 *                                       property def</li></li>
+	 *                                       <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                                       if the batch construction does not
+	 *                                       contain a batch property value
+	 *                                       assignment for a batch property that
+	 *                                       does not have a default value</li>
 	 */
 	public BatchId convertStageToBatch(StageConversionInfo stageConversionInfo) {
 		BatchId batchId = new BatchId(nextBatchRecordId++);
@@ -547,22 +563,25 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain MaterialsProducerResourceUpdateEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
-	 *                           the resource id is null</li>
-	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
-	 *                           if the resource id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the stage is offered</li>
-	 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-	 *                           if the the resource amount is negative</li>
-	 *                           <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
-	 *                           if the resource amount would cause an overflow of
-	 *                           the materials producer's resource level</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain ResourceError#NULL_RESOURCE_ID}
+	 *                                       if the resource id is null</li>
+	 *                                       <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                                       if the resource id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the stage is offered</li>
+	 *                                       <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+	 *                                       if the the resource amount is
+	 *                                       negative</li>
+	 *                                       <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
+	 *                                       if the resource amount would cause an
+	 *                                       overflow of the materials producer's
+	 *                                       resource level</li>
 	 */
 	public void convertStageToResource(StageId stageId, ResourceId resourceId, long amount) {
 		dataManagerContext.releaseMutationEvent(new ConvertStageToResourceMutationEvent(stageId, resourceId, amount));
@@ -571,17 +590,20 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Defines a new batch property
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *                           if the batch property id is already present</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           a batch property value assignment has an unknown
-	 *                           batch id</li>
-	 *                           <li>{@linkplain MaterialsError#MATERIAL_TYPE_MISMATCH}
-	 *                           if a batch property value assignment has a batch id
-	 *                           associated with a different material id type</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id is unknown</li>
+	 *                                       <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *                                       if the batch property id is already
+	 *                                       present</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if a batch property value assignment
+	 *                                       has an unknown batch id</li>
+	 *                                       <li>{@linkplain MaterialsError#MATERIAL_TYPE_MISMATCH}
+	 *                                       if a batch property value assignment
+	 *                                       has a batch id associated with a
+	 *                                       different material id type</li>
 	 */
 	public void defineBatchProperty(BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization) {
 		dataManagerContext
@@ -591,17 +613,21 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Defines a new person property
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION}
-	 *                           if the materials producer property definition
-	 *                           initialization is null</li></li>
-	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *                           if the person property already exists</li></li>
-	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-	 *                           if the property definition has no default value and
-	 *                           there is no included value assignment for some
-	 *                           extant person</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_PROPERTY_DEFINITION_INITIALIZATION}
+	 *                                       if the materials producer property
+	 *                                       definition initialization is
+	 *                                       null</li></li>
+	 *                                       <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *                                       if the person property already
+	 *                                       exists</li></li>
+	 *                                       <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                                       if the property definition has no
+	 *                                       default value and there is no included
+	 *                                       value assignment for some extant
+	 *                                       person</li>
+	 *                                       </ul>
 	 */
 	public void defineMaterialsProducerProperty(
 			MaterialsProducerPropertyDefinitionInitialization materialsProducerPropertyDefinitionInitialization) {
@@ -625,13 +651,13 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the amount of material in the batch.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       </ul>
 	 */
 	public double getBatchAmount(final BatchId batchId) {
 		validateBatchId(batchId);
@@ -642,12 +668,12 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the type of material in the batch.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialId> T getBatchMaterial(final BatchId batchId) {
@@ -658,12 +684,12 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer identifier of the batch
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialsProducerId> T getBatchProducer(final BatchId batchId) {
@@ -675,17 +701,18 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the property definition for the given {@link MaterialId} and
 	 * {@link BatchPropertyId}
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-	 *                           the material id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the batch property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the batch property id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIAL_ID}
+	 *                                       if the material id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id is unknown</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the batch property id is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the batch property id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	public PropertyDefinition getBatchPropertyDefinition(final MaterialId materialId,
 			final BatchPropertyId batchPropertyId) {
@@ -698,13 +725,14 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the {@link BatchPropertyId} values for the given {@link MaterialId}
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-	 *                           the materials id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID
-	 *                           S_PRODUCER_ID} if the materials id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIAL_ID}
+	 *                                       if the materials id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID
+	 *                                       S_PRODUCER_ID} if the materials id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends BatchPropertyId> Set<T> getBatchPropertyIds(final MaterialId materialId) {
@@ -721,17 +749,18 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the value of the batch property. It is the caller's responsibility to
 	 * validate the inputs.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the batch property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the batch property id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the batch property id is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the batch property id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getBatchPropertyValue(BatchId batchId, BatchPropertyId batchPropertyId) {
@@ -750,13 +779,13 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the stage id the batch. Returns null if the batch is not in a stage.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       </ul>
 	 */
 	public Optional<StageId> getBatchStageId(final BatchId batchId) {
 		validateBatchId(batchId);
@@ -849,16 +878,20 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerPropertyUpdateEvent} events. Matches on the materials
 	 * producer id and materials producer property id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is not known</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the materials producer property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the materials producer property id is not
-	 *                           known</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is not
+	 *                                       known</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is not known</li>
 	 */
 	public EventFilter<MaterialsProducerPropertyUpdateEvent> getEventFilterForMaterialsProducerPropertyUpdateEvent(
 			MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
@@ -889,16 +922,19 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the materials
 	 * producer id and resource id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is not known</li>
-	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
-	 *                           the resource id is null</li>
-	 *                           <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
-	 *                           if the resource id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError.NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError.UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is not
+	 *                                       known</li>
+	 *                                       <li>{@linkplain ResourceError.NULL_RESOURCE_ID}
+	 *                                       if the resource id is null</li>
+	 *                                       <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
+	 *                                       if the resource id is not known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<MaterialsProducerResourceUpdateEvent> getEventFilterForMaterialsProducerResourceUpdateEvent(
 			MaterialsProducerId materialsProducerId, ResourceId resourceId) {
@@ -919,12 +955,13 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link MaterialsProducerResourceUpdateEvent} events. Matches on the resource
 	 * id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain ResourceError.NULL_RESOURCE_ID} if
-	 *                           the resource id is null</li>
-	 *                           <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
-	 *                           if the resource id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain ResourceError.NULL_RESOURCE_ID}
+	 *                                       if the resource id is null</li>
+	 *                                       <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
+	 *                                       if the resource id is not known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<MaterialsProducerResourceUpdateEvent> getEventFilterForMaterialsProducerResourceUpdateEvent(
 			ResourceId resourceId) {
@@ -965,12 +1002,13 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the stage id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is not known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent(
 			StageId stageId) {
@@ -986,12 +1024,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the destination
 	 * materials producer id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is not
+	 *                                       known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent_ByDestination(
 			MaterialsProducerId materialsProducerId) {
@@ -1008,12 +1049,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@link StageMaterialsProducerUpdateEvent} events. Matches on the source
 	 * materials producer id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is not
+	 *                                       known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<StageMaterialsProducerUpdateEvent> getEventFilterForStageMaterialsProducerUpdateEvent_BySource(
 			MaterialsProducerId materialsProducerId) {
@@ -1054,12 +1098,13 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link StageOfferUpdateEvent}
 	 * events. Matches on the stage id.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is not known</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is not known</li>
+	 *                                       </ul>
 	 */
 	public EventFilter<StageOfferUpdateEvent> getEventFilterForStageOfferUpdateEvent(StageId stageId) {
 		validateStageId(stageId);
@@ -1072,13 +1117,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of batch ids matching the materials producer where
 	 * the batches are not staged.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	public List<BatchId> getInventoryBatches(final MaterialsProducerId materialsProducerId) {
 		validateMaterialsProducerId(materialsProducerId);
@@ -1094,17 +1141,19 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of batch ids matching the materials producer and
 	 * material id where the batches are not staged.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-	 *                           the material id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIAL_ID}
+	 *                                       if the material id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id is unknown</li>
+	 *                                       </ul>
 	 */
 	public List<BatchId> getInventoryBatchesByMaterialId(final MaterialsProducerId materialsProducerId,
 			final MaterialId materialId) {
@@ -1148,14 +1197,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns the property definition for the given
 	 * {@link MaterialsProducerPropertyId}
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the materials producer property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the materials producer property id is
-	 *                           unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is unknown</li>
+	 *                                       </ul>
 	 */
 	public PropertyDefinition getMaterialsProducerPropertyDefinition(
 			final MaterialsProducerPropertyId materialsProducerPropertyId) {
@@ -1179,18 +1229,21 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the value of the materials producer property.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the materials producer property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the materials producer property id is
-	 *                           unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is unknown</li>
+	 *                                       </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
@@ -1209,17 +1262,19 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer resource level.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
-	 *                           the resource id is null</li>
-	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
-	 *                           if the resource id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain ResourceError#NULL_RESOURCE_ID}
+	 *                                       if the resource id is null</li>
+	 *                                       <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                                       if the resource id is unknown</li>
+	 *                                       </ul>
 	 */
 	public long getMaterialsProducerResourceLevel(MaterialsProducerId materialsProducerId, ResourceId resourceId) {
 		validateMaterialsProducerId(materialsProducerId);
@@ -1233,13 +1288,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * Returns as a list the set of stage ids owned by the material producer where
 	 * the stage is being offered.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	public List<StageId> getOfferedStages(final MaterialsProducerId materialsProducerId) {
 		validateMaterialsProducerId(materialsProducerId);
@@ -1256,13 +1313,13 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage .
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       </ul>
 	 */
 	public List<BatchId> getStageBatches(final StageId stageId) {
 		validateStageId(stageId);
@@ -1277,17 +1334,17 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of batch ids matching the stage and material type.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-	 *                           the material id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
-	 *                           if the material id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIAL_ID}
+	 *                                       if the material id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
+	 *                                       if the material id is unknown</li>
+	 *                                       </ul>
 	 */
 	public List<BatchId> getStageBatchesByMaterialId(final StageId stageId, final MaterialId materialId) {
 		validateStageId(stageId);
@@ -1305,12 +1362,12 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns the materials producer id for the stage.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends MaterialsProducerId> T getStageProducer(final StageId stageId) {
@@ -1321,13 +1378,15 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns as a list the set of stage ids owned by the material producer.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       </ul>
 	 */
 	public List<StageId> getStages(final MaterialsProducerId materialsProducerId) {
 		validateMaterialsProducerId(materialsProducerId);
@@ -2232,13 +2291,13 @@ public final class MaterialsDataManager extends DataManager {
 	/**
 	 * Returns true if and only if the stage is offered.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       </ul>
 	 */
 	public boolean isStageOffered(final StageId stageId) {
 		validateStageId(stageId);
@@ -2289,15 +2348,17 @@ public final class MaterialsDataManager extends DataManager {
 	 * producer's inventory. Generates a corresponding
 	 * {@linkplain StageMembershipRemovalEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#BATCH_NOT_STAGED} if
-	 *                           the batch is not staged</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE }
-	 *                           if the stage containing the batch is offered</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#BATCH_NOT_STAGED}
+	 *                                       if the batch is not staged</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE }
+	 *                                       if the stage containing the batch is
+	 *                                       offered</li>
 	 */
 	public void moveBatchToInventory(BatchId batchId) {
 		dataManagerContext.releaseMutationEvent(new MoveBatchToInventoryMutationEvent(batchId));
@@ -2307,22 +2368,23 @@ public final class MaterialsDataManager extends DataManager {
 	 * Removes a batch frominventory, placing it on a stage. Generates a
 	 * corresponding {@linkplain StageMembershipAdditionEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#BATCH_ALREADY_STAGED}
-	 *                           if the batch is already staged</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the stage is offered</li>
-	 *                           <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
-	 *                           if batch and stage do not have the same owning
-	 *                           materials producer</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#BATCH_ALREADY_STAGED}
+	 *                                       if the batch is already staged</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the stage is offered</li>
+	 *                                       <li>{@linkplain MaterialsError#BATCH_STAGED_TO_DIFFERENT_OWNER}
+	 *                                       if batch and stage do not have the same
+	 *                                       owning materials producer</li>
 	 */
 	public void moveBatchToStage(BatchId batchId, StageId stageId) {
 		dataManagerContext.releaseMutationEvent(new MoveBatchToStageMutationEvent(batchId, stageId));
@@ -2416,13 +2478,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * Removes the given batch. Generates a corresponding
 	 * {@linkplain BatchImminentRemovalEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the batch is on an offered stage</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the batch is on an offered
+	 *                                       stage</li>
 	 */
 	public void removeBatch(BatchId batchId) {
 		dataManagerContext.releaseMutationEvent(new BatchRemovalMutationEvent(batchId));
@@ -2433,15 +2497,15 @@ public final class MaterialsDataManager extends DataManager {
 	 * Generates the corresponding {@linkplain BatchImminentRemovalEvent} and
 	 * {@linkplain StageImminentRemovalEvent} events.
 	 *
-	 * @throws util.errors.ContractException
-	 *                           <ul>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID} if
-	 *                           the stage id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if stage is offered</li>
-	 *                           </ul>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID}
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID}
+	 *                                       if the stage id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if stage is offered</li>
+	 *                                       </ul>
 	 */
 	public void removeStage(StageId stageId, boolean destroyBatches) {
 		dataManagerContext.releaseMutationEvent(new StageRemovalMutationEvent(stageId, destroyBatches));
@@ -2451,24 +2515,29 @@ public final class MaterialsDataManager extends DataManager {
 	 * Set a batch's property value. Generates a corresponding
 	 * {@linkplain BatchPropertyUpdateEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the batch id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the batch property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the batch property id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if
-	 *                           batch property is not mutable</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-	 *                           if the batch property value is null</li>
-	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
-	 *                           if the batch property value is not compatible with
-	 *                           the corresponding property definition</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the batch in on an offered stage</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the batch id is unknown</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the batch property id is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the batch property id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain PropertyError#IMMUTABLE_VALUE}
+	 *                                       if batch property is not mutable</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+	 *                                       if the batch property value is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                                       if the batch property value is not
+	 *                                       compatible with the corresponding
+	 *                                       property definition</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the batch in on an offered
+	 *                                       stage</li>
 	 */
 	public void setBatchPropertyValue(BatchId batchId, BatchPropertyId batchPropertyId, Object batchPropertyValue) {
 		dataManagerContext.releaseMutationEvent(
@@ -2479,23 +2548,29 @@ public final class MaterialsDataManager extends DataManager {
 	 * Assigns a property value to a materials producer. Generates a corresponding
 	 * {@linkplain MaterialsProducerPropertyUpdateEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the materials producer property id is null</li>
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the materials producer property id is
-	 *                           unknown</li>
-	 *                           <li>{@linkplain PropertyError#IMMUTABLE_VALUE} if
-	 *                           the materials producer property is immutable</li>
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-	 *                           if the property value is null</li>
-	 *                           {@linkplain PropertyError#INCOMPATIBLE_VALUE} if
-	 *                           the property value is incompatible with the
-	 *                           corresponding property definition</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is null</li>
+	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                                       if the materials producer property id
+	 *                                       is unknown</li>
+	 *                                       <li>{@linkplain PropertyError#IMMUTABLE_VALUE}
+	 *                                       if the materials producer property is
+	 *                                       immutable</li>
+	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+	 *                                       if the property value is null</li>
+	 *                                       {@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                                       if the property value is incompatible
+	 *                                       with the corresponding property
+	 *                                       definition</li>
 	 */
 	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
 			MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
@@ -2507,11 +2582,12 @@ public final class MaterialsDataManager extends DataManager {
 	 * Sets the offer state of a stage. Generates a corresponding
 	 * {@linkplain StageOfferUpdateEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID } if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
-	 *                           if the stage id is unknown</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID }
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
+	 *                                       if the stage id is unknown</li>
 	 */
 	public void setStageOfferState(StageId stageId, boolean offer) {
 		dataManagerContext.releaseMutationEvent(new StageOfferUpdateMutationEvent(stageId, offer));
@@ -2529,39 +2605,46 @@ public final class MaterialsDataManager extends DataManager {
 	 * material type and material producer. Generates a corresponding
 	 * {@linkplain BatchAmountUpdateEvent} for each batch.
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the source batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the source batch id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
-	 *                           the destination batch id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID} if
-	 *                           the destination batch id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#REFLEXIVE_BATCH_SHIFT}
-	 *                           if the source and destination batches are the
-	 *                           same</li>
-	 *                           <li>{@linkplain MaterialsError#MATERIAL_TYPE_MISMATCH}
-	 *                           if the batches do not have the same material
-	 *                           type</li>
-	 *                           <li>{@linkplain MaterialsError#BATCH_SHIFT_WITH_MULTIPLE_OWNERS}
-	 *                           if the batches have different owning materials
-	 *                           producers</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the source batch is on a stage is offered</li>
-	 *                           <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
-	 *                           if the destination batch is on a stage is
-	 *                           offered</li>
-	 *                           <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
-	 *                           if the shift amount is not a finite number</li>
-	 *                           <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
-	 *                           if the shift amount is negative</li>
-	 *                           <li>{@linkplain MaterialsError#INSUFFICIENT_MATERIAL_AVAILABLE}
-	 *                           if the shift amount exceeds the available material
-	 *                           on the source batch</li>
-	 *                           <li>{@linkplain MaterialsError#MATERIAL_ARITHMETIC_EXCEPTION}
-	 *                           if the shift amount would cause an overflow on the
-	 *                           destination batch</li> </blockquote></li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the source batch id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the source batch id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_BATCH_ID}
+	 *                                       if the destination batch id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_BATCH_ID}
+	 *                                       if the destination batch id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#REFLEXIVE_BATCH_SHIFT}
+	 *                                       if the source and destination batches
+	 *                                       are the same</li>
+	 *                                       <li>{@linkplain MaterialsError#MATERIAL_TYPE_MISMATCH}
+	 *                                       if the batches do not have the same
+	 *                                       material type</li>
+	 *                                       <li>{@linkplain MaterialsError#BATCH_SHIFT_WITH_MULTIPLE_OWNERS}
+	 *                                       if the batches have different owning
+	 *                                       materials producers</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the source batch is on a stage is
+	 *                                       offered</li>
+	 *                                       <li>{@linkplain MaterialsError#OFFERED_STAGE_UNALTERABLE}
+	 *                                       if the destination batch is on a stage
+	 *                                       is offered</li>
+	 *                                       <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
+	 *                                       if the shift amount is not a finite
+	 *                                       number</li>
+	 *                                       <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+	 *                                       if the shift amount is negative</li>
+	 *                                       <li>{@linkplain MaterialsError#INSUFFICIENT_MATERIAL_AVAILABLE}
+	 *                                       if the shift amount exceeds the
+	 *                                       available material on the source
+	 *                                       batch</li>
+	 *                                       <li>{@linkplain MaterialsError#MATERIAL_ARITHMETIC_EXCEPTION}
+	 *                                       if the shift amount would cause an
+	 *                                       overflow on the destination batch</li>
+	 *                                       </ul>
 	 */
 	public void transferMaterialBetweenBatches(BatchId sourceBatchId, BatchId destinationBatchId, double amount) {
 
@@ -2575,20 +2658,23 @@ public final class MaterialsDataManager extends DataManager {
 	 * {@linkplain StageMaterialsProducerUpdateEvent}
 	 * {@linkplain StageOfferUpdateEvent}
 	 *
-	 * @throws util.errors.ContractException </li>
-	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID } if
-	 *                           the stage id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
-	 *                           if the stage id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID }
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID }
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#UNOFFERED_STAGE_NOT_TRANSFERABLE }
-	 *                           if the stage is not offered</li>
-	 *                           <li>{@linkplain MaterialsError#REFLEXIVE_STAGE_TRANSFER }
-	 *                           if the source and destination materials producers
-	 *                           are the same</li>
+	 * @throws ContractException
+	 *                                       <ul>
+	 *                                       <li>{@linkplain MaterialsError#NULL_STAGE_ID }
+	 *                                       if the stage id is null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_STAGE_ID }
+	 *                                       if the stage id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID }
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID }
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#UNOFFERED_STAGE_NOT_TRANSFERABLE }
+	 *                                       if the stage is not offered</li>
+	 *                                       <li>{@linkplain MaterialsError#REFLEXIVE_STAGE_TRANSFER }
+	 *                                       if the source and destination materials
+	 *                                       producers are the same</li>
 	 */
 	public void transferOfferedStage(StageId stageId, MaterialsProducerId materialsProducerId) {
 		dataManagerContext.releaseMutationEvent(new TransferOfferedStageMutationEvent(stageId, materialsProducerId));
@@ -2599,27 +2685,32 @@ public final class MaterialsDataManager extends DataManager {
 	 * a corresponding {@linkplain RegionResourceAdditionEvent} and
 	 * {@linkplain MaterialsProducerResourceUpdateEvent}
 	 *
-	 * @throws util.errors.ContractException *</li>
-	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
-	 *                           the resource id is null</li>
-	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
-	 *                           if the resource id is unknown</li>
-	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
-	 *                           region id is null</li>
-	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *                           the region id is unknown</li>
-	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is null</li>
-	 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
-	 *                           if the materials producer id is unknown</li>
-	 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-	 *                           if the materials amount is negative</li>
-	 *                           <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCES_AVAILABLE}
-	 *                           if the materials amount exceeds the resource level
-	 *                           of the materials producer</li>
-	 *                           <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
-	 *                           if the materials amount would cause an overflow of
-	 *                           the regions resource level</li>
+	 * @throws ContractException *</li>
+	 *                                       <li>{@linkplain ResourceError#NULL_RESOURCE_ID}
+	 *                                       if the resource id is null</li>
+	 *                                       <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                                       if the resource id is unknown</li>
+	 *                                       <li>{@linkplain RegionError#NULL_REGION_ID}
+	 *                                       if the region id is null</li>
+	 *                                       <li>{@linkplain RegionError#UNKNOWN_REGION_ID}
+	 *                                       if the region id is unknown</li>
+	 *                                       <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       null</li>
+	 *                                       <li>{@linkplain MaterialsError#UNKNOWN_MATERIALS_PRODUCER_ID}
+	 *                                       if the materials producer id is
+	 *                                       unknown</li>
+	 *                                       <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+	 *                                       if the materials amount is
+	 *                                       negative</li>
+	 *                                       <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCES_AVAILABLE}
+	 *                                       if the materials amount exceeds the
+	 *                                       resource level of the materials
+	 *                                       producer</li>
+	 *                                       <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
+	 *                                       if the materials amount would cause an
+	 *                                       overflow of the regions resource
+	 *                                       level</li>
 	 */
 	public void transferResourceToRegion(MaterialsProducerId materialsProducerId, ResourceId resourceId,
 			RegionId regionId, long amount) {

@@ -143,7 +143,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Returns a RegionPropertyPluginData created from the collected inputs
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
          *                           the report label is not assigned</li>
@@ -175,7 +175,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Selects the given region property id to be included in the report.
          *
-         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *                           person property id is null
          */
         public Builder includeRegionProperty(RegionPropertyId regionPropertyId) {
@@ -191,7 +191,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Selects the given region property id to be excluded from the report
          *
-         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *                           person property id is null
          */
         public Builder excludeRegionProperty(RegionPropertyId regionPropertyId) {
@@ -207,7 +207,7 @@ public final class RegionPropertyReportPluginData implements PluginData {
         /**
          * Sets the report label
          *
-         * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+         * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
          *                           report label is null
          */
         public Builder setReportLabel(ReportLabel reportLabel) {

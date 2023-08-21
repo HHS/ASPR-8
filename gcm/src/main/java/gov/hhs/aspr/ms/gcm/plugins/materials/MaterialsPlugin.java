@@ -53,7 +53,7 @@ public final class MaterialsPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
 		 *                           if the materials plugin data is null
 		 */
 		public Plugin getMaterialsPlugin() {

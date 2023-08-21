@@ -66,7 +66,7 @@ public final class PartitionsPlugin {
 		/**
 		 * Builds the PartitionsPlugin from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PartitionError#NULL_PARTITION_PLUGIN_DATA}
 		 *                           if the partitionsPluginData is null</li>

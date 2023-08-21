@@ -17,7 +17,7 @@ public final class AndFilter extends Filter {
 	/**
 	 * Constructs a filter that is the conjunction of two filters.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PartitionError#NULL_FILTER} if either
+	 * @throws ContractException {@linkplain PartitionError#NULL_FILTER} if either
 	 *                           filter is null
 	 */
 	public AndFilter(Filter a, Filter b) {

@@ -74,7 +74,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds the batch. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 		 *                           the batch id is null</li>
@@ -101,7 +101,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * Adds the batch to inventory of the materials producer. Duplicate inputs
 		 * override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 		 *                           the batch id is null</li>
@@ -126,7 +126,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 		 *                           the batch id is null</li>
@@ -152,7 +152,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 		 *                           the material id is null</li>
 		 */
@@ -166,7 +166,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the material producer id is null</li>
 		 */
@@ -180,7 +180,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a stage.
 		 *
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_STAGE_ID} if the
+		 * @throws ContractException {@linkplain MaterialsError#NULL_STAGE_ID} if the
 		 *                           stage id is null
 		 */
 		public Builder addStage(final StageId stageId, final boolean offered) {
@@ -195,7 +195,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * Associates a stage with a materials producer. Duplicate inputs override
 		 * previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 		 *                           the stage id is null</li>
@@ -221,7 +221,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Builds the MaterialsPluginData from the collected inputs
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#UNKNOWN_MATERIAL_ID}
 		 *                           if a batch property is associated with a material
@@ -303,7 +303,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the batch property id is null</li>
@@ -332,7 +332,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the materials producer property id is null</li>
@@ -352,7 +352,7 @@ public final class MaterialsPluginData implements PluginData {
 		/**
 		 * Set the batch property value. Duplicate inputs override previous inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 		 *                           the batch id is null</li>
@@ -381,7 +381,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * Set the materials producer property value. Duplicate inputs override previous
 		 * inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id is null</li>
@@ -413,7 +413,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * Set the materials producer resource value. Duplicate inputs override previous
 		 * inputs.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id is null</li>
@@ -444,7 +444,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * assigned to either zero or the next integer value that exceeds the highest
 		 * valued batch added to this builder.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
 		 *                           if the next batch record id is negative</li>
 		 */
@@ -461,7 +461,7 @@ public final class MaterialsPluginData implements PluginData {
 		 * assigned to either zero or the next integer value that exceeds the highest
 		 * valued batch added to this builder.
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
 		 *                           if the next stage record id is negative</li>
 		 */
@@ -1430,7 +1430,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the material amount for the given batch.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -1454,7 +1454,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the material type for the given batch id.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -1472,7 +1472,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the materials producer id for the given batch id.
 	 *
-	 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+	 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null
 	 */
 	public List<BatchId> getMaterialsProducerInventoryBatches(final MaterialsProducerId materialsProducerId) {
@@ -1489,7 +1489,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the property definition for the given batch property id and material
 	 * id
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
@@ -1514,7 +1514,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the property ids associated with the given material id
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
@@ -1539,7 +1539,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns a map of the property values associated collected for the given batch
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_BATCH_ID} if
 	 *                           the batch id is null</li>
@@ -1585,7 +1585,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns the property definition associated with the given materials producer
 	 * property id
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the materials producer property id is null</li>
@@ -1623,7 +1623,7 @@ public final class MaterialsPluginData implements PluginData {
 	 * Returns a map of property id to value collected for the given materials
 	 * producer
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1645,7 +1645,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the resource level the given materials producer id and resource.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the materials producer id is null</li>
@@ -1685,7 +1685,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the batch ids that are assigned to the given stage id.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>
@@ -1713,7 +1713,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the materials producer id associated with the given stage id.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 	 *                           if the stage id is null</li>
@@ -1734,7 +1734,7 @@ public final class MaterialsPluginData implements PluginData {
 	/**
 	 * Returns the offer state of the given stage id.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
 	 *                           the stage id is null</li>

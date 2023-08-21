@@ -57,7 +57,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Constructs the data manager
 	 * 
-	 * @throws util.errors.ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+	 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
 	 *                           if the global plugin data is null
 	 */
 	public GlobalPropertiesDataManager(GlobalPropertiesPluginData globalPropertiesPluginData) {
@@ -71,7 +71,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns an event that defines a new global property
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_INITIALIZATION}
 	 *                           if the global property initialization is null</li>
@@ -106,7 +106,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link GlobalPropertyUpdateEvent} events. Matches on global property id.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -125,7 +125,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -141,7 +141,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -169,7 +169,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the time when the of the global property was last assigned.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -189,7 +189,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns the value of the global property.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
@@ -264,7 +264,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Initializes the global properties data manager
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if
+	 * @throws ContractException {@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if
 	 *                           the Global Properties Plugin Data contains a
 	 *                           property definition with a creation time that
 	 *                           exceeds the current simulation time
@@ -317,7 +317,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Set the value of the global property and updates the property assignment
 	 * time.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link PropertyError.NULL_PROPERTY_ID} if the
 	 *                           global property id is null</li>

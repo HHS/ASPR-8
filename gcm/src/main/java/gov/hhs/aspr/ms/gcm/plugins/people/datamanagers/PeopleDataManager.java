@@ -71,7 +71,7 @@ public final class PeopleDataManager extends DataManager {
 	 * PersonId is unique and will wrap the int value returned by getPersonIdLimit()
 	 * just prior to invoking this method.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}
 	 *                           if the person construction data is null</li>
@@ -212,7 +212,7 @@ public final class PeopleDataManager extends DataManager {
 	 * simulation. All data manager descendant classes that override this method
 	 * must invoke the super.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *                           if init() is invoked more than once</li></li>
@@ -311,7 +311,7 @@ public final class PeopleDataManager extends DataManager {
 	/**
 	 * Removes the person from the simulation.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>

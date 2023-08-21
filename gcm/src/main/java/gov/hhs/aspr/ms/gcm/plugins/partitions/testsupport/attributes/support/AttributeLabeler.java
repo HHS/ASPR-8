@@ -52,7 +52,7 @@ public abstract class AttributeLabeler implements Labeler {
 	/**
 	 * Returns the label for the person precondition: the context should not be null
 	 * 
-	 * @throwsContractException
+	 * @throws ContractException
 	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                          person id is null</li>
 	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if

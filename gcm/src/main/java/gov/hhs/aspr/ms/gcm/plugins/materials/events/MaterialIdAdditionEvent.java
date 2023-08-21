@@ -15,7 +15,7 @@ public record MaterialIdAdditionEvent(MaterialId materialId) implements Event {
 	/**
 	 * Constructs the event
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 	 *                           the material id is null</li>
 	 *                           </ul>

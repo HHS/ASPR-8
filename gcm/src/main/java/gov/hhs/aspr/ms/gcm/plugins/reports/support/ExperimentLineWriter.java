@@ -47,12 +47,14 @@ public final class ExperimentLineWriter {
 	 * directory must exist.
 	 *
 	 * @throws RuntimeException
+	 *                          <ul>
 	 *                          <li>if an {@link IOException} is thrown during file
-	 *                          </li> initialization</li>
+	 *                          initialization</li>
 	 *                          <li>if the simulation run is continuing from a
-	 *                          progress log</li> and the path is not a regular file
+	 *                          progress log and the path is not a regular file
 	 *                          (path does not exist) during file
 	 *                          initialization</li>
+	 *                          </ul>
 	 */
 	public ExperimentLineWriter(final ExperimentContext experimentContext, final Path path, String delimiter) {
 

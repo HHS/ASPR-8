@@ -93,21 +93,21 @@ public final class AttributeFilter extends Filter {
 	/**
 	 * Validates this attribute filter
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li>
 	 *                           if the filter's attribute id is null
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li>
 	 *                           if the filter's attribute id is unknown
-	 *                           <li>{@linkplain PartitionError.NULL_EQUALITY_OPERATOR}</li>if
+	 *                           <li>{@linkplain PartitionError#NULL_EQUALITY_OPERATOR} if
 	 *                           the filter's equality operator is null
-	 *                           <li>{@linkplain AttributeError.NULL_ATTRIBUTE_VALUE}</li>if
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE} if
 	 *                           the filter's value is null
-	 *                           <li>{@linkplain AttributeError.INCOMPATIBLE_VALUE}</li>if
+	 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE} if
 	 *                           the filter's value is incompatible with the
 	 *                           attribute definition associated with the filter's
 	 *                           attribute id.
-	 *                           <li>{@linkplain PartitionError.NON_COMPARABLE_ATTRIBUTE}</li>if
+	 *                           <li>{@linkplain PartitionError#NON_COMPARABLE_ATTRIBUTE} if
 	 *                           the filter's value is not a COMPARABLE when the
 	 *                           filter's equality operator is not EQUALS or
 	 *                           NOT_EQUALS.

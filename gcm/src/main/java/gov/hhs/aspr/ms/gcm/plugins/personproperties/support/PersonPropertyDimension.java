@@ -73,7 +73,7 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Returns the PersonPropertyDimension from the collected data.
          * 
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the person property id was not assigned
@@ -100,7 +100,7 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Sets the person property for the dimension. Defaults to null.
          * 
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the id is null
@@ -114,7 +114,7 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
          *                           if the value is null

@@ -190,6 +190,26 @@
 						<version>${maven-javadoc-plugin.version}</version>
 						<configuration>
 							<doclint>all,-missing</doclint>
+							<additionalDependencies>
+								<additionalDependency>
+									<groupId>gov.hhs.aspr.ms</groupId>
+									<artifactId>util</artifactId>
+									<version>${util.version}</version>
+								</additionalDependency>
+								<additionalDependency>
+									<groupId>org.junit.jupiter</groupId>
+									<artifactId>junit-jupiter-api</artifactId>
+									<version>${junit-jupiter-engine.version}</version>
+								</additionalDependency>
+							</additionalDependencies>
+							<author>false</author>
+							<includeDependencySources>true</includeDependencySources>
+							<additionalJOptions>
+								<additionalJOption>-Xmaxerrs</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+								<additionalJOption>-Xmaxwarns</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+							  </additionalJOptions>
 						</configuration>
 						<executions>
 							<execution>

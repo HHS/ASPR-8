@@ -316,7 +316,7 @@ public final class GroupsPluginData implements PluginData {
         /**
          * Return the GroupInitialData from the data collected by this builder.
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain GroupError#DUPLICATE_GROUP_MEMBERSHIP}
          *                           if a person was assigned to a group more than
@@ -368,11 +368,11 @@ public final class GroupsPluginData implements PluginData {
          * Adds a person to a group and the group to the person. Use this method when
          * order within memberships is not important.
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
          *                           the group id is null</li>
-         *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li> if
+         *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if
          *                           the person id is null</li>
          *                           </ul>
          */
@@ -414,9 +414,9 @@ public final class GroupsPluginData implements PluginData {
         /**
          * Adds the group to the person, but not the person to the group.
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
          *                           the group id is null</li>
          *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
          *                           person id is null
@@ -448,9 +448,9 @@ public final class GroupsPluginData implements PluginData {
         /**
          * Adds the group to the person, but not the person to the group.
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID}</li> if
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
          *                           the group id is null</li>
          *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
          *                           person id is null
@@ -481,7 +481,7 @@ public final class GroupsPluginData implements PluginData {
         /**
          * Adds a group type id Duplicate inputs override previous inputs
          *
-         * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if the
          *                           group type id is null
          */
         public Builder addGroupTypeId(final GroupTypeId groupTypeId) {
@@ -495,7 +495,7 @@ public final class GroupsPluginData implements PluginData {
          * Adds a group with the given group type Duplicate inputs override previous
          * inputs
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
          *                           group id is null</li>
@@ -525,7 +525,7 @@ public final class GroupsPluginData implements PluginData {
         /**
          * Defines a group property Duplicate inputs override previous inputs
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
          *                           the group type id is null</li>
@@ -555,7 +555,7 @@ public final class GroupsPluginData implements PluginData {
          * Sets the group property value that overrides the default value of the
          * corresponding property definition Duplicate inputs override previous inputs
          *
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain GroupError#NULL_GROUP_ID}if the
          *                           group id is null</li>
@@ -611,7 +611,7 @@ public final class GroupsPluginData implements PluginData {
          * assigned to either zero or the next integer value that exceeds the highest
          * valued group added to this builder.
          *
-         * @throws util.errors.ContractException {@linkplain GroupError#NEGATIVE_GROUP_ID} if the
+         * @throws ContractException {@linkplain GroupError#NEGATIVE_GROUP_ID} if the
          *                           next group record id is negative
          */
         public Builder setNextGroupIdValue(int nextGroupIdValue) {
@@ -837,7 +837,7 @@ public final class GroupsPluginData implements PluginData {
      * Returns the property definition for the given group type id and group
      * property id
      *
-     * @throws util.errors.ContractException
+     * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
      *                           the group type id is null</li>
@@ -863,7 +863,7 @@ public final class GroupsPluginData implements PluginData {
     /**
      * Returns the set of group property ids for the given group type id
      *
-     * @throws util.errors.ContractException
+     * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
      *                           the group type id is null</li>
@@ -903,7 +903,7 @@ public final class GroupsPluginData implements PluginData {
      * Returns the property value associated with the given group id and group
      * property id
      *
-     * @throws util.errors.ContractException
+     * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
      *                           group id is null</li>
@@ -949,7 +949,7 @@ public final class GroupsPluginData implements PluginData {
     /**
      * Returns the group type id associated with the given group id
      *
-     * @throws util.errors.ContractException
+     * @throws ContractException
      *                           <ul>
      *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
      *                           group id is null</li>

@@ -15,7 +15,7 @@ public record PersonRemovalEvent(PersonId personId) implements Event {
 	/**
 	 * Constructs the event from the give person id
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
 	 *                           </ul>
 	 */

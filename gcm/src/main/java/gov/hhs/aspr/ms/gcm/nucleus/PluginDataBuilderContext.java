@@ -41,7 +41,7 @@ public final class PluginDataBuilderContext implements PluginDataBuilderContaine
 		 * Given a plugin Data, will add it and its clone builder to the internal map in
 		 * this class
 		 * 
-		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER}
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER}
 		 *                           if the plugin data builder is null
 		 */
 		public <T extends PluginDataBuilder> Builder add(T t) {

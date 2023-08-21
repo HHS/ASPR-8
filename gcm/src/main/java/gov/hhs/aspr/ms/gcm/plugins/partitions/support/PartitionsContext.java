@@ -13,7 +13,7 @@ public interface PartitionsContext {
 	/**
 	 * Returns the data manager from the given class reference
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
 	 *                           if data manager class is null</li>

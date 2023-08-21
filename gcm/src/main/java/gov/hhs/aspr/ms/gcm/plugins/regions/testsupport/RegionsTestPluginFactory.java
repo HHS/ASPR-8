@@ -263,7 +263,7 @@ public final class RegionsTestPluginFactory {
     /**
      * Returns a standardized RegionsPluginData that is minimally adequate for
      * testing the RegionsPlugin
-     * <li>The resulting RegionsPluginData will include:
+     * The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId in {@link TestRegionId}</li>
      * <li>Every RegionPropertyId in {@link TestRegionPropertyId}</li>
@@ -341,7 +341,7 @@ public final class RegionsTestPluginFactory {
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
      * testing the RegionsPlugin
-     * <li>The resulting PeoplePluginData will include:
+     * The resulting PeoplePluginData will include:
      * <ul>
      * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
@@ -357,7 +357,7 @@ public final class RegionsTestPluginFactory {
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
      * testing the RegionsPlugin
-     * <li>The resulting StochasticsPluginData will include:
+     * The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
      * in seed</li></li>

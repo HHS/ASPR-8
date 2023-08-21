@@ -63,7 +63,7 @@ public class GlobalPropertyInitialization {
 		/**
 		 * Returns the GlobalPropertyInitialization formed from the inputs.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if no property definition was provided</li>
@@ -85,7 +85,7 @@ public class GlobalPropertyInitialization {
 		/**
 		 * Sets the property id.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           property id is null
 		 */
 		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
@@ -99,7 +99,7 @@ public class GlobalPropertyInitialization {
 		/**
 		 * Sets the property definition.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
@@ -114,7 +114,7 @@ public class GlobalPropertyInitialization {
 		 * Sets the value of the global property that overrides any default value
 		 * provided by the property definition
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
 		 *                           the value is null
 		 */
 		public Builder setValue(Object value) {

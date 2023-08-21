@@ -49,7 +49,7 @@ public final class DoubleValueContainer {
 	 * 
 	 * @param index
 	 * @return
-	 * @throws util.errors.ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
 	 *                           is negative
 	 */
 	public double getValue(int index) {
@@ -97,8 +97,6 @@ public final class DoubleValueContainer {
 	 * Constructs the DoubleValueContainer with the given default value and initial
 	 * capacity
 	 * 
-	 * @param defaultValue
-	 * @param capacity
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
 	public DoubleValueContainer(double defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
@@ -110,7 +108,7 @@ public final class DoubleValueContainer {
 	/**
 	 * Sets the value at the index to the given value
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
 	 *                           is negative
 	 */
 	public void setValue(int index, double value) {

@@ -66,7 +66,7 @@ public class BatchConstructionInfo {
 		/**
 		 * Builds the BatchConstructionInfo from the collected data
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 		 *                           the material id was not set</li>
@@ -82,7 +82,7 @@ public class BatchConstructionInfo {
 		/**
 		 * Sets the amount. Defaulted to zero.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
 		 *                           * if the amount is negative</li>
@@ -104,7 +104,7 @@ public class BatchConstructionInfo {
 		/**
 		 * Sets the material id. Defaulted to null.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
 		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
@@ -118,7 +118,7 @@ public class BatchConstructionInfo {
 		/**
 		 * Sets the materials producer id. Defaulted to null.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id is null</li>
 		 */
@@ -133,7 +133,7 @@ public class BatchConstructionInfo {
 		/**
 		 * Sets a property value;
 		 *
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the property id is null</li>

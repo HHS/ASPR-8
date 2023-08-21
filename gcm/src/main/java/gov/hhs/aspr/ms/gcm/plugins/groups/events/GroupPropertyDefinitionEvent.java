@@ -18,7 +18,7 @@ public record GroupPropertyDefinitionEvent(GroupTypeId groupTypeId, GroupPropert
 	/**
 	 * Creates the event.
 	 *
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null</li>

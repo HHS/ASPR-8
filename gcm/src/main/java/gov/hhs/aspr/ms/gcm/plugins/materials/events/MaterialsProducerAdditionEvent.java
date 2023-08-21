@@ -57,7 +57,7 @@ public class MaterialsProducerAdditionEvent implements Event {
 		/**
 		 * Builds the Region addition event from the inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerAdditionEvent build() {
@@ -68,7 +68,7 @@ public class MaterialsProducerAdditionEvent implements Event {
 		/**
 		 * Sets the materials producer id
 		 * 
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
 		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
@@ -83,7 +83,7 @@ public class MaterialsProducerAdditionEvent implements Event {
 		 * Adds an auxiliary value to be used by observers of materials producer
 		 * addition
 		 * 
-		 * @throws util.errors.ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
+		 * @throws ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
 		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {

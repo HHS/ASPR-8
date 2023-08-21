@@ -79,7 +79,7 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Returns the GroupPropertyDimension from the collected data.
          * 
-         * @throws util.errors.ContractException
+         * @throws ContractException
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the group property id was not assigned</li>
@@ -105,7 +105,7 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Sets the group id for the dimension. Defaults to null.
          * 
-         * @throws util.errors.ContractException {@linkplain GroupError#NULL_GROUP_ID} if the
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_ID} if the
          *                           groupId is null
          */
         public Builder setGroupId(GroupId groupId) {
@@ -117,7 +117,7 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Sets the group property for the dimension. Defaults to null.
          * 
-         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
          *                           property id is null
          */
         public Builder setGroupPropertyId(GroupPropertyId groupPropertyId) {
@@ -129,7 +129,7 @@ public class GroupPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
          *                           the value is null
          */
         public Builder addValue(Object value) {

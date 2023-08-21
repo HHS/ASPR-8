@@ -26,7 +26,7 @@ public class TestPlugin {
 	 * TestPlanDataManager that is used internally to this plugin to help manage
 	 * plan distribution for the aforementioned actors and data managers.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_CONTEXT} if
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_CONTEXT} if
 	 *                           the pluginContext is null
 	 */
 	private static void init(PluginContext pluginContext) {

@@ -330,7 +330,7 @@ public class ResourcesTestPluginFactory {
     /**
      * Returns a standardized RegionsPluginData that is minimally adequate for
      * testing the ResourcesPlugin
-     * <li>The resulting RegionsPluginData will include:
+     * The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId included in {@link TestRegionId}</li>
      * <li>Every person passed in via people.
@@ -359,14 +359,14 @@ public class ResourcesTestPluginFactory {
     /**
      * Returns a standardized ResourcesPluginData that is minimally adequate for
      * testing the ResourcesPlugin
-     * <li>The resulting ResourcesPluginData will include:
+     * The resulting ResourcesPluginData will include:
      * <ul>
-     * <li>Every ResourceId included in {@link TestResourceId}</li>
+     * <li>Every ResourceId included in {@link TestResourceId}
      * <ul>
      * <li>along with the defined timeTrackingPolicy for each</li>
      * </ul>
      * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-     * </li> with the defined propertyDefinition for each.
+     * with the defined propertyDefinition for each.</li> 
      * <ul>
      * <li>Each Resource will have a random property value assigned based on a
      * RandomGenerator that is created with the passed in seed</li></li>
@@ -434,7 +434,7 @@ public class ResourcesTestPluginFactory {
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
      * testing the ResourcesPlugin
-     * <li>The resulting StochasticsPluginData will include:
+     * The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
      * in seed</li></li>

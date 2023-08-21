@@ -64,7 +64,7 @@ public final class GroupsPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PersonPropertyError#NULL_GROUP_PLUGIN_DATA}
+		 * @throws ContractException {@linkplain PersonPropertyError#NULL_GROUP_PLUGIN_DATA}
 		 *                           if the groupsPluginData is null
 		 */
 		public Plugin getGroupsPlugin() {

@@ -98,7 +98,7 @@ public final class RegionPropertyReport {
 	}
 
 	/**
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
 	 *                           if the plugin data is null</li>
@@ -151,7 +151,7 @@ public final class RegionPropertyReport {
 	 * {@linkplain RegionPropertyUpdateEvent} and releases a {@link ReportItem} for
 	 * each region property's initial value.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
+	 * @throws ContractException {@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
 	 *                           region property id used in the constructor is
 	 *                           unknown
 	 */

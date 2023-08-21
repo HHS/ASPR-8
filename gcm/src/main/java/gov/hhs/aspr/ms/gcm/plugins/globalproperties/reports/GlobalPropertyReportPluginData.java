@@ -145,7 +145,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is not assigned
 		 */
 		public GlobalPropertyReportPluginData build() {
@@ -172,7 +172,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Selects the given person property id to be included in the report.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           person property id is null
 		 */
 		public Builder includeGlobalProperty(GlobalPropertyId globalPropertyId) {
@@ -188,7 +188,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Selects the given person property id to be excluded from the report
 		 * 
-		 * @throws util.errors.ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
 		 *                           person property id is null
 		 */
 		public Builder excludeGlobalProperty(GlobalPropertyId globalPropertyId) {
@@ -204,7 +204,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {

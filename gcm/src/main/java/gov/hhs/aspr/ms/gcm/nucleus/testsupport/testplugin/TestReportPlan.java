@@ -21,7 +21,7 @@ public class TestReportPlan {
 	 * Constructs an report action plan. If assignKey is false, then this report
 	 * action plan will return an empty optional key.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain TestError#NULL_PLAN} if the plan is
+	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
 	 */
 	public TestReportPlan(final double scheduledTime, Consumer<ReportContext> plan) {

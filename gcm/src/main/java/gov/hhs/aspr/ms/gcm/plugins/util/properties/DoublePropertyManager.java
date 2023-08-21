@@ -21,7 +21,7 @@ public final class DoublePropertyManager implements IndexedPropertyManager {
 	/**
 	 * Constructs this DoublePropertyManager.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
 	 *                           if the initial size is negative</li>

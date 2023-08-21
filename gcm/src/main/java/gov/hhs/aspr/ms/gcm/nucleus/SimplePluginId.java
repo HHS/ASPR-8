@@ -13,7 +13,7 @@ public class SimplePluginId implements PluginId {
 	 * Constructs a SimplePluginId from the given value. The value class must
 	 * implement a proper equals contract.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
 	 *                           value is null
 	 */
 	public SimplePluginId(Object value) {

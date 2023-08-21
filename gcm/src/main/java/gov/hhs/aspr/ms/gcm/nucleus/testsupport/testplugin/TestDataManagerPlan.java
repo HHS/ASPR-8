@@ -30,7 +30,7 @@ public class TestDataManagerPlan {
 	 * Constructs an data manager action plan. If assignKey is false, then this
 	 * actor action plan will return an empty optional key.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain TestError#NULL_PLAN} if the plan is
+	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
 	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> plan) {

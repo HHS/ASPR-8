@@ -183,7 +183,7 @@ public class PeopleTestPluginFactory {
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
 	 * testing the PeoplePlugin
-	 * <li>The resulting PeoplePluginData will be empty</li>
+	 * The resulting PeoplePluginData will be empty</li>
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>
@@ -197,7 +197,7 @@ public class PeopleTestPluginFactory {
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
 	 * testing the PeoplePlugin
-	 * <li>The resulting StochasticsPluginData will include:
+	 * The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
 	 * in seed</li></li>

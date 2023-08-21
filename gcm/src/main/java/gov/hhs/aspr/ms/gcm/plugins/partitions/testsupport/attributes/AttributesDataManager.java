@@ -39,7 +39,7 @@ public final class AttributesDataManager extends DataManager {
 	 * Returns the attribute definition associated with the given attribute id
 	 * without validation.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
@@ -78,7 +78,7 @@ public final class AttributesDataManager extends DataManager {
 	/**
 	 * Returns the attribute value associated with the given attribute id
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
@@ -307,7 +307,7 @@ public final class AttributesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link AttributeUpdateEvent}
 	 * events. Matches on attribute id.
 	 * 
-	 * @throws util.errors.ContractException </li>
+	 * @throws ContractException <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}

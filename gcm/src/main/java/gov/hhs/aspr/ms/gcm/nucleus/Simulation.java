@@ -173,7 +173,7 @@ public class Simulation {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
 		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
@@ -187,7 +187,7 @@ public class Simulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
 		 *                           null
 		 */
 		public Builder addPlugin(Plugin plugin) {
@@ -215,7 +215,7 @@ public class Simulation {
 		 * Returns an Engine instance that is initialized with the plugins and output
 		 * consumer collected by this builder.
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#SIM_HALT_TIME_TOO_EARLY}
 		 *                           If the simulation halt time is non-negative and
@@ -930,7 +930,7 @@ public class Simulation {
 	 * at zero and flows based on planning. When all plans are executed, time stops
 	 * and the simulation halts.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#REPEATED_EXECUTION} if
 	 *                           execute is invoked more than once</li>

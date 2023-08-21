@@ -52,7 +52,7 @@ public class RegionConstructionData {
 		/**
 		 * Builds the Region Construction Data from the given inputs.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
 		 *                           region id was not set
 		 */
 		public RegionConstructionData build() {
@@ -63,7 +63,7 @@ public class RegionConstructionData {
 		/**
 		 * Sets the region id
 		 * 
-		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
 		 *                           region id is null
 		 */
 		public Builder setRegionId(RegionId regionId) {
@@ -77,7 +77,7 @@ public class RegionConstructionData {
 		/**
 		 * Adds an auxiliary value to be used by observers of region addition
 		 * 
-		 * @throws util.errors.ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
+		 * @throws ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
 		 *                           value is null
 		 */
 		public Builder addValue(Object value) {
@@ -91,7 +91,7 @@ public class RegionConstructionData {
 		/**
 		 * Sets a region property value
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the region property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}

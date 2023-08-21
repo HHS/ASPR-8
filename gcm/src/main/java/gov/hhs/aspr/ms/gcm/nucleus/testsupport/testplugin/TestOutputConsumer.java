@@ -25,7 +25,7 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 * Handles all output from a simulation, but processes only TestScenarioReport
 	 * items.
 	 * 
-	 * @throws util.errors.ContractException {@linkplain TestError#NULL_OUTPUT_ITEM} if the obj
+	 * @throws ContractException {@linkplain TestError#NULL_OUTPUT_ITEM} if the obj
 	 *                           is null
 	 */
 	public void accept(Object obj) {
@@ -74,7 +74,7 @@ public class TestOutputConsumer implements Consumer<Object> {
 	 * @param classRef The class for which you want to get output items of
 	 * @return - returns a {@link Map} containing the output items as keys and the
 	 *         number of occurrences as the value
-	 * @throws util.errors.ContractException {@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if
+	 * @throws ContractException {@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if
 	 *                           there are multiple items matching the given class
 	 *                           reference
 	 */

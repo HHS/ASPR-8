@@ -128,7 +128,7 @@ public final class GroupTypeCountMap {
 		/**
 		 * Sets the count for the given group type id
 		 * 
-		 * @throws util.errors.ContractException
+		 * @throws ContractException
 		 *                           <ul>
 		 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 		 *                           groupTypeId is null</li>

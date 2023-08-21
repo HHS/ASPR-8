@@ -95,7 +95,7 @@ public final class Plugin {
 		/**
 		 * Returns the plugin formed by the inputs collected by this builder.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
 		 *                           plugin id was not set or set to null
 		 */
 		public Plugin build() {
@@ -121,7 +121,7 @@ public final class Plugin {
 		 * graph and secondarily in the order each plugin was contributed to a
 		 * simulation or experiment.
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_PLUGIN_ID} if the plugin
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN_ID} if the plugin
 		 *                           id is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
@@ -138,7 +138,7 @@ public final class Plugin {
 		 * altered after construction, 2) all its member fields are declared final and
 		 * 3) it does not pass any reference to itself during its construction.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
 		 *                           plugin data is null
 		 */
 		public Builder addPluginData(PluginData pluginData) {
@@ -155,7 +155,7 @@ public final class Plugin {
 		 * The initializer must be thread-safe. It is best practice for the initializer
 		 * to be stateless.
 		 * 
-		 * @throws util.errors.ContractException {@linkplain NucleusError#NULL_PLUGIN_INITIALIZER}
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_INITIALIZER}
 		 *                           if the initializer is null
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {

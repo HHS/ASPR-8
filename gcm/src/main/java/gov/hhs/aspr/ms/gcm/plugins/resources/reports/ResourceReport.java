@@ -316,7 +316,7 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	/**
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if a resource id passed to the constructor is

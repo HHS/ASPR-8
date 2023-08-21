@@ -70,7 +70,7 @@ public class TestSimulation {
 		 * Set the simulation time. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
 		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
@@ -84,7 +84,7 @@ public class TestSimulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the test simulation
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_PLUGINS} if the plugin
+		 * @throws ContractException {@link NucleusError#NULL_PLUGINS} if the plugin
 		 *                           collection is null
 		 */
 		public Builder addPlugin(Plugin plugin) {
@@ -98,7 +98,7 @@ public class TestSimulation {
 		/**
 		 * Add a plugin initializer to this builder for inclusion in the simulation
 		 * 
-		 * @throws util.errors.ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
 		 *                           null
 		 */
 		public Builder addPlugins(Collection<Plugin> plugins) {

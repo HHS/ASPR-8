@@ -7,7 +7,7 @@ public record GroupPropertyValue(GroupPropertyId groupPropertyId, Object value) 
 	/**
 	 * Creates the record.
 	 * 
-	 * @throws util.errors.ContractException
+	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
 	 *                           the property id is null</li>

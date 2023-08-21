@@ -156,7 +156,7 @@ public class StochasticsTestPluginFactory {
 	/**
 	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
 	 * testing the StochasticsPlugin.
-	 * <li>The resulting StocasticsPluginData will include:
+	 * The resulting StocasticsPluginData will include:
 	 * <ul>
 	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
 	 * </ul>

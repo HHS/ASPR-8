@@ -108,7 +108,7 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		/**
 		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is not assigned
 		 */
 		public MaterialsProducerPropertyReportPluginData build() {
@@ -124,7 +124,7 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws util.errors.ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
