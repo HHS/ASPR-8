@@ -1,11 +1,8 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
- * 
  * Combines a PlanData with a priority value used to reconstruct the order of
  * plans from de-serialized plans from a previous simulation execution.
- *
- *
  */
 public final class PrioritizedPlanData {
 	private final PlanData planData;
@@ -36,10 +33,8 @@ public final class PrioritizedPlanData {
 
 	/**
 	 * Returns the string representation of a prioritized plan data in the form
-	 * 
-	 * PrioritizedPlanData [planData=X, priority=1234]
-	 * 
-	 * where X= the relevant plan data's toString()
+	 * PrioritizedPlanData [planData=X, priority=1234] where X= the relevant plan
+	 * data's toString()
 	 */
 	@Override
 	public String toString() {

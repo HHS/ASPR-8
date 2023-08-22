@@ -5,11 +5,7 @@ import util.errors.ContractException;
 
 /**
  * Represents a range of person id values
- * 
- *
- *
  */
-
 @Immutable
 public class PersonRange implements Comparable<PersonRange> {
 
@@ -20,12 +16,15 @@ public class PersonRange implements Comparable<PersonRange> {
 	 * Constructs an inclusive range of person id values
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PersonError#NEGATIVE_PERSON_ID} if a negative
-	 *             id is used
-	 *             <li>
-	 *             <li>{@linkplain PersonError#ILLEGAL_PERSON_RANGE} if the low
-	 *             person id exceeds the high person id
-	 *             <li>
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NEGATIVE_PERSON_ID} if
+	 *                           a negative id is used</li>
+	 *                           <li></li>
+	 *                           <li>{@linkplain PersonError#ILLEGAL_PERSON_RANGE}
+	 *                           if the low person id exceeds the high person id
+	 *                           </li>
+	 *                           <li></li>
+	 *                           </ul>
 	 */
 	public PersonRange(int lowPersonId, int highPersonId) {
 
@@ -54,8 +53,8 @@ public class PersonRange implements Comparable<PersonRange> {
 	}
 
 	/**
-	 * Compares to another person range by ascending order for lower bound and
-	 * then ascending order by upper bound
+	 * Compares to another person range by ascending order for lower bound and then
+	 * ascending order by upper bound
 	 */
 	@Override
 	public int compareTo(PersonRange personRange) {
@@ -66,7 +65,6 @@ public class PersonRange implements Comparable<PersonRange> {
 		return result;
 	}
 
-	
 	/**
 	 * Boiler plate implementation of hash code
 	 */
@@ -80,7 +78,8 @@ public class PersonRange implements Comparable<PersonRange> {
 	}
 
 	/**
-	 * Two person ranges are equal if and only if they have the same upper and lower bounds.
+	 * Two person ranges are equal if and only if they have the same upper and lower
+	 * bounds.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -101,9 +100,8 @@ public class PersonRange implements Comparable<PersonRange> {
 	}
 
 	/**
-	 * Returns the string version of a person range in the form:
-	 * 
-	 * PersonRange [lowPersonId=4, highPersonId=10]
+	 * Returns the string version of a person range in the form: PersonRange
+	 * [lowPersonId=4, highPersonId=10]
 	 */
 	@Override
 	public String toString() {

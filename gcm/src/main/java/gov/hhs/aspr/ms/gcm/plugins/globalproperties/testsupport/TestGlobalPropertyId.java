@@ -12,50 +12,45 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 /**
- * Enumeration that provides a variety of global property definitions for testing purposes
+ * Enumeration that provides a variety of global property definitions for
+ * testing purposes
  */
 public enum TestGlobalPropertyId implements GlobalPropertyId {
 
-	GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE(PropertyDefinition.builder()//
+			.setType(Boolean.class)//
+			.setDefaultValue(false)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_2_INTEGER_MUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GLOBAL_PROPERTY_2_INTEGER_MUTABLE(PropertyDefinition.builder()//
+			.setType(Integer.class)//
+			.setDefaultValue(0)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_3_DOUBLE_MUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setPropertyValueMutability(true)//
-								.build() //
+	GLOBAL_PROPERTY_3_DOUBLE_MUTABLE(PropertyDefinition.builder()//
+			.setType(Double.class)//
+			.setPropertyValueMutability(true)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Boolean.class)//
-								.setDefaultValue(false)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Boolean.class)//
+			.setDefaultValue(false)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Integer.class)//
-								.setDefaultValue(0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GLOBAL_PROPERTY_5_INTEGER_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Integer.class)//
+			.setDefaultValue(0)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	), //
-	GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE(
-			PropertyDefinition	.builder()//
-								.setType(Double.class)//
-								.setDefaultValue(0.0)//
-								.setPropertyValueMutability(false)//
-								.build() //
+	GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE(PropertyDefinition.builder()//
+			.setType(Double.class)//
+			.setDefaultValue(0.0)//
+			.setPropertyValueMutability(false)//
+			.build() //
 	);//
 
 	/**
@@ -64,7 +59,7 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	public static TestGlobalPropertyId getRandomGlobalPropertyId(final RandomGenerator randomGenerator) {
 		return TestGlobalPropertyId.values()[randomGenerator.nextInt(TestGlobalPropertyId.values().length)];
 	}
-	
+
 	public static TestGlobalPropertyId getRandomMutableGlobalPropertyId(final RandomGenerator randomGenerator) {
 		List<TestGlobalPropertyId> candidates = new ArrayList<>();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
@@ -78,7 +73,6 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 	/**
 	 * Returns a randomly selected value that is compatible with this member's
 	 * associated property definition.
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getRandomPropertyValue(final RandomGenerator randomGenerator) {
@@ -101,7 +95,7 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 		case GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE:
 			Double d6 = randomGenerator.nextDouble();
 			return (T) d6;
-		default:			
+		default:
 			throw new RuntimeException("unhandled case: " + this);
 
 		}
@@ -124,15 +118,15 @@ public enum TestGlobalPropertyId implements GlobalPropertyId {
 		return new GlobalPropertyId() {
 		};
 	}
-	
-	public static List<TestGlobalPropertyId> getGlobalPropertyIds(){
+
+	public static List<TestGlobalPropertyId> getGlobalPropertyIds() {
 		return Arrays.asList(TestGlobalPropertyId.values());
 	}
-	
-	public static List<TestGlobalPropertyId> getShuffledGlobalPropertyIds(RandomGenerator randomGenerator){
+
+	public static List<TestGlobalPropertyId> getShuffledGlobalPropertyIds(RandomGenerator randomGenerator) {
 		List<TestGlobalPropertyId> result = getGlobalPropertyIds();
 		Random random = new Random(randomGenerator.nextLong());
-		Collections.shuffle(result,random);
+		Collections.shuffle(result, random);
 		return result;
 	}
 

@@ -11,10 +11,7 @@ import util.errors.ContractException;
 
 /**
  * An event indicating that a region has been added
- * 
- *
  */
-
 @Immutable
 public class RegionAdditionEvent implements Event {
 
@@ -42,8 +39,6 @@ public class RegionAdditionEvent implements Event {
 
 	/**
 	 * Builder class for {@link RegionAdditionEvent}
-	 * 
-	 *
 	 */
 	public static class Builder {
 
@@ -62,9 +57,8 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Builds the Region addition event from the inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
-		 *             id was not set</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id was not set
 		 */
 		public RegionAdditionEvent build() {
 			validate();
@@ -74,9 +68,8 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Sets the region id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_ID} if the region
-		 *             id is null</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null
 		 */
 		public Builder setRegionId(RegionId regionId) {
 			if (regionId == null) {
@@ -89,9 +82,8 @@ public class RegionAdditionEvent implements Event {
 		/**
 		 * Adds an auxiliary value to be used by observers of region addition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_AUXILIARY_DATA} if the
-		 *             value is null</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_AUXILIARY_DATA} if the
+		 *                           value is null
 		 */
 		public Builder addValue(Object value) {
 			if (value == null) {

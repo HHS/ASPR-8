@@ -9,8 +9,6 @@ import java.util.function.Supplier;
  * each boolean as a single bit in a BitSet. Returns a default boolean value for
  * every non-negative int index value until the value is explicitly set by an
  * invocation to the set() method.
- * 
- *
  */
 public final class BooleanContainer {
 	/*
@@ -83,10 +81,10 @@ public final class BooleanContainer {
 	private String getElementsString() {
 		Iterator<Integer> iterator = indexIteratorSupplier.get();
 		boolean first = true;
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
-		
+
 		while (iterator.hasNext()) {
 			Integer index = iterator.next();
 			boolean value = get(index);
@@ -99,7 +97,7 @@ public final class BooleanContainer {
 			sb.append("=");
 			sb.append(value);
 		}
-		
+
 		sb.append(']');
 		return sb.toString();
 	}

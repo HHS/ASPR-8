@@ -9,8 +9,6 @@ import util.errors.ContractException;
 /**
  * Implementor of IndexedPropertyManager that compresses Boolean property values
  * into a bit-based data structure.
- * 
- *
  */
 public final class BooleanPropertyManager implements IndexedPropertyManager {
 
@@ -23,32 +21,36 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 	 * Constructs this BooleanPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
-	 *             the property definition is null</li>
-	 *             <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
-	 *             if the property definition's type is not Boolean</li>
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+	 *                           if the property definition is null</li>
+	 *                           <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
+	 *                           if the property definition's type is not
+	 *                           Boolean</li>
+	 *                           </ul>
 	 */
-	
-	public BooleanPropertyManager( PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+	public BooleanPropertyManager(PropertyDefinition propertyDefinition,
+			Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		
+
 		if (propertyDefinition.getType() != Boolean.class) {
-			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE, "Requires a property definition with Boolean type ");
+			throw new ContractException(PropertyError.PROPERTY_DEFINITION_IMPROPER_TYPE,
+					"Requires a property definition with Boolean type ");
 		}
 		boolean defaultValue = false;
 		if (propertyDefinition.getDefaultValue().isPresent()) {
-			defaultValue = (Boolean)propertyDefinition.getDefaultValue().get();			
-		}		
+			defaultValue = (Boolean) propertyDefinition.getDefaultValue().get();
+		}
 
-		boolContainer = new BooleanContainer(defaultValue,indexIteratorSupplier);
+		boolContainer = new BooleanContainer(defaultValue, indexIteratorSupplier);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getPropertyValue(int id) {
-		if(id<0) {
+		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		Boolean result = boolContainer.get(id);
@@ -71,7 +73,7 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 		}
 		boolContainer.expandCapacity(count);
 	}
-	
+
 	@Override
 	public void removeId(int id) {
 		if (id < 0) {
@@ -87,7 +89,5 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

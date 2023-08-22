@@ -6,19 +6,13 @@ import net.jcip.annotations.Immutable;
 
 /**
  * An immutable container of the initial state of partitions. It contains: <BR>
- * <ul>
- * <li>partitions</li>
- * </ul>
- * 
- *
+ * partitions
  */
 @Immutable
 public final class PartitionsPluginData implements PluginData {
 
 	/**
 	 * Builder class for PartitionsPluginData
-	 * 
-	 *
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
@@ -28,21 +22,20 @@ public final class PartitionsPluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the {@link PartitionsPluginData} from the collected
-		 * information supplied to this builder.
+		 * Returns the {@link PartitionsPluginData} from the collected information
+		 * supplied to this builder.
 		 */
 		public PartitionsPluginData build() {
 			return new PartitionsPluginData(new Data(data));
 		}
 
 		/**
-		 * Set the run continuity support policy. Defaults to false. Supporting
-		 * run continuity may increase the memory requirements for partitions,
-		 * but will guarantee run continuity.
-		 *
+		 * Set the run continuity support policy. Defaults to false. Supporting run
+		 * continuity may increase the memory requirements for partitions, but will
+		 * guarantee run continuity.
 		 */
 		public Builder setRunContinuitySupport(final boolean supportRunContinuity) {
-		
+
 			data.supportRunContinuity = supportRunContinuity;
 			return this;
 		}
@@ -56,7 +49,7 @@ public final class PartitionsPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			supportRunContinuity = data.supportRunContinuity;			
+			supportRunContinuity = data.supportRunContinuity;
 		}
 
 		@Override
@@ -101,7 +94,7 @@ public final class PartitionsPluginData implements PluginData {
 	public static Builder builder() {
 		return new Builder(new Data());
 	}
-	
+
 	private final Data data;
 
 	private PartitionsPluginData(final Data data) {
@@ -110,7 +103,6 @@ public final class PartitionsPluginData implements PluginData {
 
 	/**
 	 * Returns the run continuity support policy
-	 * 
 	 */
 	public boolean supportsRunContinuity() {
 		return data.supportRunContinuity;

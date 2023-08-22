@@ -25,7 +25,7 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		}
 
 		private Data(Data data) {
-			reportLabel = data.reportLabel;			
+			reportLabel = data.reportLabel;
 			locked = data.locked;
 		}
 
@@ -67,7 +67,6 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 			return builder.toString();
 		}
 
-		
 	}
 
 	/**
@@ -79,8 +78,6 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 
 	/**
 	 * Builder class for the report
-	 * 
-	 *
 	 */
 	public final static class Builder implements PluginDataBuilder {
 		private Builder(Data data) {
@@ -103,18 +100,16 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		private void validateData() {
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}			
+			}
 		}
 
 		private Data data;
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is not assigned</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is not assigned
 		 */
 		public MaterialsProducerPropertyReportPluginData build() {
 
@@ -129,9 +124,8 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
 			ensureDataMutability();
@@ -194,7 +188,5 @@ public final class MaterialsProducerPropertyReportPluginData implements PluginDa
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
 
 }

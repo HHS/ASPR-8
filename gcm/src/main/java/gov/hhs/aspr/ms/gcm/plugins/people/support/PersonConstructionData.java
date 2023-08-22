@@ -10,7 +10,6 @@ import util.errors.ContractException;
 /**
  * Container for values used to in the construction of an agent. Values are
  * retrievable by class type and are ordered.
- *
  */
 @Immutable
 public final class PersonConstructionData {
@@ -39,8 +38,6 @@ public final class PersonConstructionData {
 
 	/**
 	 * Builder class for {@link PersonConstructionData}
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Data data = new Data();
@@ -50,8 +47,8 @@ public final class PersonConstructionData {
 		}
 
 		/**
-		 * Returns the {@link PersonConstructionData} formed from the inputs to
-		 * this builder.
+		 * Returns the {@link PersonConstructionData} formed from the inputs to this
+		 * builder.
 		 */
 		public PersonConstructionData build() {
 			return new PersonConstructionData(new Data(data));
@@ -60,9 +57,8 @@ public final class PersonConstructionData {
 		/**
 		 * Adds a value to the builder.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PersonError#NULL_AUXILIARY_DATA} if the
-		 *             value is null</li>
+		 * @throws ContractException {@linkplain PersonError#NULL_AUXILIARY_DATA} if the
+		 *                           value is null
 		 */
 		public Builder add(Object value) {
 			if (value == null) {
@@ -75,9 +71,8 @@ public final class PersonConstructionData {
 	}
 
 	/**
-	 * Returns the first auxiliary object that is an instance of the given
-	 * class. Should be used only getValues() is expected to have at most one
-	 * member.
+	 * Returns the first auxiliary object that is an instance of the given class.
+	 * Should be used only getValues() is expected to have at most one member.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getValue(Class<T> c) {
@@ -93,8 +88,8 @@ public final class PersonConstructionData {
 	}
 
 	/**
-	 * Returns the auxiliary objects that are instances of the given class in
-	 * the order of their addition to the builder.
+	 * Returns the auxiliary objects that are instances of the given class in the
+	 * order of their addition to the builder.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> List<T> getValues(Class<T> c) {

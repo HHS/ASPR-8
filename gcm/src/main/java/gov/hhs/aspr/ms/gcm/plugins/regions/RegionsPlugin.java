@@ -43,9 +43,8 @@ public final class RegionsPlugin {
 		/**
 		 * Builds the RegionsPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
-		 *             the regionsPluginData is null</li>
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
+		 *                           the regionsPluginData is null
 		 */
 		public Plugin getRegionsPlugin() {
 
@@ -65,13 +64,15 @@ public final class RegionsPlugin {
 				RegionsPluginData pluginData = c.getPluginData(RegionsPluginData.class).get();
 				c.addDataManager(new RegionsDataManager(pluginData));
 
-				Optional<RegionPropertyReportPluginData> optional1 = c.getPluginData(RegionPropertyReportPluginData.class);
+				Optional<RegionPropertyReportPluginData> optional1 = c
+						.getPluginData(RegionPropertyReportPluginData.class);
 				if (optional1.isPresent()) {
 					RegionPropertyReportPluginData regionPropertyReportPluginData = optional1.get();
 					c.addReport(new RegionPropertyReport(regionPropertyReportPluginData)::init);
 				}
 
-				Optional<RegionTransferReportPluginData> optional2 = c.getPluginData(RegionTransferReportPluginData.class);
+				Optional<RegionTransferReportPluginData> optional2 = c
+						.getPluginData(RegionTransferReportPluginData.class);
 				if (optional2.isPresent()) {
 					RegionTransferReportPluginData regionTransferReportPluginData = optional2.get();
 					c.addReport(new RegionTransferReport(regionTransferReportPluginData)::init);
@@ -87,12 +88,14 @@ public final class RegionsPlugin {
 			return this;
 		}
 
-		public Builder setRegionPropertyReportPluginData(RegionPropertyReportPluginData regionPropertyReportPluginData) {
+		public Builder setRegionPropertyReportPluginData(
+				RegionPropertyReportPluginData regionPropertyReportPluginData) {
 			data.regionPropertyReportPluginData = regionPropertyReportPluginData;
 			return this;
 		}
 
-		public Builder setRegionTransferReportPluginData(RegionTransferReportPluginData regionTransferReportPluginData) {
+		public Builder setRegionTransferReportPluginData(
+				RegionTransferReportPluginData regionTransferReportPluginData) {
 			data.regionTransferReportPluginData = regionTransferReportPluginData;
 			return this;
 		}

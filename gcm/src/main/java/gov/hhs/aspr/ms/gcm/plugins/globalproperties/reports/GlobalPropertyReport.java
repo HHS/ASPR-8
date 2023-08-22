@@ -15,17 +15,9 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import util.errors.ContractException;
 
 /**
- * A Report that displays assigned global property values over time.
- *
- * Fields
- *
- * Time -- the time in days when the global property was set
- *
- * Property -- the global property identifier
- *
- * Value -- the value of the global property
- *
- *
+ * A Report that displays assigned global property values over time. Fields Time
+ * -- the time in days when the global property was set Property -- the global
+ * property identifier Value -- the value of the global property
  */
 public final class GlobalPropertyReport {
 
@@ -35,11 +27,11 @@ public final class GlobalPropertyReport {
 	private final ReportLabel reportLabel;
 	private final boolean includeNewPropertyIds;
 
-	private final ReportHeader reportHeader = ReportHeader	.builder()//
-															.add("time")//
-															.add("property")//
-															.add("value")//
-															.build();//
+	private final ReportHeader reportHeader = ReportHeader.builder()//
+			.add("time")//
+			.add("property")//
+			.add("value")//
+			.build();//
 
 	private boolean isCurrentProperty(GlobalPropertyId globalPropertyId) {
 		return currentProperties.contains(globalPropertyId);
@@ -78,11 +70,10 @@ public final class GlobalPropertyReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPropertyIds.contains(globalPropertyId)) {
 			return false;
@@ -102,13 +93,9 @@ public final class GlobalPropertyReport {
 	}
 
 	/**
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
-	 *             if the plugin data is null</li>
-	 * 
+	 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+	 *                           if the plugin data is null
 	 */
-
 	public GlobalPropertyReport(GlobalPropertyReportPluginData globalPropertyReportPluginData) {
 
 		if (globalPropertyReportPluginData == null) {
@@ -121,14 +108,16 @@ public final class GlobalPropertyReport {
 		includeNewPropertyIds = globalPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
-	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext, final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
+	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext,
+			final GlobalPropertyDefinitionEvent globalPropertyDefinitionEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyDefinitionEvent.globalPropertyId();
 		if (addToCurrentProperties(globalPropertyId)) {
 			writeProperty(reportContext, globalPropertyId, globalPropertyDefinitionEvent.initialPropertyValue());
 		}
 	}
 
-	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext, final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
+	private void handleGlobalPropertyUpdateEvent(final ReportContext reportContext,
+			final GlobalPropertyUpdateEvent globalPropertyUpdateEvent) {
 		final GlobalPropertyId globalPropertyId = globalPropertyUpdateEvent.globalPropertyId();
 		if (isCurrentProperty(globalPropertyId)) {
 			writeProperty(reportContext, globalPropertyId, globalPropertyUpdateEvent.currentPropertyValue());
@@ -140,7 +129,8 @@ public final class GlobalPropertyReport {
 	 */
 	public void init(final ReportContext reportContext) {
 
-		final GlobalPropertiesDataManager globalPropertiesDataManager = reportContext.getDataManager(GlobalPropertiesDataManager.class);
+		final GlobalPropertiesDataManager globalPropertiesDataManager = reportContext
+				.getDataManager(GlobalPropertiesDataManager.class);
 
 		reportContext.subscribe(GlobalPropertyDefinitionEvent.class, this::handleGlobalPropertyDefinitionEvent);
 		reportContext.subscribe(GlobalPropertyUpdateEvent.class, this::handleGlobalPropertyUpdateEvent);
@@ -153,8 +143,7 @@ public final class GlobalPropertyReport {
 		}
 
 		/*
-		 * We initialize the reporting with the current state of each global
-		 * property
+		 * We initialize the reporting with the current state of each global property
 		 */
 		for (final GlobalPropertyId globalPropertyId : currentProperties) {
 			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
@@ -176,7 +165,8 @@ public final class GlobalPropertyReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
+	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId,
+			final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportLabel(reportLabel);

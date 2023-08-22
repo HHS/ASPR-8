@@ -4,15 +4,13 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Thread safe state container for the Experiment Status Console
- *
  */
-
 @ThreadSafe
 public final class StatusConsoleState {
 	private boolean immediateErrorReporting;
 	private boolean reportScenarioProgress;
-	private int stackTraceReportLimit;	
-	private int lastReportedCompletionPercentage;	
+	private int stackTraceReportLimit;
+	private int lastReportedCompletionPercentage;
 	private int immediateStackTraceCount;
 
 	public synchronized boolean immediateErrorReporting() {

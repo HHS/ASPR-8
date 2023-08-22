@@ -6,7 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record PersonRegionUpdateEvent(PersonId personId,
-									  RegionId previousRegionId,
-									  RegionId currentRegionId) implements Event {
+public record PersonRegionUpdateEvent(PersonId personId, RegionId previousRegionId, RegionId currentRegionId)
+		implements Event {
 }

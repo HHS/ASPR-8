@@ -44,8 +44,6 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 
 	/**
 	 * Builder class for the report
-	 * 
-	 *
 	 */
 	public final static class Builder extends PeriodicReportPluginData.Builder {
 		private Data data;
@@ -56,16 +54,15 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		}
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is not assigned</li>
+		 *                           the report label is not assigned</li>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is not assigned</li>
+		 *                           the report period is not assigned</li>
+		 *                           </ul>
 		 */
 		public RegionTransferReportPluginData build() {
 			return new RegionTransferReportPluginData(data);
@@ -74,10 +71,8 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
 			super.setReportLabel(reportLabel);
@@ -87,10 +82,8 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
 			super.setReportPeriod(reportPeriod);

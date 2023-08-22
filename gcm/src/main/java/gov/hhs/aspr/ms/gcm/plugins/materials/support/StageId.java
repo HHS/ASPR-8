@@ -4,11 +4,9 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Identifier for all material stages
- * 
- *
  */
 @Immutable
-public final class StageId implements Comparable<StageId>{
+public final class StageId implements Comparable<StageId> {
 
 	private final int id;
 
@@ -22,7 +20,7 @@ public final class StageId implements Comparable<StageId>{
 
 	@Override
 	public int compareTo(StageId personId) {
-		return Integer.compare(id,personId.id);
+		return Integer.compare(id, personId.id);
 	}
 
 	@Override
@@ -44,8 +42,8 @@ public final class StageId implements Comparable<StageId>{
 		}
 		return true;
 	}
-	
-	@Override	
+
+	@Override
 	public String toString() {
 		return Integer.toString(id);
 	}

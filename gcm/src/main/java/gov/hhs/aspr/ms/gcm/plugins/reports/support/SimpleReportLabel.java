@@ -5,8 +5,6 @@ import util.errors.ContractException;
 
 /**
  * A convenience implementor of ReportLabel that wraps a value.
- * 
- *
  */
 @Immutable
 public final class SimpleReportLabel implements ReportLabel {
@@ -17,10 +15,8 @@ public final class SimpleReportLabel implements ReportLabel {
 	 * Creates a ReportLabel from a value. The value must implement a proper equals
 	 * contract and be immutable.
 	 * 
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the value is
-	 *             null</li>
+	 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+	 *                           value is null
 	 */
 	public SimpleReportLabel(Object value) {
 		if (value == null) {

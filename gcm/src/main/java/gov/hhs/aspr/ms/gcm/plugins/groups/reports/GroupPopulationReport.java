@@ -13,17 +13,9 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 
 /**
  * A periodic Report that displays the number of groups having a particular
- * number of people for a given group type.
- *
- * Fields
- *
- * GroupType -- the group type of group
- *
- * PersonCount -- the number of people in each group
- * 
- * GroupCount -- the number of groups having the person count
- *
- *
+ * number of people for a given group type. Fields GroupType -- the group type
+ * of group PersonCount -- the number of people in each group GroupCount -- the
+ * number of groups having the person count
  */
 public final class GroupPopulationReport extends PeriodicReport {
 
@@ -32,10 +24,8 @@ public final class GroupPopulationReport extends PeriodicReport {
 	}
 
 	/*
-	 * 
 	 * Count of the number of groups having a particular person count for a
 	 * particular group type
-	 *
 	 */
 	private static class Counter {
 		int count;
@@ -47,10 +37,10 @@ public final class GroupPopulationReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-																	.add("group_type")//
-																	.add("person_count")//
-																	.add("group_count")//
-																	.build();//
+					.add("group_type")//
+					.add("person_count")//
+					.add("group_count")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -58,11 +48,8 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 
-		
-
 		/*
-		 * Count the number of groups of each size that exist for each group
-		 * type
+		 * Count the number of groups of each size that exist for each group type
 		 */
 		Map<GroupTypeId, Map<Integer, Counter>> groupTypePopulationMap = new LinkedHashMap<>();
 		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {

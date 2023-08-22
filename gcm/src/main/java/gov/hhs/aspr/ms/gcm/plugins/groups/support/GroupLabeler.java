@@ -13,25 +13,24 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelerSensitivity;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * A labeler for groups. The dimension of the labeler is
  * {@linkplain GroupTypeId}, the events that stimulates a label update are
  * {@linkplain GroupMembershipAdditionEvent} and
- * {@linkplain GroupMembershipRemovalEvent} and the labeling function
- * is composed from the given Function.
- * 
- *
+ * {@linkplain GroupMembershipRemovalEvent} and the labeling function is
+ * composed from the given Function.
  */
 public abstract class GroupLabeler implements Labeler {
-	
-	protected GroupLabeler() {}
-	
+
+	protected GroupLabeler() {
+	}
+
 	protected abstract Object getLabelFromGroupTypeCountMap(GroupTypeCountMap groupTypeCountMap);
-	
+
 	private GroupsDataManager groupsDataManager;
 
-	
 	private Optional<PersonId> getPersonId(GroupMembershipAdditionEvent groupMembershipAdditionEvent) {
 		return Optional.of(groupMembershipAdditionEvent.personId());
 	}
@@ -41,27 +40,29 @@ public abstract class GroupLabeler implements Labeler {
 	}
 
 	/**
-	 * Returns a set of labeler sensitivitites for
-	 * GroupMembershipAdditionEvent and
-	 * GroupMembershipRemovalEvent. All group changes will effect the
-	 * partition.
+	 * Returns a set of labeler sensitivitites for GroupMembershipAdditionEvent and
+	 * GroupMembershipRemovalEvent. All group changes will effect the partition.
 	 */
 	@Override
 	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::getPersonId));
-		result.add(new LabelerSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::getPersonId));
+		result.add(new LabelerSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class,
+				this::getPersonId));
+		result.add(new LabelerSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class,
+				this::getPersonId));
 		return result;
 	}
 
 	/**
 	 * Returns the label for the given person id
 	 * 
-	 * @throwsContractException
-	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
-	 *                          the person id is null
-	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the person id is unknown
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
+	 *                           </ul>
 	 */
 	@Override
 	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
@@ -112,7 +113,7 @@ public abstract class GroupLabeler implements Labeler {
 		GroupTypeCountMap.Builder groupTypeCountMapBuilder = GroupTypeCountMap.builder();
 		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
 			int count = groupsDataManager.getGroupCountForGroupTypeAndPerson(groupTypeId, personId);
-			if(groupTypeId.equals(eventGroupTypeId)) {
+			if (groupTypeId.equals(eventGroupTypeId)) {
 				count += delta;
 			}
 			groupTypeCountMapBuilder.setCount(groupTypeId, count);
@@ -125,7 +126,5 @@ public abstract class GroupLabeler implements Labeler {
 	public String toString() {
 		return "GroupLabeler []";
 	}
-	
-	
 
 }

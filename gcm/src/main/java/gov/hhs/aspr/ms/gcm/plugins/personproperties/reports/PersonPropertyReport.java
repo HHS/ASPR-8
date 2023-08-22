@@ -24,21 +24,9 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 /**
  * A periodic Report that displays the number of people exhibiting a particular
  * value for each person property for a given region pair. Only non-zero person
- * counts are reported.
- *
- *
- * Fields
- *
- * region -- the region identifier
- *
- * property -- the person property identifier
- *
- * value -- the value of the property
- *
- * person_count -- the number of people having the property value within the
- * region
- *
- *
+ * counts are reported. Fields region -- the region identifier property -- the
+ * person property identifier value -- the value of the property person_count --
+ * the number of people having the property value within the region
  */
 public final class PersonPropertyReport extends PeriodicReport {
 
@@ -60,16 +48,15 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * The constrained set of person properties that will be used in this
-	 * report. They are set during init()
+	 * The constrained set of person properties that will be used in this report.
+	 * They are set during init()
 	 */
 	private final Set<PersonPropertyId> includedPersonPropertyIds = new LinkedHashSet<>();
 	private final Set<PersonPropertyId> currentProperties = new LinkedHashSet<>();
 	private final Set<PersonPropertyId> excludedPersonPropertyIds = new LinkedHashSet<>();
 
 	/*
-	 * The tuple mapping to person counts that is maintained via handling of
-	 * events.
+	 * The tuple mapping to person counts that is maintained via handling of events.
 	 */
 	private final Map<RegionId, Map<PersonPropertyId, Map<Object, Counter>>> tupleMap = new LinkedHashMap<>();
 
@@ -79,11 +66,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-																	.add("region")//
-																	.add("property")//
-																	.add("value")//
-																	.add("person_count")//
-																	.build();//
+					.add("region")//
+					.add("property")//
+					.add("value")//
+					.add("person_count")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -91,14 +78,13 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/*
 	 * Decrements the population for the given tuple
 	 */
-	private void decrement(final RegionId regionId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private void decrement(final RegionId regionId, final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		getCounter(regionId, personPropertyId, personPropertyValue).count--;
 	}
 
 	@Override
 	protected void flush(ReportContext reportContext) {
-
-		
 
 		/*
 		 * For each tuple having a positive population, report the tuple
@@ -130,10 +116,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * Returns the counter for the give tuple. Creates the counter if it does
-	 * not already exist.
+	 * Returns the counter for the give tuple. Creates the counter if it does not
+	 * already exist.
 	 */
-	private Counter getCounter(final RegionId regionId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private Counter getCounter(final RegionId regionId, final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = tupleMap.get(regionId);
 		if (propertyIdMap == null) {
 			propertyIdMap = new LinkedHashMap<>();
@@ -157,12 +144,14 @@ public final class PersonPropertyReport extends PeriodicReport {
 		PersonId personId = personAdditionEvent.personId();
 		final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (final PersonPropertyId personPropertyId : currentProperties) {
-			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId,
+					personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 		}
 	}
 
-	private void handlePersonPropertyUpdateEvent(ReportContext reportContext, PersonPropertyUpdateEvent personPropertyUpdateEvent) {
+	private void handlePersonPropertyUpdateEvent(ReportContext reportContext,
+			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
 		PersonPropertyId personPropertyId = personPropertyUpdateEvent.personPropertyId();
 		if (isCurrentProperty(personPropertyId)) {
 			PersonId personId = personPropertyUpdateEvent.personId();
@@ -174,21 +163,25 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private void handlePersonImminentRemovalEvent(ReportContext reportContext, PersonImminentRemovalEvent personImminentRemovalEvent) {
+	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
+			PersonImminentRemovalEvent personImminentRemovalEvent) {
 		PersonId personId = personImminentRemovalEvent.personId();
 		RegionId regionId = regionsDataManager.getPersonRegion(personId);
 		for (PersonPropertyId personPropertyId : currentProperties) {
-			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId,
+					personPropertyId);
 			decrement(regionId, personPropertyId, personPropertyValue);
 		}
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext reportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext reportContext,
+			PersonRegionUpdateEvent personRegionUpdateEvent) {
 		PersonId personId = personRegionUpdateEvent.personId();
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId regionId = personRegionUpdateEvent.currentRegionId();
 		for (final PersonPropertyId personPropertyId : currentProperties) {
-			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+			final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId,
+					personPropertyId);
 			increment(regionId, personPropertyId, personPropertyValue);
 			decrement(previousRegionId, personPropertyId, personPropertyValue);
 		}
@@ -197,7 +190,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/*
 	 * Increments the population for the given tuple
 	 */
-	private void increment(final RegionId regionId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private void increment(final RegionId regionId, final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		getCounter(regionId, personPropertyId, personPropertyValue).count++;
 	}
 
@@ -244,11 +238,10 @@ public final class PersonPropertyReport extends PeriodicReport {
 		 * FALSE FALSE TRUE FALSE
 		 * 
 		 * 
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 * 
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPersonPropertyIds.contains(personPropertyId)) {
 			return false;
@@ -289,7 +282,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			for (final PersonPropertyId personPropertyId : currentProperties) {
-				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId,
+						personPropertyId);
 				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}
@@ -309,12 +303,14 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext, PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
+	private void handlePersonPropertyDefinitionEvent(ReportContext actorContext,
+			PersonPropertyDefinitionEvent personPropertyDefinitionEvent) {
 		PersonPropertyId personPropertyId = personPropertyDefinitionEvent.personPropertyId();
 		if (addToCurrentProperties(personPropertyId)) {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				final RegionId regionId = regionsDataManager.getPersonRegion(personId);
-				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId, personPropertyId);
+				final Object personPropertyValue = personPropertiesDataManager.getPersonPropertyValue(personId,
+						personPropertyId);
 				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}

@@ -112,7 +112,6 @@ public final class AT_PartitionsDataManager_Continuity {
 	 * 
 	 * A labeler TestAttributeId.INT_1 that labels people with I1_Label.LOW,
 	 * I1_Label.MEDIUM, or I1_Label.HIGH
-	 * 
 	 */
 	private static void makePartition(ActorContext c) {
 		PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);

@@ -21,13 +21,11 @@ public class TestReportPlan {
 	 * Constructs an report action plan. If assignKey is false, then this report
 	 * action plan will return an empty optional key.
 	 * 
-	 * @throws ContractException
-	 *            
-	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
-	 * 
+	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
+	 *                           null
 	 */
 	public TestReportPlan(final double scheduledTime, Consumer<ReportContext> plan) {
-		
+
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
@@ -37,8 +35,6 @@ public class TestReportPlan {
 		this.plan = plan;
 	}
 
-	
-
 	/**
 	 * Boilerplate implementation of hashCode consistent with equals()
 	 */
@@ -46,7 +42,7 @@ public class TestReportPlan {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);		
+		result = prime * result + (executed ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(scheduledTime);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -55,9 +51,9 @@ public class TestReportPlan {
 
 	/**
 	 * TestActorPlans are equal if and only they return the same values for
-	 * 1)executed() and 2)getScheduledTime()This limited sense of
-	 * equality is present simply to provide some reasonable evidence that the
-	 * plugin data cloning method is working correctly for the test plugin data.
+	 * 1)executed() and 2)getScheduledTime()This limited sense of equality is
+	 * present simply to provide some reasonable evidence that the plugin data
+	 * cloning method is working correctly for the test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -71,7 +67,7 @@ public class TestReportPlan {
 		if (executed != other.executed) {
 			return false;
 		}
-		
+
 		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
 			return false;
 		}
@@ -82,7 +78,7 @@ public class TestReportPlan {
 	 * Constructs an test actor plan from another test actor plan.
 	 */
 	public TestReportPlan(TestReportPlan testReportPlan) {
-		scheduledTime = testReportPlan.scheduledTime;		
+		scheduledTime = testReportPlan.scheduledTime;
 		executed = testReportPlan.executed;
 		plan = testReportPlan.plan;
 	}
@@ -95,8 +91,8 @@ public class TestReportPlan {
 	}
 
 	/**
-	 * Package access. Executes the embedded action and marks this action plan
-	 * as executed.
+	 * Package access. Executes the embedded action and marks this action plan as
+	 * executed.
 	 */
 	void executeAction(final ReportContext actorContext) {
 		try {

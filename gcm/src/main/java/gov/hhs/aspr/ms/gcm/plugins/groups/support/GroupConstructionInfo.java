@@ -12,8 +12,6 @@ import util.errors.ContractException;
 /**
  * Represents the information to add a group, but not its relationship to
  * people.
- * 
- *
  */
 @Immutable
 public final class GroupConstructionInfo {
@@ -75,9 +73,8 @@ public final class GroupConstructionInfo {
 		/**
 		 * Builds the {@link GroupConstructionInfo} from the collected data
 		 * 
-		 * @throws ContractException;
-		 *             <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if no
-		 *             group type id was collected</li>
+		 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if no
+		 *                           group type id was collected
 		 */
 		public GroupConstructionInfo build() {
 			validate();
@@ -87,8 +84,7 @@ public final class GroupConstructionInfo {
 		/**
 		 * Sets the group type id
 		 * 
-		 * @throws ContractException
-		 *             if the group type id is null
+		 * @throws ContractException if the group type id is null
 		 */
 		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
 			if (groupTypeId == null) {
@@ -102,10 +98,12 @@ public final class GroupConstructionInfo {
 		 * Sets the group property value.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             group property id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             group property value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the group property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the group property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
 			if (groupPropertyId == null) {

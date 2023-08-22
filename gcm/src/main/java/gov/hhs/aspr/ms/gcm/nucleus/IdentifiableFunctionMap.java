@@ -21,8 +21,8 @@ public final class IdentifiableFunctionMap<N> {
 	}
 
 	/**
-	 * Returns a builder instance that will build an IdentifiableFunctionMap of
-	 * the given type
+	 * Returns a builder instance that will build an IdentifiableFunctionMap of the
+	 * given type
 	 */
 	public static <T> Builder<T> builder(Class<T> type) {
 		if (type == null) {
@@ -45,10 +45,12 @@ public final class IdentifiableFunctionMap<N> {
 		 * Puts the function at the id, replacing any existing function.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if the
-		 *             function id is null</li>
-		 *             <li>{@linkplain NucleusError#NULL_FUNCTION} if the
-		 *             function is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
+		 *                           the function id is null</li>
+		 *                           <li>{@linkplain NucleusError#NULL_FUNCTION} if the
+		 *                           function is null</li>
+		 *                           </ul>
 		 */
 		public Builder<T> put(Object id, Function<T, Object> function) {
 			if (id == null) {
@@ -69,10 +71,12 @@ public final class IdentifiableFunctionMap<N> {
 	 * Gets the function associated with the given id
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if the
-	 *             function id is null</li>
-	 *             <li>{@linkplain NucleusError#UNKNOWN_FUNCTION_ID} if the
-	 *             function id is not in this map</li>
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_FUNCTION_ID} if
+	 *                           the function id is null</li>
+	 *                           <li>{@linkplain NucleusError#UNKNOWN_FUNCTION_ID}
+	 *                           if the function id is not in this map</li>
+	 *                           </ul>
 	 */
 	public IdentifiableFunction<N> get(Object id) {
 		if (id == null) {

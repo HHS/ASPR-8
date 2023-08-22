@@ -33,7 +33,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		}
 
 		private Data(Data data) {
-			reportLabel = data.reportLabel;			
+			reportLabel = data.reportLabel;
 			includedProperties.addAll(data.includedProperties);
 			excludedProperties.addAll(data.excludedProperties);
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
@@ -64,7 +64,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 			result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
 			result = prime * result + ((excludedProperties == null) ? 0 : excludedProperties.hashCode());
 			result = prime * result + ((includedProperties == null) ? 0 : includedProperties.hashCode());
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());			
+			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
 			return result;
 		}
 
@@ -100,11 +100,10 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 				}
 			} else if (!reportLabel.equals(other.reportLabel)) {
 				return false;
-			}			
+			}
 			return true;
 		}
-		
-		
+
 	}
 
 	/**
@@ -116,8 +115,6 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 
 	/**
 	 * Builder class for the report
-	 * 
-	 *
 	 */
 	public final static class Builder implements PluginDataBuilder {
 		private Builder(Data data) {
@@ -140,20 +137,16 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		private void validateData() {
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
-			}			
+			}
 		}
 
 		private Data data;
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is not assigned</li>
-		 * 
-		 * 
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is not assigned
 		 */
 		public GlobalPropertyReportPluginData build() {
 
@@ -166,9 +159,9 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to true.
+		 * Sets the default policy for inclusion of person properties in the report.
+		 * This policy is used when a person property has not been explicitly included
+		 * or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
 			ensureDataMutability();
@@ -179,9 +172,8 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Selects the given person property id to be included in the report.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           person property id is null
 		 */
 		public Builder includeGlobalProperty(GlobalPropertyId globalPropertyId) {
 			ensureDataMutability();
@@ -196,9 +188,8 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Selects the given person property id to be excluded from the report
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             person property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           person property id is null
 		 */
 		public Builder excludeGlobalProperty(GlobalPropertyId globalPropertyId) {
 			ensureDataMutability();
@@ -213,9 +204,8 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
 			ensureDataMutability();
@@ -237,8 +227,6 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
-
-	
 
 	public ReportLabel getReportLabel() {
 		return data.reportLabel;
@@ -291,6 +279,5 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		builder2.append("]");
 		return builder2.toString();
 	}
-	
-	
+
 }

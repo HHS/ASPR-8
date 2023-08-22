@@ -7,11 +7,8 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Event to indicating that a group had a property value change
- *
  */
 @Immutable
-public record GroupPropertyUpdateEvent(GroupId groupId,
-									   GroupPropertyId groupPropertyId,
-									   Object previousPropertyValue,
-									   Object currentPropertyValue) implements Event {
+public record GroupPropertyUpdateEvent(GroupId groupId, GroupPropertyId groupPropertyId, Object previousPropertyValue,
+		Object currentPropertyValue) implements Event {
 }

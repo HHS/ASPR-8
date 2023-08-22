@@ -17,26 +17,23 @@ import util.errors.ContractException;
 /**
  * A a labeler for resources. The dimension of the labeler is the given
  * {@linkplain ResourceId}, the event that stimulates a label update is
- * {@linkplain PersonResourceUpdateEvent} and the labeling function
- * is composed from the given Function.
- * 
- *
+ * {@linkplain PersonResourceUpdateEvent} and the labeling function is composed
+ * from the given Function.
  */
 public abstract class ResourceLabeler implements Labeler {
 
 	private final ResourceId resourceId;
-	
+
 	protected abstract Object getLabelFromAmount(long amount);
-	
+
 	private ResourcesDataManager resourcesDataManager;
-	
-	
+
 	public ResourceId getResourceId() {
 		return resourceId;
 	}
 
 	public ResourceLabeler(ResourceId resourceId) {
-		this.resourceId = resourceId;		
+		this.resourceId = resourceId;
 	}
 
 	private Optional<PersonId> getPersonId(PersonResourceUpdateEvent personResourceUpdateEvent) {
@@ -50,7 +47,8 @@ public abstract class ResourceLabeler implements Labeler {
 	@Override
 	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::getPersonId));
+		result.add(
+				new LabelerSensitivity<PersonResourceUpdateEvent>(PersonResourceUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
@@ -74,7 +72,7 @@ public abstract class ResourceLabeler implements Labeler {
 
 	@Override
 	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
-		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent)event;
+		PersonResourceUpdateEvent personResourceUpdateEvent = (PersonResourceUpdateEvent) event;
 		return getLabelFromAmount(personResourceUpdateEvent.previousResourceLevel());
 	}
 
@@ -86,7 +84,5 @@ public abstract class ResourceLabeler implements Labeler {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

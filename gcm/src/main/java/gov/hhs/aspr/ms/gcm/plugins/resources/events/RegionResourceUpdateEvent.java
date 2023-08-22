@@ -7,11 +7,8 @@ import net.jcip.annotations.Immutable;
 
 /**
  * An observation event indicating that a region's resource level has changed.
- *
  */
-
 @Immutable
-public record RegionResourceUpdateEvent(RegionId regionId,
-										ResourceId resourceId, long previousResourceLevel,
-										long currentResourceLevel) implements Event {
+public record RegionResourceUpdateEvent(RegionId regionId, ResourceId resourceId, long previousResourceLevel,
+		long currentResourceLevel) implements Event {
 }

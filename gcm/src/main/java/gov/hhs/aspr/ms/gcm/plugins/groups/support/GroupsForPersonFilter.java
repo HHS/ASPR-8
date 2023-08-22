@@ -31,11 +31,11 @@ public class GroupsForPersonFilter extends Filter {
 	public Equality getEquality() {
 		return equality;
 	}
-	
+
 	public int getGroupCount() {
 		return groupCount;
 	}
-	
+
 	public GroupsForPersonFilter(final Equality equality, final int groupCount) {
 		this.equality = equality;
 		this.groupCount = groupCount;
@@ -48,7 +48,7 @@ public class GroupsForPersonFilter extends Filter {
 
 	@Override
 	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
-		if(partitionsContext == null) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupsDataManager == null) {
@@ -58,19 +58,23 @@ public class GroupsForPersonFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipAdditionEvent event) {
 		return Optional.of(event.personId());
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipRemovalEvent event) {
 		return Optional.of(event.personId());
 	}
 
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::additionRequiresRefresh));
-		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::removalRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class,
+				this::additionRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class,
+				this::removalRequiresRefresh));
 
 		return result;
 	}
@@ -112,7 +116,5 @@ public class GroupsForPersonFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

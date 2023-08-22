@@ -4,11 +4,7 @@ import util.errors.ContractException;
 
 /**
  * A convenience class for representing PluginId as a wrapped object.
- * 
- *
- *
  */
-
 public class SimplePluginId implements PluginId {
 
 	private final Object value;
@@ -17,11 +13,8 @@ public class SimplePluginId implements PluginId {
 	 * Constructs a SimplePluginId from the given value. The value class must
 	 * implement a proper equals contract.
 	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#NULL_PLUGIN_ID} if the value is
-	 *             null</li>
-	 * 
-	 * 
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_ID} if the
+	 *                           value is null
 	 */
 	public SimplePluginId(Object value) {
 		if (value == null) {
@@ -50,8 +43,7 @@ public class SimplePluginId implements PluginId {
 	}
 
 	/**
-	 * Simple Plugin Ids are equal if and only if their contained values are
-	 * equal
+	 * Simple Plugin Ids are equal if and only if their contained values are equal
 	 */
 	@Override
 	public boolean equals(Object obj) {

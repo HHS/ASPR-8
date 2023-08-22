@@ -12,23 +12,22 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.AttributesD
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * A labeler for attributes. The dimension of the labeler is the given
  * {@linkplain AttributeId}, the event that stimulates a label update is
  * {@linkplain AttributeUpdateEvent} and the labeling function is composed from
  * the given Function.
- * 
- *
  */
 public abstract class AttributeLabeler implements Labeler {
 
 	private final AttributeId attributeId;
-	
+
 	private AttributesDataManager attributesDataManager;
 
 	protected abstract Object getLabelFromValue(Object value);
-	
+
 	public AttributeLabeler(AttributeId attributeId) {
 		this.attributeId = attributeId;
 	}
@@ -52,15 +51,15 @@ public abstract class AttributeLabeler implements Labeler {
 	}
 
 	/**
-	 * Returns the label for the person
+	 * Returns the label for the person precondition: the context should not be null
 	 * 
-	 * precondition: the context should not be null
-	 * 
-	 * @throwsContractException
-	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if
-	 *                          the person id is null
-	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID}
-	 *                          if the person id is unknown
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown
+	 *                           </ul>
 	 */
 	@Override
 	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {

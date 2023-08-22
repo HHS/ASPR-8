@@ -20,8 +20,6 @@ import util.errors.ContractException;
 
 /**
  * A plugin providing a materials data manager to the simulation.
- * 
- *
  */
 public final class MaterialsPlugin {
 
@@ -55,9 +53,8 @@ public final class MaterialsPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
-		 *             if the materials plugin data is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PLUGIN_DATA}
+		 *                           if the materials plugin data is null
 		 */
 		public Plugin getMaterialsPlugin() {
 
@@ -94,15 +91,19 @@ public final class MaterialsPlugin {
 					c.addReport(new BatchStatusReport(batchStatusReportPluginData)::init);
 				}
 
-				Optional<MaterialsProducerPropertyReportPluginData> optional2 = c.getPluginData(MaterialsProducerPropertyReportPluginData.class);
+				Optional<MaterialsProducerPropertyReportPluginData> optional2 = c
+						.getPluginData(MaterialsProducerPropertyReportPluginData.class);
 				if (optional2.isPresent()) {
-					MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = optional2.get();
+					MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = optional2
+							.get();
 					c.addReport(new MaterialsProducerPropertyReport(materialsProducerPropertyReportPluginData)::init);
 				}
 
-				Optional<MaterialsProducerResourceReportPluginData> optional3 = c.getPluginData(MaterialsProducerResourceReportPluginData.class);
+				Optional<MaterialsProducerResourceReportPluginData> optional3 = c
+						.getPluginData(MaterialsProducerResourceReportPluginData.class);
 				if (optional3.isPresent()) {
-					MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = optional3.get();
+					MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData = optional3
+							.get();
 					c.addReport(new MaterialsProducerResourceReport(materialsProducerResourceReportPluginData)::init);
 				}
 
@@ -122,12 +123,14 @@ public final class MaterialsPlugin {
 			return this;
 		}
 
-		public Builder setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
+		public Builder setMaterialsProducerPropertyReportPluginData(
+				MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData) {
 			data.materialsProducerPropertyReportPluginData = materialsProducerPropertyReportPluginData;
 			return this;
 		}
 
-		public Builder setMaterialsProducerResourceReportPluginData(MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
+		public Builder setMaterialsProducerResourceReportPluginData(
+				MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
 			data.materialsProducerResourceReportPluginData = materialsProducerResourceReportPluginData;
 			return this;
 		}

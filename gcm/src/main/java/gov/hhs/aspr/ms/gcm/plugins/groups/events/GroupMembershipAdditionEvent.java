@@ -7,10 +7,7 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Event to indicating that person was added to a group
- *
  */
-
 @Immutable
-public record GroupMembershipAdditionEvent(PersonId personId,
-										   GroupId groupId) implements Event {
+public record GroupMembershipAdditionEvent(PersonId personId, GroupId groupId) implements Event {
 }

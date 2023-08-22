@@ -102,7 +102,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 
     /**
      * Returns the TestGroupPropertyId associated with the given TestGroupTypeId
-     * 
      * Preconditions: The TestGroupTypeId should not be null
      */
     public static Set<TestGroupPropertyId> getTestGroupPropertyIds(TestGroupTypeId testGroupTypeId) {
@@ -127,7 +126,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
     /**
      * Returns a randomly selected value that is compatible with this member's
      * associated property definition.
-     * 
      */
     public Object getRandomPropertyValue(final RandomGenerator randomGenerator) {
         switch (this) {
@@ -167,7 +165,6 @@ public enum TestGroupPropertyId implements GroupPropertyId {
 
     /**
      * Returns a randomly selected TestGroupPropertyId.
-     * 
      */
     public static TestGroupPropertyId getRandomTestGroupPropertyId(final RandomGenerator randomGenerator) {
         int index = randomGenerator.nextInt(TestGroupPropertyId.values().length);

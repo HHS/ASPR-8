@@ -21,13 +21,9 @@ import util.errors.ContractException;
 
 /**
  * A mutable data manager for global properties.
- * 
- *
  */
-
 public final class GlobalPropertiesDataManager extends DataManager {
 
-	
 	private static enum EventFunctionId {
 		GLOBAL_PROPERTY_ID; //
 
@@ -61,9 +57,8 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Constructs the data manager
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
-	 *                           if the global plugin data is null</li>
+	 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+	 *                           if the global plugin data is null
 	 */
 	public GlobalPropertiesDataManager(GlobalPropertiesPluginData globalPropertiesPluginData) {
 		if (globalPropertiesPluginData == null) {
@@ -74,18 +69,15 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	}
 
 	/**
-	 * 
 	 * Returns an event that defines a new global property
 	 * 
 	 * @throws ContractException
-	 * 
+	 *                           <ul>
 	 *                           <li>{@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_INITIALIZATION}
 	 *                           if the global property initialization is null</li>
-	 * 
 	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *                           if the global property already exists</li>
-	 * 
-	 * 
+	 *                           </ul>
 	 */
 	public void defineGlobalProperty(GlobalPropertyInitialization globalPropertyInitialization) {
 		dataManagerContext
@@ -95,7 +87,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GlobalPropertyDefinitionEvent} events. Matches all such events.
-	 *
 	 */
 	public EventFilter<GlobalPropertyDefinitionEvent> getEventFilterForGlobalPropertyDefinitionEvent() {
 		return EventFilter.builder(GlobalPropertyDefinitionEvent.class)//
@@ -105,7 +96,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Returns an event filter used to subscribe to
 	 * {@link GlobalPropertyUpdateEvent} events. Matches all such events.
-	 *
 	 */
 	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent() {
 		return EventFilter.builder(GlobalPropertyUpdateEvent.class)//
@@ -116,13 +106,13 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link GlobalPropertyUpdateEvent} events. Matches on global property id.
 	 *
-	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is not known</li>
-	 * 
+	 *                           </ul>
 	 */
 	public EventFilter<GlobalPropertyUpdateEvent> getEventFilterForGlobalPropertyUpdateEvent(
 			GlobalPropertyId globalPropertyId) {
@@ -136,13 +126,13 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is unknown</li>
-	 * 
+	 *                           </ul>
 	 */
-
 	public PropertyDefinition getGlobalPropertyDefinition(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
 		return globalPropertyDefinitions.get(globalPropertyId);
@@ -152,13 +142,13 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the property definition for the given {@link GlobalPropertyId}
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is unknown</li>
-	 * 
+	 *                           </ul>
 	 */
-
 	public double getGlobalPropertyDefinitionTime(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
 		return globalPropertyDefinitionTimes.get(globalPropertyId);
@@ -180,12 +170,13 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the time when the of the global property was last assigned.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is unknown</li>
+	 *                           </ul>
 	 */
-
 	public double getGlobalPropertyTime(GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyId(globalPropertyId);
 		Double result = globalPropertyTimes.get(globalPropertyId);
@@ -199,11 +190,12 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Returns the value of the global property.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the global property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the global property id is unknown</li>
-	 * 
+	 *                           </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getGlobalPropertyValue(GlobalPropertyId globalPropertyId) {
@@ -272,12 +264,10 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	/**
 	 * Initializes the global properties data manager
 	 * 
-	 * @throws ContractException
-	 * 
-	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_DEF_TIME}
-	 *                           if the Global Properties Plugin Data contains a
+	 * @throws ContractException {@linkplain PropertyError#INCOMPATIBLE_DEF_TIME} if
+	 *                           the Global Properties Plugin Data contains a
 	 *                           property definition with a creation time that
-	 *                           exceeds the current simulation time</li>
+	 *                           exceeds the current simulation time
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -298,7 +288,6 @@ public final class GlobalPropertiesDataManager extends DataManager {
 		globalPropertyDefinitions = globalPropertiesPluginData.getGlobalPropertyDefinitions();
 
 		globalPropertyDefinitionTimes = globalPropertiesPluginData.getGlobalPropertyDefinitionTimes();
-
 
 		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
@@ -328,17 +317,21 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 * Set the value of the global property and updates the property assignment
 	 * time.
 	 *
-	 * @throw {@link ContractException}
-	 *        <li>{@link PropertyError.NULL_PROPERTY_ID} if the global property id
-	 *        is null
-	 *        <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if the global property
-	 *        id is unknown
-	 *        <li>{@link PropertyError.NULL_PROPERTY_VALUE} if the property value is
-	 *        null
-	 *        <li>{@link PropertyError.IMMUTABLE_VALUE} if the global property
-	 *        definition indicates the property is not mutable
-	 *        <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the property value is
-	 *        incompatible with the property definition </blockquote></li>
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_ID} if the
+	 *                           global property id is null</li>
+	 *                           <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if
+	 *                           the global property id is unknown</li>
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_VALUE} if
+	 *                           the property value is null</li>
+	 *                           <li>{@link PropertyError#IMMUTABLE_VALUE} if the
+	 *                           global property definition indicates the property
+	 *                           is not mutable</li>
+	 *                           <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the
+	 *                           property value is incompatible with the property
+	 *                           definition</li>
+	 *                           </ul>
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {
 

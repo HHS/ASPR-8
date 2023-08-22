@@ -3,10 +3,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 /**
  * The unique identifier for actors. Actors are constructed dynamically and ids
  * are distributed contiguously from 0.
- * 
- *
  */
-
 public final class ActorId {
 
 	private final int id;
@@ -26,8 +23,7 @@ public final class ActorId {
 	}
 
 	/**
-	 * Returns string of the form "ActorId[X]" where the value of the actor id
-	 * is X
+	 * Returns string of the form "ActorId[X]" where the value of the actor id is X
 	 */
 	@Override
 	public String toString() {

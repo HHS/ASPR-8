@@ -11,8 +11,6 @@ import util.errors.ContractException;
 /**
  * Represents the information to fully specify the conversion of a stage into a
  * batch
- * 
- *
  */
 @Immutable
 public class StageConversionInfo {
@@ -69,11 +67,12 @@ public class StageConversionInfo {
 		 * Builds the BatchConstructionInfo from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-		 *             material id was not set</li>
-		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID}
-		 *             if the stage id was not set</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
+		 *                           the material id was not set</li>
+		 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
+		 *                           the stage id was not set</li>
+		 *                           </ul>
 		 */
 		public StageConversionInfo build() {
 			validate();
@@ -84,10 +83,12 @@ public class StageConversionInfo {
 		 * Sets the amount. Defaulted to zero.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
-		 *             * if the amount is negative</li>
-		 *             <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
-		 *             if the amount is not finite</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NEGATIVE_MATERIAL_AMOUNT}
+		 *                           * if the amount is negative</li>
+		 *                           <li>{@linkplain MaterialsError#NON_FINITE_MATERIAL_AMOUNT}
+		 *                           if the amount is not finite</li>
+		 *                           </ul>
 		 */
 		public Builder setAmount(double amount) {
 			if (!Double.isFinite(amount)) {
@@ -96,7 +97,7 @@ public class StageConversionInfo {
 			if (amount < 0) {
 				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
 			}
-			
+
 			data.amount = amount;
 			return this;
 		}
@@ -104,9 +105,8 @@ public class StageConversionInfo {
 		/**
 		 * Sets the material id. Defaulted to null.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-		 *             material id is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
 			if (materialId == null) {
@@ -120,9 +120,10 @@ public class StageConversionInfo {
 		 * Sets the stager id. Defaulted to null.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_STAGE_ID}
-		 *             if the stage id is null</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
+		 *                           the stage id is null</li>
+		 *                           </ul>
 		 */
 		public Builder setStageId(StageId stageId) {
 			if (stageId == null) {
@@ -136,12 +137,12 @@ public class StageConversionInfo {
 		 * Sets a property value;
 		 *
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             property value is null</li>
-		 *
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder setPropertyValue(BatchPropertyId batchPropertyId, Object propertyValue) {
 			if (batchPropertyId == null) {

@@ -23,11 +23,11 @@ public class GroupMemberFilter extends Filter {
 			throw new ContractException(GroupError.NULL_GROUP_ID);
 		}
 	}
-	
+
 	public GroupId getGroupId() {
 		return groupId;
 	}
-	
+
 	public GroupMemberFilter(final GroupId groupId) {
 		this.groupId = groupId;
 	}
@@ -37,14 +37,16 @@ public class GroupMemberFilter extends Filter {
 		validateGroupIdNotNull(partitionsContext, groupId);
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipAdditionEvent event) {
 		if (event.groupId().equals(groupId)) {
 			return Optional.of(event.personId());
 		}
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipRemovalEvent event) {
 		if (event.groupId().equals(groupId)) {
 			return Optional.of(event.personId());
 		}
@@ -55,21 +57,23 @@ public class GroupMemberFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::additionRequiresRefresh));
-		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::removalRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class,
+				this::additionRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class,
+				this::removalRequiresRefresh));
 
 		return result;
 	}
 
 	@Override
 	public boolean evaluate(PartitionsContext partitionsContext, PersonId personId) {
-		if(partitionsContext == null) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (groupsDataManager == null) {
 			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
-		return groupsDataManager.isPersonInGroup(personId,groupId);
+		return groupsDataManager.isPersonInGroup(personId, groupId);
 	}
 
 	@Override
@@ -107,7 +111,5 @@ public class GroupMemberFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

@@ -100,8 +100,6 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 
 	/**
 	 * Builder class for the report
-	 * 
-	 *
 	 */
 	public final static class Builder extends PeriodicReportPluginData.Builder {
 		private Data data;
@@ -112,25 +110,24 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		}
 
 		/**
-		 * Returns a PersonPropertyReportPluginData created from the collected
-		 * inputs
+		 * Returns a PersonPropertyReportPluginData created from the collected inputs
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is not assigned</li>
+		 *                           the report label is not assigned</li>
 		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is not assigned</li>
+		 *                           the report period is not assigned</li>
+		 *                           </ul>
 		 */
 		public PersonPropertyReportPluginData build() {
 			return new PersonPropertyReportPluginData(data);
 		}
 
 		/**
-		 * Sets the default policy for inclusion of person properties in the
-		 * report. This policy is used when a person property has not been
-		 * explicitly included or excluded. Defaulted to true.
+		 * Sets the default policy for inclusion of person properties in the report.
+		 * This policy is used when a person property has not been explicitly included
+		 * or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
 			data.defaultInclusionPolicy = include;
@@ -140,10 +137,8 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Selects the given person property id to be included in the report.
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           the
-		 *                           person property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           person property id is null
 		 */
 		public Builder includePersonProperty(PersonPropertyId personPropertyId) {
 			if (personPropertyId == null) {
@@ -157,10 +152,8 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Selects the given person property id to be excluded from the report
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-		 *                           the
-		 *                           person property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           person property id is null
 		 */
 		public Builder excludePersonProperty(PersonPropertyId personPropertyId) {
 			if (personPropertyId == null) {
@@ -174,10 +167,8 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Sets the report label
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-		 *                           the
-		 *                           report label is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_LABEL} if the
+		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
 			super.setReportLabel(reportLabel);
@@ -187,10 +178,8 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		/**
 		 * Sets the report period id
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-		 *                           the
-		 *                           report period is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_PERIOD} if the
+		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
 			super.setReportPeriod(reportPeriod);

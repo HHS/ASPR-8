@@ -11,9 +11,8 @@ public enum TestAuxiliaryGroupTypeId implements GroupTypeId {
 	GROUP_AUX_TYPE_1, GROUP_AUX_TYPE_2, GROUP_AUX_TYPE_3;
 
 	/**
-	 * Returns a randomly selected member of this enumeration.
-	 * 
-	 * Precondition: The random generator must not be null
+	 * Returns a randomly selected member of this enumeration. Precondition: The
+	 * random generator must not be null
 	 */
 	public static TestAuxiliaryGroupTypeId getRandomGroupTypeId(final RandomGenerator randomGenerator) {
 		return TestAuxiliaryGroupTypeId.values()[randomGenerator.nextInt(TestAuxiliaryGroupTypeId.values().length)];

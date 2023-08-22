@@ -1,16 +1,16 @@
 package gov.hhs.aspr.ms.gcm.plugins.regions.support;
 
 public final class SimpleRegionPropertyId implements RegionPropertyId {
-	
+
 	private final Object value;
-	
+
 	/**
 	 * Creates a region property id from the given value
 	 * 
 	 * @throws NullPointerException if the value is null
 	 */
 	public SimpleRegionPropertyId(Object value) {
-		if (value == null) {			
+		if (value == null) {
 			throw new NullPointerException("null value in simple region property id");
 		}
 		this.value = value;
@@ -19,7 +19,7 @@ public final class SimpleRegionPropertyId implements RegionPropertyId {
 	public Object getValue() {
 		return this.value;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -27,7 +27,7 @@ public final class SimpleRegionPropertyId implements RegionPropertyId {
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -46,11 +46,10 @@ public final class SimpleRegionPropertyId implements RegionPropertyId {
 		}
 		return true;
 	}
-	
+
 	@Override
 	public String toString() {
-		return value.toString();		
+		return value.toString();
 	}
-	
 
 }

@@ -32,23 +32,15 @@ import util.path.Path;
 
 /**
  * An instance of the Simulation orchestrates the execution of a scenario from a
- * set of contributed plugins.
- * 
- * Plugins are loaded primarily based on the directed acyclic graph implied by
- * their dependencies and then secondarily on the order in which the plugins
- * were added to the experiment or simulation.
- * 
+ * set of contributed plugins. Plugins are loaded primarily based on the
+ * directed acyclic graph implied by their dependencies and then secondarily on
+ * the order in which the plugins were added to the experiment or simulation.
  * Each plugin contributes an initialization behavior that adds actors and data
  * managers to the simulation at simulation startup. The data managers are
  * initialized in the order they are added to the simulation. Actor
- * initialization then follows in a similar order.
- * 
- * After initialization is over, time flows based on the execution of planning.
- * Plans are collected from both actors and data managers. When no more plans
- * remain, the simulation halts.
- * 
- * 
- *
+ * initialization then follows in a similar order. After initialization is over,
+ * time flows based on the execution of planning. Plans are collected from both
+ * actors and data managers. When no more plans remain, the simulation halts.
  */
 @NotThreadSafe
 public class Simulation {
@@ -181,10 +173,8 @@ public class Simulation {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@link NucleusError#NULL_SIMULATION_TIME} if
-		 *                           the simulation time is null
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
@@ -197,12 +187,9 @@ public class Simulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the simulation
 		 * 
-		 * @throws ContractException
-		 *                           <li>{@link NucleusError#NULL_PLUGIN} if the plugin
-		 *                           is null
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
+		 *                           null
 		 */
-
 		public Builder addPlugin(Plugin plugin) {
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
@@ -229,12 +216,14 @@ public class Simulation {
 		 * consumer collected by this builder.
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain NucleusError#SIM_HALT_TIME_TOO_EARLY}
 		 *                           If the simulation halt time is non-negative and
 		 *                           less than the start time of the simulation</li>
 		 *                           <li>{@linkplain NucleusError#MISSING_SIM_HALT_TIME}
 		 *                           If simulation state is being recorded and the
 		 *                           simulation halt time is not set.</li>
+		 *                           </ul>
 		 */
 		public Simulation build() {
 			validate();
@@ -422,9 +411,6 @@ public class Simulation {
 		DataManagerContext dataManagerContext = new DataManagerContext(dataManagerId, this);
 		dataManagerIdToDataManagerContextMap.put(dataManagerId, dataManagerContext);
 
-		/*
-		 * 
-		 */
 		dataManagerIdToDataManagerMap.put(dataManagerId, dataManager);
 		dataManagerToDataManagerIdMap.put(dataManager, dataManagerId);
 
@@ -678,7 +664,6 @@ public class Simulation {
 			/*
 			 * Explain in detail why there is a circular dependency
 			 */
-
 			Graph<PluginId, Object> g = mutableGraph.toGraph();
 
 			g = Graphs.getSourceSinkReducedGraph(g);
@@ -946,25 +931,23 @@ public class Simulation {
 	 * and the simulation halts.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link NucleusError#REPEATED_EXECUTION} if
-	 *                           execute is invoked more than once
-	 *
+	 *                           execute is invoked more than once</li>
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
 	 *                           contributed plugins contain dependencies on plugins
-	 *                           that have not been added to the simulation
-	 * 
+	 *                           that have not been added to the simulation</li>
 	 *                           <li>{@link NucleusError#MISSING_PLUGIN} if the
-	 *                           contributed plugins contain duplicate plugin ids
-	 * 
+	 *                           contributed plugins contain duplicate plugin
+	 *                           ids</li>
 	 *                           <li>{@link NucleusError#CIRCULAR_PLUGIN_DEPENDENCIES}
 	 *                           if the contributed plugins form a circular chain of
-	 *                           dependencies
+	 *                           dependencies</li>
 	 *                           <li>{@link NucleusError#DATA_MANAGER_INITIALIZATION_FAILURE}
 	 *                           if a data manager does not invoke
 	 *                           {@linkplain DataManager#init(DataManagerContext)}
-	 *                           in its override of init().
-	 * 
-	 * 
+	 *                           in its override of init().</li>
+	 *                           </ul>
 	 */
 	public void execute() {
 		reportContext = new ReportContext(this);
@@ -1170,7 +1153,7 @@ public class Simulation {
 			while (!planningQueue.isEmpty()) {
 				PlanRec planRec = planningQueue.poll();
 				if (planRec.plan != null) {
-					
+
 					PlanData planData = planRec.plan.getPlanData();
 					if (planData != null) {
 						planQueueDataBuilder.setActive(planRec.isActive)//
@@ -1359,10 +1342,7 @@ public class Simulation {
 	 * Note that we are allowing components to delete plans that do not exist. This
 	 * was done to ease any bookkeeping burdens on the component and seems generally
 	 * harmless.
-	 *
-	 * 
 	 */
-
 	@SuppressWarnings("unchecked")
 	protected Optional<Plan<DataManagerContext>> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
@@ -2143,7 +2123,6 @@ public class Simulation {
 
 	/**
 	 * Returns the time (floating point days) of simulation start.
-	 * 
 	 */
 	protected double getStartTime() {
 		return data.simulationState.getStartTime();
@@ -2151,7 +2130,6 @@ public class Simulation {
 
 	/**
 	 * Returns the base date that synchronizes with simulation time zero.
-	 * 
 	 */
 	protected LocalDate getBaseDate() {
 		return data.simulationState.getBaseDate();

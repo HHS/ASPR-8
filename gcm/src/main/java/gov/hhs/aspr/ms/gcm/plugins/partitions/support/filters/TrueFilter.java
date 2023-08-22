@@ -13,7 +13,6 @@ import net.jcip.annotations.Immutable;
  * AndFilter over a loop of filters that might be empty. AND operating over an
  * empty set should always be true.
  */
-
 @Immutable
 public final class TrueFilter extends Filter {
 
@@ -54,6 +53,5 @@ public final class TrueFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
+
 }

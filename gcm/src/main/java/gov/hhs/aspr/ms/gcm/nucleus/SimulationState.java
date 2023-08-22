@@ -11,9 +11,6 @@ import util.errors.ContractException;
  * An immutable data class that holds 1) the base date aligned to simulation
  * time zero and 2) the simulation start time as a floating point number of
  * days.
- * 
- *
- *
  */
 @Immutable
 public class SimulationState {
@@ -92,7 +89,6 @@ public class SimulationState {
 
     /**
      * Builder class for SimulationTime
-     *
      */
     public static class Builder {
         private Data data;
@@ -119,17 +115,15 @@ public class SimulationState {
          * Builds the SimulationState from the collected data
          * 
          * @throws ContractException
+         *                           <ul>
          *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
          *                           if the planning queue arrival id does not exceed
-         *                           the
-         *                           arrival id values for all stored PlanQueueData</li>
-         * 
+         *                           the arrival id values for all stored
+         *                           PlanQueueData</li>
          *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_TIME}
-         *                           if the
-         *                           simulation start time is exceeded by any time value
-         *                           stored for a plan</li>
-         * 
-         * 
+         *                           if the simulation start time is exceeded by any
+         *                           time value stored for a plan</li>
+         *                           </ul>
          */
         public SimulationState build() {
             validate();
@@ -137,9 +131,7 @@ public class SimulationState {
         }
 
         /**
-         * Sets the time (floating point days) of simulation start. Defaults to
-         * zero.
-         * 
+         * Sets the time (floating point days) of simulation start. Defaults to zero.
          */
         public Builder setStartTime(double startTime) {
             data.startTime = startTime;
@@ -147,13 +139,11 @@ public class SimulationState {
         }
 
         /**
-         * Sets the base date that synchronizes with simulation time zero.
-         * Defaults to the current date.
+         * Sets the base date that synchronizes with simulation time zero. Defaults to
+         * the current date.
          * 
-         * @throws ContractException
-         *                           <li>{@linkplain NucleusError#NULL_BASE_DATE} if the
-         *                           base
-         *                           date is null</li>
+         * @throws ContractException {@linkplain NucleusError#NULL_BASE_DATE} if the
+         *                           base date is null
          */
         public Builder setBaseDate(LocalDate localDate) {
             if (localDate == null) {
@@ -166,10 +156,8 @@ public class SimulationState {
         /**
          * Adds a PlanQueueData used for plan queue reconstruction
          * 
-         * @throws ContractException
-         *                           <li>{@linkplain NucleusError#NULL_PLAN_QUEUE_DATA}
-         *                           if the
-         *                           plan queue data is null</li>
+         * @throws ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA} if
+         *                           the plan queue data is null
          */
         public Builder addPlanQueueData(PlanQueueData planQueueData) {
             if (planQueueData == null) {
@@ -190,7 +178,6 @@ public class SimulationState {
 
     /**
      * Returns the time (floating point days) of simulation start.
-     * 
      */
     public double getStartTime() {
         return data.startTime;
@@ -198,7 +185,6 @@ public class SimulationState {
 
     /**
      * Returns the base date that synchronizes with simulation time zero.
-     * 
      */
     public LocalDate getBaseDate() {
         return data.baseDate;
@@ -206,15 +192,14 @@ public class SimulationState {
 
     /**
      * Returns the list of PlanQueueData objects.
-     * 
      */
     public List<PlanQueueData> getPlanQueueDatas() {
         return new ArrayList<>(data.planQueueDatas);
     }
 
     /**
-     * Returns the planning queue arrival id that should be used as the first
-     * free arrival id.
+     * Returns the planning queue arrival id that should be used as the first free
+     * arrival id.
      */
     public long getPlanningQueueArrivalId() {
         return data.planningQueueArrivalId;

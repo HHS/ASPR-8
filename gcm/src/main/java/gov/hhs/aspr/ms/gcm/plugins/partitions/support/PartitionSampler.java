@@ -6,12 +6,8 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 
 /**
- * 
  * A {@link PartitionSampler} represents the details of a sample query for a
  * {@link Partition}. All inputs to the {@link PartitionSampler} are optional.
- * 
- * 
- *
  */
 public final class PartitionSampler {
 
@@ -47,8 +43,6 @@ public final class PartitionSampler {
 
 	/**
 	 * Standard builder class for partition samplers. All inputs are optional.
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Data data = new Data();
@@ -57,9 +51,8 @@ public final class PartitionSampler {
 		}
 
 		/**
-		 * Returns the {@linkplain PartitionSampler} formed from the inputs
-		 * collected by this builder and resets the state of the builder to
-		 * empty.
+		 * Returns the {@linkplain PartitionSampler} formed from the inputs collected by
+		 * this builder and resets the state of the builder to empty.
 		 */
 		public PartitionSampler build() {
 			return new PartitionSampler(new Data(data));
@@ -74,10 +67,9 @@ public final class PartitionSampler {
 		}
 
 		/**
-		 * Sets the {@link RandomNumberGeneratorId} to be used when sampling
-		 * from a {@link Partition}. If no {@link RandomNumberGeneratorId} is
-		 * provided, the default random number generator for the simulation is
-		 * used.
+		 * Sets the {@link RandomNumberGeneratorId} to be used when sampling from a
+		 * {@link Partition}. If no {@link RandomNumberGeneratorId} is provided, the
+		 * default random number generator for the simulation is used.
 		 */
 		public Builder setRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 			data.randomNumberGeneratorId = randomNumberGeneratorId;
@@ -86,8 +78,8 @@ public final class PartitionSampler {
 
 		/**
 		 * Sets the {@link LabelSet} for this {@link PartitionSampler}. If no
-		 * {@link LabelSet} is provided, all cells of the {@link Partition}
-		 * participate in the sampling.
+		 * {@link LabelSet} is provided, all cells of the {@link Partition} participate
+		 * in the sampling.
 		 */
 		public Builder setLabelSet(LabelSet labelSet) {
 			data.labelSet = labelSet;
@@ -95,9 +87,9 @@ public final class PartitionSampler {
 		}
 
 		/**
-		 * Sets the {@link LabelSetWeightingFunction} for this
-		 * {@link PartitionSampler}. If no {@link LabelSetWeightingFunction} is
-		 * provided, all cells of the {@link Partition} are weighted uniformly.
+		 * Sets the {@link LabelSetWeightingFunction} for this {@link PartitionSampler}.
+		 * If no {@link LabelSetWeightingFunction} is provided, all cells of the
+		 * {@link Partition} are weighted uniformly.
 		 */
 		public Builder setLabelSetWeightingFunction(LabelSetWeightingFunction labelSetWeightingFunction) {
 			data.labelSetWeightingFunction = labelSetWeightingFunction;
@@ -115,9 +107,9 @@ public final class PartitionSampler {
 	}
 
 	/**
-	 * Returns the {@link RandomNumberGeneratorId} to be used when generating
-	 * the random sample. If no {@link RandomNumberGeneratorId} is provided, the
-	 * default random number generator for the simulation is used.
+	 * Returns the {@link RandomNumberGeneratorId} to be used when generating the
+	 * random sample. If no {@link RandomNumberGeneratorId} is provided, the default
+	 * random number generator for the simulation is used.
 	 */
 	public Optional<RandomNumberGeneratorId> getRandomNumberGeneratorId() {
 		return Optional.ofNullable(data.randomNumberGeneratorId);
@@ -125,8 +117,8 @@ public final class PartitionSampler {
 
 	/**
 	 * Returns the {@link LabelSet} for this {@link PartitionSampler}. If no
-	 * {@link LabelSet} is provided, all cells of the {@link Partition}
-	 * participate in the sampling.
+	 * {@link LabelSet} is provided, all cells of the {@link Partition} participate
+	 * in the sampling.
 	 */
 	public Optional<LabelSet> getLabelSet() {
 		return Optional.ofNullable(data.labelSet);

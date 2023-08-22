@@ -6,7 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record StageMaterialsProducerUpdateEvent(StageId stageId,
-												MaterialsProducerId previousMaterialsProducerId,
-												MaterialsProducerId currentMaterialsProducerId) implements Event {
+public record StageMaterialsProducerUpdateEvent(StageId stageId, MaterialsProducerId previousMaterialsProducerId,
+		MaterialsProducerId currentMaterialsProducerId) implements Event {
 }

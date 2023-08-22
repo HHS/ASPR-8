@@ -2,10 +2,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 /**
  * The unique identifier for reports.
- * 
- *
  */
-
 public final class ReportId {
 
 	private final int id;
@@ -25,8 +22,8 @@ public final class ReportId {
 	}
 
 	/**
-	 * Returns string of the form "ReportId [X]" where the value of the actor id
-	 * is X
+	 * Returns string of the form "ReportId [X]" where the value of the actor id is
+	 * X
 	 */
 	@Override
 	public String toString() {

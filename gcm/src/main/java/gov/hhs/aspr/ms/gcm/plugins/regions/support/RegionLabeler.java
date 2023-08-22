@@ -19,8 +19,6 @@ import util.errors.ContractException;
  * {@linkplain RegionId} class, the event that stimulates a label update is
  * {@linkplain PersonRegionUpdateEvent} and the labeling function is composed
  * from the given Function.
- * 
- *
  */
 public abstract class RegionLabeler implements Labeler {
 

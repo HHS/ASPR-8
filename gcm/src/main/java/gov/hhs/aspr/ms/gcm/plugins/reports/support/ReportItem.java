@@ -11,8 +11,6 @@ import util.errors.ContractException;
  * A thread safe(immutable), container that supports output lines for multiple
  * reports. The values contained in a report item should be immutable and
  * support toString().
- *
- *
  */
 @ThreadSafe
 public final class ReportItem {
@@ -32,11 +30,10 @@ public final class ReportItem {
 		private Data data = new Data();
 
 		/**
-		 * Adds an entry's string value to the report item. Order should follow
-		 * the order in the {@link ReportHeader}
+		 * Adds an entry's string value to the report item. Order should follow the
+		 * order in the {@link ReportHeader}
 		 * 
-		 * @throws ContractException
-		 *             <li>if the entry is null</li>
+		 * @throws ContractException if the entry is null
 		 */
 		public Builder addValue(final Object entry) {
 			if (entry == null) {
@@ -64,13 +61,13 @@ public final class ReportItem {
 		/**
 		 * Builds the {@link ReportItem} from the colleced data.
 		 * 
-		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER} if the
-		 *             collected report header is null</li>
-		 *             <li>{@linkplain ReportError#NULL_REPORT_LABEL} if the
-		 *             collected report label is null</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_HEADER} if
+		 *                           the collected report header is null</li>
+		 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+		 *                           the collected report label is null</li>
+		 *                           </ul>
 		 */
 		public ReportItem build() {
 			validateData();
@@ -78,9 +75,9 @@ public final class ReportItem {
 		}
 
 		/**
-		 * Sets the associated {@link ReportHeader} for this {@link ReportItem}.
-		 * The report header and the report item should have the same order of
-		 * added fiels values.
+		 * Sets the associated {@link ReportHeader} for this {@link ReportItem}. The
+		 * report header and the report item should have the same order of added fiels
+		 * values.
 		 */
 		public Builder setReportHeader(ReportHeader reportHeader) {
 			if (reportHeader == null) {
@@ -91,8 +88,8 @@ public final class ReportItem {
 		}
 
 		/**
-		 * Sets the report type for this {@link ReportItem}. The report type
-		 * should be the class type of the report that authors the report item.
+		 * Sets the report type for this {@link ReportItem}. The report type should be
+		 * the class type of the report that authors the report item.
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
 			if (reportLabel == null) {
@@ -187,8 +184,10 @@ public final class ReportItem {
 	 * Returns the string value stored at the given index
 	 *
 	 * @throws IndexOutOfBoundsException
-	 *             <li>if the index < 0</li>
-	 *             <li>if the index >= size()</li>
+	 *                                   <ul>
+	 *                                   <li>if the index &lt; 0</li>
+	 *                                   <li>if the index &gt;= size()</li>
+	 *                                   </ul>
 	 */
 	public String getValue(final int index) {
 		return data.values.get(index);
@@ -204,12 +203,9 @@ public final class ReportItem {
 	}
 
 	/**
-	 * A string listing the values as added to this ReportItem delimited by
-	 * commas in the form:
-	 * 
-	 * ReportItem
-	 * [reportType=reportType,reportHeader=reportHeader,values=[value1,
-	 * value2...]]
+	 * A string listing the values as added to this ReportItem delimited by commas
+	 * in the form: ReportItem
+	 * [reportType=reportType,reportHeader=reportHeader,values=[value1, value2...]]
 	 */
 	@Override
 	public String toString() {
@@ -238,6 +234,7 @@ public final class ReportItem {
 		result = prime * result + ((data == null) ? 0 : data.hashCode());
 		return result;
 	}
+
 	/**
 	 * Two report items are equal iff and only if their ids, headers and ordered
 	 * values are equal.
@@ -260,8 +257,5 @@ public final class ReportItem {
 		}
 		return true;
 	}
-
-	
-	
 
 }

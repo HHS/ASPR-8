@@ -18,20 +18,10 @@ import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
- * A Report that displays assigned region property values over time.
- *
- *
- * Fields
- *
- * Time -- the time in days when the region property was set
- *
- * Region -- the region identifier
- *
- * Property -- the region property identifier
- *
- * Value -- the value of the region property
- *
- *
+ * A Report that displays assigned region property values over time. Fields Time
+ * -- the time in days when the region property was set Region -- the region
+ * identifier Property -- the region property identifier Value -- the value of
+ * the region property
  */
 public final class RegionPropertyReport {
 
@@ -41,12 +31,12 @@ public final class RegionPropertyReport {
 	private final ReportLabel reportLabel;
 	private final boolean includeNewPropertyIds;
 
-	private final ReportHeader reportHeader = ReportHeader	.builder()//
-															.add("Time")//
-															.add("Region")//
-															.add("Property")//
-															.add("Value")//
-															.build();//
+	private final ReportHeader reportHeader = ReportHeader.builder()//
+			.add("Time")//
+			.add("Region")//
+			.add("Property")//
+			.add("Value")//
+			.build();//
 
 	private boolean isCurrentProperty(RegionPropertyId regionPropertyId) {
 		return currentProperties.contains(regionPropertyId);
@@ -85,11 +75,10 @@ public final class RegionPropertyReport {
 		 * FALSE FALSE TRUE FALSE
 		 *
 		 *
-		 * Two of the cases above are contradictory since a property cannot be
-		 * both explicitly included and explicitly excluded
+		 * Two of the cases above are contradictory since a property cannot be both
+		 * explicitly included and explicitly excluded
 		 *
 		 */
-
 		// if X is true then we don't add the property
 		if (excludedPropertyIds.contains(regionPropertyId)) {
 			return false;
@@ -109,11 +98,11 @@ public final class RegionPropertyReport {
 	}
 
 	/**
-	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
-	 *             if the plugin data is null</li>
-	 *
+	 *                           <ul>
+	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
+	 *                           if the plugin data is null</li>
+	 *                           </ul>
 	 */
 	public RegionPropertyReport(RegionPropertyReportPluginData regionPropertyReportPluginData) {
 		if (regionPropertyReportPluginData == null) {
@@ -126,7 +115,8 @@ public final class RegionPropertyReport {
 		includeNewPropertyIds = regionPropertyReportPluginData.getDefaultInclusionPolicy();
 	}
 
-	private void handleRegionPropertyUpdateEvent(ReportContext reportContext, RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
+	private void handleRegionPropertyUpdateEvent(ReportContext reportContext,
+			RegionPropertyUpdateEvent regionPropertyUpdateEvent) {
 		RegionPropertyId regionPropertyId = regionPropertyUpdateEvent.regionPropertyId();
 		if (isCurrentProperty(regionPropertyId)) {
 			RegionId regionId = regionPropertyUpdateEvent.regionId();
@@ -145,7 +135,8 @@ public final class RegionPropertyReport {
 		}
 	}
 
-	private void handleRegionPropertyDefinitionEvent(ReportContext reportContext, RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
+	private void handleRegionPropertyDefinitionEvent(ReportContext reportContext,
+			RegionPropertyDefinitionEvent regionPropertyDefinitionEvent) {
 		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 		RegionPropertyId regionPropertyId = regionPropertyDefinitionEvent.regionPropertyId();
 		if (addToCurrentProperties(regionPropertyId)) {
@@ -158,13 +149,12 @@ public final class RegionPropertyReport {
 
 	/**
 	 * Initial behavior for this report. The report subscribes to
-	 * {@linkplain RegionPropertyUpdateEvent} and releases a {@link ReportItem}
-	 * for each region property's initial value.
+	 * {@linkplain RegionPropertyUpdateEvent} and releases a {@link ReportItem} for
+	 * each region property's initial value.
 	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
-	 *             region property id used in the constructor is unknown</li>
+	 * @throws ContractException {@linkplain PropertyError#UNKNOWN_PROPERTY_ID} if a
+	 *                           region property id used in the constructor is
+	 *                           unknown
 	 */
 	public void init(final ReportContext reportContext) {
 		final RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
@@ -182,7 +172,8 @@ public final class RegionPropertyReport {
 
 		for (RegionId regionId : regionsDataManager.getRegionIds()) {
 			for (final RegionPropertyId regionPropertyId : currentProperties) {
-				final Object regionPropertyValue = regionsDataManager.getRegionPropertyValue(regionId, regionPropertyId);
+				final Object regionPropertyValue = regionsDataManager.getRegionPropertyValue(regionId,
+						regionPropertyId);
 				writeProperty(reportContext, regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
@@ -198,11 +189,12 @@ public final class RegionPropertyReport {
 			builder.excludeRegionProperty(regionPropertyId);
 		}
 		builder.setDefaultInclusion(includeNewPropertyIds);
-		
+
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void writeProperty(ReportContext reportContext, final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	private void writeProperty(ReportContext reportContext, final RegionId regionId,
+			final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(reportHeader);

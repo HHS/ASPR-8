@@ -46,8 +46,7 @@ public final class GlobalPropertyDimension implements Dimension {
                 return false;
             }
             Data other = (Data) obj;
-            return Objects.equals(globalPropertyId, other.globalPropertyId)
-                    && Objects.equals(values, other.values)
+            return Objects.equals(globalPropertyId, other.globalPropertyId) && Objects.equals(values, other.values)
                     && assignmentTime == other.assignmentTime;
         }
 
@@ -62,7 +61,6 @@ public final class GlobalPropertyDimension implements Dimension {
 
     /**
      * Builder class for GlobalPropertyDimension
-     *
      */
     public static class Builder {
 
@@ -75,12 +73,8 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Returns the GlobalPropertyDimension from the collected data.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-         *                           the global property id was not assigned</li>
-         * 
-         * 
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           global property id was not assigned
          */
         public GlobalPropertyDimension build() {
             validate();
@@ -96,11 +90,8 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Sets the global property for the dimension. Defaults to null.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-         *                           the global property id is null</li>
-         * 
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           global property id is null
          */
         public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
             validateGlobalPropertyId(globalPropertyId);
@@ -111,11 +102,8 @@ public final class GlobalPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-         *                           if the value is null</li>
-         * 
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+         *                           the value is null
          */
         public Builder addValue(Object value) {
             validateValue(value);

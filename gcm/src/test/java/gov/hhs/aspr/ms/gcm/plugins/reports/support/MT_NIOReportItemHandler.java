@@ -402,7 +402,6 @@ public final class MT_NIOReportItemHandler {
 	 * no experiment columns
 	 * 
 	 * write three reports
-	 * 
 	 */
 	private void test2(Path subPath) {
 		ReportLabel reportLabel = new SimpleReportLabel("report label");
@@ -487,7 +486,6 @@ public final class MT_NIOReportItemHandler {
 	 * do not read progress log
 	 * 
 	 * write three reports
-	 * 
 	 */
 	private void test3(Path subPath) {
 

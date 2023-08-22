@@ -23,8 +23,6 @@ import util.errors.ContractException;
 
 /**
  * Mutable data manager for people.
- *
- *
  */
 public final class PeopleDataManager extends DataManager {
 
@@ -74,9 +72,10 @@ public final class PeopleDataManager extends DataManager {
 	 * just prior to invoking this method.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}
 	 *                           if the person construction data is null</li>
-	 *
+	 *                           </ul>
 	 */
 	public PersonId addPerson(final PersonConstructionData personConstructionData) {
 		PersonId personId = new PersonId(personIds.size());
@@ -215,14 +214,13 @@ public final class PeopleDataManager extends DataManager {
 	 * must invoke the super.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
 	 *                           if init() is invoked more than once</li>
-	 * 
-	 * 
 	 *                           <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
 	 *                           if the plugin data person assignment time exceeds
 	 *                           the start time of the simulation</li>
-	 *
+	 *                           </ul>
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
@@ -316,14 +314,14 @@ public final class PeopleDataManager extends DataManager {
 	 * Removes the person from the simulation.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
-	 *                           person id is null
-	 *                           <li>
+	 *                           person id is null</li>
+	 *                           <li></li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
-	 *                           the person does not exist
-	 *                           <li>
-	 *
-	 *
+	 *                           the person does not exist</li>
+	 *                           <li></li>
+	 *                           </ul>
 	 */
 	public void removePerson(final PersonId personId) {
 		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));
@@ -386,7 +384,7 @@ public final class PeopleDataManager extends DataManager {
 			if (next == null) {
 				throw new NoSuchElementException();
 			}
-			Integer result = next;			
+			Integer result = next;
 			increment();
 			return result;
 		}

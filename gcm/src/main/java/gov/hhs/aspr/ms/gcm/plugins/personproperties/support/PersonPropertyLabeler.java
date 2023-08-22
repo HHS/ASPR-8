@@ -17,24 +17,22 @@ import util.errors.ContractException;
 /**
  * A labeler for person properties. The dimension of the labeler is the given
  * {@linkplain PersonPropertyId}, the event that stimulates a label update is
- * {@linkplain PersonPropertyUpdateEvent} and the labeling function
- * is composed from the given Function.
- * 
- *
+ * {@linkplain PersonPropertyUpdateEvent} and the labeling function is composed
+ * from the given Function.
  */
 public abstract class PersonPropertyLabeler implements Labeler {
 
-	private final PersonPropertyId personPropertyId;	
+	private final PersonPropertyId personPropertyId;
 	private PersonPropertiesDataManager personPropertiesDataManager;
-	
+
 	public PersonPropertyId getPersonPropertyId() {
 		return personPropertyId;
 	}
-	 
+
 	public PersonPropertyLabeler(PersonPropertyId personPropertyId) {
-		this.personPropertyId = personPropertyId;		
+		this.personPropertyId = personPropertyId;
 	}
-	
+
 	protected abstract Object getLabelFromValue(Object value);
 
 	private Optional<PersonId> getPersonId(PersonPropertyUpdateEvent personPropertyUpdateEvent) {
@@ -48,13 +46,14 @@ public abstract class PersonPropertyLabeler implements Labeler {
 	@Override
 	public final Set<LabelerSensitivity<?>> getLabelerSensitivities() {
 		Set<LabelerSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new LabelerSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::getPersonId));
+		result.add(
+				new LabelerSensitivity<PersonPropertyUpdateEvent>(PersonPropertyUpdateEvent.class, this::getPersonId));
 		return result;
 	}
 
 	@Override
 	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {
-		if(partitionsContext == null) {
+		if (partitionsContext == null) {
 			throw new ContractException(NucleusError.NULL_SIMULATION_CONTEXT);
 		}
 		if (personPropertiesDataManager == null) {
@@ -71,7 +70,7 @@ public abstract class PersonPropertyLabeler implements Labeler {
 
 	@Override
 	public final Object getPastLabel(PartitionsContext partitionsContext, Event event) {
-		PersonPropertyUpdateEvent personPropertyUpdateEvent =(PersonPropertyUpdateEvent)event;
+		PersonPropertyUpdateEvent personPropertyUpdateEvent = (PersonPropertyUpdateEvent) event;
 		return getLabelFromValue(personPropertyUpdateEvent.previousPropertyValue());
 	}
 
@@ -83,7 +82,5 @@ public abstract class PersonPropertyLabeler implements Labeler {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

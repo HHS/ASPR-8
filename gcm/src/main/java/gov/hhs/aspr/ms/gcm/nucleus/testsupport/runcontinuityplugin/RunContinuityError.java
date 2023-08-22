@@ -6,11 +6,9 @@ import util.errors.ContractException;
 /**
  * An enumeration supporting {@link ContractException} that acts as a general
  * description of the exception.
- * 
- *
  */
 public enum RunContinuityError implements ContractError {
-	
+
 	NULL_RUN_CONTINUITY_PLUGN_DATA("Null run continuity plugin data"), //
 	;
 

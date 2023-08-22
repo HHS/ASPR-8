@@ -40,20 +40,21 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 			throw new ContractException(GroupError.UNKNOWN_GROUP_TYPE_ID, groupTypeId);
 		}
 	}
-	
+
 	public GroupTypeId getGroupTypeId() {
 		return groupTypeId;
 	}
-	
+
 	public Equality getEquality() {
 		return equality;
 	}
-	
+
 	public int getGroupCount() {
 		return groupCount;
 	}
 
-	public GroupsForPersonAndGroupTypeFilter(final GroupTypeId groupTypeId, final Equality equality, final int groupCount) {
+	public GroupsForPersonAndGroupTypeFilter(final GroupTypeId groupTypeId, final Equality equality,
+			final int groupCount) {
 		this.equality = equality;
 		this.groupCount = groupCount;
 		this.groupTypeId = groupTypeId;
@@ -78,7 +79,8 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return equality.isCompatibleComparisonValue(Integer.compare(count, groupCount));
 	}
 
-	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipAdditionEvent event) {
+	private Optional<PersonId> additionRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipAdditionEvent event) {
 		if (groupsDataManager == null) {
 			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
@@ -88,7 +90,8 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return Optional.empty();
 	}
 
-	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext, GroupMembershipRemovalEvent event) {
+	private Optional<PersonId> removalRequiresRefresh(PartitionsContext partitionsContext,
+			GroupMembershipRemovalEvent event) {
 		if (groupsDataManager == null) {
 			groupsDataManager = partitionsContext.getDataManager(GroupsDataManager.class);
 		}
@@ -101,8 +104,10 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class, this::additionRequiresRefresh));
-		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class, this::removalRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipAdditionEvent>(GroupMembershipAdditionEvent.class,
+				this::additionRequiresRefresh));
+		result.add(new FilterSensitivity<GroupMembershipRemovalEvent>(GroupMembershipRemovalEvent.class,
+				this::removalRequiresRefresh));
 
 		return result;
 	}
@@ -154,7 +159,5 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

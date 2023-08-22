@@ -7,10 +7,8 @@ import gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers.ObjectValueCo
 import util.errors.ContractException;
 
 /**
- * Implementor of IndexedPropertyManager that stores Object property values in an
- * Object array based data structure.
- * 
- *
+ * Implementor of IndexedPropertyManager that stores Object property values in
+ * an Object array based data structure.
  */
 public final class ObjectPropertyManager implements IndexedPropertyManager {
 
@@ -24,30 +22,31 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 	 * Constructs this IntPropertyManager.
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE} if the
-	 *             initial size is negative</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION} if
-	 *             the property definition is null</li> 
-	 * 
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
+	 *                           if the initial size is negative</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+	 *                           if the property definition is null</li>
+	 *                           </ul>
 	 */
-	public ObjectPropertyManager(PropertyDefinition propertyDefinition, Supplier<Iterator<Integer>> indexIteratorSupplier) {
+	public ObjectPropertyManager(PropertyDefinition propertyDefinition,
+			Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {
 			throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 		}
-		
+
 		if (propertyDefinition.getDefaultValue().isPresent()) {
-			defaultValue = propertyDefinition.getDefaultValue().get();			
-		}else {
-			defaultValue = null;	
+			defaultValue = propertyDefinition.getDefaultValue().get();
+		} else {
+			defaultValue = null;
 		}
 
-		
 		objectValueContainer = new ObjectValueContainer(defaultValue, indexIteratorSupplier);
 	}
 
 	@Override
 	public <T> T getPropertyValue(int id) {
-		if(id<0) {
+		if (id < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_INDEX);
 		}
 		return objectValueContainer.getValue(id);
@@ -70,13 +69,13 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 		}
 		objectValueContainer.setValue(id, defaultValue);
 	}
-	
+
 	@Override
 	public void incrementCapacity(int count) {
 		if (count < 0) {
 			throw new ContractException(PropertyError.NEGATIVE_CAPACITY_INCREMENT);
 		}
-		objectValueContainer.setCapacity(objectValueContainer.getCapacity()+count);		
+		objectValueContainer.setCapacity(objectValueContainer.getCapacity() + count);
 	}
 
 	@Override
@@ -89,8 +88,5 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
-	
 
 }

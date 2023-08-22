@@ -22,14 +22,11 @@ public class TestOutputConsumer implements Consumer<Object> {
 	}
 
 	/**
-	 * Handles all output from a simulation, but processes only
-	 * TestScenarioReport items.
+	 * Handles all output from a simulation, but processes only TestScenarioReport
+	 * items.
 	 * 
-	 * @throws ContractException
-	 * 
-	 *             <li>{@linkplain TestError#NULL_OUTPUT_ITEM} if the obj is
-	 *             null</li>
-	 * 
+	 * @throws ContractException {@linkplain TestError#NULL_OUTPUT_ITEM} if the obj
+	 *                           is null
 	 */
 	public void accept(Object obj) {
 		if (obj == null) {
@@ -39,20 +36,16 @@ public class TestOutputConsumer implements Consumer<Object> {
 	}
 
 	/**
-	 * Returns all outputs from a Simulation based on the Class Parameter in a
-	 * map where the keys of the map are the output items and the values are the
-	 * counts of how many times those items were encountered. The returned map
-	 * contains no null keys or values.
+	 * Returns all outputs from a Simulation based on the Class Parameter in a map
+	 * where the keys of the map are the output items and the values are the counts
+	 * of how many times those items were encountered. The returned map contains no
+	 * null keys or values.
 	 * 
-	 * @param <T>
-	 *            This type is derived from the class parameter and also
-	 *            determines the return type of this method.
-	 * @param classRef
-	 *            The class for which you want to get output items of
-	 * 
-	 * 
-	 * @return - returns a {@link Map} containing the output items as keys and
-	 *         the number of occurrences as the value
+	 * @param <T>      This type is derived from the class parameter and also
+	 *                 determines the return type of this method.
+	 * @param classRef The class for which you want to get output items of
+	 * @return - returns a {@link Map} containing the output items as keys and the
+	 *         number of occurrences as the value
 	 */
 	public <T> Map<T, Integer> getOutputItemMap(Class<T> classRef) {
 		Map<T, MutableInteger> sourceMap = new LinkedHashMap<>();
@@ -76,20 +69,14 @@ public class TestOutputConsumer implements Consumer<Object> {
 	/**
 	 * Returns the output from a Simulation based on the Class Parameter.
 	 * 
-	 * @param <T>
-	 *            This type is derived from the class parameter and also
-	 *            determines the return type of this method.
-	 * @param classRef
-	 *            The class for which you want to get output items of
-	 * 
-	 * 
-	 * @return - returns a {@link Map} containing the output items as keys and
-	 *         the number of occurrences as the value
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if there
-	 *             are multiple items matching the given class reference</li>
-	 * 
+	 * @param <T>      This type is derived from the class parameter and also
+	 *                 determines the return type of this method.
+	 * @param classRef The class for which you want to get output items of
+	 * @return - returns a {@link Map} containing the output items as keys and the
+	 *         number of occurrences as the value
+	 * @throws ContractException {@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if
+	 *                           there are multiple items matching the given class
+	 *                           reference
 	 */
 	public <T> Optional<T> getOutputItem(Class<T> classRef) {
 		T result = null;
@@ -106,31 +93,22 @@ public class TestOutputConsumer implements Consumer<Object> {
 
 		return Optional.ofNullable(result);
 	}
-	
+
 	/**
 	 * Returns the output from a Simulation based on the Class Parameter.
 	 * 
-	 * @param <T>
-	 *            This type is derived from the class parameter and also
-	 *            determines the return type of this method.
-	 * @param classRef
-	 *            The class for which you want to get output items of
-	 * 
-	 * 
-	 * @return - returns a {@link Map} containing the output items as keys and
-	 *         the number of occurrences as the value
-	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain TestError#MULTIPLE_MATCHING_ITEMS} if there
-	 *             are multiple items matching the given class reference</li>
-	 * 
+	 * @param <T>      This type is derived from the class parameter and also
+	 *                 determines the return type of this method.
+	 * @param classRef The class for which you want to get output items of
+	 * @return - returns a {@link Map} containing the output items as keys and the
+	 *         number of occurrences as the value
 	 */
 	public <T> List<T> getOutputItems(Class<T> classRef) {
 		List<T> result = new ArrayList<>();
 
 		for (Object item : outputItems) {
 			if (classRef.isAssignableFrom(item.getClass())) {
-				result.add(classRef.cast(item));				 
+				result.add(classRef.cast(item));
 			}
 		}
 

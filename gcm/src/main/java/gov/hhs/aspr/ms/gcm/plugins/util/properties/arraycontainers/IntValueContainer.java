@@ -13,16 +13,11 @@ import util.errors.ContractException;
  * represents the highest value in this container. For example, if this
  * container contains the values [1,0,14,-20,300] then these would be stored in
  * a short array since 300 exceeds the highest value of byte.
- * 
- * 
- *
  */
 public final class IntValueContainer {
 
 	/**
 	 * An enumeration representing the four int-based primitive data types in Java.
-	 * 
-	 *
 	 */
 	public static enum IntValueType {
 
@@ -56,7 +51,6 @@ public final class IntValueContainer {
 	/*
 	 * Rebuilds the subTypeArray to be the most compact representation that is
 	 * value-compatible with the given long.
-	 * 
 	 */
 	private SubTypeArray rebuildSubTypeArray(long value) {
 		if (IntValueType.SHORT.isCompatibleValue(value)) {
@@ -206,10 +200,10 @@ public final class IntValueContainer {
 			return indexIteratorSupplier;
 		}
 	}
+
 	/*
 	 * SubTypeArray implementor for ints
 	 */
-
 	private static class IntArray implements SubTypeArray {
 
 		private int[] values;
@@ -431,7 +425,7 @@ public final class IntValueContainer {
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("ShortArray [values=");
-			builder.append(getElementsString());			
+			builder.append(getElementsString());
 			builder.append(", defaultValue=");
 			builder.append(defaultValue);
 			builder.append("]");
@@ -561,7 +555,6 @@ public final class IntValueContainer {
 	 * Returns the default value as a byte.
 	 * 
 	 * @throws RuntimeException if the default value is not compatible with byte
-	 * 
 	 */
 	public byte getDefaultValueAsByte() {
 		long result = subTypeArray.getDefaultValue();
@@ -575,7 +568,6 @@ public final class IntValueContainer {
 	 * Returns the default value as a short.
 	 * 
 	 * @throws RuntimeException if the default value is not compatible with short
-	 * 
 	 */
 	public short getDefaultValueAsShort() {
 		long result = subTypeArray.getDefaultValue();
@@ -589,7 +581,6 @@ public final class IntValueContainer {
 	 * Returns the default value as an int.
 	 * 
 	 * @throws RuntimeException if the default value is not compatible with int
-	 * 
 	 */
 	public int getDefaultValueAsInt() {
 		long result = subTypeArray.getDefaultValue();
@@ -610,9 +601,6 @@ public final class IntValueContainer {
 	/**
 	 * Constructs the IntValueContainer with the given default value and initial
 	 * capacity
-	 * 
-	 * @param defaultValue
-	 * @param capacity
 	 * 
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
@@ -640,17 +628,14 @@ public final class IntValueContainer {
 	/**
 	 * Returns the value at index as a byte.
 	 * 
-	 * @param index
-	 * @return
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 * 
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 * @throws RuntimeException
-	 *                           <li>if index < 0
+	 *                           <ul>
+	 *                           <li>if index &lt; 0</li>
 	 *                           <li>if the value to return is not compatible with
-	 *                           byte
-	 * 
+	 *                           byte</li>
+	 *                           </ul>
 	 */
 	public byte getValueAsByte(int index) {
 		if (index < 0) {
@@ -671,17 +656,14 @@ public final class IntValueContainer {
 	/**
 	 * Returns the value at index as a short.
 	 * 
-	 * @param index
-	 * @return
-	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 * @throws RuntimeException
-	 *                           <li>if index < 0
+	 *                           <ul>
+	 *                           <li>if index &lt; 0</li>
 	 *                           <li>if the value to return is not compatible with
-	 *                           short
-	 * 
+	 *                           short</li>
+	 *                           </ul>
 	 */
 	public short getValueAsShort(int index) {
 		if (index < 0) {
@@ -703,15 +685,13 @@ public final class IntValueContainer {
 	/**
 	 * Returns the value at index as a long.
 	 * 
-	 * @param index
-	 * @return
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 * @throws RuntimeException
+	 *                           <ul>
 	 *                           <li>if the value to return is not compatible with
-	 *                           long
-	 * 
+	 *                           long</li>
+	 *                           </ul>
 	 */
 	public int getValueAsInt(int index) {
 		long result;
@@ -732,12 +712,8 @@ public final class IntValueContainer {
 	/**
 	 * Returns the value at index as a long.
 	 * 
-	 * @param index
-	 * @return
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 * 
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public long getValueAsLong(int index) {
 		if (index < 0) {
@@ -756,10 +732,8 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given byte
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void setByteValue(int index, byte value) {
 		if (index < 0) {
@@ -771,11 +745,8 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given short
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 * 
-	 * 
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void setShortValue(int index, short value) {
 		if (index < 0) {
@@ -791,11 +762,8 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given int
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 * 
-	 * 
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void setIntValue(int index, int value) {
 		if (index < 0) {
@@ -811,10 +779,8 @@ public final class IntValueContainer {
 	/**
 	 * Sets the value at the index to the given long
 	 * 
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 * 
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void setLongValue(int index, long value) {
 		if (index < 0) {
@@ -846,13 +812,10 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given byte
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void incrementByteValue(int index, byte value) {
-		
 
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
@@ -861,13 +824,11 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given short
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void incrementShortValue(int index, short value) {
-		
+
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -875,13 +836,11 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given int
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void incrementIntValue(int index, int value) {
-		
+
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -889,13 +848,11 @@ public final class IntValueContainer {
 	/**
 	 * Increments the value at the index by the given long
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void incrementLongValue(int index, long value) {
-		
+
 		long incrementedValue = Math.addExact(getValueAsLong(index), value);
 		setLongValue(index, incrementedValue);
 	}
@@ -903,13 +860,10 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given byte
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void decrementByteValue(int index, byte value) {
-		
 
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
@@ -918,13 +872,11 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given short
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void decrementShortValue(int index, short value) {
-		
+
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
@@ -932,13 +884,11 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given int
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 */
 	public void decrementIntValue(int index, int value) {
-		
+
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}
@@ -946,17 +896,16 @@ public final class IntValueContainer {
 	/**
 	 * Decrements the value at the index by the given long
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
-	 *                           index is negative</li>
-	 *
+	 * @throws ContractException {@linkplain PropertyError#NEGATIVE_INDEX} if index
+	 *                           is negative
 	 * @throws RuntimeException
+	 *                           <ul>
 	 *                           <li>if index is negative</li>
 	 *                           <li>if the value causes an overflow</li>
-	 *
+	 *                           </ul>
 	 */
 	public void decrementLongValue(int index, long value) {
-		
+
 		long decrementedValue = Math.subtractExact(getValueAsLong(index), value);
 		setLongValue(index, decrementedValue);
 	}

@@ -17,27 +17,11 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 
 /**
  * A Report that displays the creation, destruction, offering, batch conversion,
- * resource conversion and transfer of stages.
- *
- *
- * Fields
- *
- * Time -- the time in days when the global resource was set
- *
- * Stage -- the stage identifier
- *
- * MaterialsProducer -- the acting materials producer
- *
- * Action -- One of Create, Destroy, Offer, BatchConversion, ResourceConversion,
- * Transfer
- * 
- * Offered -- the offered state of the stage
- * 
- * ResourceMaterial
- * 
- * Amount
- *
- *
+ * resource conversion and transfer of stages. Fields Time -- the time in days
+ * when the global resource was set Stage -- the stage identifier
+ * MaterialsProducer -- the acting materials producer Action -- One of Create,
+ * Destroy, Offer, BatchConversion, ResourceConversion, Transfer Offered -- the
+ * offered state of the stage ResourceMaterial Amount
  */
 public final class StageReport {
 	private final ReportLabel reportLabel;
@@ -81,13 +65,13 @@ public final class StageReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			reportHeader = ReportHeader	.builder()//
-										.add("time")//
-										.add("stage")//
-										.add("materials_producer")//
-										.add("action")//
-										.add("offered")//
-										.build();//
+			reportHeader = ReportHeader.builder()//
+					.add("time")//
+					.add("stage")//
+					.add("materials_producer")//
+					.add("action")//
+					.add("offered")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -103,7 +87,8 @@ public final class StageReport {
 		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void handleStageImminentRemovalEvent(ReportContext reportContext, StageImminentRemovalEvent stageImminentRemovalEvent) {
+	private void handleStageImminentRemovalEvent(ReportContext reportContext,
+			StageImminentRemovalEvent stageImminentRemovalEvent) {
 		StageId stageId = stageImminentRemovalEvent.stageId();
 		StageRecord stageRecord = stageRecords.remove(stageId);
 		stageRecord.lastAction = Action.DESTROYED;
@@ -118,7 +103,8 @@ public final class StageReport {
 		writeReportItem(reportContext, stageRecord);
 	}
 
-	private void handleStageMaterialsProducerUpdateEvent(ReportContext reportContext, StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
+	private void handleStageMaterialsProducerUpdateEvent(ReportContext reportContext,
+			StageMaterialsProducerUpdateEvent stageMaterialsProducerUpdateEvent) {
 		StageId stageId = stageMaterialsProducerUpdateEvent.stageId();
 		StageRecord stageRecord = stageRecords.get(stageId);
 		stageRecord.materialsProducerId = stageMaterialsProducerUpdateEvent.currentMaterialsProducerId();

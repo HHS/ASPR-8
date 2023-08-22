@@ -17,10 +17,12 @@ public abstract class PeriodicReport {
 	 * Creates the periodic report from the given report period
 	 * 
 	 * @throws ContractException
-	 *             <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if the report
-	 *             period is null</li>
-	 *             <li>{@linkplain ReportError.NULL_REPORT_LABEL} if the report
-	 *             period is null</li>
+	 *                           <ul>
+	 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
+	 *                           the report period is null</li>
+	 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
+	 *                           the report period is null</li>
+	 *                           </ul>
 	 */
 	public PeriodicReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
 		if (reportPeriod == null) {
@@ -49,14 +51,9 @@ public abstract class PeriodicReport {
 	private Integer reportingHour = 0;
 
 	/**
-	 * Adds the time field column(s) to the given {@link ReportHeaderBuilder} as
-	 * appropriate to the {@link ReportPeriod} specified during construction.
-	 * 
-	 * DAILY : Day
-	 * 
-	 * HOURLY : Day, Hour
-	 * 
-	 * END_OF_SIMULATION has no header additions
+	 * Adds the time field column(s) to the given {@link ReportHeader.Builder} as
+	 * appropriate to the {@link ReportPeriod} specified during construction. DAILY
+	 * : Day HOURLY : Day, Hour END_OF_SIMULATION has no header additions
 	 */
 	protected final ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
 		switch (reportPeriod) {
@@ -85,9 +82,8 @@ public abstract class PeriodicReport {
 	}
 
 	/**
-	 * Places the current reporting day and report hour on the report as
-	 * appropriate to the {@link ReportPeriod} specified during construction.
-	 *
+	 * Places the current reporting day and report hour on the report as appropriate
+	 * to the {@link ReportPeriod} specified during construction.
 	 */
 	protected final void fillTimeFields(final ReportItem.Builder reportItemBuilder) {
 
@@ -109,13 +105,10 @@ public abstract class PeriodicReport {
 
 	/**
 	 * Subscribes to simulation close. Initializes periodic flushing of report
-	 * contents with the first flush scheduled for one time period from
-	 * simulation start. Descendant implementors of PeriodicReport must invoke
-	 * super.init().
+	 * contents with the first flush scheduled for one time period from simulation
+	 * start. Descendant implementors of PeriodicReport must invoke super.init().
 	 * 
-	 * @throws ContractException
-	 *             <li>if the report context is null</li>
-	 * 
+	 * @throws ContractException if the report context is null
 	 */
 	public final void init(ReportContext reportContext) {
 
@@ -143,8 +136,8 @@ public abstract class PeriodicReport {
 	}
 
 	/**
-	 * Called by the init() to allow descendant report classes to initialize.
-	 * The init() will invoke a flush() command after the prepare()
+	 * Called by the init() to allow descendant report classes to initialize. The
+	 * init() will invoke a flush() command after the prepare()
 	 */
 	protected void prepare(ReportContext reportContext) {
 	}
@@ -157,8 +150,7 @@ public abstract class PeriodicReport {
 
 	/**
 	 * Provides descendant implementors the opportunity to releases report items
-	 * from the data stored during the time since the last invocation of
-	 * flush().
+	 * from the data stored during the time since the last invocation of flush().
 	 */
 	protected abstract void flush(final ReportContext reportContext);
 

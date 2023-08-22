@@ -112,8 +112,6 @@ public class AttributesPluginData implements PluginData {
 			}
 		}
 
-		
-
 		private void validateData() {
 
 			// show all property ids agree with the definitions
@@ -164,16 +162,15 @@ public class AttributesPluginData implements PluginData {
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 * 
 		 * @throws ContractException
-		 * 
+		 *                           <ul>
 		 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 		 *                           if a person attribute value was recorded for an
 		 *                           unknown attribute id</li>
-		 * 
 		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE}
 		 *                           if a person attribute value was recorded that is
 		 *                           not compatible witht he corresponding attribute
 		 *                           definition</li>
-		 * 
+		 *                           </ul>
 		 */
 		public AttributesPluginData build() {
 			if (!data.locked) {
@@ -187,12 +184,14 @@ public class AttributesPluginData implements PluginData {
 		 * Adds an attribute definition.
 		 *
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 		 *                           if the attribute id is null</li>
 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_DEFINITION}
 		 *                           if the attribute definition is null</li>
 		 *                           <li>{@linkplain AttributeError#DUPLICATE_ATTRIBUTE_DEFINITION}
 		 *                           if the attribute id was previously added</li>
+		 *                           </ul>
 		 */
 		public Builder defineAttribute(final AttributeId attributeId, final AttributeDefinition attributeDefinition) {
 			ensureDataMutability();
@@ -207,12 +206,14 @@ public class AttributesPluginData implements PluginData {
 		 * Sets the person's attribute value. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 		 *                           person id is null</li>
-		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID} if
-		 *                           the attribute property id is null</li>
+		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+		 *                           if the attribute property id is null</li>
 		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE}
 		 *                           if the attribute property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder setPersonAttributeValue(final PersonId personId, final AttributeId attributeId,
 				final Object attributeValue) {
@@ -267,10 +268,12 @@ public class AttributesPluginData implements PluginData {
 	 * Returns the attribute definition for the given attribute id
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id is unknown</li>
+	 *                           </ul>
 	 */
 	public AttributeDefinition getAttributeDefinition(final AttributeId attributeId) {
 		validateAttributeIdNotNull(attributeId);
@@ -283,7 +286,6 @@ public class AttributesPluginData implements PluginData {
 
 	/**
 	 * Returns the attribute ids
-	 *
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AttributeId> Set<T> getAttributeIds() {
@@ -354,11 +356,12 @@ public class AttributesPluginData implements PluginData {
 	 * starting from zero.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id is unknown</li>
-	 * 
+	 *                           </ul>
 	 */
 	public List<Object> getAttributeValues(AttributeId attributeId) {
 		validateAttributeId(attributeId);

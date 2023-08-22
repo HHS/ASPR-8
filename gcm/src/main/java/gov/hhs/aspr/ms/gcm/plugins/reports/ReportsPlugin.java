@@ -4,8 +4,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 
 /**
  * A plugin providing a report actors to the simulation.
- * 
- *
  */
 public class ReportsPlugin {
 
@@ -14,25 +12,20 @@ public class ReportsPlugin {
 
 	/**
 	 * Returns the report plugin.
-	 *
-	 * <P>
+	 * <p>
 	 * Uses ReportsPluginId.PLUGIN_ID as its id
-	 * </P>
-	 * 
-	 * <P>
+	 * </p>
+	 * <p>
 	 * Depends on no plugins
-	 * </P>
-	 * 
-	 * <P>
+	 * </p>
+	 * <p>
 	 * Provides no actors, reports or data mangers:
-	 * </P>
-	 * 
+	 * </p>
 	 */
-
 	public static Plugin getReportsPlugin() {
-		return Plugin	.builder()//						
-						.setPluginId(ReportsPluginId.PLUGIN_ID)//
-						.build();//
+		return Plugin.builder()//
+				.setPluginId(ReportsPluginId.PLUGIN_ID)//
+				.build();//
 	}
 
 }

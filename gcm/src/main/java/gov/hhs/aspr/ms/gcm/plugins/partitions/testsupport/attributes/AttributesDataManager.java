@@ -25,10 +25,7 @@ import util.errors.ContractException;
 
 /**
  * Published data view that provides attribute information.
- * 
- *
  */
-
 public final class AttributesDataManager extends DataManager {
 
 	private DataManagerContext dataManagerContext;
@@ -42,10 +39,12 @@ public final class AttributesDataManager extends DataManager {
 	 * without validation.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id unknown</li>
+	 *                           </ul>
 	 */
 	public AttributeDefinition getAttributeDefinition(final AttributeId attributeId) {
 		validateAttributeId(attributeId);
@@ -78,8 +77,8 @@ public final class AttributesDataManager extends DataManager {
 	/**
 	 * Returns the attribute value associated with the given attribute id
 	 * 
-	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
@@ -88,6 +87,7 @@ public final class AttributesDataManager extends DataManager {
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
 	 *                           the person id unknown</li>
+	 *                           </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getAttributeValue(final PersonId personId, final AttributeId attributeId) {
@@ -126,7 +126,6 @@ public final class AttributesDataManager extends DataManager {
 
 	/**
 	 * Constructs this data manager from the given context
-	 *
 	 */
 	public AttributesDataManager(AttributesPluginData attributesPluginData) {
 		if (attributesPluginData == null) {
@@ -218,11 +217,7 @@ public final class AttributesDataManager extends DataManager {
 
 	/**
 	 * Updates the person's current attribute value. Generates a corresponding
-	 * {@linkplain AttributeUpdateEvent}
-	 * 
-	 * 
-	 * Throws {@link ContractException}
-	 *
+	 * {@linkplain AttributeUpdateEvent} Throws {@link ContractException}
 	 * <ul>
 	 * <li>{@link PersonError#NULL_PERSON_ID} if the person id is null</li>
 	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is unknown</li>
@@ -311,15 +306,13 @@ public final class AttributesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to {@link AttributeUpdateEvent}
 	 * events. Matches on attribute id.
 	 * 
-	 * 
-	 * 
 	 * @throws ContractException
-	 * 
+	 *                           <ul>
 	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
 	 *                           if the attribute id is null</li>
 	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 	 *                           if the attribute id is not known</li>
-	 * 
+	 *                           </ul>
 	 */
 	public EventFilter<AttributeUpdateEvent> getEventFilterForAttributeUpdateEvent(AttributeId attributeId) {
 		validateAttributeId(attributeId);

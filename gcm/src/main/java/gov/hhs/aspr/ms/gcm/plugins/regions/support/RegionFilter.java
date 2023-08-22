@@ -19,7 +19,7 @@ public final class RegionFilter extends Filter {
 
 	private RegionsDataManager regionsDataManager;
 
-	private void validateRegionId( final RegionId regionId) {
+	private void validateRegionId(final RegionId regionId) {
 
 		if (regionId == null) {
 			throw new ContractException(RegionError.NULL_REGION_ID);
@@ -45,14 +45,14 @@ public final class RegionFilter extends Filter {
 		if (regionsDataManager == null) {
 			regionsDataManager = partitionsContext.getDataManager(RegionsDataManager.class);
 		}
-		
+
 		for (RegionId regionId : regionIds) {
 			validateRegionId(regionId);
 		}
 
 	}
-	
-	public Set<RegionId> getRegionIds(){
+
+	public Set<RegionId> getRegionIds() {
 		return new LinkedHashSet<>(regionIds);
 	}
 
@@ -93,7 +93,8 @@ public final class RegionFilter extends Filter {
 	@Override
 	public Set<FilterSensitivity<?>> getFilterSensitivities() {
 		Set<FilterSensitivity<?>> result = new LinkedHashSet<>();
-		result.add(new FilterSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::requiresRefresh));
+		result.add(
+				new FilterSensitivity<PersonRegionUpdateEvent>(PersonRegionUpdateEvent.class, this::requiresRefresh));
 		return result;
 	}
 
@@ -123,7 +124,5 @@ public final class RegionFilter extends Filter {
 		}
 		return true;
 	}
-	
-	
 
 }

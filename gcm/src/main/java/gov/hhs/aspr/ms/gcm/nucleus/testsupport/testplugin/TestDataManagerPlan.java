@@ -11,7 +11,6 @@ import util.errors.ContractException;
  */
 public class TestDataManagerPlan {
 
-
 	private final double scheduledTime;
 
 	private boolean executed;
@@ -22,7 +21,7 @@ public class TestDataManagerPlan {
 	 * Constructs an test actor plan from another test actor plan.
 	 */
 	public TestDataManagerPlan(TestDataManagerPlan testDataManagerPlan) {
-		scheduledTime = testDataManagerPlan.scheduledTime;		
+		scheduledTime = testDataManagerPlan.scheduledTime;
 		executed = testDataManagerPlan.executed;
 		plan = testDataManagerPlan.plan;
 	}
@@ -31,20 +30,17 @@ public class TestDataManagerPlan {
 	 * Constructs an data manager action plan. If assignKey is false, then this
 	 * actor action plan will return an empty optional key.
 	 * 
-	 * @throws ContractException
-	 *            
-	 *             <li>{@linkplain TestError#NULL_PLAN} if the plan is null</li>
+	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
+	 *                           null
 	 */
 	public TestDataManagerPlan(final double scheduledTime, Consumer<DataManagerContext> plan) {
-		
+
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
-		this.scheduledTime = scheduledTime;		
+		this.scheduledTime = scheduledTime;
 		this.plan = plan;
 	}
-
-	
 
 	/**
 	 * Returns true if an only if this data manager action plan was executed
@@ -54,8 +50,8 @@ public class TestDataManagerPlan {
 	}
 
 	/**
-	 * Package access. Executes the embedded action and marks this action plan
-	 * as executed.
+	 * Package access. Executes the embedded action and marks this action plan as
+	 * executed.
 	 */
 	void executeAction(final DataManagerContext dataManagerContext) {
 		try {
@@ -72,7 +68,7 @@ public class TestDataManagerPlan {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);		
+		result = prime * result + (executed ? 1231 : 1237);
 		long temp;
 		temp = Double.doubleToLongBits(scheduledTime);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -97,7 +93,7 @@ public class TestDataManagerPlan {
 		if (executed != other.executed) {
 			return false;
 		}
-		
+
 		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
 			return false;
 		}

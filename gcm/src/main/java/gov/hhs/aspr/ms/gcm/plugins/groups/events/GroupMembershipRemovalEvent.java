@@ -7,9 +7,7 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Event to indicating that person was removed from a group
- *
  */
 @Immutable
-public record GroupMembershipRemovalEvent(PersonId personId,
-										  GroupId groupId) implements Event {
+public record GroupMembershipRemovalEvent(PersonId personId, GroupId groupId) implements Event {
 }

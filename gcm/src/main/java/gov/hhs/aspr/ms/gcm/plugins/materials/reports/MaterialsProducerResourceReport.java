@@ -13,42 +13,30 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 
 /**
- * A Report that displays materials producer resource changes over time.
- *
- *
- * Fields
- *
+ * A Report that displays materials producer resource changes over time. Fields
  * Time -- the time in days when the materials producer resource level was set
- * 
- * Resource -- the resource identifier
- *
- * MaterialsProducer -- the materials producer identifier
- *
- * Action -- the action taken on the resource
- *
- * Amount -- the amount of resource
- *
- *
+ * Resource -- the resource identifier MaterialsProducer -- the materials
+ * producer identifier Action -- the action taken on the resource Amount -- the
+ * amount of resource
  */
 public final class MaterialsProducerResourceReport {
 	private final ReportLabel reportLabel;
 
-	public MaterialsProducerResourceReport(MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
+	public MaterialsProducerResourceReport(
+			MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData) {
 		this.reportLabel = materialsProducerResourceReportPluginData.getReportLabel();
 	}
 
 	private static enum Action {
 		/*
-		 * Used when a resource is directly added to a materials producer which
-		 * only happens when the materials producer is being initialized from
-		 * the scenario
+		 * Used when a resource is directly added to a materials producer which only
+		 * happens when the materials producer is being initialized from the scenario
 		 */
 		ADDED("Added"),
 
 		/*
 		 * Used when a materials producer transfers resource to a region
 		 */
-
 		REMOVED("Removed");
 
 		private final String displayName;
@@ -62,18 +50,19 @@ public final class MaterialsProducerResourceReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			reportHeader = ReportHeader	.builder()//
-										.add("time")//
-										.add("resource")//
-										.add("materials_producer")//
-										.add("action")//
-										.add("amount")//
-										.build();//
+			reportHeader = ReportHeader.builder()//
+					.add("time")//
+					.add("resource")//
+					.add("materials_producer")//
+					.add("action")//
+					.add("amount")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
-	private void handleMaterialsProducerResourceUpdateEvent(ReportContext reportContext, MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
+	private void handleMaterialsProducerResourceUpdateEvent(ReportContext reportContext,
+			MaterialsProducerResourceUpdateEvent materialsProducerResourceUpdateEvent) {
 		long currentResourceLevel = materialsProducerResourceUpdateEvent.currentResourceLevel();
 		long previousResourceLevel = materialsProducerResourceUpdateEvent.previousResourceLevel();
 		long amount = currentResourceLevel - previousResourceLevel;
@@ -87,7 +76,8 @@ public final class MaterialsProducerResourceReport {
 		}
 	}
 
-	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId, final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
+	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId,
+			final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
@@ -99,18 +89,22 @@ public final class MaterialsProducerResourceReport {
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
-	private void handleResourceIdAdditionEvent(ReportContext reportContext, ResourceIdAdditionEvent resourceIdAdditionEvent) {
+	private void handleResourceIdAdditionEvent(ReportContext reportContext,
+			ResourceIdAdditionEvent resourceIdAdditionEvent) {
 		ResourceId resourceId = resourceIdAdditionEvent.resourceId();
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
-			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
+			long materialsProducerResourceLevel = materialsDataManager
+					.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED,
+					materialsProducerResourceLevel);
 		}
 	}
 
 	public void init(final ReportContext reportContext) {
 
-		reportContext.subscribe(MaterialsProducerResourceUpdateEvent.class, this::handleMaterialsProducerResourceUpdateEvent);
+		reportContext.subscribe(MaterialsProducerResourceUpdateEvent.class,
+				this::handleMaterialsProducerResourceUpdateEvent);
 		reportContext.subscribe(ResourceIdAdditionEvent.class, this::handleResourceIdAdditionEvent);
 		reportContext.subscribe(MaterialsProducerAdditionEvent.class, this::handleMaterialsProducerAdditionEvent);
 		if (reportContext.stateRecordingIsScheduled()) {
@@ -121,8 +115,10 @@ public final class MaterialsProducerResourceReport {
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-				long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-				writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
+				long materialsProducerResourceLevel = materialsDataManager
+						.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+				writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED,
+						materialsProducerResourceLevel);
 			}
 		}
 	}
@@ -133,13 +129,16 @@ public final class MaterialsProducerResourceReport {
 		reportContext.releaseOutput(builder.build());
 	}
 
-	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext, MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
+	private void handleMaterialsProducerAdditionEvent(ReportContext reportContext,
+			MaterialsProducerAdditionEvent materialsProducerAdditionEvent) {
 		MaterialsProducerId materialsProducerId = materialsProducerAdditionEvent.getMaterialsProducerId();
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 		for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
-			long materialsProducerResourceLevel = materialsDataManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);
+			long materialsProducerResourceLevel = materialsDataManager
+					.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+			writeReportItem(reportContext, resourceId, materialsProducerId, Action.ADDED,
+					materialsProducerResourceLevel);
 		}
 	}
 

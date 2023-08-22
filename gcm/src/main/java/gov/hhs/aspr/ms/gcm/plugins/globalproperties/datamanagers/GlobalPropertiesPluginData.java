@@ -21,16 +21,12 @@ import util.errors.ContractException;
  * <li>global property definitions</li>
  * <li>global property values</li>
  * </ul>
- * 
- *
  */
 @Immutable
 public final class GlobalPropertiesPluginData implements PluginData {
 
 	/**
 	 * Builder class for GloblaInitialData
-	 * 
-	 *
 	 */
 	public static class Builder implements PluginDataBuilder {
 		private Data data;
@@ -44,30 +40,25 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * supplied to this builder. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *                           if a global property value was associated with a
-		 *                           global property id that was not defined
-		 * 
-		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li>
+		 *                           global property id that was not defined</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
 		 *                           if a global property value was associated with a
 		 *                           global property id that is incompatible with the
-		 *                           corresponding property definition.
-		 * 
-		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           corresponding property definition.</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *                           if a global property time was associated with a
-		 *                           global property id that was not defined
-		 * 
-		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_TIME}</li>
-		 *                           if a global property assignment time was less than
-		 *                           the associated property definition creation time.
-		 * 
-		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *                           global property id that was not defined</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_TIME} if
+		 *                           a global property assignment time was less than the
+		 *                           associated property definition creation time.</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *                           if a global property definition has no default
 		 *                           value and there is also no corresponding property
-		 *                           value assignment.
-		 * 
-		 * 
-		 * 
+		 *                           value assignment.</li>
+		 *                           </ul>
 		 */
 		public GlobalPropertiesPluginData build() {
 			if (!data.locked) {
@@ -81,15 +72,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * Defines a global property Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 * 
-		 * 
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-		 *                           if the global property id is null
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the global property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *                           </li> if the property definition is null
-		 *
-		 * 
+		 *                           if the property definition is null</li>
+		 *                           </ul>
 		 */
 		public Builder defineGlobalProperty(final GlobalPropertyId globalPropertyId,
 				final PropertyDefinition propertyDefinition, final double time) {
@@ -119,17 +107,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * corresponding property definition. Duplicate inputs override previous inputs.
 		 * 
 		 * @throws ContractException
-		 * 
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>if
-		 *                           the global property id is null
-		 * 
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}</li>if
-		 *                           the global property value is null
-		 * 
-		 * 
-		 * 
-		 *
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}if
+		 *                           the global property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}if
+		 *                           the global property value is null</li>
+		 *                           </ul>
 		 */
 		public Builder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object propertyValue,
 				final double assignmentTime) {
@@ -192,7 +175,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			/*
 			 * For every global property definition that has no default value, ensure that
 			 * there is a corresponding global property value assignment
-			 * 
 			 */
 			for (GlobalPropertyId globalPropertyId : data.globalPropertyDefinitions.keySet()) {
 				PropertyDefinition propertyDefinition = data.globalPropertyDefinitions.get(globalPropertyId);
@@ -342,11 +324,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * {@link GlobalPropertyId}.
 	 * 
 	 * @throws ContractException
-	 * 
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-	 *                           if the global property id is null
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *                           if the global property id is known
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is known</li>
+	 *                           </ul>
 	 */
 	public PropertyDefinition getGlobalPropertyDefinition(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
@@ -357,11 +340,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the creation time for the given {@link GlobalPropertyId}.
 	 * 
 	 * @throws ContractException
-	 * 
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-	 *                           if the global property id is null
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *                           if the global property id is known
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is known</li>
+	 *                           </ul>
 	 */
 	public Double getGlobalPropertyDefinitionTime(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);
@@ -370,7 +354,6 @@ public final class GlobalPropertiesPluginData implements PluginData {
 
 	/**
 	 * Returns the set of {@link GlobalPropertyId}
-	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GlobalPropertyId> Set<T> getGlobalPropertyIds() {
@@ -385,12 +368,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the optional property value for the given property id
 	 * 
 	 * @throws ContractException
-	 * 
-	 * 
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-	 *                           if the global property id is null
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *                           if the global property id is known
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is known</li>
+	 *                           </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Optional<T> getGlobalPropertyValue(final GlobalPropertyId globalPropertyId) {
@@ -403,12 +386,12 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	 * Returns the optional property assignment time for the given property id
 	 * 
 	 * @throws ContractException
-	 * 
-	 * 
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-	 *                           if the global property id is null
-	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *                           if the global property id is known
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the global property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the global property id is known</li>
+	 *                           </ul>
 	 */
 	public Optional<Double> getGlobalPropertyTime(final GlobalPropertyId globalPropertyId) {
 		validateGlobalPropertyIdExists(data, globalPropertyId);

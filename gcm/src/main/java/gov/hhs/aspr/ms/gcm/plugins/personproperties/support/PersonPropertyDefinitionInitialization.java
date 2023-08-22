@@ -16,10 +16,6 @@ import util.errors.ContractException;
 /**
  * A class for defining a person property with an associated property id and
  * property values for extant people.
- * 
- * 
- *
- * 
  */
 @Immutable
 public final class PersonPropertyDefinitionInitialization {
@@ -56,7 +52,6 @@ public final class PersonPropertyDefinitionInitialization {
 
 	/**
 	 * Builder class for a PersonPropertyDefinitionInitialization
-	 * 
 	 */
 	public final static class Builder {
 
@@ -85,18 +80,19 @@ public final class PersonPropertyDefinitionInitialization {
 		}
 
 		/**
-		 * Constructs the PersonPropertyDefinitionInitialization from the
-		 * collected data
+		 * Constructs the PersonPropertyDefinitionInitialization from the collected data
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if no property definition was assigned to the
-		 *             builder</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if no
-		 *             property id was assigned to the builder</li>
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE} if a
-		 *             collected property value is incompatible with the
-		 *             property definition</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if no property definition was assigned to the
+		 *                           builder</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           no property id was assigned to the builder</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+		 *                           if a collected property value is incompatible with
+		 *                           the property definition</li>
+		 *                           </ul>
 		 */
 		public PersonPropertyDefinitionInitialization build() {
 			validate();
@@ -106,9 +102,8 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Sets the property id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             property id is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+		 *                           property id is null
 		 */
 		public Builder setPersonPropertyId(PersonPropertyId propertyId) {
 			if (propertyId == null) {
@@ -121,9 +116,8 @@ public final class PersonPropertyDefinitionInitialization {
 		/**
 		 * Sets the property definition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *             if the property definition is null</li>
+		 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
 			if (propertyDefinition == null) {
@@ -132,11 +126,11 @@ public final class PersonPropertyDefinitionInitialization {
 			data.propertyDefinition = propertyDefinition;
 			return this;
 		}
-		
+
 		/**
 		 * Sets the time tracking policy. Defaults to false;
 		 */
-		public Builder setTrackTimes(boolean trackTimes) {			
+		public Builder setTrackTimes(boolean trackTimes) {
 			data.trackTimes = trackTimes;
 			return this;
 		}
@@ -145,12 +139,13 @@ public final class PersonPropertyDefinitionInitialization {
 		 * Adds a property value
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PERSON_ID} if the
-		 *             person id is null</li>
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             property value is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the property value is null</li>
+		 *                           </ul>
 		 */
-
 		public Builder addPropertyValue(PersonId personId, Object value) {
 			if (personId == null) {
 				throw new ContractException(PersonError.NULL_PERSON_ID);
@@ -181,14 +176,14 @@ public final class PersonPropertyDefinitionInitialization {
 
 	/**
 	 * Returns the list of (person,value) pairs collected by the builder in the
-	 * order of their addition. All pairs have non-null entries and the values
-	 * are compatible with the contained property definition. Duplicate
-	 * assignments of values to the same person may be present.
+	 * order of their addition. All pairs have non-null entries and the values are
+	 * compatible with the contained property definition. Duplicate assignments of
+	 * values to the same person may be present.
 	 */
 	public List<Pair<PersonId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
 	}
-	
+
 	/**
 	 * Returns the time tracking policy.
 	 */

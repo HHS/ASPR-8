@@ -39,8 +39,6 @@ public class MaterialsProducerConstructionData {
 
 	/**
 	 * Static builder class for {@link MaterialsProducerConstructionData}
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Data data = new Data();
@@ -57,9 +55,8 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Builds the MaterialsProducerConstructionData from the given inputs.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id was not set</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerConstructionData build() {
 			validate();
@@ -69,9 +66,8 @@ public class MaterialsProducerConstructionData {
 		/**
 		 * Sets the materials producer id
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *             if the materials producer id is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			if (materialsProducerId == null) {
@@ -85,9 +81,8 @@ public class MaterialsProducerConstructionData {
 		 * Adds an auxiliary value to be used by observers of materials producer
 		 * addition
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
-		 *             the value is null</li>
+		 * @throws ContractException {@linkplain MaterialsError#NULL_AUXILIARY_DATA} if
+		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {
 			if (value == null) {
@@ -101,18 +96,18 @@ public class MaterialsProducerConstructionData {
 		 * Sets a materials producer property value
 		 * 
 		 * @throws ContractException
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-		 *             materials producer property id is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-		 *             value is null</li>
-		 * 
-		 *             <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *             if the materials producer property was previously
-		 *             set</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the materials producer property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+		 *                           if the value is null</li>
+		 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if the materials producer property was previously
+		 *                           set</li>
+		 *                           </ul>
 		 */
-		public Builder setMaterialsProducerPropertyValue(MaterialsProducerPropertyId materialsProducerPropertyId, Object value) {
+		public Builder setMaterialsProducerPropertyValue(MaterialsProducerPropertyId materialsProducerPropertyId,
+				Object value) {
 			if (materialsProducerPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -130,15 +125,14 @@ public class MaterialsProducerConstructionData {
 		 * Sets a materials producer resource level
 		 * 
 		 * @throws ContractException
-		 * 
-		 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-		 *             resource id is null</li>
-		 * 
-		 *             <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *             if the level is negative</li>
-		 * 
-		 *             <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
-		 *             if the resource level was previously set</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           the resource id is null</li>
+		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+		 *                           if the level is negative</li>
+		 *                           <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
+		 *                           if the resource level was previously set</li>
+		 *                           </ul>
 		 */
 		public Builder setResourceLevel(ResourceId resourceId, long level) {
 

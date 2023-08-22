@@ -49,9 +49,9 @@ public class TestSimulation {
 		}
 
 		/**
-		 * If true and an output consumer is also assigned then the simulation
-		 * will produce plugins and a SimulationTime that reflect the final
-		 * state of the simulation. Defaults to false.
+		 * If true and an output consumer is also assigned then the simulation will
+		 * produce plugins and a SimulationTime that reflect the final state of the
+		 * simulation. Defaults to false.
 		 */
 		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
@@ -67,13 +67,11 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Set the simulation time. Defaults to the current date and a start
-		 * time of zero.
+		 * Set the simulation time. Defaults to the current date and a start time of
+		 * zero.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_SIMULATION_TIME} if the
-		 *             simulation time is null
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
+		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			if (simulationState == null) {
@@ -86,13 +84,9 @@ public class TestSimulation {
 		/**
 		 * Adds a plugin to this builder for inclusion in the test simulation
 		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGINS} if the plugin
-		 *             collection is null
-		 *             
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_PLUGINS} if the plugin
+		 *                           collection is null
 		 */
-
 		public Builder addPlugin(Plugin plugin) {
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
@@ -102,15 +96,11 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Add a plugin initializer to this builder for inclusion in the
-		 * simulation
+		 * Add a plugin initializer to this builder for inclusion in the simulation
 		 * 
-		 * @throws ContractException
-		 *             <li>{@link NucleusError#NULL_PLUGIN} if the plugin is
-		 *             null
-		 * 
+		 * @throws ContractException {@link NucleusError#NULL_PLUGIN} if the plugin is
+		 *                           null
 		 */
-
 		public Builder addPlugins(Collection<Plugin> plugins) {
 			if (plugins == null) {
 				throw new ContractException(NucleusError.NULL_PLUGINS);
@@ -125,8 +115,8 @@ public class TestSimulation {
 		}
 
 		/**
-		 * Returns an Engine instance that is initialized with the plugins and
-		 * output consumer collected by this builder.
+		 * Returns an Engine instance that is initialized with the plugins and output
+		 * consumer collected by this builder.
 		 */
 		public TestSimulation build() {
 			return new TestSimulation(new Data(data));
@@ -155,17 +145,17 @@ public class TestSimulation {
 				.build().execute();
 
 		// show that all actions were executed
-		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer.getOutputItemMap(TestScenarioReport.class);
+		Map<TestScenarioReport, Integer> outputItems = data.testOutputConsumer
+				.getOutputItemMap(TestScenarioReport.class);
 		boolean complete = false;
 
 		if (outputItems.size() < 1) {
 			throw new ContractException(TestError.MISSING_TEST_SCENARIO_REPORTS);
 		}
-		
+
 		if (outputItems.size() > 1) {
 			throw new ContractException(TestError.DUPLICATE_TEST_SCENARIO_REPORTS);
 		}
-		
 
 		TestScenarioReport testScenarioReport = outputItems.keySet().iterator().next();
 		Integer count = outputItems.get(testScenarioReport);

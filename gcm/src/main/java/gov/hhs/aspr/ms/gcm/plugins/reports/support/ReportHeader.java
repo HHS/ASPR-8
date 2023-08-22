@@ -10,8 +10,6 @@ import util.errors.ContractException;
 /**
  * An immutable, ordered container for the string values in the header of a
  * report. Constructed via the contained builder class.
- * 
- *
  */
 @Immutable
 public final class ReportHeader {
@@ -31,8 +29,6 @@ public final class ReportHeader {
 
 	/**
 	 * Builder class for ReportHeader
-	 * 
-	 *
 	 */
 	@NotThreadSafe
 	public final static class Builder {
@@ -46,9 +42,8 @@ public final class ReportHeader {
 		/**
 		 * Add a string to the list of strings in the header in the order added.
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain ReportError#NULL_REPORT_HEADER_STRING} if
-		 *             the header string is null</li>
+		 * @throws ContractException {@linkplain ReportError#NULL_REPORT_HEADER_STRING}
+		 *                           if the header string is null
 		 */
 		public Builder add(String headerString) {
 			if (headerString == null) {
@@ -59,8 +54,8 @@ public final class ReportHeader {
 		}
 
 		/**
-		 * Returns a report header from the collected header strings. Clears the
-		 * state of the builder.
+		 * Returns a report header from the collected header strings. Clears the state
+		 * of the builder.
 		 */
 		public ReportHeader build() {
 			return new ReportHeader(headerStrings);
@@ -75,10 +70,8 @@ public final class ReportHeader {
 	}
 
 	/**
-	 * String representation that preserves the order of the added strings
-	 * presented as:
-	 * 
-	 * ReportHeader [headerStrings=[string1, string2...]
+	 * String representation that preserves the order of the added strings presented
+	 * as: ReportHeader [headerStrings=[string1, string2...]
 	 */
 	@Override
 	public String toString() {

@@ -7,10 +7,7 @@ import net.jcip.annotations.ThreadSafe;
  * plugin scenario is considered complete if and only if the plugin contained at
  * least one plan for a test actor or test data manager and all such plans were
  * executed by the simulation.
- * 
- *
  */
-
 @ThreadSafe
 public final class TestScenarioReport {
 	private final boolean complete;
@@ -21,11 +18,10 @@ public final class TestScenarioReport {
 	}
 
 	/**
-	 * Returns true if and only if the plugin contained at least one plan for a
-	 * test actor or test data manager and all such plans were executed by the
+	 * Returns true if and only if the plugin contained at least one plan for a test
+	 * actor or test data manager and all such plans were executed by the
 	 * simulation.
 	 */
-
 	public boolean isComplete() {
 		return complete;
 	}
@@ -42,8 +38,8 @@ public final class TestScenarioReport {
 	}
 
 	/**
-	 * Two TestScenarioReport instances are equal if and only if they have the
-	 * same completion status.
+	 * Two TestScenarioReport instances are equal if and only if they have the same
+	 * completion status.
 	 */
 	@Override
 	public boolean equals(Object obj) {

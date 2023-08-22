@@ -7,11 +7,8 @@ import net.jcip.annotations.Immutable;
 
 /**
  * An observation event indicating that a resource property has changed.
- *
  */
 @Immutable
-public record ResourcePropertyUpdateEvent(ResourceId resourceId,
-										  ResourcePropertyId resourcePropertyId,
-										  Object previousPropertyValue,
-										  Object currentPropertyValue) implements Event {
+public record ResourcePropertyUpdateEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId,
+		Object previousPropertyValue, Object currentPropertyValue) implements Event {
 }

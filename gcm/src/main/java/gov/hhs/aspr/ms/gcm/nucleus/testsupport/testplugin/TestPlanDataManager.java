@@ -11,14 +11,11 @@ import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
 /**
  * A data manager used by test actors and test data managers to retrieve plans
  * by alias ids.
- * 
- *
  */
-
 public class TestPlanDataManager extends DataManager {
 
 	private final Map<Object, List<TestReportPlan>> reportActionPlanMap = new LinkedHashMap<>();
-	
+
 	private final Map<Object, List<TestActorPlan>> actorActionPlanMap = new LinkedHashMap<>();
 
 	private final Map<Object, List<TestDataManagerPlan>> dataManagerActionPlanMap = new LinkedHashMap<>();
@@ -32,7 +29,7 @@ public class TestPlanDataManager extends DataManager {
 			List<TestActorPlan> testActorPlans = testPluginData.getTestActorPlans(alias);
 			actorActionPlanMap.put(alias, testActorPlans);
 		}
-		
+
 		for (Object alias : testPluginData.getTestReportAliases()) {
 			List<TestReportPlan> testReportPlans = testPluginData.getTestReportPlans(alias);
 			reportActionPlanMap.put(alias, testReportPlans);
@@ -45,9 +42,9 @@ public class TestPlanDataManager extends DataManager {
 	}
 
 	/**
-	 * Initializes this data manager by subscribing to simulation close. On
-	 * close it releases a single TestScenarioReport that indicates success if
-	 * there was at least one plan and all plans were executed.
+	 * Initializes this data manager by subscribing to simulation close. On close it
+	 * releases a single TestScenarioReport that indicates success if there was at
+	 * least one plan and all plans were executed.
 	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
@@ -66,7 +63,7 @@ public class TestPlanDataManager extends DataManager {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns all plans associated with the given report alias
 	 */
@@ -93,12 +90,10 @@ public class TestPlanDataManager extends DataManager {
 	}
 
 	/*
-	 * Return true if and only if all actions that are stored in this action
-	 * data view have been executed. Indicates that all injected behaviors in a
-	 * unit test were actually executed. RETURNS FALSE IF THERE WERE NO ACTIONS
-	 * STORED.
+	 * Return true if and only if all actions that are stored in this action data
+	 * view have been executed. Indicates that all injected behaviors in a unit test
+	 * were actually executed. RETURNS FALSE IF THERE WERE NO ACTIONS STORED.
 	 */
-
 	private void sendActionCompletionReport(DataManagerContext context) {
 		context.releaseOutput(new TestScenarioReport(allActionsExecuted()));
 	}
@@ -113,7 +108,7 @@ public class TestPlanDataManager extends DataManager {
 				}
 			}
 		}
-		
+
 		for (Object alias : reportActionPlanMap.keySet()) {
 			for (TestReportPlan testReportPlan : reportActionPlanMap.get(alias)) {
 				planCount++;

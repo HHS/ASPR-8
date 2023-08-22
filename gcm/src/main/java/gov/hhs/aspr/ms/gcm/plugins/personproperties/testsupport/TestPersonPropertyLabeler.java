@@ -7,7 +7,6 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyLabele
 /**
  * A person property labeler that labels people as either true or false based on
  * an Equality based comparison with an integer value and the specified value.
- * 
  * Should only be used with properties that are comparable to integers when the
  * equality type is not Equality.EQUAL or Equality.NOT_EQUAL.
  */
@@ -57,7 +56,5 @@ public class TestPersonPropertyLabeler extends PersonPropertyLabeler {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }

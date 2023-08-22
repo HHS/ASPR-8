@@ -8,7 +8,6 @@ import util.errors.ContractException;
 
 /**
  * An event indicating that a material type has been added
- *
  */
 @Immutable
 public record MaterialIdAdditionEvent(MaterialId materialId) implements Event {
@@ -16,8 +15,8 @@ public record MaterialIdAdditionEvent(MaterialId materialId) implements Event {
 	/**
 	 * Constructs the event
 	 *
-	 * @throws ContractException <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if the
-	 *                           material id is null</li>
+	 * @throws ContractException {@linkplain MaterialsError#NULL_MATERIAL_ID} if the
+	 *                           material id is null
 	 */
 	public MaterialIdAdditionEvent {
 		if (materialId == null) {

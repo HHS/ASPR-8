@@ -6,9 +6,7 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Event to signal the imminent removal of a group from the simulation
- *
  */
-
 @Immutable
 public record GroupImminentRemovalEvent(GroupId groupId) implements Event {
 }

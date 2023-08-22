@@ -7,18 +7,14 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 
 /**
  * A generics based function that returns an optional {@link PersonId} from a
- * {@link PartitionsContext} and {@link Event}. Used by {@link FilterSensitivity} to
- * ascertain the person id from an event and whether that event would effect the
- * filter that owns the filter sensitivity.
- * 
- * 
- *
- * 
+ * {@link PartitionsContext} and {@link Event}. Used by
+ * {@link FilterSensitivity} to ascertain the person id from an event and
+ * whether that event would effect the filter that owns the filter sensitivity.
  */
 public interface EventPredicate<T extends Event> {
 	/**
-	 * Returns an optional of the person id associated with the event if that
-	 * event would effect that filter.  Returns an empty optional otherwise.
+	 * Returns an optional of the person id associated with the event if that event
+	 * would effect that filter. Returns an empty optional otherwise.
 	 */
 	public Optional<PersonId> requiresRefresh(PartitionsContext partitionsContext, T event);
 }

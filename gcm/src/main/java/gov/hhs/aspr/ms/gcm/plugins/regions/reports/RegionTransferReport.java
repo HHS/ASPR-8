@@ -20,20 +20,9 @@ import util.wrappers.MutableInteger;
  * A periodic Report that displays the number of times a person transferred from
  * one region to another. Transfers from a region to itself are interpreted as
  * the addition of people at that region. Removal of people is not reflected in
- * this report.
- *
- *
- * Fields
- *
- *
- * SourceRegion -- the source region identifier
- *
- * DestinationRegion -- the destination region property identifier
- *
- * Transfers -- the number of transfers from the source region to the
- * destination region
- *
- *
+ * this report. Fields SourceRegion -- the source region identifier
+ * DestinationRegion -- the destination region property identifier Transfers --
+ * the number of transfers from the source region to the destination region
  */
 public final class RegionTransferReport extends PeriodicReport {
 
@@ -57,18 +46,16 @@ public final class RegionTransferReport extends PeriodicReport {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
 
-																	.add("source_region")//
-																	.add("destination_region")//
-																	.add("transfers")//
-																	.build();//
+					.add("source_region")//
+					.add("destination_region")//
+					.add("transfers")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
 	@Override
 	protected void flush(ReportContext reportContext) {
-
-		
 
 		for (final MultiKey multiKey : baseMap.keySet()) {
 			RegionId sourceRegionId = multiKey.getKey(0);
@@ -94,7 +81,8 @@ public final class RegionTransferReport extends PeriodicReport {
 		increment(regionId, regionId);
 	}
 
-	private void handlePersonRegionUpdateEvent(ReportContext ReportContext, PersonRegionUpdateEvent personRegionUpdateEvent) {
+	private void handlePersonRegionUpdateEvent(ReportContext ReportContext,
+			PersonRegionUpdateEvent personRegionUpdateEvent) {
 		RegionId previousRegionId = personRegionUpdateEvent.previousRegionId();
 		RegionId currentRegionId = personRegionUpdateEvent.currentRegionId();
 		increment(previousRegionId, currentRegionId);

@@ -7,7 +7,6 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public record MaterialsProducerPropertyUpdateEvent(MaterialsProducerId materialsProducerId,
-												   MaterialsProducerPropertyId materialsProducerPropertyId,
-												   Object previousPropertyValue,
-												   Object currentPropertyValue) implements Event {
+		MaterialsProducerPropertyId materialsProducerPropertyId, Object previousPropertyValue,
+		Object currentPropertyValue) implements Event {
 }

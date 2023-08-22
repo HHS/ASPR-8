@@ -4,14 +4,11 @@ import util.errors.ContractException;
 
 /**
  * Base class for all data managers.
- * 
- * 
- *
  */
 public class DataManager {
 	/**
-	 * Package access used by the simulation to help ensure that init() is
-	 * invoked exactly once.
+	 * Package access used by the simulation to help ensure that init() is invoked
+	 * exactly once.
 	 */
 	boolean isInitialized() {
 		return initialized;
@@ -22,12 +19,11 @@ public class DataManager {
 	/**
 	 * Initializes the data manager. This method should only be invoked by the
 	 * simulation. All data manager descendant classes that override this method
-	 * must invoke the super.
+	 * must invoke the super. <br>
 	 * 
-	 * @throws ContractException
-	 *             <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
-	 *             if init() is invoked more than once</li>
-	 * 
+	 * @param dataManagerContext
+	 * @throws ContractException {@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
+	 *                           if init() is invoked more than once
 	 */
 	public void init(DataManagerContext dataManagerContext) {
 		if (initialized) {

@@ -8,8 +8,6 @@ import util.errors.ContractException;
 /**
  * A thread-safe, immutable class that defines a property, but does not indicate
  * the role that property is playing or the identifier of the property.
- *
- *
  */
 @ThreadSafe
 public final class PropertyDefinition {
@@ -41,7 +39,7 @@ public final class PropertyDefinition {
 			int result = 1;
 			result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
 			result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
-			result = prime * result +  type.hashCode();
+			result = prime * result + type.hashCode();
 			return result;
 		}
 
@@ -69,14 +67,11 @@ public final class PropertyDefinition {
 			}
 			return true;
 		}
-		
-		
+
 	}
 
 	/**
 	 * Builder class for {@linkplain PropertyDefinition}
-	 * 
-	 *
 	 */
 	public static class Builder {
 
@@ -84,7 +79,7 @@ public final class PropertyDefinition {
 
 		private Builder() {
 		}
-		
+
 		private void validate() {
 			if (data.type == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_TYPE);
@@ -101,12 +96,14 @@ public final class PropertyDefinition {
 		 * Builds the property definition
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PropertyError#NULL_PROPERTY_TYPE} if the
-		 *             class type of the definition is not assigned or null</li>
-		 *             <li>{@linkplain PropertyError#INCOMPATIBLE_DEFAULT_VALUE}if
-		 *             the default value is not null and the class type is not a
-		 *             super-type of the default value</li>
-		 * 
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_TYPE}
+		 *                           if the class type of the definition is not assigned
+		 *                           or null</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_DEFAULT_VALUE}if
+		 *                           the default value is not null and the class type is
+		 *                           not a super-type of the default value</li>
+		 *                           </ul>
 		 */
 		public PropertyDefinition build() {
 			validate();
@@ -122,8 +119,8 @@ public final class PropertyDefinition {
 		}
 
 		/**
-		 * Sets property value mutability during simulation run time. Default
-		 * value is true.
+		 * Sets property value mutability during simulation run time. Default value is
+		 * true.
 		 */
 		public Builder setPropertyValueMutability(boolean propertyValuesAreMutable) {
 			data.propertyValuesAreMutable = propertyValuesAreMutable;
@@ -131,14 +128,13 @@ public final class PropertyDefinition {
 		}
 
 		/**
-		 * Sets the default value for property values of this definition. Value
-		 * must be set(non-null) by client.
+		 * Sets the default value for property values of this definition. Value must be
+		 * set(non-null) by client.
 		 */
 		public Builder setDefaultValue(Object defaultValue) {
 			data.defaultValue = defaultValue;
 			return this;
 		}
-
 
 	}
 
@@ -149,13 +145,12 @@ public final class PropertyDefinition {
 	}
 
 	/**
-	 * Returns the Optional<Object> containing default value for the property
-	 * definition. Null values are allowed as a convenience. Any property
-	 * definition that has a null default value must have corresponding property
-	 * value assignments within plugin initial data that cover all cases.
-	 * Property definitions for dynamically generated relationships MUST contain
-	 * non-null default values since they are created after data initialization
-	 * of the plugins.
+	 * Returns the Optional containing default value for the property definition.
+	 * Null values are allowed as a convenience. Any property definition that has a
+	 * null default value must have corresponding property value assignments within
+	 * plugin initial data that cover all cases. Property definitions for
+	 * dynamically generated relationships MUST contain non-null default values
+	 * since they are created after data initialization of the plugins.
 	 */
 	public Optional<Object> getDefaultValue() {
 		if (data.defaultValue == null) {
@@ -167,35 +162,30 @@ public final class PropertyDefinition {
 	/**
 	 * Returns that class type of this definition. It is used to ensure that all
 	 * values assigned to properties have a predictable type from the modeler's
-	 * perspective. Property assignments are descendant class tolerant. For
-	 * example, a property having a defined type of Number, would accept values
-	 * that are Double, Integer or any other descendant type.
-	 *
+	 * perspective. Property assignments are descendant class tolerant. For example,
+	 * a property having a defined type of Number, would accept values that are
+	 * Double, Integer or any other descendant type.
 	 */
 	public Class<?> getType() {
 		return data.type;
 	}
 
 	/**
-	 * The modeler may define a property such that all associated property
-	 * values must be equal to the default value of this property definition.
-	 * Any attempt to assign a value to a property so defined will result in an
-	 * error. This can be used to ensure that some variables remain constant
-	 * throughout the run of a simulation instance.
-	 *
-	 * Returns true if and only if the value of the property must remain
-	 * constant.
+	 * The modeler may define a property such that all associated property values
+	 * must be equal to the default value of this property definition. Any attempt
+	 * to assign a value to a property so defined will result in an error. This can
+	 * be used to ensure that some variables remain constant throughout the run of a
+	 * simulation instance. Returns true if and only if the value of the property
+	 * must remain constant.
 	 */
 	public boolean propertyValuesAreMutable() {
 		return data.propertyValuesAreMutable;
 	}
 
 	/**
-	 * Standard string representation in the form:
-	 * 
-	 * PropertyDefinition [type=someType,mapOption=mapOption,
-	 * constantPropertyValues=true, defaultValue=someValue,
-	 * timeTrackingPolicy=policy]
+	 * Standard string representation in the form: PropertyDefinition
+	 * [type=someType,mapOption=mapOption, constantPropertyValues=true,
+	 * defaultValue=someValue, timeTrackingPolicy=policy]
 	 */
 	@Override
 	public String toString() {
@@ -205,7 +195,7 @@ public final class PropertyDefinition {
 		builder2.append(", propertyValuesAreMutable=");
 		builder2.append(data.propertyValuesAreMutable);
 		builder2.append(", defaultValue=");
-		builder2.append(data.defaultValue);		
+		builder2.append(data.defaultValue);
 		builder2.append("]");
 		return builder2.toString();
 	}
@@ -227,14 +217,11 @@ public final class PropertyDefinition {
 			return false;
 		}
 		PropertyDefinition other = (PropertyDefinition) obj;
-		
+
 		if (!data.equals(other.data)) {
 			return false;
 		}
 		return true;
 	}
 
-	
-	
-	
 }

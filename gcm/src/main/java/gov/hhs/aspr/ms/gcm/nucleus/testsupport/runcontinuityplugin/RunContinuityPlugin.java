@@ -6,8 +6,6 @@ import util.errors.ContractException;
 
 /**
  * A plugin providing a person property management to the simulation.
- * 
- *
  */
 @ThreadSafe
 public final class RunContinuityPlugin {
@@ -39,9 +37,8 @@ public final class RunContinuityPlugin {
 		/**
 		 * Builds the RunContinuityPlugin from the collected inputs
 		 * 
-		 * @throws ContractException
-		 *             <li>{@linkplain RunContinuityError#NULL_RUN_CONTINUITY_PLUGN_DATA}
-		 *             if the runContinuityPluginData is null</li>
+		 * @throws ContractException {@linkplain RunContinuityError#NULL_RUN_CONTINUITY_PLUGN_DATA}
+		 *                           if the runContinuityPluginData is null
 		 */
 		public Plugin build() {
 

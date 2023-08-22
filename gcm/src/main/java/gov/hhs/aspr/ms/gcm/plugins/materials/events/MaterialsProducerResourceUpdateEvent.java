@@ -6,8 +6,6 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public record MaterialsProducerResourceUpdateEvent(MaterialsProducerId materialsProducerId,
-												   ResourceId resourceId,
-												   long previousResourceLevel,
-												   long currentResourceLevel) implements Event {
+public record MaterialsProducerResourceUpdateEvent(MaterialsProducerId materialsProducerId, ResourceId resourceId,
+		long previousResourceLevel, long currentResourceLevel) implements Event {
 }

@@ -11,31 +11,21 @@ import util.errors.ContractException;
 
 /**
  * A {@linkplain LabelSet} is a set of labels that are used to specify a sub-set
- * of the cell space of a partition during sampling.
- * 
- * Partitions are composed of cells that are associated with combinations of
- * labels associated with the various attributes of people. The label set
- * specifies a subset of that space by value.
- * 
- * For example: Suppose a partition is formed by the regions and two person
- * properties. The regions are grouped together under state labels. The first
- * property is the Integer AGE and is grouped by PRESCHOOL, SCHOOL and ADULT.
- * The second property is the Integer VACCINE_DOSES_RECEIVED and ranges from 0
- * to 3 inclusive.
- * 
- * The {@link LabelSet} [REGION = VIRGINIA, AGE=PRESHOOL,
+ * of the cell space of a partition during sampling. Partitions are composed of
+ * cells that are associated with combinations of labels associated with the
+ * various attributes of people. The label set specifies a subset of that space
+ * by value. For example: Suppose a partition is formed by the regions and two
+ * person properties. The regions are grouped together under state labels. The
+ * first property is the Integer AGE and is grouped by PRESCHOOL, SCHOOL and
+ * ADULT. The second property is the Integer VACCINE_DOSES_RECEIVED and ranges
+ * from 0 to 3 inclusive. The {@link LabelSet} [REGION = VIRGINIA, AGE=PRESHOOL,
  * VACCINE_DOSES_RECEIVED=2] will match the single partition cell that
  * represents Virginia preschoolers who have received 2 doses of vaccine. The
  * {@link LabelSet} [REGION = VIRGINIA, AGE=PRESHOOL] will match all partition
  * cells that represent Virginia preschoolers, without regard to doses of
- * vaccine received.
- * 
- * 
- * Label Sets are built by the modeler via the supplied Builder class.
- *
- *
+ * vaccine received. Label Sets are built by the modeler via the supplied
+ * Builder class.
  */
-
 public final class LabelSet {
 
 	@Override
@@ -83,14 +73,16 @@ public final class LabelSet {
 		}
 
 		/**
-		 * Sets the label value for the given label id. Replaces any existing
-		 * label value for the same id.
+		 * Sets the label value for the given label id. Replaces any existing label
+		 * value for the same id.
 		 * 
 		 * @throws ContractException
-		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL_DIMENSION}
-		 *             if the dimension is null</li>
-		 *             <li>{@linkplain PartitionError#NULL_PARTITION_LABEL} if
-		 *             the label is null</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PartitionError#NULL_PARTITION_LABEL_DIMENSION}
+		 *                           if the dimension is null</li>
+		 *                           <li>{@linkplain PartitionError#NULL_PARTITION_LABEL}
+		 *                           if the label is null</li>
+		 *                           </ul>
 		 */
 		public Builder setLabel(Object id, Object label) {
 			if (id == null) {

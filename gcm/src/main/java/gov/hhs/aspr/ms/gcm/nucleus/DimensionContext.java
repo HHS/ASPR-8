@@ -23,8 +23,6 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 
 	/**
 	 * A builder class for DimensionContext
-	 * 
-	 *
 	 */
 	public static class Builder {
 		private Builder() {
@@ -48,11 +46,8 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		 * Given a plugin Data, will add it and its clone builder to the internal map in
 		 * this class
 		 * 
-		 * @throws ContractException
-		 *                           <ul>
-		 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA} if
-		 *                           the plugin data builder is null</li>
-		 * 
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
+		 *                           plugin data builder is null
 		 */
 		public <T extends PluginData> PluginDataBuilder add(T t) {
 			if (t == null) {
@@ -73,7 +68,6 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		return new Builder();
 	}
 
-	
 	@Override
 	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
 
@@ -107,10 +101,10 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
 	 *                           if more than one plugin data matches the given
 	 *                           class reference</li>
-	 * 
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_CLASS}
 	 *                           if no plugin data matches the given class
 	 *                           reference</li>
+	 *                           </ul>
 	 */
 	public <T extends PluginData> T getPluginData(Class<T> classRef) {
 

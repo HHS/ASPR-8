@@ -9,17 +9,20 @@ import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 
 @Immutable
-public record ResourcePropertyDefinitionEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) implements Event {
+public record ResourcePropertyDefinitionEvent(ResourceId resourceId, ResourcePropertyId resourcePropertyId,
+		Object resourcePropertyValue) implements Event {
 	/**
 	 * Constructs the event.
 	 *
 	 * @throws ContractException
-	 *             <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the
-	 *             resource id is null</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if the
-	 *             resource property id is null</li>
-	 *             <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the
-	 *             resource property value is null</li>
+	 *                           <ul>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the resource id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the resource property id is null</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+	 *                           if the resource property value is null</li>
+	 *                           </ul>
 	 */
 	public ResourcePropertyDefinitionEvent {
 		if (resourceId == null) {

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
 
 public class AT_PeriodicReportPluginData {
 
@@ -37,9 +36,6 @@ public class AT_PeriodicReportPluginData {
 			}
 		}
 
-		/**
-		 * Builder class for the report
-		 */
 		public final static class Builder extends PeriodicReportPluginData.Builder {
 
 			private Data data;
@@ -49,40 +45,17 @@ public class AT_PeriodicReportPluginData {
 				this.data = data;
 			}
 
-			/**
-			 * Returns a PersonPropertyReportPluginData created from the collected inputs
-			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-			 *                           the report label is not assigned</li>
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-			 *                           the report period is not assigned</li>
-			 */
 			@Override
 			public LocalPeriodicReportPluginData build() {
 				return new LocalPeriodicReportPluginData(data);
 			}
 
-			/**
-			 * Sets the report label
-			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
-			 *                           the report label is null</li>
-			 */
 			@Override
 			public Builder setReportLabel(ReportLabel reportLabel) {
 				super.setReportLabel(reportLabel);
 				return this;
 			}
 
-			/**
-			 * Sets the report period id
-			 * 
-			 * @throws ContractException
-			 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
-			 *                           the report period is null</li>
-			 */
 			@Override
 			public Builder setReportPeriod(ReportPeriod reportPeriod) {
 				super.setReportPeriod(reportPeriod);
@@ -90,9 +63,6 @@ public class AT_PeriodicReportPluginData {
 			}
 		}
 
-		/**
-		 * Returns a new instance of the builder class
-		 */
 		public static Builder builder() {
 			return new Builder(new Data());
 		}

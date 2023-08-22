@@ -4,8 +4,6 @@ import net.jcip.annotations.Immutable;
 
 /**
  * Identifier for all batches
- * 
- *
  */
 @Immutable
 public final class BatchId implements Comparable<BatchId> {
@@ -22,7 +20,7 @@ public final class BatchId implements Comparable<BatchId> {
 
 	@Override
 	public int compareTo(BatchId personId) {
-		return Integer.compare(id,personId.id);
+		return Integer.compare(id, personId.id);
 	}
 
 	@Override
@@ -44,8 +42,8 @@ public final class BatchId implements Comparable<BatchId> {
 		}
 		return true;
 	}
-	
-	@Override	
+
+	@Override
 	public String toString() {
 		return Integer.toString(id);
 	}
