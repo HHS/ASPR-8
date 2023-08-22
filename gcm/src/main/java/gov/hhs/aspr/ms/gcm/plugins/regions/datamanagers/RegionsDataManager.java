@@ -1018,6 +1018,7 @@ public final class RegionsDataManager extends DataManager {
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
 	 *                           the region id is not known</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(
 			RegionId departureRegionId) {
