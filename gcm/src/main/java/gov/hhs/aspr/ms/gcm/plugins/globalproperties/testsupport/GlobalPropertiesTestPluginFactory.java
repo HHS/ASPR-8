@@ -91,7 +91,7 @@ public final class GlobalPropertiesTestPluginFactory {
          * Sets the {@link GlobalPropertiesPluginData} in this Factory. This explicit
          * instance of pluginData will be used to create a GlobalPropertiesPlugin
          * 
-         * @throws ContractExecption {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
+         * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setGlobalPropertiesPluginData(GlobalPropertiesPluginData globalPropertiesPluginData) {
@@ -107,7 +107,7 @@ public final class GlobalPropertiesTestPluginFactory {
          * explicit instance of pluginData will be used to create a
          * GlobalPropertiesPlugin
          * 
-         * @throws ContractExecption {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
+         * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PROPERTY_REPORT_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setGlobalPropertyReportPluginData(
@@ -137,7 +137,7 @@ public final class GlobalPropertiesTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      * 
-     * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+     * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if
      *                           testPluginData is null
      */
     public static Factory factory(long seed, TestPluginData testPluginData) {
@@ -163,7 +163,7 @@ public final class GlobalPropertiesTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      * 
-     * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+     * @throws ContractException {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
      *                           if consumer is null
      */
     public static Factory factory(long seed, Consumer<ActorContext> consumer) {

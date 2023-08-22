@@ -69,7 +69,7 @@ public final class TestPluginFactory {
 	 * </ul>
 	 * via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
 	 */
 	public static Factory factory(TestPluginData testPluginData) {
@@ -87,7 +87,7 @@ public final class TestPluginFactory {
 	 * </ul>
 	 * via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 * @throws ContractException {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null
 	 */
 	public static Factory factory(Consumer<ActorContext> consumer) {

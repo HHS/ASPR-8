@@ -85,7 +85,7 @@ public class StochasticsTestPluginFactory {
 		 * Sets the {@link StochasticsPluginData} in this Factory. This explicit
 		 * instance of pluginData will be used to create a StochasticsPlugin
 		 * 
-		 * @throws ContractExecption {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+		 * @throws ContractException {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
 		 *                           if the passed in pluginData is null
 		 */
 		public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
@@ -114,7 +114,7 @@ public class StochasticsTestPluginFactory {
 	 * </ul>
 	 * via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
 	 */
 	public static Factory factory(long seed, TestPluginData testPluginData) {
@@ -141,7 +141,7 @@ public class StochasticsTestPluginFactory {
 	 * </ul>
 	 * via the {@link Factory#getPlugins()} method.
 	 * 
-	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+	 * @throws ContractException {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null
 	 */
 	public static Factory factory(long seed, Consumer<ActorContext> consumer) {

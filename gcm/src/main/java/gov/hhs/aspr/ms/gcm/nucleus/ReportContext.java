@@ -148,7 +148,7 @@ public final class ReportContext {
 	 * Unsubscribes the report from events of the given type for all phases of event
 	 * handling.
 	 * 
-	 * @throws ContractExceptionn {@link NucleusError#NULL_EVENT_CLASS} if the event
+	 * @throws ContractException {@link NucleusError#NULL_EVENT_CLASS} if the event
 	 *                            class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {

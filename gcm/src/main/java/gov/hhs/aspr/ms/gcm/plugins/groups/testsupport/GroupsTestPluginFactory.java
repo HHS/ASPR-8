@@ -129,7 +129,7 @@ public final class GroupsTestPluginFactory {
          * Sets the {@link GroupsPluginData} in this Factory. This explicit instance of
          * pluginData will be used to create a GroupsPlugin
          * 
-         * @throws ContractExecption {@linkplain GroupError#NULL_GROUP_PLUGIN_DATA} if
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_PLUGIN_DATA} if
          *                           the passed in pluginData is null
          */
         public Factory setGroupsPluginData(GroupsPluginData groupsPluginData) {
@@ -144,7 +144,7 @@ public final class GroupsTestPluginFactory {
          * Sets the {@link GroupPopulationReportPluginData} in this Factory. This
          * explicit instance of pluginData will be used to create a GroupsPlugin
          * 
-         * @throws ContractExecption {@linkplain GroupError#NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA}
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_POPULATION_REPORT_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setGroupPopulationReportPluginData(
@@ -160,7 +160,7 @@ public final class GroupsTestPluginFactory {
          * Sets the {@link GroupPopulationReportPluginData} in this Factory. This
          * explicit instance of pluginData will be used to create a GroupsPlugin
          * 
-         * @throws ContractExecption {@linkplain GroupError#NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA}
+         * @throws ContractException {@linkplain GroupError#NULL_GROUP_PROPERTY_REPORT_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setGroupPropertyReportPluginData(GroupPropertyReportPluginData groupPropertyReportPluginData) {
@@ -175,7 +175,7 @@ public final class GroupsTestPluginFactory {
          * Sets the {@link PeoplePluginData} in this Factory. This explicit instance of
          * pluginData will be used to create a PeoplePlugin
          * 
-         * @throws ContractExecption {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if
+         * @throws ContractException {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if
          *                           the passed in pluginData is null
          */
         public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
@@ -190,7 +190,7 @@ public final class GroupsTestPluginFactory {
          * Sets the {@link StochasticsPluginData} in this Factory. This explicit
          * instance of pluginData will be used to create a StochasticsPlugin
          * 
-         * @throws ContractExecption {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+         * @throws ContractException {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
@@ -225,7 +225,7 @@ public final class GroupsTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      *
-     * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+     * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if
      *                           testPluginData is null
      */
     public static Factory factory(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup,
@@ -259,7 +259,7 @@ public final class GroupsTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      *
-     * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+     * @throws ContractException {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
      *                           if consumer is null
      */
     public static Factory factory(int initialPopulation, double expectedGroupsPerPerson, double expectedPeoplePerGroup,

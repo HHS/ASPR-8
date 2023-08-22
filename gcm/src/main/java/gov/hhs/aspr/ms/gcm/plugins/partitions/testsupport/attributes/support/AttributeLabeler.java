@@ -12,6 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.AttributesD
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import util.errors.ContractException;
 
 /**
  * A labeler for attributes. The dimension of the labeler is the given

@@ -117,7 +117,7 @@ public final class RegionsTestPluginFactory {
          * Sets the {@link PeoplePluginData} in this Factory. This explicit instance of
          * pluginData will be used to create a PeoplePlugin
          * 
-         * @throws ContractExecption {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if
+         * @throws ContractException {@linkplain PersonError#NULL_PEOPLE_PLUGIN_DATA} if
          *                           the passed in pluginData is null
          */
         public Factory setPeoplePluginData(PeoplePluginData peoplePluginData) {
@@ -132,7 +132,7 @@ public final class RegionsTestPluginFactory {
          * Sets the {@link RegionPropertyReportPluginData} in this Factory. This
          * explicit instance of pluginData will be used to create a PeoplePlugin
          * 
-         * @throws ContractExecption {@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
+         * @throws ContractException {@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setRegionPropertyReportPluginData(
@@ -148,7 +148,7 @@ public final class RegionsTestPluginFactory {
          * Sets the {@link RegionTransferReportPluginData} in this Factory. This
          * explicit instance of pluginData will be used to create a PeoplePlugin
          * 
-         * @throws ContractExecption {@linkplain RegionError#NULL_REGION_TRANSFER_REPORT_PLUGIN_DATA}
+         * @throws ContractException {@linkplain RegionError#NULL_REGION_TRANSFER_REPORT_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setRegionTransferReportPluginData(
@@ -164,7 +164,7 @@ public final class RegionsTestPluginFactory {
          * Sets the {@link RegionsPluginData} in this Factory. This explicit instance of
          * pluginData will be used to create a RegionsPlugin
          * 
-         * @throws ContractExecption {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
+         * @throws ContractException {@linkplain RegionError#NULL_REGION_PLUGIN_DATA} if
          *                           the passed in pluginData is null
          */
         public Factory setRegionsPluginData(RegionsPluginData regionsPluginData) {
@@ -179,7 +179,7 @@ public final class RegionsTestPluginFactory {
          * Sets the {@link StochasticsPluginData} in this Factory. This explicit
          * instance of pluginData will be used to create a StochasticsPlugin
          * 
-         * @throws ContractExecption {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
+         * @throws ContractException {@linkplain StochasticsError#NULL_STOCHASTICS_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setStochasticsPluginData(StochasticsPluginData stochasticsPluginData) {
@@ -214,7 +214,7 @@ public final class RegionsTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      * 
-     * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
+     * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if
      *                           testPluginData is null
      */
     public static Factory factory(int initialPopulation, long seed, boolean trackTimes, TestPluginData testPluginData) {
@@ -248,7 +248,7 @@ public final class RegionsTestPluginFactory {
      * </ul>
      * via the {@link Factory#getPlugins()} method.
      * 
-     * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
+     * @throws ContractException {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
      *                           if consumer is null
      */
     public static Factory factory(int initialPopulation, long seed, boolean trackTimes,
