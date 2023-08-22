@@ -143,8 +143,8 @@ public final class StochasticsPluginData implements PluginData {
 		 * RandomNumberGeneratorId values. Clears the builder's state.
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain StochasticsError#NULL_SEED} if the
-		 *                           seed was not set</li>
+		 *                           <ul><li>{@linkplain StochasticsError#NULL_SEED} if the
+		 *                           seed was not set</li></ul>
 		 */
 		public StochasticsPluginData build() {
 

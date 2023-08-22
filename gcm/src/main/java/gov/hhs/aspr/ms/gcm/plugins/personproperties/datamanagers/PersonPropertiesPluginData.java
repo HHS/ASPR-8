@@ -166,6 +166,7 @@ public class PersonPropertiesPluginData implements PluginData {
 		 * Builds the {@linkplain PersonPropertiesPluginData} from the collected data.
 		 * 
 		 * @throws ContractException
+		 *                           <ul>
 		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *                           if a person is assigned a property value or time
 		 *                           for a property that was not defined.</li>
@@ -177,10 +178,11 @@ public class PersonPropertiesPluginData implements PluginData {
 		 *                           a person is assigned a property assignment time,
 		 *                           but the corresponding property is not marked for
 		 *                           time tracking</li>
-		 *                           <li>{@linkplain PropertyError#PROPERTY_TIME_PRECEDES_DEFAULT}
+		 *                           <li>{@linkplain PersonPropertyError#PROPERTY_TIME_PRECEDES_DEFAULT}
 		 *                           if a person is assigned a property assignment time,
 		 *                           but that value precedes default tracking time for
 		 *                           the corresponding property id</li>
+		 *                           </ul>
 		 */
 		public PersonPropertiesPluginData build() {
 
@@ -383,7 +385,8 @@ public class PersonPropertiesPluginData implements PluginData {
 	/**
 	 * Returns the {@link PropertyDefinition} for the given {@link PersonPropertyId}
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -402,7 +405,8 @@ public class PersonPropertiesPluginData implements PluginData {
 	/**
 	 * Returns the time when the person property id was added.
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -417,7 +421,8 @@ public class PersonPropertiesPluginData implements PluginData {
 	/**
 	 * Returns true if the person property assignment times are tracked.
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}

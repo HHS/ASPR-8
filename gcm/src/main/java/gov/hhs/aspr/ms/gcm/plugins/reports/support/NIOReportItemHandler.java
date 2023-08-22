@@ -37,7 +37,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 *                                       <li>{@linkplain ReportError#NULL_REPORT_LABEL}
 		 *                                       if the report label is null</li>
 		 *                                       <li>{@linkplain ReportError#NULL_REPORT_PATH}
-		 *                                       if the path is null</li>
+		 *                                       if the path is null</li></ul>
 		 */
 		public Builder addReport(final ReportLabel reportLabel, final Path path) {
 			if (path == null) {
@@ -80,7 +80,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 * @throws ContractException
 		 *                                       <li>{@linkplain ReportError#PATH_COLLISION}
 		 *                                       if multiple reports are assigned the
-		 *                                       same path</li>
+		 *                                       same path</li></ul>
 		 */
 		public NIOReportItemHandler build() {
 			validate();

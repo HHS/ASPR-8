@@ -31,7 +31,7 @@ public final class SimpleRegionId implements RegionId {
 	}
 
 	/**
-	 * Two {@link SimpleREGIONId} instances are equal if and only if their inputs
+	 * Two {@link SimpleRegionId} instances are equal if and only if their inputs
 	 * are equal.
 	 */
 	@Override

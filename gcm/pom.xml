@@ -189,7 +189,7 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven-javadoc-plugin.version}</version>
 						<configuration>
-							<doclint>all,-missing</doclint>
+							<doclint>html</doclint>
 							<additionalDependencies>
 								<additionalDependency>
 									<groupId>gov.hhs.aspr.ms</groupId>

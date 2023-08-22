@@ -95,8 +95,6 @@ public final class FloatValueContainer {
 	 * Constructs the floatValueContainer with the given default value and initial
 	 * capacity
 	 * 
-	 * @param defaultValue
-	 * @param capacity
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
 	public FloatValueContainer(float defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {

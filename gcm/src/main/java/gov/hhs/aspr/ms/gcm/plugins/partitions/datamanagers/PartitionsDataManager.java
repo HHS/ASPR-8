@@ -91,9 +91,10 @@ public final class PartitionsDataManager extends DataManager {
 	 * given key.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <ul>
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
 	 *                           </ul>
 	 */
@@ -108,13 +109,13 @@ public final class PartitionsDataManager extends DataManager {
 	 * the corresponding label for the person.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
-	 *                           <li>{@link PartitionError.NULL_LABEL_SET} if the
+	 *                           <li>{@link PartitionError#NULL_LABEL_SET} if the
 	 *                           label set is null</li>
-	 *                           <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET}
+	 *                           <li>{@link PartitionError#INCOMPATIBLE_LABEL_SET}
 	 *                           if the label set contains dimensions not contained
 	 *                           in the population partition</li>
 	 *                           </ul>
@@ -128,8 +129,8 @@ public final class PartitionsDataManager extends DataManager {
 
 	/**
 	 * Returns the number of people in the population partition for the given key.
-	 * <li>{@link PartitionError.NULL_PARTITION_KEY} if the key is null</li></li>
-	 * <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY} if the key is
+	 * <li>{@link PartitionError#NULL_PARTITION_KEY} if the key is null</li></li>
+	 * <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY} if the key is
 	 * unknown</li>
 	 * </ul>
 	 */
@@ -145,13 +146,13 @@ public final class PartitionsDataManager extends DataManager {
 	 * set is equal to the corresponding label for the person.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
-	 *                           <li>{@link PartitionError.NULL_LABEL_SET} if the
+	 *                           <li>{@link PartitionError#NULL_LABEL_SET} if the
 	 *                           label set is null</li>
-	 *                           <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET}
+	 *                           <li>{@link PartitionError#INCOMPATIBLE_LABEL_SET}
 	 *                           if the label set contains dimensions not contained
 	 *                           in the population partition</li>
 	 *                           </ul>
@@ -171,13 +172,13 @@ public final class PartitionsDataManager extends DataManager {
 	 * All values will be positive.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
-	 *                           <li>{@link PartitionError.NULL_LABEL_SET} if the
+	 *                           <li>{@link PartitionError#NULL_LABEL_SET} if the
 	 *                           label set is null</li>
-	 *                           <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET}
+	 *                           <li>{@link PartitionError#INCOMPATIBLE_LABEL_SET}
 	 *                           if the label set contains dimensions not contained
 	 *                           in the population partition</li>
 	 *                           </ul>
@@ -194,20 +195,20 @@ public final class PartitionsDataManager extends DataManager {
 	 * the given PartitionSampler.
 	 *
 	 * @throws ContractException
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
-	 *                           <li>{@link PartitionError.NULL_PARTITION_SAMPLER}
+	 *                           <li>{@link PartitionError#NULL_PARTITION_SAMPLER}
 	 *                           if the partition sampler is null</li>
-	 *                           <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET}
+	 *                           <li>{@link PartitionError#INCOMPATIBLE_LABEL_SET}
 	 *                           if the partition sampler has a label set containing
 	 *                           dimensions not present in the population
 	 *                           partition</li>
-	 *                           <li>{@link PersonError.UNKNOWN_PERSON_ID} if the
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
 	 *                           partition sampler has an excluded person that does
 	 *                           not exist</li>
-	 *                           <li>{@link StochasticsError.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                           <li>{@link StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the partition sampler has a random number
 	 *                           generator id that is unknown</li>
 	 */
@@ -232,7 +233,7 @@ public final class PartitionsDataManager extends DataManager {
 	 *                           if the key is unknown</li>
 	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
 	 *                           person does not exist</li>
-	 *                           <li>{@link PartitionError.NULL_LABEL_SET_FUNCTION}
+	 *                           <li>{@link PartitionError#NULL_LABEL_SET_FUNCTION}
 	 *                           if the label set function is null</li>
 	 */
 	public <T> Optional<T> getPersonValue(Object key, LabelSetFunction<T> labelSetFunction, PersonId personId) {
@@ -248,13 +249,13 @@ public final class PartitionsDataManager extends DataManager {
 	 * partition corresponding to the key.
 	 * 
 	 * @throws ContractException
-	 *                           <li>{@link PersonError.NULL_PERSON_ID} if the
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
-	 *                           <li>{@link PersonError.UNKNOWN_PERSON_ID} if the
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
 	 *                           person id is null</li>
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
 	 *                           </ul>
 	 */
@@ -272,17 +273,17 @@ public final class PartitionsDataManager extends DataManager {
 	 * is equal to the corresponding label for the person.
 	 * 
 	 * @throws ContractException
-	 *                           <li>{@link PersonError.NULL_PERSON_ID} if the
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
-	 *                           <li>{@link PersonError.UNKNOWN_PERSON_ID} if the
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
 	 *                           person id is null</li>
-	 *                           <li>{@link PartitionError.NULL_PARTITION_KEY} if
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
-	 *                           <li>{@link PartitionError.UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                           if the key is unknown</li>
-	 *                           <li>{@link PartitionError.NULL_LABEL_SET} if the
+	 *                           <li>{@link PartitionError#NULL_LABEL_SET} if the
 	 *                           label set is null</li>
-	 *                           <li>{@link PartitionError.INCOMPATIBLE_LABEL_SET}
+	 *                           <li>{@link PartitionError#INCOMPATIBLE_LABEL_SET}
 	 *                           if the label contains a dimension not present in
 	 *                           the partition</li>
 	 *                           </ul>

@@ -27,8 +27,7 @@ public final class StochasticsDataManager extends DataManager {
 	/**
 	 * Returns the general, non-identified, random number generator was initialized
 	 * with the current base seed value that was initialized from the
-	 * {@linkplain StochasticsPluginData} or reset via
-	 * {@linkplain StochasticsDataManager#resetSeeds(long)}
+	 * {@linkplain StochasticsPluginData}
 	 */
 	public Well getRandomGenerator() {
 		return randomGenerator;

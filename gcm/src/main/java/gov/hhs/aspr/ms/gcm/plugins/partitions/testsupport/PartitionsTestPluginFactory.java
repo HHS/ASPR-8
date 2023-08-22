@@ -86,7 +86,7 @@ public class PartitionsTestPluginFactory {
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link PartitionsTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link PartitionsTestPluginFactory#factory}</li>
+		 * {@link PartitionsTestPluginFactory#factory}</li></ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -271,7 +271,7 @@ public class PartitionsTestPluginFactory {
 	 * The resulting PartitionsPlugin will include:
 	 * <ul>
 	 * <li>the basic PartitionsPlugin from
-	 * {@link PartitionsPlugin#getPartitionsPlugin}</li>
+	 * {@link PartitionsPlugin.Builder#getPartitionsPlugin()}</li>
 	 * <li>An additional pluginDependency on {@link AttributesPluginId}</li>
 	 * </ul>
 	 */

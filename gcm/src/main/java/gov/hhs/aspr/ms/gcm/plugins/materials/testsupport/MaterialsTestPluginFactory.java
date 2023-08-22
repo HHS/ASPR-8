@@ -112,7 +112,7 @@ public class MaterialsTestPluginFactory {
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link MaterialsTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link MaterialsTestPluginFactory#factory}</li>
+		 * {@link MaterialsTestPluginFactory#factory}</li></ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();

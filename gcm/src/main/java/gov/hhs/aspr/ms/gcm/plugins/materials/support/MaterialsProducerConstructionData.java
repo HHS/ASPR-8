@@ -96,13 +96,13 @@ public class MaterialsProducerConstructionData {
 		 * Sets a materials producer property value
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           <ul><li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the materials producer property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *                           if the value is null</li>
 		 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
 		 *                           if the materials producer property was previously
-		 *                           set</li>
+		 *                           set</li></ul>
 		 */
 		public Builder setMaterialsProducerPropertyValue(MaterialsProducerPropertyId materialsProducerPropertyId,
 				Object value) {
@@ -123,12 +123,12 @@ public class MaterialsProducerConstructionData {
 		 * Sets a materials producer resource level
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+		 *                           <ul><li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
 		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
 		 *                           if the level is negative</li>
 		 *                           <li>{@linkplain ResourceError#DUPLICATE_REGION_RESOURCE_LEVEL_ASSIGNMENT}
-		 *                           if the resource level was previously set</li>
+		 *                           if the resource level was previously set</li></ul>
 		 */
 		public Builder setResourceLevel(ResourceId resourceId, long level) {
 

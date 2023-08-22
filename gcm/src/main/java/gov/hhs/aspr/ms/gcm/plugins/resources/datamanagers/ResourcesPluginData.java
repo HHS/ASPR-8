@@ -308,7 +308,7 @@ public final class ResourcesPluginData implements PluginData {
 		 *                                       <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 		 *                                       if a resource level was collected for a
 		 *                                       region that is an unknown resource
-		 *                                       id</li>
+		 *                                       id</li></ul>
 		 */
 		public ResourcesPluginData build() {
 
@@ -799,9 +799,9 @@ public final class ResourcesPluginData implements PluginData {
 	 * 
 	 * @throws ContractException
 	 *                                       <ul>
-	 *                                       <li>{@linkplain ResourceError.NULL_RESOURCE_ID}
+	 *                                       <li>{@linkplain ResourceError#NULL_RESOURCE_ID}
 	 *                                       if the resource id is null</li>
-	 *                                       <li>{@linkplain ResourceError.UNKNOWN_RESOURCE_ID}
+	 *                                       <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                                       if the resource id is unknown</li>
 	 *                                       </ul>
 	 */

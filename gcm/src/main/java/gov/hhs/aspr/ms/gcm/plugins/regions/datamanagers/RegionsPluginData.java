@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
@@ -27,7 +28,7 @@ import util.errors.ContractException;
  * An immutable container of the initial state of regions. It contains: <BR>
  * <ul>
  * <li>region ids</li>
- * <li>suppliers of consumers of {@linkplain ActorContext} for region</li>
+ * <li>suppliers of consumers of {@linkplain ActorContext} for region
  * initialization</li>
  * <li>region property definitions: all regions share a set of property
  * definitions with default values, but have individual property values</li>
@@ -227,38 +228,34 @@ public class RegionsPluginData implements PluginData {
 		}
 
 		/**
-		 * Returns the {@link RegionInitialData} from the collected information supplied
+		 * Returns the {@link RegionsPluginData} from the collected information supplied
 		 * to this builder.
 		 * 
 		 * @throws ContractException
-		 *                                       <li>{@linkplain RegionError#UNKNOWN_REGION_ID}
-		 *                                       if a region property value was
-		 *                                       associated with a region id that was
-		 *                                       not properly added with an initial
-		 *                                       agent behavior.</li>
-		 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-		 *                                       if a region property value was
-		 *                                       associated with a region property id
-		 *                                       that was not defined</li>
-		 *                                       <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
-		 *                                       if a region property value was
-		 *                                       associated with a region and region
-		 *                                       property id that is incompatible with
-		 *                                       the corresponding property
-		 *                                       definition.</li>
-		 *                                       <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
-		 *                                       if a region property definition does
-		 *                                       not have a default value and there are
-		 *                                       no property values added to replace
-		 *                                       that default.</li>
-		 *                                       <li>{@linkplain RegionError#PERSON_ARRIVAL_DATA_PRESENT}
-		 *                                       if a person region arrival data was
-		 *                                       collected, but the region arrival
-		 *                                       tracking policy is true</li>
-		 *                                       <li>{@linkplain RegionError#MISSING_PERSON_ARRIVAL_DATA}
-		 *                                       if person region arrival data was
-		 *                                       collected, but the region arrival time
-		 *                                       tracking policy is false</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a
+		 *                           region property value was associated with a region
+		 *                           id that was not properly added with an initial
+		 *                           agent behavior.</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+		 *                           if a region property value was associated with a
+		 *                           region property id that was not defined</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+		 *                           if a region property value was associated with a
+		 *                           region and region property id that is incompatible
+		 *                           with the corresponding property definition.</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+		 *                           if a region property definition does not have a
+		 *                           default value and there are no property values
+		 *                           added to replace that default.</li>
+		 *                           <li>{@linkplain RegionError#PERSON_ARRIVAL_DATA_PRESENT}
+		 *                           if a person region arrival data was collected, but
+		 *                           the region arrival tracking policy is true</li>
+		 *                           <li>{@linkplain RegionError#MISSING_PERSON_ARRIVAL_DATA}
+		 *                           if person region arrival data was collected, but
+		 *                           the region arrival time tracking policy is
+		 *                           false</li>
+		 *                           </ul>
 		 */
 		public RegionsPluginData build() {
 			if (!data.locked) {
@@ -273,10 +270,12 @@ public class RegionsPluginData implements PluginData {
 		 * corresponding property definition
 		 * 
 		 * @throws ContractException
-		 *                                       <li>{@linkplain RegionError#NULL_REGION_ID}
-		 *                                       if the region id is null
-		 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *                                       if the region property id is null
+		 *                           <ul>
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the region property id is null</li>
+		 *                           </ul>
 		 */
 		public Builder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId,
 				final Object regionPropertyValue) {
@@ -316,13 +315,15 @@ public class RegionsPluginData implements PluginData {
 		 * be set to false.
 		 * 
 		 * @throws ContractException
-		 *                                       <li>{@linkplain PersonError#NULL_PERSON_ID}
-		 *                                       if the person id is null</li>
-		 *                                       <li>{@linkplain RegionError#NULL_REGION_ID}
-		 *                                       if the region id is null</li>
-		 *                                       <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
-		 *                                       if other people have been added using
-		 *                                       region arrival times</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null</li>
+		 *                           <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
+		 *                           if other people have been added using region
+		 *                           arrival times</li>
+		 *                           </ul>
 		 */
 		public Builder addPerson(final PersonId personId, final RegionId regionId) {
 			ensureDataMutability();
@@ -342,15 +343,17 @@ public class RegionsPluginData implements PluginData {
 		 * when time tracking will be set to true.
 		 * 
 		 * @throws ContractException
-		 *                                       <li>{@linkplain PersonError#NULL_PERSON_ID}if
-		 *                                       the person id is null</li>
-		 *                                       <li>{@linkplain RegionError#NON_FINITE_TIME}if
-		 *                                       the arrival time is not finite</li>
-		 *                                       <li>{@linkplain RegionError#NULL_TIME}if
-		 *                                       the arrival time is null</li>
-		 *                                       <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
-		 *                                       if other people have been added without
-		 *                                       using region arrival times</li>
+		 *                           <ul>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}if the
+		 *                           person id is null</li>
+		 *                           <li>{@linkplain RegionError#NON_FINITE_TIME}if the
+		 *                           arrival time is not finite</li>
+		 *                           <li>{@linkplain RegionError#NULL_TIME}if the
+		 *                           arrival time is null</li>
+		 *                           <li>{@linkplain RegionError#REGION_ARRIVAL_TIMES_MISMATCHED}
+		 *                           if other people have been added without using
+		 *                           region arrival times</li>
+		 *                           </ul>
 		 */
 		public Builder addPerson(final PersonId personId, final RegionId regionId, final Double arrivalTime) {
 			ensureDataMutability();
@@ -383,9 +386,8 @@ public class RegionsPluginData implements PluginData {
 		/**
 		 * Adds the region id and its associated agent initial behavior.
 		 * 
-		 * @throws ContractException
-		 *                                       <li>{@linkplain RegionError#NULL_REGION_ID}
-		 *                                       if the region id is null
+		 * @throws ContractException {@linkplain RegionError#NULL_REGION_ID} if the
+		 *                           region id is null
 		 */
 		public Builder addRegion(final RegionId regionId) {
 			ensureDataMutability();
@@ -398,12 +400,12 @@ public class RegionsPluginData implements PluginData {
 		 * Defines a region property
 		 * 
 		 * @throws ContractException
-		 *                                       <ul>
-		 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}
-		 *                                       if the region property id is null</li>
-		 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
-		 *                                       if the property definition is null</li>
-		 *                                       </ul>
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           the region property id is null</li>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
+		 *                           if the property definition is null</li>
+		 *                           </ul>
 		 */
 		public Builder defineRegionProperty(final RegionPropertyId regionPropertyId,
 				final PropertyDefinition propertyDefinition) {
@@ -503,11 +505,12 @@ public class RegionsPluginData implements PluginData {
 	 * {@link RegionPropertyId}.
 	 * 
 	 * @throws ContractException
-	 *                                       <ul>
-	 *                                       <li>{@linkplain PropertyError#NULL_PROPERTY_ID}</li>
-	 *                                       if the region property id is null</li>
-	 *                                       <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
-	 *                                       if the region property id is known
+	 *                           <ul>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+	 *                           the region property id is null</li>
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
+	 *                           if the region property id is known</li>
+	 *                           </ul>
 	 */
 	public PropertyDefinition getRegionPropertyDefinition(final RegionPropertyId regionPropertyId) {
 		validateRegionPropertyIdNotNull(regionPropertyId);
@@ -532,11 +535,12 @@ public class RegionsPluginData implements PluginData {
 	 * {@link RegionPropertyId}.
 	 * 
 	 * @throws ContractException
-	 *                                       <ul>
-	 *                                       <li>{@linkplain RegionError#NULL_REGION_ID}</li>
-	 *                                       if the region id is null</li>
-	 *                                       <li>{@linkplain RegionError#UNKNOWN_REGION_ID}</li>
-	 *                                       if the region id is unknown
+	 *                           <ul>
+	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
+	 *                           region id is null</li>
+	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
+	 *                           the region id is unknown</li>
+	 *                           </ul>
 	 */
 	public Map<RegionPropertyId, Object> getRegionPropertyValues(final RegionId regionId) {
 		validateRegionExists(data, regionId);
@@ -595,10 +599,8 @@ public class RegionsPluginData implements PluginData {
 	/**
 	 * Returns the {@link RegionId} for the given {@link PersonId}.
 	 * 
-	 * @throws ContractException
-	 *                                       <ul>
-	 *                                       <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
-	 *                                       if the person id is null
+	 * @throws ContractException {@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends RegionId> Optional<T> getPersonRegion(final PersonId personId) {
@@ -614,10 +616,8 @@ public class RegionsPluginData implements PluginData {
 	/**
 	 * Returns the region arrival time for the given {@link PersonId}.
 	 * 
-	 * @throws ContractException
-	 *                                       <ul>
-	 *                                       <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
-	 *                                       if the person id is null
+	 * @throws ContractException {@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null
 	 */
 	public Optional<Double> getPersonRegionArrivalTime(final PersonId personId) {
 		validatePersonId(personId);

@@ -63,7 +63,7 @@ public class StochasticsTestPluginFactory {
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link StochasticsTestPluginFactory#factory}</li>
+		 * {@link StochasticsTestPluginFactory#factory}</li></ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();

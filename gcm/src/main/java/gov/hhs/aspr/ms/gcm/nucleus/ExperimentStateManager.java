@@ -62,7 +62,7 @@ public final class ExperimentStateManager {
 	 *                           the scenario is not known</li>
 	 *                           <li>{@linkplain NucleusError#SCENARIO_CANNOT_BE_EXECUTED}if
 	 *                           the scenario's current status is not
-	 *                           {@linkplain Scenario#READY}</li>
+	 *                           {@linkplain ScenarioStatus#READY}</li>
 	 *                           </ul>
 	 */
 	public synchronized void openScenario(Integer scenarioId, List<String> metaData) {

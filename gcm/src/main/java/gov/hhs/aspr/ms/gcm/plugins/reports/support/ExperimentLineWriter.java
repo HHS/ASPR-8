@@ -38,7 +38,7 @@ public final class ExperimentLineWriter {
 	private boolean headerWritten;
 
 	/**
-	 * Creates this {@link NIOHeaderedOutputItemHandler} The path to the file that
+	 * Creates this {@link ExperimentLineWriter} The path to the file that
 	 * may or may not exist and may contain some complete or partial content from a
 	 * previous execution of the experiment. If not empty, this file must have a
 	 * header, be tab delimited and have as its first column be the scenario id.

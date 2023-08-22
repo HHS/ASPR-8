@@ -64,7 +64,7 @@ import util.errors.ContractException;
 
 /**
  * <p>
- * Mutable data manager that backs the {@linkplain PersonGroupDataView}.
+ * Mutable data manager for groups
  * </p>
  * <b>Implementation Notes</b>
  * <p>
@@ -145,7 +145,7 @@ public final class GroupsDataManager extends DataManager {
 	/**
 	 * Constructs this person group data manager
 	 * 
-	 * @throws ContractException {@linkplain NucleusError#NULL_CONTEXT} if
+	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_INITIALIZATION_DATA} if
 	 *                           groupsPluginData is null
 	 */
 	public GroupsDataManager(GroupsPluginData groupsPluginData) {
@@ -674,7 +674,7 @@ public final class GroupsDataManager extends DataManager {
 	 *                           group id is unknown</li>
 	 *                           <li>{@link GroupError#DUPLICATE_GROUP_MEMBERSHIP}
 	 *                           if the person is already a member of the group</li>
-	 *                           </ul
+	 *                           </ul>
 	 */
 	public void addPersonToGroup(final PersonId personId, final GroupId groupId) {
 		dataManagerContext.releaseMutationEvent(new GroupMembershipAdditionMutationEvent(personId, groupId));
@@ -747,20 +747,20 @@ public final class GroupsDataManager extends DataManager {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain GroupError.NULL_GROUP_ID } if the
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_ID } if the
 	 *                           group id is null</li>
-	 *                           <li>{@linkplain GroupError.UNKNOWN_GROUP_ID } if
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_ID } if
 	 *                           the group id is unknown</li>
-	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID } if
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID } if
 	 *                           the group property id is null</li>
-	 *                           <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID }
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID }
 	 *                           if the group property id is unknown</li>
-	 *                           <li>{@linkplain PropertyError.IMMUTABLE_VALUE } if
+	 *                           <li>{@linkplain PropertyError#IMMUTABLE_VALUE } if
 	 *                           the corresponding property definition defines the
 	 *                           property as immutable</li>
-	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_VALUE }
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE }
 	 *                           if the property value is null</li>
-	 *                           <li>{@linkplain PropertyError.INCOMPATIBLE_VALUE }
+	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE }
 	 *                           if property value is incompatible with the
 	 *                           corresponding property definition</li>
 	 *                           </ul>
@@ -1849,9 +1849,9 @@ public final class GroupsDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain GroupError.NULL_GROUP_TYPE_ID} if
+	 *                           <li>{@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null</li>
-	 *                           <li>{@linkplain GroupError.UNKNOWN_GROUP_TYPE_ID}
+	 *                           <li>{@linkplain GroupError#UNKNOWN_GROUP_TYPE_ID}
 	 *                           if the group type id is not known</li>
 	 *                           </ul>
 	 */

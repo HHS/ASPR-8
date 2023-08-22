@@ -82,7 +82,7 @@ public final class ResourcesDataManager extends DataManager {
 	/**
 	 * Constructs the PersonResourceManager from the context
 	 *
-	 * @throws ContractException {@linkplain NucleusError#NULL_RESOURCE_PLUGIN_DATA}
+	 * @throws ContractException {@linkplain ResourceError#NULL_RESOURCE_PLUGIN_DATA}
 	 *                           if the plugin data is null
 	 */
 	public ResourcesDataManager(final ResourcesPluginData resourcesPluginData) {
@@ -96,6 +96,7 @@ public final class ResourcesDataManager extends DataManager {
 	 * Reduces the resource for the particular person and resource by the amount.
 	 *
 	 * @throws RuntimeException
+	 *                          <ul>
 	 *                          <li>if the resource id is null</li>
 	 *                          <li>if the resource id is unknown</li>
 	 *                          <li>if the person id null</li>
@@ -1170,7 +1171,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Expends an amount of resource from a person. Generates the corresponding
 	 * {@linkplain PersonResourceUpdateEvent} event
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -1241,7 +1243,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Adds an amount of resource to a region. Generates the corresponding
 	 * {@linkplain RegionResourceUpdateEvent} event.
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -1291,9 +1294,10 @@ public final class ResourcesDataManager extends DataManager {
 
 	/**
 	 * Removes an amount of resource from a region.Generates the corresponding
-	 * {@linkplain RegionResourceUpdateEvent} event<
+	 * {@linkplain RegionResourceUpdateEvent} event
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -1341,7 +1345,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Assigns a value to a resource property. Generates the corresponding
 	 * {@linkplain ResourcePropertyUpdateEvent} event
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1427,7 +1432,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Generates the corresponding {@linkplain RegionResourceUpdateEvent} and
 	 * {@linkplain PersonResourceUpdateEvent} events
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -1488,7 +1494,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Generates the corresponding {@linkplain RegionResourceUpdateEvent} and
 	 * {@linkplain PersonResourceUpdateEvent} events
 	 * 
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
@@ -1586,7 +1593,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1606,7 +1614,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
 	 * person id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1634,7 +1643,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link PersonResourceUpdateEvent} events. Matches on the resource id and
 	 * person id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1680,7 +1690,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1700,7 +1711,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link RegionResourceUpdateEvent} events. Matches on the resource id and
 	 * region id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
@@ -1746,7 +1758,8 @@ public final class ResourcesDataManager extends DataManager {
 	 * {@link ResourcePropertyUpdateEvent} events. Matches on the resource id and
 	 * resource property id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}

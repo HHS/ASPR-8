@@ -225,9 +225,9 @@ public final class PeoplePluginData implements PluginData {
 		 * builder.
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain PersonError#INVALID_PERSON_COUNT}
+		 *                           <ul><li>{@linkplain PersonError#INVALID_PERSON_COUNT}
 		 *                           if the person count does not exceed all person
-		 *                           range values</li>
+		 *                           range values</li></ul>
 		 */
 		public PeoplePluginData build() {
 			validate();
@@ -239,8 +239,8 @@ public final class PeoplePluginData implements PluginData {
 		 * Adds a person range. Overlapping person ranges are tolerated.
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
-		 *                           person id is null</li>
+		 *                           <ul><li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li></ul>
 		 */
 		public Builder addPersonRange(PersonRange personRange) {
 			ensureDataMutability();

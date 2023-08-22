@@ -47,7 +47,7 @@ public final class TestPluginFactory {
 		 * Returns a list of plugins containing a TestPlugin built from the contributed
 		 * PluginDatas
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link TestPluginFactory#factory}</li>
+		 * {@link TestPluginFactory#factory}</li></ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();

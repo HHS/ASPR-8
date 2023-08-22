@@ -39,7 +39,7 @@ import util.errors.ContractException;
 import util.wrappers.MutableInteger;
 
 /**
- * Mutable data manager that backs the {@linkplain RegionDataView}. This data
+ * Mutable data manager for regions. This data
  * manager is for internal use by the {@link RegionsPlugin} and should not be
  * published. All regions and region properties are established during
  * construction and cannot be changed. Region property values are mutable.
@@ -234,7 +234,7 @@ public final class RegionsDataManager extends DataManager {
 	 *                           null</li></li>
 	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
 	 *                           if the region property is already defined</li></li>
-	 *                           <li>{@linkplain RegionError# UNKNOWN_REGION_ID} if
+	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
 	 *                           the RegionPropertyDefinitionInitialization contains
 	 *                           region property assignments for unknown
 	 *                           regions</li></li>
@@ -529,8 +529,8 @@ public final class RegionsDataManager extends DataManager {
 	 *
 	 * Precondition : the person must exist and be stored in this manager
 	 *
-	 * @throws ContractException <li>{@linkplain PersonError.NULL_PERSON_ID} if the
-	 * person id is null</li> <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if the
+	 * @throws ContractException <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 * person id is null</li> <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the
 	 * person id is unknown</li>
 	 *
 	 */
@@ -1007,9 +1007,9 @@ public final class RegionsDataManager extends DataManager {
 	 * events. Matches on the person id.
 	 *
 	 * @throws ContractException <ul>
-	 *                           <li>{@linkplain PersonError.NULL_PERSON_ID} if the
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
-	 *                           <li>{@linkplain PersonError.UNKNOWN_PERSON_ID} if
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
 	 *                           the person id is not known</li>
 	 */
 	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent(PersonId personId) {
@@ -1044,9 +1044,9 @@ public final class RegionsDataManager extends DataManager {
 	 * {@link RegionPropertyUpdateEvent} events. Matches on the region id.
 	 *
 	 * @throws ContractException <ul>
-	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
-	 *                           <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the region property id is not known</li>
 	 */
 	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent(
@@ -1064,13 +1064,13 @@ public final class RegionsDataManager extends DataManager {
 	 * and region id.
 	 *
 	 * @throws ContractException <ul>
-	 *                           <li>{@linkplain RegionError.NULL_REGION_ID} if the
+	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
-	 *                           <li>{@linkplain RegionError.UNKNOWN_REGION_ID} if
+	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
 	 *                           the region id is not known</li>
-	 *                           <li>{@linkplain PropertyError.NULL_PROPERTY_ID} if
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
-	 *                           <li>{@linkplain PropertyError.UNKNOWN_PROPERTY_ID}
+	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the region property id is not known</li>
 	 */
 	public EventFilter<RegionPropertyUpdateEvent> getEventFilterForRegionPropertyUpdateEvent(RegionId regionId,

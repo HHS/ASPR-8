@@ -20,7 +20,7 @@ public abstract class PeriodicReport {
 	 *                           <ul>
 	 *                           <li>{@linkplain ReportError#NULL_REPORT_PERIOD} if
 	 *                           the report period is null</li>
-	 *                           <li>{@linkplain ReportError.NULL_REPORT_LABEL} if
+	 *                           <li>{@linkplain ReportError#NULL_REPORT_LABEL} if
 	 *                           the report period is null</li>
 	 *                           </ul>
 	 */
@@ -51,7 +51,7 @@ public abstract class PeriodicReport {
 	private Integer reportingHour = 0;
 
 	/**
-	 * Adds the time field column(s) to the given {@link ReportHeaderBuilder} as
+	 * Adds the time field column(s) to the given {@link ReportHeader.Builder} as
 	 * appropriate to the {@link ReportPeriod} specified during construction. DAILY
 	 * : Day HOURLY : Day, Hour END_OF_SIMULATION has no header additions
 	 */

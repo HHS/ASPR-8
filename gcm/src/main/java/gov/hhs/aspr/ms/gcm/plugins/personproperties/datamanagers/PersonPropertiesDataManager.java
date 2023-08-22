@@ -319,7 +319,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 *                           <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *                           if the person property value is null</li>
 	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
 	 *                           if the person property value is not compatible with
@@ -388,7 +388,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
-	 *                           <li>{@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_VALUE}
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *                           if the person property value is null</li>
 	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
 	 *                           if the person property value is not compatible with
@@ -925,7 +925,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * null</li>
 	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the person property id is
 	 * unknown</li>
-	 * <li>{@link PersonPropertyError#NULL_PERSON_PROPERTY_VALUE} if the property
+	 * <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the property
 	 * value is null</li>
 	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the property value is not
 	 * compatible with the corresponding property definition</li>

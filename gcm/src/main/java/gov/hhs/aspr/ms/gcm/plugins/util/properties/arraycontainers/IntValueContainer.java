@@ -602,8 +602,6 @@ public final class IntValueContainer {
 	 * Constructs the IntValueContainer with the given default value and initial
 	 * capacity
 	 * 
-	 * @param defaultValue
-	 * @param capacity
 	 * @throws NegativeArraySizeException if the capacity is negative
 	 */
 	public IntValueContainer(long defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {

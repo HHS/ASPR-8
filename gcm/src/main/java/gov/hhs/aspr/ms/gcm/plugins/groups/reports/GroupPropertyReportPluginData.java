@@ -270,7 +270,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 	/**
 	 * Returns the included group property values for the given group type id
 	 * 
-	 * @throws ContractException {@linkplain PropertyError#NULL_GROUP_TYPE_ID} if
+	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_TYPE_ID} if
 	 *                           the group type id is null
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {

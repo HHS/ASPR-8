@@ -128,8 +128,8 @@ public final class RegionPropertyDefinitionInitialization {
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_OWNER}
-		 *                           if the property owner is null</li>
+		 *                           <li>{@linkplain RegionError#NULL_REGION_ID}
+		 *                           if the regionId is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *                           if the property value is null</li>
 		 *                           </ul>

@@ -11,7 +11,6 @@ import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReport;
 import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
 import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import util.errors.ContractException;
 
@@ -64,7 +63,7 @@ public final class GroupsPlugin {
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException {@linkplain PersonPropertyError#NULL_GROUP_PLUGIN_DATA}
+		 * @throws ContractException {@linkplain GroupError#NULL_GROUP_PLUGIN_DATA}
 		 *                           if the groupsPluginData is null
 		 */
 		public Plugin getGroupsPlugin() {

@@ -45,14 +45,14 @@ public final class AttributeDefinition {
 		 * Builds the attribute definition
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE}
+		 *                           <ul><li>{@linkplain AttributeError#NULL_ATTRIBUTE_TYPE}
 		 *                           if the class type of the definition is not assigned
 		 *                           or null</li>
 		 *                           <li>{@linkplain AttributeError#NULL_DEFAULT_VALUE}if
 		 *                           the default value null</li>
 		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_DEFAULT_VALUE}if
 		 *                           the class type is not a super-type of the default
-		 *                           value</li>
+		 *                           value</li></ul>
 		 */
 		public AttributeDefinition build() {
 			return new AttributeDefinition(new Data(data));

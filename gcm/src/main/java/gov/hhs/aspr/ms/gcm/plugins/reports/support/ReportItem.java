@@ -184,8 +184,9 @@ public final class ReportItem {
 	 * Returns the string value stored at the given index
 	 *
 	 * @throws IndexOutOfBoundsException
-	 *                                   <li>if the index < 0</li>
-	 *                                   <li>if the index >= size()</li>
+	 *                                   <ul>
+	 *                                   <li>if the index &lt; 0</li>
+	 *                                   <li>if the index &gt;= size()</li>
 	 *                                   </ul>
 	 */
 	public String getValue(final int index) {

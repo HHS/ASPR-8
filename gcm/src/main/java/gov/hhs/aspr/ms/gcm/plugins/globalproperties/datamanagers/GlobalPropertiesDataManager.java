@@ -319,16 +319,16 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link PropertyError.NULL_PROPERTY_ID} if the
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_ID} if the
 	 *                           global property id is null</li>
-	 *                           <li>{@link PropertyError.UNKNOWN_PROPERTY_ID} if
+	 *                           <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if
 	 *                           the global property id is unknown</li>
-	 *                           <li>{@link PropertyError.NULL_PROPERTY_VALUE} if
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_VALUE} if
 	 *                           the property value is null</li>
-	 *                           <li>{@link PropertyError.IMMUTABLE_VALUE} if the
+	 *                           <li>{@link PropertyError#IMMUTABLE_VALUE} if the
 	 *                           global property definition indicates the property
 	 *                           is not mutable</li>
-	 *                           <li>{@link PropertyError.INCOMPATIBLE_VALUE} if the
+	 *                           <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the
 	 *                           property value is incompatible with the property
 	 *                           definition </blockquote></li>
 	 *                           </ul>

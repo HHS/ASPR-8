@@ -44,12 +44,16 @@ public final class Tuplator {
 	 * Fills the given tuple with the values that correspond to the given index.
 	 * 
 	 * @throws IndexOutOfBoundsException
-	 *                                   <li>if index < 0
-	 *                                   <li>if index >= size()
+	 *                                   <ul>
+	 *                                   <li>if index &lt; 0</li>
+	 *                                   <li>if index &gt;= size()</li>
+	 *                                   </ul>
 	 * @throws IllegalArgumentException
+	 *                                   <ul>
 	 *                                   <li>if the tuple is null</li>
 	 *                                   <li>if the tuple's length is not equal to
-	 *                                   dimensions()
+	 *                                   dimensions()</li>
+	 *                                   </ul>
 	 */
 	public void fillTuple(int index, int[] tuple) {
 		if ((index < 0) || (index >= size)) {

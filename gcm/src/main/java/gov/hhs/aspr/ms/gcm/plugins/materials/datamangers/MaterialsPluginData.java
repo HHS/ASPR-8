@@ -153,8 +153,8 @@ public final class MaterialsPluginData implements PluginData {
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
-		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
-		 *                           the material id is null</li>
+		 *                           <ul><li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
+		 *                           the material id is null</li></ul>
 		 */
 		public Builder addMaterial(final MaterialId materialId) {
 			ensureDataMutability();
@@ -167,8 +167,8 @@ public final class MaterialsPluginData implements PluginData {
 		 * Adds a batch to stage. Duplicate inputs override previous inputs.
 		 *
 		 * @throws ContractException
-		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *                           if the material producer id is null</li>
+		 *                           <ul><li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the material producer id is null</li></ul>
 		 */
 		public Builder addMaterialsProducerId(final MaterialsProducerId materialsProducerId) {
 			ensureDataMutability();
@@ -445,8 +445,8 @@ public final class MaterialsPluginData implements PluginData {
 		 * valued batch added to this builder.
 		 *
 		 * @throws ContractException
-		 *                           <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
-		 *                           if the next batch record id is negative</li>
+		 *                           <ul><li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
+		 *                           if the next batch record id is negative</li></ul>
 		 */
 		public Builder setNextBatchRecordId(int nextBatchRecordId) {
 			ensureDataMutability();
@@ -462,8 +462,8 @@ public final class MaterialsPluginData implements PluginData {
 		 * valued batch added to this builder.
 		 *
 		 * @throws ContractException
-		 *                           <li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
-		 *                           if the next stage record id is negative</li>
+		 *                           <ul><li>{@linkplain MaterialsError#NEGATIVE_BATCH_ID}
+		 *                           if the next stage record id is negative</li></ul>
 		 */
 		public Builder setNextStageRecordId(int nextStageRecordId) {
 			ensureDataMutability();

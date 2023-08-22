@@ -92,12 +92,12 @@ public class RegionConstructionData {
 		 * Sets a region property value
 		 * 
 		 * @throws ContractException
-		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
+		 *                           <ul><li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 		 *                           the region property id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *                           if the value is null</li>
 		 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_VALUE_ASSIGNMENT}
-		 *                           if the region property was previously set</li>
+		 *                           if the region property was previously set</li></ul>
 		 */
 		public Builder setRegionPropertyValue(RegionPropertyId regionPropertyId, Object value) {
 			if (regionPropertyId == null) {
