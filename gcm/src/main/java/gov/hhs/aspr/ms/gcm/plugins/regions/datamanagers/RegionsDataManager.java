@@ -810,23 +810,24 @@ public final class RegionsDataManager extends DataManager {
 	 * Updates the region's property value and time. Generates a corresponding
 	 * {@linkplain RegionPropertyUpdateEvent}
 	 * 
-	 * @throws {@link ContractException}
-	 *                <ul>
-	 *                <li>{@link RegionError#NULL_REGION_ID} if the region id is
-	 *                null</li>
-	 *                <li>{@link RegionError#UNKNOWN_REGION_ID} if the region id is
-	 *                unknown</li>
-	 *                <li>{@link PropertyError#NULL_PROPERTY_ID} if the property id
-	 *                is null</li>
-	 *                <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the property
-	 *                id is unknown</li>
-	 *                <li>{@link PropertyError#NULL_PROPERTY_VALUE} if the value is
-	 *                null</li>
-	 *                <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the value is
-	 *                incompatible with the defined type for the property</li>
-	 *                <li>{@link PropertyError#IMMUTABLE_VALUE} if the property has
-	 *                been defined as immutable</li>
-	 *                </ul>
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@link RegionError#NULL_REGION_ID} if the
+	 *                           region id is null</li>
+	 *                           <li>{@link RegionError#UNKNOWN_REGION_ID} if the
+	 *                           region id is unknown</li>
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_ID} if the
+	 *                           property id is null</li>
+	 *                           <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if
+	 *                           the property id is unknown</li>
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_VALUE} if
+	 *                           the value is null</li>
+	 *                           <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the
+	 *                           value is incompatible with the defined type for the
+	 *                           property</li>
+	 *                           <li>{@link PropertyError#IMMUTABLE_VALUE} if the
+	 *                           property has been defined as immutable</li>
+	 *                           </ul>
 	 */
 	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId,
 			final Object regionPropertyValue) {
