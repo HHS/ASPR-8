@@ -23,7 +23,7 @@ import util.errors.ContractException;
  * <b>Resolvers</b>
  * <ul>
  * <li><b>AttributesEventResolver</b>: Uses initializing data to create and
- * publish data view. Handles all plugin-defined events.
+ * publish data view. Handles all plugin-defined events.</li>
  * </ul>
  * <p>
  * <b>Data Views</b> The attributes plugin supplies one data view.
@@ -48,7 +48,7 @@ import util.errors.ContractException;
  * for this plugin.</li>
  * <li><b>AttributeDefinition: </b>Class for defining the type and default value
  * of an attribute</li>
- * <li><b>AttributeFilter: </b></li>Defines a filter used in partitions.
+ * <li><b>AttributeFilter: </b>Defines a filter used in partitions.</li>
  * <li><b>AttributeId: </b>Marker interface that defines attribute id
  * values.</li>
  * <li><b>AttributeLabeler: </b>Provides dimension labeling for person

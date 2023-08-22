@@ -474,7 +474,7 @@ public final class ResourcesPluginData implements PluginData {
 		 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
 		 *                           the resource id is null</li>
 		 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-		 *                           if the resource amount is negative</li> *
+		 *                           if the resource amount is negative</li>
 		 *                           </ul>
 		 */
 		public Builder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {

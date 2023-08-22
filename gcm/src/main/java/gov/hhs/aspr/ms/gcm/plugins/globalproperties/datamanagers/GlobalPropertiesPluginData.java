@@ -41,23 +41,23 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
-		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *                           if a global property value was associated with a
-		 *                           global property id that was not defined
-		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}</li>
+		 *                           global property id that was not defined</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
 		 *                           if a global property value was associated with a
 		 *                           global property id that is incompatible with the
-		 *                           corresponding property definition.
-		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}</li>
+		 *                           corresponding property definition.</li>
+		 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 		 *                           if a global property time was associated with a
-		 *                           global property id that was not defined
-		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_TIME}</li>
-		 *                           if a global property assignment time was less than
-		 *                           the associated property definition creation time.
-		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}</li>
+		 *                           global property id that was not defined</li>
+		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_TIME} if
+		 *                           a global property assignment time was less than the
+		 *                           associated property definition creation time.</li>
+		 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 		 *                           if a global property definition has no default
 		 *                           value and there is also no corresponding property
-		 *                           value assignment.
+		 *                           value assignment.</li>
 		 *                           </ul>
 		 */
 		public GlobalPropertiesPluginData build() {

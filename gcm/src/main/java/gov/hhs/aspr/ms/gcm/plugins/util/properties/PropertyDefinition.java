@@ -145,13 +145,12 @@ public final class PropertyDefinition {
 	}
 
 	/**
-	 * Returns the Optional<Object> containing default value for the property
-	 * definition. Null values are allowed as a convenience. Any property definition
-	 * that has a null default value must have corresponding property value
-	 * assignments within plugin initial data that cover all cases. Property
-	 * definitions for dynamically generated relationships MUST contain non-null
-	 * default values since they are created after data initialization of the
-	 * plugins.
+	 * Returns the Optional containing default value for the property definition.
+	 * Null values are allowed as a convenience. Any property definition that has a
+	 * null default value must have corresponding property value assignments within
+	 * plugin initial data that cover all cases. Property definitions for
+	 * dynamically generated relationships MUST contain non-null default values
+	 * since they are created after data initialization of the plugins.
 	 */
 	public Optional<Object> getDefaultValue() {
 		if (data.defaultValue == null) {

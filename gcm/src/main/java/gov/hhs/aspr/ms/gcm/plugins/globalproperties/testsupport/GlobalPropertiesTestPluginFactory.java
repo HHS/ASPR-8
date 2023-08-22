@@ -179,7 +179,7 @@ public final class GlobalPropertiesTestPluginFactory {
     /**
      * Returns a Standardized GlobalPropertiesPluginData that is minimally adequate
      * for testing the GlobalPropertiesPlugin The resulting
-     * GlobalPropertiesPluginData will include:</li>
+     * GlobalPropertiesPluginData will include:
      * <ul>
      * <li>Every GlobalPropertyId included in {@link TestGlobalPropertyId}
      * <ul>

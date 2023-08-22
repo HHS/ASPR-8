@@ -86,7 +86,8 @@ public final class GroupsTestPluginFactory {
 
         /**
          * Returns a list of plugins containing a Groups, People, Stocastics and a Test
-         * Plugin built from the contributed PluginDatas. <ul>
+         * Plugin built from the contributed PluginDatas.
+         * <ul>
          * <li>GroupsPlugin is defaulted to one formed from
          * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}</li>
          * <li>PeoplePlugin is defaulted to one formed from
@@ -278,19 +279,19 @@ public final class GroupsTestPluginFactory {
      * testing the GroupsPlugin The resulting GroupsPluginData will include:
      * <ul>
      * <li>Every GroupTypeId included in {@link TestGroupTypeId}</li>
-     * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}</li>
+     * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}
      * <ul>
      * <li>along with the groupTypeId and propertyDefinition for each</li>
      * </ul>
-     * <li>A number of groups equal to the passed in groupCount</li>
+     * <li>A number of groups equal to the passed in groupCount
      * <ul>
-     * <li>each group will get a random groupTypeId based on a RandomGenerator</li>
+     * <li>each group will get a random groupTypeId based on a RandomGenerator
      * seeded by the passed in seed</li>
-     * <li>every GroupPropertyId included in {@link TestGroupPropertyId} with a</li>
+     * <li>every GroupPropertyId included in {@link TestGroupPropertyId} with a
      * randomPropertyValue obtained from each based on the same RandomGenerator</li>
      * </ul>
      * <li>an average group membership based on the passed in membershipCount and
-     * passed in people.</li>
+     * passed in people.
      * <ul>
      * <li>This is determined based on the above RandomGenerator.
      * </ul>

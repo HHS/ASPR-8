@@ -157,7 +157,7 @@ public final class GroupsDataManager extends DataManager {
 
 	/**
 	 * Initial behavior
-	 * <li>Adds all event labelers defined by the following events</li>
+	 * Adds all event labelers defined by the following events
 	 * <ul>
 	 * <li>{@linkplain GroupMembershipAdditionEvent}</li>
 	 * <li>{@linkplain GroupMembershipRemovalEvent}</li>
@@ -165,9 +165,9 @@ public final class GroupsDataManager extends DataManager {
 	 * <li>{@linkplain GroupImminentRemovalEvent}</li>
 	 * <li>{@linkplain GroupPropertyUpdateEvent}</li>
 	 * </ul>
-	 * <li>Adds groups, group memberships, group properties from the
-	 * {@linkplain GroupsPluginData}</li>
-	 * <li>Subscribes to the following events:</li>
+	 * Adds groups, group memberships, group properties from the
+	 * {@linkplain GroupsPluginData}
+	 * Subscribes to the following events:
 	 * <ul>
 	 * <li>{@linkplain PersonRemovalEvent} Removes the person from all groups by
 	 * scheduling the removal for the current time. This allows references and group

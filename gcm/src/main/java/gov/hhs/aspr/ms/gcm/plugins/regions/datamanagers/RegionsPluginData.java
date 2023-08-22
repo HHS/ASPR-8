@@ -37,7 +37,6 @@ import util.errors.ContractException;
  * <li>person region arrival time tracking policy</li>
  * </ul>
  */
-
 @Immutable
 public class RegionsPluginData implements PluginData {
 

@@ -10,7 +10,6 @@ import util.errors.ContractException;
  * An event released by the people data manager whenever a person property
  * definition is added to the simulation.
  */
-
 @Immutable
 public record PersonPropertyDefinitionEvent(PersonPropertyId personPropertyId) implements Event {
 

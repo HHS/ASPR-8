@@ -22,9 +22,7 @@ public final class ObjectValueContainer {
 	 * Constructs a new ObjectValueContainer with the given default value and
 	 * initial capacity. The default value may be null.
 	 * 
-	 * @throws IllegalArgumentException
-	 *                                  <li>if capacity is negative</li>
-	 *                                  </ul>
+	 * @throws IllegalArgumentException if capacity is negative
 	 */
 	public ObjectValueContainer(Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		elements = new Object[0];

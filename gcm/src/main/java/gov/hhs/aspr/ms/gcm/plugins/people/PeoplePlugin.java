@@ -7,7 +7,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 /**
  * A nucleus plugin for representing people, dealing only with their existence.
  */
-
 public final class PeoplePlugin {
 
 	private PeoplePlugin() {

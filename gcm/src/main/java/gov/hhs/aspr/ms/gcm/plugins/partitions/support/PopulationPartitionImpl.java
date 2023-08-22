@@ -317,6 +317,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 * Constructs a PopulationPartitionImpl
 	 * 
 	 * @throws RuntimeException
+	 *                          <ul>
 	 *                          <li>if context is null</li>
 	 *                          <li>if partition is null</li>
 	 *                          <li>if the partition contains labelers</li>

@@ -73,10 +73,8 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Returns the PersonPropertyDimension from the collected data.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-         *                           the person property id was not assigned
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           person property id was not assigned
          */
         public PersonPropertyDimension build() {
             validate();
@@ -100,10 +98,8 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Sets the person property for the dimension. Defaults to null.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-         *                           the id is null
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+         *                           id is null
          */
         public Builder setPersonPropertyId(PersonPropertyId personPropertyId) {
             validatePersonPropertyId(personPropertyId);
@@ -114,10 +110,8 @@ public class PersonPropertyDimension implements Dimension {
         /**
          * Adds a value to the dimension.
          * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
-         *                           if the value is null
+         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
+         *                           the value is null
          */
         public Builder addValue(Object value) {
             validateValue(value);

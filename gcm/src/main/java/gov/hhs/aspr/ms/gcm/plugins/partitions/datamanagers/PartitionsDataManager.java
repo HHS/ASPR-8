@@ -55,7 +55,6 @@ import util.errors.ContractException;
  * maintenance
  * </p>
  */
-
 public final class PartitionsDataManager extends DataManager {
 
 	private final boolean supportRunContinuity;
@@ -130,10 +129,14 @@ public final class PartitionsDataManager extends DataManager {
 
 	/**
 	 * Returns the number of people in the population partition for the given key.
-	 * <li>{@link PartitionError#NULL_PARTITION_KEY} if the key is null</li>
-	 * <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY} if the key is
-	 * unknown</li>
-	 * </ul>
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
+	 *                           the key is null</li>
+	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           if the key is unknown</li>
+	 *                           </ul>
 	 */
 	public int getPersonCount(final Object key) {
 		validateKeyExists(key);
@@ -549,10 +552,14 @@ public final class PartitionsDataManager extends DataManager {
 	/**
 	 * Removes the population index for the given key if that key is present.
 	 * Returns true if and only if the partition was removed.
-	 * <li>{@linkplain PartitionError#NULL_PARTITION_KEY} if the key is null</li>
-	 * <li>{@linkplain PartitionError#UNKNOWN_POPULATION_PARTITION_KEY} if the key
-	 * is unknown</li>
-	 * </ul>
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain PartitionError#NULL_PARTITION_KEY}
+	 *                           if the key is null</li>
+	 *                           <li>{@linkplain PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                           if the key is unknown</li>
+	 *                           </ul>
 	 */
 	public void removePartition(final Object key) {
 

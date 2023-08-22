@@ -26,7 +26,6 @@ import util.errors.ContractException;
  * vaccine received. Label Sets are built by the modeler via the supplied
  * Builder class.
  */
-
 public final class LabelSet {
 
 	@Override

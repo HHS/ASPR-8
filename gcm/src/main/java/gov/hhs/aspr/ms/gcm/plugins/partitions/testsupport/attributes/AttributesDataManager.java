@@ -26,7 +26,6 @@ import util.errors.ContractException;
 /**
  * Published data view that provides attribute information.
  */
-
 public final class AttributesDataManager extends DataManager {
 
 	private DataManagerContext dataManagerContext;

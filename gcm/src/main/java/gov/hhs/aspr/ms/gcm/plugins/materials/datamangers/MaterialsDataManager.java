@@ -2311,7 +2311,7 @@ public final class MaterialsDataManager extends DataManager {
 	}
 
 	/**
-	 * <li>Removes a batch from a non-offered stage, placing it into the materials
+	 * Removes a batch from a non-offered stage, placing it into the materials
 	 * producer's inventory. Generates a corresponding
 	 * {@linkplain StageMembershipRemovalEvent}
 	 *
@@ -2528,8 +2528,8 @@ public final class MaterialsDataManager extends DataManager {
 	 *                           the materials producer property is immutable</li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *                           if the property value is null</li>
-	 *                           {@linkplain PropertyError#INCOMPATIBLE_VALUE} if
-	 *                           the property value is incompatible with the
+	 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
+	 *                           if the property value is incompatible with the
 	 *                           corresponding property definition</li>
 	 *                           </ul>
 	 */

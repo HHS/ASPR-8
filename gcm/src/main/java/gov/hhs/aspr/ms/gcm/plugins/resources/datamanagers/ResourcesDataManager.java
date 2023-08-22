@@ -47,7 +47,6 @@ import util.wrappers.MutableLong;
  * Data manager for resources. Resource property values are generally mutable
  * and specific to the type of resource.
  */
-
 public final class ResourcesDataManager extends DataManager {
 
 	private PeopleDataManager peopleDataManager;
@@ -447,12 +446,13 @@ public final class ResourcesDataManager extends DataManager {
 	 * Defines a new resource property. Generates the corresponding
 	 * ResourcePropertyAdditionEvent.
 	 * 
-	 * @throw {@link ContractException}
-	 *        <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the resource id
-	 *        is unknown</li>
-	 *        <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION} if the
-	 *        resource property is already defined</li>
-	 *        </ul>
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the resource id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
+	 *                           if the resource property is already defined</li>
+	 *                           </ul>
 	 */
 	public void defineResourceProperty(ResourcePropertyInitialization resourcePropertyInitialization) {
 		dataManagerContext
@@ -656,17 +656,17 @@ public final class ResourcesDataManager extends DataManager {
 	/**
 	 * Increases the resource for the particular region and resource by the amount.
 	 *
-	 * @throws RuntimeException</li>
-	 *                               <li>if the resource id is null</li>
-	 *                               <li>if the resource id is unknown</li>
-	 *                               <li>if the region id null</li>
-	 *                               <li>if the region id is unknown</li>
-	 *                               <li>if the amount is negative</li>
-	 *                               <li>if the amount causes an overflow</li>
-	 * @throws ContractException     </li>
-	 *                               <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
-	 *                               if the amount is negative</li>
-	 *                               </ul>
+	 * @throws RuntimeException
+	 *                           <ul>
+	 *                           <li>if the resource id is null</li>
+	 *                           <li>if the resource id is unknown</li>
+	 *                           <li>if the region id null</li>
+	 *                           <li>if the region id is unknown</li>
+	 *                           <li>if the amount is negative</li>
+	 *                           <li>if the amount causes an overflow</li>
+	 *                           </ul>
+	 * @throws ContractException {@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+	 *                           if the amount is negative
 	 */
 	private void incrementRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 		Map<ResourceId, MutableLong> map = regionResources.get(regionId);
@@ -808,42 +808,54 @@ public final class ResourcesDataManager extends DataManager {
 
 	/**
 	 * <ul>
-	 * <li>Adds all event labelers defined by the following events <blockquote>
+	 * <li>Adds all event labelers defined by the following events
 	 * <ul>
 	 * <li>{@linkplain PersonResourceUpdateEvent}</li>
 	 * <li>{@linkplain RegionResourceUpdateEvent}</li>
 	 * <li>{@linkplain ResourcePropertyUpdateEvent}</li>
 	 * </ul>
-	 * </blockquote></li>
-	 * <li>Sets resource property values from the</li>
+	 * </li>
+	 * <li>Sets resource property values from the
 	 * {@linkplain ResourcesPluginData}</li>
-	 * <li>Sets region resource levels from the</li>
+	 * <li>Sets region resource levels from the
 	 * {@linkplain ResourcesPluginData}</li>
-	 * <li>Sets person resource levels from the</li>
+	 * <li>Sets person resource levels from the
 	 * {@linkplain ResourcesPluginData}</li>
-	 * <p>
+	 * </ul>
 	 * Subscribes to the following events:
 	 * <ul>
-	 * <li>{@linkplain PersonImminentAdditionEvent}<blockquote> Sets the person's
-	 * initial resource levels in the {@linkplain ResourcesDataManager} from the
-	 * ResourceInitialization references in the auxiliary data of the event. <BR>
-	 * <BR>
-	 * Throws {@link ContractException}
+	 * <li>{@linkplain PersonImminentAdditionEvent}
 	 * <ul>
-	 * <li>{@linkplain PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if the person id is
-	 * unknown</li>
-	 * <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if the auxiliary data
-	 * contains a ResourceInitialization that has a null resource id</li>
-	 * <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID} if the auxiliary data
-	 * contains a ResourceInitialization that has an unknown resource id</li>
-	 * <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT} if the auxiliary data
-	 * contains a ResourceInitialization that has a negative resource level</li>
+	 * <li>Sets the person's initial resource levels in the
+	 * {@linkplain ResourcesDataManager} from the ResourceInitialization references
+	 * in the auxiliary data of the event.
 	 * </ul>
-	 * </blockquote></li>
-	 * -------------------------------------------------------------------------------
-	 * <li>{@linkplain PersonRemovalEvent}<blockquote> Removes the resource
-	 * assignment data for the person from the {@linkplain ResourcesDataManager}
+	 * <li>{@linkplain PersonRemovalEvent}
+	 * <ul>
+	 * <li>Removes the resource assignment data for the person from the
+	 * {@linkplain ResourcesDataManager}
+	 * </ul>
+	 * </ul>
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown</li>
+	 *                           <li>{@linkplain ResourceError#NULL_RESOURCE_ID} if
+	 *                           the auxiliary data contains a
+	 *                           ResourceInitialization that has a null resource
+	 *                           id</li>
+	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
+	 *                           if the auxiliary data contains a
+	 *                           ResourceInitialization that has an unknown resource
+	 *                           id</li>
+	 *                           <li>{@linkplain ResourceError#NEGATIVE_RESOURCE_AMOUNT}
+	 *                           if the auxiliary data contains a
+	 *                           ResourceInitialization that has a negative resource
+	 *                           level</li>
+	 *                           </ul>
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {

@@ -6,7 +6,6 @@ import util.errors.ContractException;
 /**
  * Represents a range of person id values
  */
-
 @Immutable
 public class PersonRange implements Comparable<PersonRange> {
 

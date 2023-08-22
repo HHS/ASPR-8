@@ -44,7 +44,6 @@ import util.errors.ContractException;
  * can be invoked in any order and relational validation is delayed until
  * build() is invoked.
  */
-
 @Immutable
 public final class MaterialsPluginData implements PluginData {
 

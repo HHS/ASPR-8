@@ -12,7 +12,6 @@ import util.errors.ContractException;
 /**
  * An event indicating that a region has been added
  */
-
 @Immutable
 public class RegionAdditionEvent implements Event {
 

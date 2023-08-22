@@ -29,7 +29,6 @@ public final class BooleanPropertyManager implements IndexedPropertyManager {
 	 *                           Boolean</li>
 	 *                           </ul>
 	 */
-
 	public BooleanPropertyManager(PropertyDefinition propertyDefinition,
 			Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (propertyDefinition == null) {

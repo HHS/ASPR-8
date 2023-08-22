@@ -31,6 +31,7 @@ public final class EnumContainer {
 	 * Constructs an instance of EnumContainer.
 	 * 
 	 * @throws IllegalArgumentException
+	 *                                  <ul>
 	 *                                  <li>if the class is null</li>
 	 *                                  <li>if the class is not an enumeration</li>
 	 *                                  <li>if the default is not null and not a
@@ -63,6 +64,7 @@ public final class EnumContainer {
 	 * Set the value at the given index.
 	 * 
 	 * @throws IllegalArgumentException
+	 *                                  <ul>
 	 *                                  <li>if the index is negative</li>
 	 *                                  <li>if the value is null</li>
 	 *                                  <li>if the value is not a member of the
@@ -98,9 +100,7 @@ public final class EnumContainer {
 	/**
 	 * Set the value at the given index.
 	 * 
-	 * @throws ArrayIndexOutOfBoundsException
-	 *                                        <li>if the index is negative</li>
-	 *                                        </ul>
+	 * @throws ArrayIndexOutOfBoundsException if the index is negative
 	 */
 	public Object getValue(int index) {
 		/*

@@ -48,7 +48,6 @@ import util.errors.ContractException;
 /**
  * Mutable data manager for person properties
  */
-
 public final class PersonPropertiesDataManager extends DataManager {
 	private static enum EventFunctionId {
 		PERSON_PROPERTY_ID, //
@@ -928,20 +927,27 @@ public final class PersonPropertiesDataManager extends DataManager {
 
 	/**
 	 * Updates the value of a person's property. Generates a corresponding
-	 * {@linkplain PersonPropertyUpdateEvent} Throws {@link ContractException}
-	 * <li>{@link PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is unknown</li>
-	 * <li>{@link PropertyError#NULL_PROPERTY_ID} if the person property id is
-	 * null</li>
-	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the person property id is
-	 * unknown</li>
-	 * <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the property value is
-	 * null</li>
-	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the property value is not
-	 * compatible with the corresponding property definition</li>
-	 * <li>{@link PropertyError#IMMUTABLE_VALUE} if the corresponding property
-	 * definition marks the property as immutable</li>
-	 * </ul>
+	 * {@linkplain PersonPropertyUpdateEvent}
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
+	 *                           person id is unknown</li>
+	 *                           <li>{@link PropertyError#NULL_PROPERTY_ID} if the
+	 *                           person property id is null</li>
+	 *                           <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if
+	 *                           the person property id is unknown</li>
+	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
+	 *                           if the property value is null</li>
+	 *                           <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the
+	 *                           property value is not compatible with the
+	 *                           corresponding property definition</li>
+	 *                           <li>{@link PropertyError#IMMUTABLE_VALUE} if the
+	 *                           corresponding property definition marks the
+	 *                           property as immutable</li>
+	 *                           </ul>
 	 */
 	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId,
 			final Object personPropertyValue) {

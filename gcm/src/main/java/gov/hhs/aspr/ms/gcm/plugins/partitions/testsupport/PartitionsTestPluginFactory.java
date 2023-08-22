@@ -252,7 +252,7 @@ public class PartitionsTestPluginFactory {
 	 * Returns a standardized AttributesPluginData that is minimally adequate for
 	 * testing the PartitionsPlugin The resulting AttributesPluginData will include:
 	 * <ul>
-	 * <li>Every AttributeId included in {@link TestAttributeId}</li>
+	 * <li>Every AttributeId included in {@link TestAttributeId}
 	 * <ul>
 	 * <li>along with the attributeDefinition for each</li>
 	 * </ul>

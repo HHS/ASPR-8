@@ -63,6 +63,7 @@ public class PeopleTestPluginFactory {
 		/**
 		 * Returns a list of plugins containing a People, Stochastic and Test Plugin
 		 * built from the contributed PluginDatas.
+		 * <ul>
 		 * <li>PeoplePlugin is defaulted to one formed from
 		 * {@link PeopleTestPluginFactory#getStandardPeoplePluginData}</li>
 		 * <li>StochasticsPlugin is defaulted to one formed from
@@ -183,7 +184,7 @@ public class PeopleTestPluginFactory {
 
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
-	 * testing the PeoplePlugin The resulting PeoplePluginData will be empty</li>
+	 * testing the PeoplePlugin. The resulting PeoplePluginData will be empty
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>

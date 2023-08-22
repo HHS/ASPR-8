@@ -84,7 +84,8 @@ public class PersonPropertiesTestPluginFactory {
 
         /**
          * Returns a list of plugins containing a PersonProperties, Regions, People,
-         * Stochastics and Test Plugin built from the contributed PluginDatas. <ul>
+         * Stochastics and Test Plugin built from the contributed PluginDatas.
+         * <ul>
          * <li>PersonPropertiesPlugin is defaulted to one formed from
          * {@link PersonPropertiesTestPluginFactory#getStandardPersonPropertiesPluginData}
          * </li>
@@ -306,15 +307,15 @@ public class PersonPropertiesTestPluginFactory {
      * for testing the PersonPropertiesPlugin. The resulting
      * PersonPropertiesPluginData will include:
      * <ul>
-     * <li>Every PersonPropertyId included in {@link TestPersonPropertyId}</li>
+     * <li>Every PersonPropertyId included in {@link TestPersonPropertyId}
      * <ul>
      * <li>along with the propertyDefinition for each</li>
      * </ul>
      * <li>Every person in the list of passed in people.
      * <ul>
      * <li>Each person will have a property value if the propertyDefinition does not
-     * </li>have a defaultValue, OR via a RandomGenerator seeded by the passed in
-     * seed via nextBoolean.
+     * have a defaultValue, OR via a RandomGenerator seeded by the passed in seed
+     * via nextBoolean.</li>
      * <li>The property value is gotten from
      * {@link TestPersonPropertyId#getRandomPropertyValue}</li>
      * </ul>

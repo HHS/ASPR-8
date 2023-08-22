@@ -9,7 +9,6 @@ import util.errors.ContractException;
 /**
  * Immutable data class that represents the addition of a resource property
  */
-
 public class ResourcePropertyInitialization {
 
 	private static class Data {

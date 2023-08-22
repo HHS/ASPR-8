@@ -9,7 +9,6 @@ import net.jcip.annotations.Immutable;
  * An observation event indicating that a person's property assignment has
  * changed.
  */
-
 @Immutable
 public record PersonPropertyUpdateEvent(PersonId personId, PersonPropertyId personPropertyId,
 		Object previousPropertyValue, Object currentPropertyValue) implements Event {

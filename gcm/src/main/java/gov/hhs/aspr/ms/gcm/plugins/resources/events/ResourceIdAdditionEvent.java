@@ -9,7 +9,6 @@ import util.errors.ContractException;
 /**
  * An observation event indicating that a resource id has been added.
  */
-
 @Immutable
 public record ResourceIdAdditionEvent(ResourceId resourceId, boolean timeTrackingPolicy) implements Event {
 	/**

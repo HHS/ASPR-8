@@ -48,7 +48,7 @@ public final class PluginContext {
 	 *                           if plugin initialization is over</li>
 	 *                           <li>{@link NucleusError#NULL_REPORT_CONTEXT_CONSUMER}
 	 *                           if the consumer is null</li>
-	 *                           <ul>
+	 *                           </ul>
 	 */
 	public void addReport(Consumer<ReportContext> init) {
 		simulation.addReportForPlugin(init);

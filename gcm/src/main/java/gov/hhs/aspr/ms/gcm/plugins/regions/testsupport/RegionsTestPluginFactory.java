@@ -79,7 +79,9 @@ public final class RegionsTestPluginFactory {
         /**
          * Returns a list of plugins containing a People, Regions, Stochastics and Test
          * Plugin built from the contributed PluginDatas.
-         * {@link RegionsTestPluginFactory#getStandardRegionsPluginData}
+         * <ul>
+         * <li>RegionsPlugin is defaulted to one formed from
+         * {@link RegionsTestPluginFactory#getStandardRegionsPluginData}</li>
          * <li>PeoplePlugin is defaulted to one formed from
          * {@link RegionsTestPluginFactory#getStandardPeoplePluginData}</li>
          * <li>StochasticsPlugin is defaulted to one formed from
@@ -200,14 +202,14 @@ public final class RegionsTestPluginFactory {
      * </ul>
      * either directly (by default) via
      * <ul>
-     * <li>{@link #getStandardPeoplePluginData},
-     * <li>{@link #getStandardRegionsPluginData},
+     * <li>{@link #getStandardPeoplePluginData}</li>
+     * <li>{@link #getStandardRegionsPluginData}</li>
      * <li>{@link #getStandardStochasticsPluginData}</li>
      * </ul>
      * or explicitly set via
      * <ul>
-     * <li>{@link Factory#setPeoplePluginData},
-     * <li>{@link Factory#setRegionsPluginData},
+     * <li>{@link Factory#setPeoplePluginData}</li>
+     * <li>{@link Factory#setRegionsPluginData}</li>
      * <li>{@link Factory#setStochasticsPluginData}</li>
      * </ul>
      * via the {@link Factory#getPlugins()} method.
@@ -266,15 +268,15 @@ public final class RegionsTestPluginFactory {
      * testing the RegionsPlugin The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId in {@link TestRegionId}</li>
-     * <li>Every RegionPropertyId in {@link TestRegionPropertyId}</li>
+     * <li>Every RegionPropertyId in {@link TestRegionPropertyId}
      * <ul>
-     * <li>along with the propertyDefinition for each.
+     * <li>along with the propertyDefinition for each.</li>
      * <li>If the propertyDefinition has a default value, that value is used.
      * Otherwise a randomPropertyValue is set using a RandomGenerator seeded by the
      * passed in seed via {@link TestRegionPropertyId#getRandomPropertyValue}
      * </ul>
      * <li>the passed in timeTrackingPolicy</li>
-     * <li>Every person in the passed in list will be added to a RegionId</li>
+     * <li>Every person in the passed in list will be added to a RegionId
      * <ul>
      * <li>starting with RegionId_1 and looping through all possible RegionIds in
      * {@link TestRegionId}

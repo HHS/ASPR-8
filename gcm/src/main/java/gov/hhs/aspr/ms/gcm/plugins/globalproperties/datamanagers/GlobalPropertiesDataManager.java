@@ -330,7 +330,7 @@ public final class GlobalPropertiesDataManager extends DataManager {
 	 *                           is not mutable</li>
 	 *                           <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the
 	 *                           property value is incompatible with the property
-	 *                           definition </blockquote></li>
+	 *                           definition</li>
 	 *                           </ul>
 	 */
 	public void setGlobalPropertyValue(GlobalPropertyId globalPropertyId, Object globalPropertyValue) {

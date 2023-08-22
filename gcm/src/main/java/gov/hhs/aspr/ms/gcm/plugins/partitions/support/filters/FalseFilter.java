@@ -13,7 +13,6 @@ import net.jcip.annotations.Immutable;
  * OrFilter over a loop of filters that might be empty. OR operating over an
  * empty set should always be false.
  */
-
 @Immutable
 public final class FalseFilter extends Filter {
 

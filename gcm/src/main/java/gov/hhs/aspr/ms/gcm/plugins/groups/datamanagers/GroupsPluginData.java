@@ -750,7 +750,6 @@ public final class GroupsPluginData implements PluginData {
              * All group property definitions that do not have a default value must have
              * corresponding property value assignments for added groups.
              */
-
             Map<GroupTypeId, Set<GroupPropertyId>> propertyDefsWithoutDefaults = new LinkedHashMap<>();
 
             for (GroupTypeId groupTypeId : data.groupTypeIds) {

@@ -10,7 +10,6 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
  * object dimension which is a dimension within a partition and the label
  * occupies a point in that dimension.
  */
-
 public interface Labeler {
 
 	/**

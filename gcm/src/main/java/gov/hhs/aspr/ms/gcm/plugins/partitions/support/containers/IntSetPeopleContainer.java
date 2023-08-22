@@ -145,9 +145,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
 	 * duplicate values.
 	 * 
-	 * @throws IllegalArgumentException
-	 *                                  <li>the target depth is not positive</li>
-	 *                                  </ul>
+	 * @throws IllegalArgumentException the target depth is not positive
 	 */
 	public IntSetPeopleContainer() {
 		this.targetDepth = DEFAULT_TARGET_DEPTH;

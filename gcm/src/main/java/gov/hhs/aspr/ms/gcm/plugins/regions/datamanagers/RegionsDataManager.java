@@ -343,7 +343,8 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           c id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *                           the region id is not known
+	 *                           the region id is not known</li>
+	 *                           </ul>
 	 */
 	public List<PersonId> getPeopleInRegion(final RegionId regionId) {
 		validateRegionId(regionId);
@@ -434,7 +435,8 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *                           the region id is not known
+	 *                           the region id is not known</li>
+	 *                           </ul>
 	 */
 	public int getRegionPopulationCount(final RegionId regionId) {
 		validateRegionId(regionId);
@@ -449,7 +451,8 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the region property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
-	 *                           if the region property id is unknown
+	 *                           if the region property id is unknown</li>
+	 *                           </ul>
 	 */
 	public PropertyDefinition getRegionPropertyDefinition(final RegionPropertyId regionPropertyId) {
 		validateRegionPropertyId(regionPropertyId);
@@ -557,7 +560,6 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if a
 	 *                           person in the people plugin does not have an
 	 *                           assigned region id in the region plugin data</li>
-	 *                           </li>
 	 *                           <li>{@linkplain RegionError#REGION_ARRIVAL_TIME_EXCEEDS_SIM_TIME}
 	 *                           if a person's region arrival time exceeds the
 	 *                           current simulation time</li>
@@ -739,13 +741,19 @@ public final class RegionsDataManager extends DataManager {
 
 	/**
 	 * Updates the person's current region and region arrival time. Generates a
-	 * corresponding {@linkplain PersonRegionUpdateEvent} Throws
-	 * {@link ContractException}
-	 * <li>{@link PersonError#NULL_PERSON_ID} if the person id is null</li>
-	 * <li>{@link PersonError#UNKNOWN_PERSON_ID} if the person id is unknown</li>
-	 * <li>{@link RegionError#NULL_REGION_ID} if the region id is null</li>
-	 * <li>{@link RegionError#UNKNOWN_REGION_ID} if the region id is unknown</li>
-	 * </ul>
+	 * corresponding {@linkplain PersonRegionUpdateEvent}
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
+	 *                           person id is unknown</li>
+	 *                           <li>{@link RegionError#NULL_REGION_ID} if the
+	 *                           region id is null</li>
+	 *                           <li>{@link RegionError#UNKNOWN_REGION_ID} if the
+	 *                           region id is unknown</li>
+	 *                           </ul>
 	 */
 	public void setPersonRegion(final PersonId personId, final RegionId regionId) {
 		dataManagerContext.releaseMutationEvent(new PersonRegionUpdateMutationEvent(personId, regionId));
@@ -988,7 +996,8 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *                           the region id is not known</li>*
+	 *                           the region id is not known</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent_ByArrivalRegion(
 			RegionId arrivalRegionId) {
@@ -1008,7 +1017,7 @@ public final class RegionsDataManager extends DataManager {
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
-	 *                           the region id is not known</li>*
+	 *                           the region id is not known</li>
 	 */
 	public EventFilter<PersonRegionUpdateEvent> getEventFilterForPersonRegionUpdateEvent_ByDepartureRegion(
 			RegionId departureRegionId) {

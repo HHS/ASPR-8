@@ -387,14 +387,14 @@ public class MaterialsTestPluginFactory {
 	 * Returns a standardized MaterialsPluginData that is minimally adequate for
 	 * testing the MaterialsPlugin The resulting MaterialsPluginData will include:
 	 * <ul>
-	 * <li>Every MaterialId included in {@link TestMaterialId}</li>
+	 * <li>Every MaterialId included in {@link TestMaterialId}
 	 * <ul>
 	 * <li>Each MaterialId will be used to define a BatchProperty via
 	 * {@link TestBatchPropertyId#getTestBatchPropertyIds} along with the
 	 * propertyDefinition for each</li>
 	 * </ul>
 	 * <li>Every MaterialProducerId included in {@link TestMaterialsProducerId} With
-	 * </li>each one containing:
+	 * each one containing:
 	 * <ul>
 	 * <li>The specified number of batches. Each batch will have the following:
 	 * <ul>
@@ -404,24 +404,25 @@ public class MaterialsTestPluginFactory {
 	 * <li>a random amount based on the same RandomGenerator.nextDouble
 	 * <li>Every BatchPropertyId included in {@link TestBatchPropertyId} where the
 	 * batchPropertyValue will be set if the batchPropertyDefinition does not have a
-	 * </li>default value OR if randomGenerator.nextBoolean is true. Either way, the
+	 * default value OR if randomGenerator.nextBoolean is true. Either way, the
 	 * value will be set to the result from
-	 * {@link TestBatchPropertyId#getRandomPropertyValue}
+	 * {@link TestBatchPropertyId#getRandomPropertyValue}</li>
 	 * </ul>
 	 * <li>the specified number of stages. Exactly half will be offered.
 	 * <li>the specified number of batches in a stage dervied from a shuffled list
 	 * of batches via nextLong and a random stageId via nextInt</li>
 	 * </ul>
 	 * <li>Every MaterialProducerPropertyId included in
-	 * {@link TestMaterialsProducerPropertyId} along with the defined</li>
+	 * {@link TestMaterialsProducerPropertyId} along with the defined
 	 * propertyDefinition for each.
 	 * <ul>
 	 * <li>The MaterialProducerPropertyIds that do not have default values will have
 	 * a property value set derived from
 	 * {@link TestMaterialsProducerPropertyId#getRandomPropertyValue}</li>
 	 * </ul>
+	 * </ul>
 	 * 
-	 * @throw {@link RuntimeException}
+	 * @throws RuntimeException if numBatches &lt; numBatchesInStage
 	 */
 	public static MaterialsPluginData getStandardMaterialsPluginData(int numBatches, int numStages,
 			int numBatchesInStage, long seed) {
@@ -527,7 +528,7 @@ public class MaterialsTestPluginFactory {
 	 * <li>Every ResourceId included in {@link TestResourceId} along with the
 	 * defined timeTrackingPolicy for each</li>
 	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-	 * </li>with the defined propertyDefinition for each.
+	 * with the defined propertyDefinition for each.
 	 * <ul>
 	 * <li>Each Resource will have a random property value assigned based on a
 	 * RandomGenerator that is created with the passed in seed</li>
@@ -556,7 +557,7 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
-	 * testing the MaterialsPlugin The resulting PeoplePluginData will be empty</li>
+	 * testing the MaterialsPlugin The resulting PeoplePluginData will be empty
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>
