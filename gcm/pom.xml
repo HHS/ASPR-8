@@ -189,7 +189,7 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven-javadoc-plugin.version}</version>
 						<configuration>
-							<doclint>html</doclint>
+							<doclint>all,-missing</doclint>
 							<additionalDependencies>
 								<additionalDependency>
 									<groupId>gov.hhs.aspr.ms</groupId>
@@ -203,7 +203,6 @@
 								</additionalDependency>
 							</additionalDependencies>
 							<author>false</author>
-							<includeDependencySources>false</includeDependencySources>
 							<additionalJOptions>
 								<additionalJOption>-Xmaxerrs</additionalJOption>
 								<additionalJOption>65536</additionalJOption>
