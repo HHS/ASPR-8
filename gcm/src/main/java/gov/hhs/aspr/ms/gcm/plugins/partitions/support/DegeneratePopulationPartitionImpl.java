@@ -39,15 +39,14 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	/**
 	 * Constructs an DegeneratePopulationPartitionImpl
 	 *
-	 * @throws ContractException
-	 *                               <ul>
-	 *                               <li>{@linkplain PartitionError#NON_DEGENERATE_PARTITION}
-	 *                               if the partition contains labelers</li>
-	 * @throws RuntimeException</li>
-	 *                               <li>if context is null</li>
-	 *                               <li>if partition is null</li>
-	 *                               <li>if the partition contains labelers</li>
-	 *                               </ul>
+	 * @throws ContractException {@linkplain PartitionError#NON_DEGENERATE_PARTITION}
+	 *                           if the partition contains labelers
+	 * @throws RuntimeException
+	 *                           <ul>
+	 *                           <li>if context is null</li>
+	 *                           <li>if partition is null</li>
+	 *                           <li>if the partition contains labelers</li>
+	 *                           </ul>
 	 */
 	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
 			boolean supportRunContinuity) {

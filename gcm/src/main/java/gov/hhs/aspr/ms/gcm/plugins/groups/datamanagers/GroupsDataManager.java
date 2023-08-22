@@ -145,8 +145,8 @@ public final class GroupsDataManager extends DataManager {
 	/**
 	 * Constructs this person group data manager
 	 * 
-	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_INITIALIZATION_DATA} if
-	 *                           groupsPluginData is null
+	 * @throws ContractException {@linkplain GroupError#NULL_GROUP_INITIALIZATION_DATA}
+	 *                           if groupsPluginData is null
 	 */
 	public GroupsDataManager(GroupsPluginData groupsPluginData) {
 		if (groupsPluginData == null) {
@@ -923,13 +923,11 @@ public final class GroupsDataManager extends DataManager {
 		}
 	}
 
-	/*
+	/**
 	 * Validates the group type id
 	 *
-	 * @throws ContractException
-	 *
-	 * <li>{@link NucleusError#NULL_GROUP_CONSTRUCTION_INFO} if the group
-	 * construction info is null
+	 * @throws ContractException {@link GroupError#NULL_GROUP_CONSTRUCTION_INFO} if
+	 *                           the group construction info is null
 	 */
 	private void validateGroupConstructionInfoNotNull(final GroupConstructionInfo groupConstructionInfo) {
 		if (groupConstructionInfo == null) {

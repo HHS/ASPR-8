@@ -58,9 +58,8 @@ public abstract class Filter {
 	public abstract boolean evaluate(PartitionsContext partitionsContext, PersonId personId);
 
 	/**
-	 * Validates the filter from the given context. Preconditions:
-	 * <li>the context is not null</li>
-	 * </ul>
+	 * Validates the filter from the given context. Preconditions: the context is
+	 * not null
 	 */
 	public abstract void validate(PartitionsContext partitionsContext);
 

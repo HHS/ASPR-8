@@ -90,6 +90,7 @@ public class ResourcesTestPluginFactory {
         /**
          * Returns a list of plugins containing a Resources, People, Regions,
          * Stochastics and Test Plugin built from the contributed PluginDatas.
+         * <ul>
          * <li>ResourcesPlugin is defaulted to one formed from
          * {@link ResourcesTestPluginFactory#getStandardResourcesPluginData}</li>
          * <li>RegionsPlugin is defaulted to one formed from
@@ -100,6 +101,7 @@ public class ResourcesTestPluginFactory {
          * {@link ResourcesTestPluginFactory#getStandardStochasticsPluginData}</li>
          * <li>TestPlugin is formed from the TestPluginData passed into
          * {@link ResourcesTestPluginFactory#factory}</li>
+         * </ul>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -313,8 +315,7 @@ public class ResourcesTestPluginFactory {
 
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
-     * testing the ResourcesPlugin
-     * <li>The resutling PeoplePluginData will include:
+     * testing the ResourcesPlugin The resutling PeoplePluginData will include:
      * <ul>
      * <li>A number of people equal to the value of initialPopulation</li>
      * </ul>
@@ -329,8 +330,7 @@ public class ResourcesTestPluginFactory {
 
     /**
      * Returns a standardized RegionsPluginData that is minimally adequate for
-     * testing the ResourcesPlugin
-     * The resulting RegionsPluginData will include:
+     * testing the ResourcesPlugin The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId included in {@link TestRegionId}</li>
      * <li>Every person passed in via people.
@@ -358,19 +358,16 @@ public class ResourcesTestPluginFactory {
 
     /**
      * Returns a standardized ResourcesPluginData that is minimally adequate for
-     * testing the ResourcesPlugin
-     * The resulting ResourcesPluginData will include:
+     * testing the ResourcesPlugin The resulting ResourcesPluginData will include:
      * <ul>
      * <li>Every ResourceId included in {@link TestResourceId}
      * <ul>
      * <li>along with the defined timeTrackingPolicy for each</li>
      * </ul>
      * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-     * with the defined propertyDefinition for each.</li> 
-     * <ul>
+     * with the defined propertyDefinition for each.</li>
      * <li>Each Resource will have a random property value assigned based on a
-     * RandomGenerator that is created with the passed in seed</li></li>
-     * </ul>
+     * RandomGenerator that is created with the passed in seed</li>
      * </ul>
      */
     public static ResourcesPluginData getStandardResourcesPluginData(List<PersonId> people, long seed) {
@@ -433,11 +430,10 @@ public class ResourcesTestPluginFactory {
 
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
-     * testing the ResourcesPlugin
-     * The resulting StochasticsPluginData will include:
+     * testing the ResourcesPlugin The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-     * in seed</li></li>
+     * in seed</li>
      * </ul>
      */
     public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

@@ -60,12 +60,13 @@ public final class GlobalPropertiesTestPluginFactory {
 
         /**
          * Returns a list of plugins containing a GlobalProperties and a Test Plugin
-         * built from the contributed PluginDatas.
+         * built from the contributed PluginDatas. <ul>
          * <li>GlobalPropertiesPlugin is defaulted to one formed from
          * {@link GlobalPropertiesTestPluginFactory#getStandardGlobalPropertiesPluginData}
          * </li>
          * <li>TestPlugin is formed from the TestPluginData passed into
          * {@link GlobalPropertiesTestPluginFactory#factory}</li>
+         * </ul>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -177,8 +178,8 @@ public final class GlobalPropertiesTestPluginFactory {
 
     /**
      * Returns a Standardized GlobalPropertiesPluginData that is minimally adequate
-     * for testing the GlobalPropertiesPlugin
-     * The resulting GlobalPropertiesPluginData will include:</li>
+     * for testing the GlobalPropertiesPlugin The resulting
+     * GlobalPropertiesPluginData will include:</li>
      * <ul>
      * <li>Every GlobalPropertyId included in {@link TestGlobalPropertyId}
      * <ul>

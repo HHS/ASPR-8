@@ -109,6 +109,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * the corresponding label for the person.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -129,7 +130,7 @@ public final class PartitionsDataManager extends DataManager {
 
 	/**
 	 * Returns the number of people in the population partition for the given key.
-	 * <li>{@link PartitionError#NULL_PARTITION_KEY} if the key is null</li></li>
+	 * <li>{@link PartitionError#NULL_PARTITION_KEY} if the key is null</li>
 	 * <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY} if the key is
 	 * unknown</li>
 	 * </ul>
@@ -146,6 +147,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * set is equal to the corresponding label for the person.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -172,6 +174,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * All values will be positive.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -195,6 +198,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * the given PartitionSampler.
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -211,6 +215,7 @@ public final class PartitionsDataManager extends DataManager {
 	 *                           <li>{@link StochasticsError#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
 	 *                           if the partition sampler has a random number
 	 *                           generator id that is unknown</li>
+	 *                           </ul>
 	 */
 	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
 		validateKeyExists(key);
@@ -227,6 +232,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * create this population partition. No precondition tests will be performed.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PartitionError#NULL_PARTITION_KEY} if
 	 *                           the key is null</li>
 	 *                           <li>{@link PartitionError#UNKNOWN_POPULATION_PARTITION_KEY}
@@ -235,6 +241,7 @@ public final class PartitionsDataManager extends DataManager {
 	 *                           person does not exist</li>
 	 *                           <li>{@link PartitionError#NULL_LABEL_SET_FUNCTION}
 	 *                           if the label set function is null</li>
+	 *                           </ul>
 	 */
 	public <T> Optional<T> getPersonValue(Object key, LabelSetFunction<T> labelSetFunction, PersonId personId) {
 		validateKeyExists(key);
@@ -249,6 +256,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * partition corresponding to the key.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the
@@ -273,6 +281,7 @@ public final class PartitionsDataManager extends DataManager {
 	 * is equal to the corresponding label for the person.
 	 * 
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@link PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@link PersonError#UNKNOWN_PERSON_ID} if the

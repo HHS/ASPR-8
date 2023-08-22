@@ -86,7 +86,7 @@ public final class GroupsTestPluginFactory {
 
         /**
          * Returns a list of plugins containing a Groups, People, Stocastics and a Test
-         * Plugin built from the contributed PluginDatas.
+         * Plugin built from the contributed PluginDatas. <ul>
          * <li>GroupsPlugin is defaulted to one formed from
          * {@link GroupsTestPluginFactory#getStandardGroupsPluginData}</li>
          * <li>PeoplePlugin is defaulted to one formed from
@@ -95,6 +95,7 @@ public final class GroupsTestPluginFactory {
          * {@link GroupsTestPluginFactory#getStandardStochasticsPluginData}</li>
          * <li>TestPlugin is formed from the TestPluginData passed into
          * {@link GroupsTestPluginFactory#factory}</li>
+         * </ul>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -274,8 +275,7 @@ public final class GroupsTestPluginFactory {
 
     /**
      * Returns a standardized GroupsPluginData that is minimally adequate for
-     * testing the GroupsPlugin
-     * The resulting GroupsPluginData will include:
+     * testing the GroupsPlugin The resulting GroupsPluginData will include:
      * <ul>
      * <li>Every GroupTypeId included in {@link TestGroupTypeId}</li>
      * <li>Every GroupPropertyId included in {@link TestGroupPropertyId}</li>
@@ -290,7 +290,7 @@ public final class GroupsTestPluginFactory {
      * randomPropertyValue obtained from each based on the same RandomGenerator</li>
      * </ul>
      * <li>an average group membership based on the passed in membershipCount and
-     *  passed in people.</li>
+     * passed in people.</li>
      * <ul>
      * <li>This is determined based on the above RandomGenerator.
      * </ul>
@@ -357,8 +357,7 @@ public final class GroupsTestPluginFactory {
 
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
-     * testing the GroupsPlugin
-     * The resulting PeoplePluginData will include:
+     * testing the GroupsPlugin The resulting PeoplePluginData will include:
      * <ul>
      * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
@@ -374,8 +373,7 @@ public final class GroupsTestPluginFactory {
 
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
-     * testing the GroupsPlugin
-     * The resulting StochasticsPluginData will include:
+     * testing the GroupsPlugin The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
      * in seed</li>

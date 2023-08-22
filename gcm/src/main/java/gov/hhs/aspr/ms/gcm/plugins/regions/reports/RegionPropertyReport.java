@@ -102,6 +102,7 @@ public final class RegionPropertyReport {
 	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_PROPERTY_REPORT_PLUGIN_DATA}
 	 *                           if the plugin data is null</li>
+	 *                           </ul>
 	 */
 	public RegionPropertyReport(RegionPropertyReportPluginData regionPropertyReportPluginData) {
 		if (regionPropertyReportPluginData == null) {

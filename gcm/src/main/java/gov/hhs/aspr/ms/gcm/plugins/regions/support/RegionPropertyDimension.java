@@ -80,6 +80,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           the region property id was not assigned</li>
          *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
          *                           RegionId was not assigned</li>
+         *                           </ul>
          */
         public RegionPropertyDimension build() {
             validate();
@@ -103,6 +104,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
          *                           regionId is null</li>
+         *                           </ul>
          */
         public Builder setRegionId(RegionId RegionId) {
             validateRegionId(RegionId);
@@ -117,6 +119,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
          *                           the property id is null</li>
+         *                           </ul>
          */
         public Builder setRegionPropertyId(RegionPropertyId RegionPropertyId) {
             validateRegionPropertyId(RegionPropertyId);
@@ -131,6 +134,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           <ul>
          *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
          *                           if the value is null</li>
+         *                           </ul>
          */
         public Builder addValue(Object value) {
             validateValue(value);

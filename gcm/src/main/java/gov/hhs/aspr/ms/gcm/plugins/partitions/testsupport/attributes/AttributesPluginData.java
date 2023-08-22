@@ -162,13 +162,15 @@ public class AttributesPluginData implements PluginData {
 		 * Returns the {@linkplain AttributesPluginData} from the collected data
 		 * 
 		 * @throws ContractException
-		 *                           <ul><li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+		 *                           <ul>
+		 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
 		 *                           if a person attribute value was recorded for an
 		 *                           unknown attribute id</li>
 		 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE}
 		 *                           if a person attribute value was recorded that is
 		 *                           not compatible witht he corresponding attribute
-		 *                           definition</li></ul>
+		 *                           definition</li>
+		 *                           </ul>
 		 */
 		public AttributesPluginData build() {
 			if (!data.locked) {

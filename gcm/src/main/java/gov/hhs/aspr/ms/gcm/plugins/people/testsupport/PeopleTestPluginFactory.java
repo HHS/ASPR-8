@@ -68,7 +68,8 @@ public class PeopleTestPluginFactory {
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link PeopleTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link PeopleTestPluginFactory#factory}</li></ul>
+		 * {@link PeopleTestPluginFactory#factory}</li>
+		 * </ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -182,8 +183,7 @@ public class PeopleTestPluginFactory {
 
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
-	 * testing the PeoplePlugin
-	 * The resulting PeoplePluginData will be empty</li>
+	 * testing the PeoplePlugin The resulting PeoplePluginData will be empty</li>
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>
@@ -196,11 +196,10 @@ public class PeopleTestPluginFactory {
 
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the PeoplePlugin
-	 * The resulting StochasticsPluginData will include:
+	 * testing the PeoplePlugin The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-	 * in seed</li></li>
+	 * in seed</li>
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

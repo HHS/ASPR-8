@@ -30,6 +30,7 @@ public final class DoublePropertyManager implements IndexedPropertyManager {
 	 *                           <li>{@linkplain PropertyError#PROPERTY_DEFINITION_IMPROPER_TYPE}
 	 *                           if the property definition's type is not
 	 *                           Double</li>
+	 *                           </ul>
 	 */
 	public DoublePropertyManager(PropertyDefinition propertyDefinition,
 			Supplier<Iterator<Integer>> indexIteratorSupplier) {

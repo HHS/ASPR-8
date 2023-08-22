@@ -7,10 +7,8 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     private final Object value;
 
     /**
-     * @throws ContractException
-     *                           <li>
-     *                           {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
-     *                           if the value is null</li>
+     * @throws ContractException {@linkplain StochasticsError#NULL_RANDOM_NUMBER_GENERATOR_ID}
+     *                           if the value is null
      */
     public SimpleRandomNumberGeneratorId(Object value) {
         if (value == null) {

@@ -203,7 +203,7 @@
 								</additionalDependency>
 							</additionalDependencies>
 							<author>false</author>
-							<includeDependencySources>true</includeDependencySources>
+							<includeDependencySources>false</includeDependencySources>
 							<additionalJOptions>
 								<additionalJOption>-Xmaxerrs</additionalJOption>
 								<additionalJOption>65536</additionalJOption>

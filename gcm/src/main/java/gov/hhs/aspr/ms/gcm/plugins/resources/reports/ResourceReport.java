@@ -322,6 +322,7 @@ public final class ResourceReport extends PeriodicReport {
 	 *                           if a resource id passed to the constructor is
 	 *                           unknown</li>
 	 *                           <li></li>
+	 *                           </ul>
 	 */
 	@Override
 	protected void prepare(final ReportContext reportContext) {

@@ -241,6 +241,7 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           the resource id is null</li>
 	 *                           <li>{@linkplain ResourceError#UNKNOWN_RESOURCE_ID}
 	 *                           if the resource id is unknown</li>
+	 *                           </ul>
 	 */
 	public List<PersonId> getPeopleWithResource(final ResourceId resourceId) {
 		validateResourceId(resourceId);
@@ -1311,6 +1312,7 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           <li>{@linkplain ResourceError#INSUFFICIENT_RESOURCES_AVAILABLE}
 	 *                           if the region does not have the required amount of
 	 *                           the resource</li>
+	 *                           </ul>
 	 */
 	public void removeResourceFromRegion(ResourceId resourceId, RegionId regionId, long amount) {
 		dataManagerContext.releaseMutationEvent(new RegionResourceRemovalMutationEvent(resourceId, regionId, amount));
@@ -1512,6 +1514,7 @@ public final class ResourcesDataManager extends DataManager {
 	 *                           <li>{@linkplain ResourceError#RESOURCE_ARITHMETIC_EXCEPTION}
 	 *                           if the transfer results in an overflow of the
 	 *                           person's resource level</li>
+	 *                           </ul>
 	 */
 	public void transferResourceToPersonFromRegion(ResourceId resourceId, PersonId personId, long amount) {
 		dataManagerContext

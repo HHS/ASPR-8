@@ -120,8 +120,10 @@ public class StageConversionInfo {
 		 * Sets the stager id. Defaulted to null.
 		 * 
 		 * @throws ContractException
-		 *                           <ul><li>{@linkplain MaterialsError#NULL_STAGE_ID} if
-		 *                           the stage id is null</li></ul>
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_STAGE_ID} if
+		 *                           the stage id is null</li>
+		 *                           </ul>
 		 */
 		public Builder setStageId(StageId stageId) {
 			if (stageId == null) {

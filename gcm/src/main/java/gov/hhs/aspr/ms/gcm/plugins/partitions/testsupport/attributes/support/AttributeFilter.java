@@ -95,22 +95,23 @@ public final class AttributeFilter extends Filter {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}</li>
-	 *                           if the filter's attribute id is null
-	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}</li>
-	 *                           if the filter's attribute id is unknown
-	 *                           <li>{@linkplain PartitionError#NULL_EQUALITY_OPERATOR} if
-	 *                           the filter's equality operator is null
-	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE} if
-	 *                           the filter's value is null
-	 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE} if
-	 *                           the filter's value is incompatible with the
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_ID}
+	 *                           if the filter's attribute id is null</li>
+	 *                           <li>{@linkplain AttributeError#UNKNOWN_ATTRIBUTE_ID}
+	 *                           if the filter's attribute id is unknown</li>
+	 *                           <li>{@linkplain PartitionError#NULL_EQUALITY_OPERATOR}
+	 *                           if the filter's equality operator is null</li>
+	 *                           <li>{@linkplain AttributeError#NULL_ATTRIBUTE_VALUE}
+	 *                           if the filter's value is null</li>
+	 *                           <li>{@linkplain AttributeError#INCOMPATIBLE_VALUE}
+	 *                           if the filter's value is incompatible with the
 	 *                           attribute definition associated with the filter's
-	 *                           attribute id.
-	 *                           <li>{@linkplain PartitionError#NON_COMPARABLE_ATTRIBUTE} if
-	 *                           the filter's value is not a COMPARABLE when the
+	 *                           attribute id.</li>
+	 *                           <li>{@linkplain PartitionError#NON_COMPARABLE_ATTRIBUTE}
+	 *                           if the filter's value is not a COMPARABLE when the
 	 *                           filter's equality operator is not EQUALS or
-	 *                           NOT_EQUALS.
+	 *                           NOT_EQUALS.</li>
+	 *                           </ul>
 	 */
 	@Override
 	public void validate(PartitionsContext partitionsContext) {

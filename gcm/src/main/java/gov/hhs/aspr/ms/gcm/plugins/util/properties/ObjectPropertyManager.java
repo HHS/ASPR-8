@@ -27,6 +27,7 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 	 *                           if the initial size is negative</li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 	 *                           if the property definition is null</li>
+	 *                           </ul>
 	 */
 	public ObjectPropertyManager(PropertyDefinition propertyDefinition,
 			Supplier<Iterator<Integer>> indexIteratorSupplier) {

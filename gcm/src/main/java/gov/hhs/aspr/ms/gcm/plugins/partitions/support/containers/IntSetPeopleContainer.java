@@ -147,6 +147,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	 * 
 	 * @throws IllegalArgumentException
 	 *                                  <li>the target depth is not positive</li>
+	 *                                  </ul>
 	 */
 	public IntSetPeopleContainer() {
 		this.targetDepth = DEFAULT_TARGET_DEPTH;

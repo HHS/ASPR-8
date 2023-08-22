@@ -370,10 +370,10 @@ public final class GroupsPluginData implements PluginData {
          *
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
-         *                           the group id is null</li>
-         *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if
-         *                           the person id is null</li>
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+         *                           group id is null</li>
+         *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+         *                           person id is null</li>
          *                           </ul>
          */
         public Builder associatePersonToGroup(final GroupId groupId, final PersonId personId) {
@@ -416,8 +416,8 @@ public final class GroupsPluginData implements PluginData {
          *
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
-         *                           the group id is null</li>
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+         *                           group id is null</li>
          *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
          *                           person id is null
          *                           </ul>
@@ -450,8 +450,8 @@ public final class GroupsPluginData implements PluginData {
          *
          * @throws ContractException
          *                           <ul>
-         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if
-         *                           the group id is null</li>
+         *                           <li>{@linkplain GroupError#NULL_GROUP_ID} if the
+         *                           group id is null</li>
          *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
          *                           person id is null
          *                           </ul>

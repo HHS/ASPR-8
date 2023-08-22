@@ -39,13 +39,13 @@ public final class LineWriter {
 	private boolean headerWritten;
 
 	/**
-	 * Creates this {@link LineWriter} The path to the file that
-	 * may or may not exist and may contain some complete or partial content from a
-	 * previous execution of the experiment. If not empty, this file must have a
-	 * header, be tab delimited and have as its first column be the scenario id.
-	 * Partial lines at the end of the file due to an ungraceful halt to the
-	 * previous execution are tolerated. If the file does not exist, then its parent
-	 * directory must exist.
+	 * Creates this {@link LineWriter} The path to the file that may or may not
+	 * exist and may contain some complete or partial content from a previous
+	 * execution of the experiment. If not empty, this file must have a header, be
+	 * tab delimited and have as its first column be the scenario id. Partial lines
+	 * at the end of the file due to an ungraceful halt to the previous execution
+	 * are tolerated. If the file does not exist, then its parent directory must
+	 * exist.
 	 * 
 	 * @throws RuntimeException
 	 *                          <ul>
@@ -183,6 +183,7 @@ public final class LineWriter {
 	 * 
 	 * @throws RuntimeException
 	 *                          <li>if an {@link IOException} is thrown</li>
+	 *                          </ul>
 	 */
 	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
 
@@ -240,6 +241,7 @@ public final class LineWriter {
 	 * 
 	 * @throws RuntimeException
 	 *                          <li>if an {@link IOException} is thrown</li>
+	 *                          </ul>
 	 */
 	public void flush() {
 		try {

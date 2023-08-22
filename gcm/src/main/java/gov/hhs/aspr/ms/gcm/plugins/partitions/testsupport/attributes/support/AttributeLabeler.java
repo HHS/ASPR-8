@@ -53,10 +53,12 @@ public abstract class AttributeLabeler implements Labeler {
 	 * Returns the label for the person precondition: the context should not be null
 	 * 
 	 * @throws ContractException
-	 *                          <li>{@linkplain PersonError#NULL_PERSON_ID} if the
-	 *                          person id is null</li>
-	 *                          <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
-	 *                          the person id is unknown
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+	 *                           person id is null</li>
+	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
+	 *                           the person id is unknown
+	 *                           </ul>
 	 */
 	@Override
 	public final Object getCurrentLabel(PartitionsContext partitionsContext, PersonId personId) {

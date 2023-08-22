@@ -25,6 +25,7 @@ public class PersonRange implements Comparable<PersonRange> {
 	 *                           if the low person id exceeds the high person id
 	 *                           </li>
 	 *                           <li></li>
+	 *                           </ul>
 	 */
 	public PersonRange(int lowPersonId, int highPersonId) {
 

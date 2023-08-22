@@ -101,6 +101,7 @@ public class MaterialsTestPluginFactory {
 		/**
 		 * Returns a list of plugins containing a Materials, Resources, Regions, People,
 		 * Stochastic and Test Plugin built from the contributed PluginDatas
+		 * <ul>
 		 * <li>MaterialsPlugin is defaulted to one formed from
 		 * {@link MaterialsTestPluginFactory#getStandardMaterialsPluginData}</li>
 		 * <li>ResourcesPlugin is defaulted to one formed from
@@ -112,7 +113,8 @@ public class MaterialsTestPluginFactory {
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link MaterialsTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link MaterialsTestPluginFactory#factory}</li></ul>
+		 * {@link MaterialsTestPluginFactory#factory}</li>
+		 * </ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -383,8 +385,7 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized MaterialsPluginData that is minimally adequate for
-	 * testing the MaterialsPlugin
-	 * The resulting MaterialsPluginData will include:
+	 * testing the MaterialsPlugin The resulting MaterialsPluginData will include:
 	 * <ul>
 	 * <li>Every MaterialId included in {@link TestMaterialId}</li>
 	 * <ul>
@@ -393,7 +394,7 @@ public class MaterialsTestPluginFactory {
 	 * propertyDefinition for each</li>
 	 * </ul>
 	 * <li>Every MaterialProducerId included in {@link TestMaterialsProducerId} With
-	 * </li> each one containing:
+	 * </li>each one containing:
 	 * <ul>
 	 * <li>The specified number of batches. Each batch will have the following:
 	 * <ul>
@@ -403,13 +404,13 @@ public class MaterialsTestPluginFactory {
 	 * <li>a random amount based on the same RandomGenerator.nextDouble
 	 * <li>Every BatchPropertyId included in {@link TestBatchPropertyId} where the
 	 * batchPropertyValue will be set if the batchPropertyDefinition does not have a
-	 * </li> default value OR if randomGenerator.nextBoolean is true. Either way,
-	 * the value will be set to the result from
+	 * </li>default value OR if randomGenerator.nextBoolean is true. Either way, the
+	 * value will be set to the result from
 	 * {@link TestBatchPropertyId#getRandomPropertyValue}
 	 * </ul>
 	 * <li>the specified number of stages. Exactly half will be offered.
 	 * <li>the specified number of batches in a stage dervied from a shuffled list
-	 * of batches via nextLong and a random stageId via nextInt</li></li>
+	 * of batches via nextLong and a random stageId via nextInt</li>
 	 * </ul>
 	 * <li>Every MaterialProducerPropertyId included in
 	 * {@link TestMaterialsProducerPropertyId} along with the defined</li>
@@ -521,16 +522,15 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized ResourcesPluginData that is minimally adequate for
-	 * testing the MaterialsPlugin
-	 * The resulting ResourcesPluginData will include:
+	 * testing the MaterialsPlugin The resulting ResourcesPluginData will include:
 	 * <ul>
 	 * <li>Every ResourceId included in {@link TestResourceId} along with the
-	 * defined timeTrackingPolicy for each</li></li>
+	 * defined timeTrackingPolicy for each</li>
 	 * <li>Every ResourcePropertyId included in {@link TestResourcePropertyId} along
-	 * </li> with the defined propertyDefinition for each.
+	 * </li>with the defined propertyDefinition for each.
 	 * <ul>
 	 * <li>Each Resource will have a random property value assigned based on a
-	 * RandomGenerator that is created with the passed in seed</li></li>
+	 * RandomGenerator that is created with the passed in seed</li>
 	 * </ul>
 	 * </ul>
 	 */
@@ -556,8 +556,7 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized PeoplePluginData that is minimally adequate for
-	 * testing the MaterialsPlugin
-	 * The resulting PeoplePluginData will be empty</li>
+	 * testing the MaterialsPlugin The resulting PeoplePluginData will be empty</li>
 	 * <ul>
 	 * <li>the equivalent of PeoplePluginData.builder().build()
 	 * </ul>
@@ -569,8 +568,7 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized RegionsPluginData that is minimally adequate for
-	 * testing the MaterialsPlugin
-	 * The resulting RegionsPluginData will include:
+	 * testing the MaterialsPlugin The resulting RegionsPluginData will include:
 	 * <ul>
 	 * <li>Every RegionId included in {@link TestRegionId}</li>
 	 * </ul>
@@ -585,11 +583,10 @@ public class MaterialsTestPluginFactory {
 
 	/**
 	 * Returns a standardized StochasticsPluginData that is minimally adequate for
-	 * testing the MaterialsPlugin
-	 * The resulting StochasticsPluginData will include:
+	 * testing the MaterialsPlugin The resulting StochasticsPluginData will include:
 	 * <ul>
 	 * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-	 * in seed</li></li>
+	 * in seed</li>
 	 * </ul>
 	 */
 	public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

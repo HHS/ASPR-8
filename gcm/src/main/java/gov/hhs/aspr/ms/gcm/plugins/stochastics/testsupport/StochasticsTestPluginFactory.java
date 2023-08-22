@@ -60,10 +60,12 @@ public class StochasticsTestPluginFactory {
 		/**
 		 * Returns a list of plugins containing a Stochastics and Test Plugin built from
 		 * the contributed PluginDatas.
+		 * <ul>
 		 * <li>StochasticsPlugin is defaulted to one formed from
 		 * {@link StochasticsTestPluginFactory#getStandardStochasticsPluginData}</li>
 		 * <li>TestPlugin is formed from the TestPluginData passed into
-		 * {@link StochasticsTestPluginFactory#factory}</li></ul>
+		 * {@link StochasticsTestPluginFactory#factory}</li>
+		 * </ul>
 		 */
 		public List<Plugin> getPlugins() {
 			List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -110,7 +112,7 @@ public class StochasticsTestPluginFactory {
 	 * <ul>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the</li> {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_PLUGIN_DATA} if
 	 *                           testPluginData is null
@@ -137,7 +139,7 @@ public class StochasticsTestPluginFactory {
 	 * <ul>
 	 * <li>{@link Factory#setStochasticsPluginData}</li>
 	 * </ul>
-	 * <li>via the</li> {@link Factory#getPlugins()} method.
+	 * via the {@link Factory#getPlugins()} method.
 	 * 
 	 * @throws ContractExecption {@linkplain NucleusError#NULL_ACTOR_CONTEXT_CONSUMER}
 	 *                           if consumer is null
@@ -155,8 +157,8 @@ public class StochasticsTestPluginFactory {
 
 	/**
 	 * Creates a Standardized StocasticsPluginData that is minimally adequate for
-	 * testing the StochasticsPlugin.
-	 * The resulting StocasticsPluginData will include:
+	 * testing the StochasticsPlugin. The resulting StocasticsPluginData will
+	 * include:
 	 * <ul>
 	 * <li>Every randomGeneratorId included in {@link TestRandomGeneratorId}</li>
 	 * </ul>

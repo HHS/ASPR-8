@@ -19,7 +19,6 @@ import util.errors.ContractError;
  * <li><b>Stochastics Plugin Data</b>: Provides initial state for the data
  * manager</li>
  * </ul>
- * </p>
  * <p>
  * <b>Events </b> The plugin supports no events.
  ** </p>
@@ -29,7 +28,6 @@ import util.errors.ContractError;
  * <li><b>StochasticsDataManger</b>: Manages the random generators and provides
  * various related capabilities.
  * </ul>
- * </p>
  * <p>
  * <b>Reports</b> The plugin defines no reports
  * </p>
@@ -44,7 +42,6 @@ import util.errors.ContractError;
  * <li><b>RandomNumberGeneratorId: </b>Marker interface for generator id
  * values</li>
  * </ul>
- * </p>
  * <p>
  * <b>Required Plugins</b> This plugin has no plugin dependencies
  * </p>

@@ -46,19 +46,16 @@ public final class GlobalPropertiesPlugin {
 		 * <ul>
 		 * <li>Report Plugin</li>
 		 * </ul>
-		 * </p>
 		 * <p>
 		 * Provides data mangers:
 		 * <ul>
 		 * <li>{@linkplain GlobalPropertiesDataManager}</li>
 		 * </ul>
-		 * </p>
 		 * <p>
 		 * Provides reports:
 		 * <ul>
 		 * <li>{@linkplain GlobalPropertyReport}</li>
 		 * </ul>
-		 * </p>
 		 * 
 		 * @throws ContractException {@linkplain GlobalPropertiesError#NULL_GLOBAL_PLUGIN_DATA}
 		 *                           if the global plugin data is null

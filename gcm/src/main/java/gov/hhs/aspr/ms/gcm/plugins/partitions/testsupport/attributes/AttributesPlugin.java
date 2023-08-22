@@ -19,21 +19,18 @@ import util.errors.ContractException;
  * <li><b>AttributeUpdateEvent</b>: Notifies subscribed oberservers of a person
  * attribute value change</li>
  * </ul>
- * </p>
  * <p>
  * <b>Resolvers</b>
  * <ul>
  * <li><b>AttributesEventResolver</b>: Uses initializing data to create and
  * publish data view. Handles all plugin-defined events.
  * </ul>
- * </p>
  * <p>
  * <b>Data Views</b> The attributes plugin supplies one data view.
  * <ul>
  * <li><b>Attributes Data View</b>: Supplies attribute values, ids and
  * definitions.</li>
  * </ul>
- * </p>
  * <p>
  * <b>Reports</b> The plugin defines no reports.
  * </p>
@@ -57,7 +54,6 @@ import util.errors.ContractException;
  * <li><b>AttributeLabeler: </b>Provides dimension labeling for person
  * attributes in partitions.</li>
  * </ul>
- * </p>
  * <p>
  * <b>Required Plugins</b>
  * <ul>
@@ -66,7 +62,6 @@ import util.errors.ContractException;
  * <li><b>PeoplePlugin:</b> Used throughout the plugin since the plugin is
  * focused on person attributes</li>
  * </ul>
- * </p>
  */
 public final class AttributesPlugin {
 

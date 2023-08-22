@@ -17,9 +17,7 @@ public record PersonImminentRemovalEvent(PersonId personId) implements Event {
 	/**
 	 * Constructs the event from the give person id
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID}</li>
-	 *                           </ul>
+	 * @throws ContractException {@linkplain PersonError#NULL_PERSON_ID}
 	 */
 	public PersonImminentRemovalEvent {
 		if (personId == null) {

@@ -86,6 +86,7 @@ public final class RegionsTestPluginFactory {
          * {@link RegionsTestPluginFactory#getStandardStochasticsPluginData}</li>
          * <li>TestPlugin is formed from the TestPluginData passed into
          * {@link RegionsTestPluginFactory#factory}</li>
+         * </ul>
          */
         public List<Plugin> getPlugins() {
             List<Plugin> pluginsToAdd = new ArrayList<>();
@@ -262,8 +263,7 @@ public final class RegionsTestPluginFactory {
 
     /**
      * Returns a standardized RegionsPluginData that is minimally adequate for
-     * testing the RegionsPlugin
-     * The resulting RegionsPluginData will include:
+     * testing the RegionsPlugin The resulting RegionsPluginData will include:
      * <ul>
      * <li>Every RegionId in {@link TestRegionId}</li>
      * <li>Every RegionPropertyId in {@link TestRegionPropertyId}</li>
@@ -340,8 +340,7 @@ public final class RegionsTestPluginFactory {
 
     /**
      * Returns a standardized PeoplePluginData that is minimally adequate for
-     * testing the RegionsPlugin
-     * The resulting PeoplePluginData will include:
+     * testing the RegionsPlugin The resulting PeoplePluginData will include:
      * <ul>
      * <li>a number of people equal to the passed in intialPopulation</li>
      * </ul>
@@ -356,11 +355,10 @@ public final class RegionsTestPluginFactory {
 
     /**
      * Returns a standardized StochasticsPluginData that is minimally adequate for
-     * testing the RegionsPlugin
-     * The resulting StochasticsPluginData will include:
+     * testing the RegionsPlugin The resulting StochasticsPluginData will include:
      * <ul>
      * <li>a seed based on the nextLong of a RandomGenerator seeded from the passed
-     * in seed</li></li>
+     * in seed</li>
      * </ul>
      */
     public static StochasticsPluginData getStandardStochasticsPluginData(long seed) {

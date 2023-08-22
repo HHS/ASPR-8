@@ -638,6 +638,7 @@ public final class IntValueContainer {
 	 *                               <li>if index < 0</li>
 	 *                               <li>if the value to return is not compatible
 	 *                               with byte</li>
+	 *                               </ul>
 	 */
 	public byte getValueAsByte(int index) {
 		if (index < 0) {
@@ -668,6 +669,7 @@ public final class IntValueContainer {
 	 *                               <li>if index < 0</li>
 	 *                               <li>if the value to return is not compatible
 	 *                               with short</li>
+	 *                               </ul>
 	 */
 	public short getValueAsShort(int index) {
 		if (index < 0) {
@@ -698,6 +700,7 @@ public final class IntValueContainer {
 	 * @throws RuntimeException</li>
 	 *                               <li>if the value to return is not compatible
 	 *                               with long</li>
+	 *                               </ul>
 	 */
 	public int getValueAsInt(int index) {
 		long result;
@@ -744,6 +747,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void setByteValue(int index, byte value) {
 		if (index < 0) {
@@ -826,6 +830,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void incrementByteValue(int index, byte value) {
 
@@ -840,6 +845,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void incrementShortValue(int index, short value) {
 
@@ -854,6 +860,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void incrementIntValue(int index, int value) {
 
@@ -868,6 +875,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void incrementLongValue(int index, long value) {
 
@@ -882,6 +890,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void decrementByteValue(int index, byte value) {
 
@@ -896,6 +905,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void decrementShortValue(int index, short value) {
 
@@ -910,6 +920,7 @@ public final class IntValueContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NEGATIVE_INDEX} if
 	 *                           index is negative</li>
+	 *                           </ul>
 	 */
 	public void decrementIntValue(int index, int value) {
 
@@ -927,6 +938,7 @@ public final class IntValueContainer {
 	 * @throws RuntimeException</li>
 	 *                               <li>if index is negative</li>
 	 *                               <li>if the value causes an overflow</li>
+	 *                               </ul>
 	 */
 	public void decrementLongValue(int index, long value) {
 

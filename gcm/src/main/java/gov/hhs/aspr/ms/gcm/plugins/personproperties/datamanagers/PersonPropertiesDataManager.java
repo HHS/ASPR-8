@@ -130,12 +130,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Defines a new person property
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION_INITIALIZATION}
 	 *                           if the property definition initialization is
-	 *                           null</li></li>
+	 *                           null</li>
 	 *                           <li>{@linkplain PropertyError#DUPLICATE_PROPERTY_DEFINITION}
-	 *                           if the person property already exists</li></li>
+	 *                           if the person property already exists</li>
 	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
 	 *                           if the property definition has no default value and
 	 *                           there is no included value assignment for some
@@ -193,7 +194,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id and
 	 * person id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
@@ -202,6 +204,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
 	 *                           the person id is not known</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(PersonId personId,
 			PersonPropertyId personPropertyId) {
@@ -217,11 +220,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * Returns an event filter used to subscribe to
 	 * {@link PersonPropertyUpdateEvent} events. Matches on person property id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is not known</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(
 			PersonPropertyId personPropertyId) {
@@ -245,6 +250,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           if the person property id is not known</li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 	 *                           if the person property value is null</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(
 			PersonPropertyId personPropertyId, Object propertyValue, boolean useCurrentValue) {
@@ -262,7 +268,8 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * {@link PersonPropertyUpdateEvent} events. Matches on region id and person
 	 * property id.
 	 *
-	 * @throws ContractException <ul>
+	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain RegionError#NULL_REGION_ID} if the
 	 *                           region id is null</li>
 	 *                           <li>{@linkplain RegionError#UNKNOWN_REGION_ID} if
@@ -271,6 +278,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is not known</li>
+	 *                           </ul>
 	 */
 	public EventFilter<PersonPropertyUpdateEvent> getEventFilterForPersonPropertyUpdateEvent(RegionId regionId,
 			PersonPropertyId personPropertyId) {
@@ -478,6 +486,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           if the person property does not have time tracking
 	 *                           turned on in the associated property
 	 *                           definition</li>
+	 *                           </ul>
 	 */
 	public double getPersonPropertyTime(final PersonId personId, final PersonPropertyId personPropertyId) {
 		validatePersonExists(personId);
@@ -531,6 +540,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 *                           the person property id is null</li>
 	 *                           <li>{@linkplain PropertyError#UNKNOWN_PROPERTY_ID}
 	 *                           if the person property id is unknown</li>
+	 *                           </ul>
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId) {
@@ -925,12 +935,13 @@ public final class PersonPropertiesDataManager extends DataManager {
 	 * null</li>
 	 * <li>{@link PropertyError#UNKNOWN_PROPERTY_ID} if the person property id is
 	 * unknown</li>
-	 * <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the property
-	 * value is null</li>
+	 * <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE} if the property value is
+	 * null</li>
 	 * <li>{@link PropertyError#INCOMPATIBLE_VALUE} if the property value is not
 	 * compatible with the corresponding property definition</li>
 	 * <li>{@link PropertyError#IMMUTABLE_VALUE} if the corresponding property
 	 * definition marks the property as immutable</li>
+	 * </ul>
 	 */
 	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId,
 			final Object personPropertyValue) {

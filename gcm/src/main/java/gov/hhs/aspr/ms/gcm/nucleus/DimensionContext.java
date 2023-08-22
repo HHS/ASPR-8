@@ -100,7 +100,7 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
 	 *                           if more than one plugin data matches the given
-	 *                           class reference</li></li>
+	 *                           class reference</li>
 	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_CLASS}
 	 *                           if no plugin data matches the given class
 	 *                           reference</li>

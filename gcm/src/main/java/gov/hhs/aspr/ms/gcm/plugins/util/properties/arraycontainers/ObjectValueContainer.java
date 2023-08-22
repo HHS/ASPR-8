@@ -24,6 +24,7 @@ public final class ObjectValueContainer {
 	 * 
 	 * @throws IllegalArgumentException
 	 *                                  <li>if capacity is negative</li>
+	 *                                  </ul>
 	 */
 	public ObjectValueContainer(Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		elements = new Object[0];

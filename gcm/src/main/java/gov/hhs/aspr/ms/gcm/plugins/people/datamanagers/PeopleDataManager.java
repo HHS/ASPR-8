@@ -75,6 +75,7 @@ public final class PeopleDataManager extends DataManager {
 	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}
 	 *                           if the person construction data is null</li>
+	 *                           </ul>
 	 */
 	public PersonId addPerson(final PersonConstructionData personConstructionData) {
 		PersonId personId = new PersonId(personIds.size());
@@ -215,10 +216,11 @@ public final class PeopleDataManager extends DataManager {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#DATA_MANAGER_DUPLICATE_INITIALIZATION}
-	 *                           if init() is invoked more than once</li></li>
+	 *                           if init() is invoked more than once</li>
 	 *                           <li>{@linkplain PersonError#PERSON_ASSIGNMENT_TIME_IN_FUTURE}
 	 *                           if the plugin data person assignment time exceeds
 	 *                           the start time of the simulation</li>
+	 *                           </ul>
 	 */
 	@Override
 	public void init(final DataManagerContext dataManagerContext) {
@@ -319,6 +321,7 @@ public final class PeopleDataManager extends DataManager {
 	 *                           <li>{@linkplain PersonError#UNKNOWN_PERSON_ID} if
 	 *                           the person does not exist</li>
 	 *                           <li></li>
+	 *                           </ul>
 	 */
 	public void removePerson(final PersonId personId) {
 		dataManagerContext.releaseMutationEvent(new PersonRemovalMutationEvent(personId));

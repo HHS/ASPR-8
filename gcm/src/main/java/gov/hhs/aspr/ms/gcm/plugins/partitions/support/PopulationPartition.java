@@ -19,9 +19,7 @@ public interface PopulationPartition {
 	 * only be used to add people who have just been created and thus cannot already
 	 * be members.
 	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the person id is null</li>
-	 *                          </ul>
+	 * @throws RuntimeException if the person id is null
 	 */
 	public void attemptPersonAddition(PersonId personId);
 

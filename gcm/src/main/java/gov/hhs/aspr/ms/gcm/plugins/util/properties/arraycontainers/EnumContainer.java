@@ -35,6 +35,7 @@ public final class EnumContainer {
 	 *                                  <li>if the class is not an enumeration</li>
 	 *                                  <li>if the default is not null and not a
 	 *                                  member of the enumeration</li>
+	 *                                  </ul>
 	 */
 	public EnumContainer(Class<?> c, Object defaultValue, Supplier<Iterator<Integer>> indexIteratorSupplier) {
 		if (c == null) {
@@ -66,6 +67,7 @@ public final class EnumContainer {
 	 *                                  <li>if the value is null</li>
 	 *                                  <li>if the value is not a member of the
 	 *                                  enumeration</li>
+	 *                                  </ul>
 	 */
 	public void setValue(int index, Object value) {
 
@@ -98,6 +100,7 @@ public final class EnumContainer {
 	 * 
 	 * @throws ArrayIndexOutOfBoundsException
 	 *                                        <li>if the index is negative</li>
+	 *                                        </ul>
 	 */
 	public Object getValue(int index) {
 		/*

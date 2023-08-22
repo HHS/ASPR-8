@@ -19,6 +19,7 @@ public record PersonImminentAdditionEvent(PersonId personId, PersonConstructionD
 	 * Constructs the event from the given person id and person construction data
 	 *
 	 * @throws ContractException
+	 *                           <ul>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
 	 *                           person id is null</li>
 	 *                           <li>{@linkplain PersonError#NULL_PERSON_CONSTRUCTION_DATA}

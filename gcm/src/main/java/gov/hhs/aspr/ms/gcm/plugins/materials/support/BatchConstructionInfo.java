@@ -119,8 +119,10 @@ public class BatchConstructionInfo {
 		 * Sets the materials producer id. Defaulted to null.
 		 * 
 		 * @throws ContractException
-		 *                           <ul><li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
-		 *                           if the materials producer id is null</li></ul>
+		 *                           <ul>
+		 *                           <li>{@linkplain MaterialsError#NULL_MATERIALS_PRODUCER_ID}
+		 *                           if the materials producer id is null</li>
+		 *                           </ul>
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			if (materialsProducerId == null) {

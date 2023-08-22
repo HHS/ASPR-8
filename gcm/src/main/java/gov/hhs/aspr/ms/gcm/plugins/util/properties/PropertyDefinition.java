@@ -96,12 +96,14 @@ public final class PropertyDefinition {
 		 * Builds the property definition
 		 * 
 		 * @throws ContractException
-		 *                           <ul><li>{@linkplain PropertyError#NULL_PROPERTY_TYPE}
+		 *                           <ul>
+		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_TYPE}
 		 *                           if the class type of the definition is not assigned
 		 *                           or null</li>
 		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_DEFAULT_VALUE}if
 		 *                           the default value is not null and the class type is
-		 *                           not a super-type of the default value</li></ul>
+		 *                           not a super-type of the default value</li>
+		 *                           </ul>
 		 */
 		public PropertyDefinition build() {
 			validate();

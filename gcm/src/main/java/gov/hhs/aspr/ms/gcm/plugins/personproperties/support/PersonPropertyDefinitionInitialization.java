@@ -140,8 +140,8 @@ public final class PersonPropertyDefinitionInitialization {
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
-		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if
-		 *                           the person id is null</li>
+		 *                           <li>{@linkplain PersonError#NULL_PERSON_ID} if the
+		 *                           person id is null</li>
 		 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_VALUE}
 		 *                           if the property value is null</li>
 		 *                           </ul>

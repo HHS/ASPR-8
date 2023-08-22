@@ -93,7 +93,7 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           no property id was assigned to the builder</li>
 		 *                           <li>{@linkplain PropertyError#INCOMPATIBLE_VALUE}
 		 *                           if a collected property value is incompatible with
-		 *                           the property definition</li> *
+		 *                           the property definition</li>
 		 *                           <li>{@linkplain MaterialsError#NULL_MATERIAL_ID} if
 		 *                           no material id was assigned to the builder</li>
 		 *                           </ul>

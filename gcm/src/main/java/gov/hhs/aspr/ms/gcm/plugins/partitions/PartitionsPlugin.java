@@ -43,7 +43,6 @@ public final class PartitionsPlugin {
 	 * <li>Stochastics Plugin</li>
 	 * <li>People Plugin</li>
 	 * </ul>
-	 * </p>
 	 * <p>
 	 * Provides data mangers: {@linkplain PartitionsDataManager}
 	 * </p>

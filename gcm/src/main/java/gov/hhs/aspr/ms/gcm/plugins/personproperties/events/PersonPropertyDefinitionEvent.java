@@ -17,10 +17,8 @@ public record PersonPropertyDefinitionEvent(PersonPropertyId personPropertyId) i
 	/**
 	 * Creates the event.
 	 *
-	 * @throws ContractException
-	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_ID} if
-	 *                           the property id is null</li>
-	 *                           </ul>
+	 * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
+	 *                           property id is null
 	 */
 	public PersonPropertyDefinitionEvent {
 
