@@ -60,6 +60,8 @@ public final class Vaccinator {
 	}
 
 	/* end */
+	
+	/* start code_ref= regions_plugin_vaccinator_vaccinate_random_person|code_cap= Selects a person at random from the population to vaccinate. If the region is using the VACCINE_PRIORITY policy, then those with the least number of vaccinations have preference.*/
 	private void vaccinateRandomPerson(ActorContext actorContext) {
 
 		List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
@@ -105,6 +107,7 @@ public final class Vaccinator {
 			vaccinationDataManager.vaccinatePerson(selectedPersonId);
 		}
 	}
+	/* end */
 
 	/* start code_ref= regions_plugin_vaccinator_init|code_cap=The vaccinator initializes by planning the vaccination of 5000 people carried out over approximately 50 days. */
 	public void init(ActorContext actorContext) {
