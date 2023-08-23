@@ -205,7 +205,7 @@ public final class Example_16 {
 	}
 
 	/* end */
-	/* start code_ref= person_properties_example_16_execute|The various plugins are gathered from their initial data. */
+	/* start code_ref= person_properties_example_16_execute|code_cap=The various plugins are gathered from their initial data. */
 	private void execute() {
 
 		/*
