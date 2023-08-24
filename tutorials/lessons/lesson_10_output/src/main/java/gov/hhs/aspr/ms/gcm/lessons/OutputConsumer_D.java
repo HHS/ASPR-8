@@ -27,7 +27,7 @@ public class OutputConsumer_D implements Consumer<ExperimentContext> {
 
 		StringJoiner joiner = new StringJoiner("\t", "", "");
 		joiner.add(scenarioId.toString());
-		experimentContext.getScenarioMetaData(scenarioId).get().forEach(joiner::add);
+		experimentContext.getScenarioMetaData(scenarioId).forEach(joiner::add);
 
 		System.out.println(joiner);
 	}
