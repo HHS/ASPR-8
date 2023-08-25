@@ -2,16 +2,50 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<!-- Properties -->
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr.ms</groupId>
 	<artifactId>gcm</artifactId>
-	<name>General Computational Model</name>
-	<packaging>jar</packaging>
 	<version>4.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
+	<name>General Computational Model</name>
+	<description>GCM is a Java based simulation framework for building disease progression models.</description>
+	<url>https://github.com/HHS/ASPR-8</url>
+
+	<!-- License Information -->
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE v3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+		</license>
+	</licenses>
+
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<name>Shawn Hatch</name>
+			<email>shawn.r.hatch@leidos.com</email>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Zachary Bischoff</name>
+			<organization>Leidos</organization>
+			<email>zachary.bischoff@leidos.com</email>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<!-- SCM Information -->
+	<scm>
+		<connection>scm:git:git://github.com/HHS/ASPR-8.git</connection>
+		<developerConnection>scm:git:ssh://github.com:HHS/ASPR-8.git</developerConnection>
+		<url>https://github.com/HHS/ASPR-8/tree/main</url>
+	</scm>
+
+	<!-- Properties -->
 	<properties>
 		<!-- basic project properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,13 +64,6 @@
 		<jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
 		<junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
 	</properties>
-
-	<!-- Organization -->
-	<organization>
-		<name>ASPR</name>
-		<url>https://www.phe.gov</url>
-	</organization>
-
 
 	<!-- Dependencies -->
 	<dependencies>
@@ -71,30 +98,6 @@
 		</dependency>
 	</dependencies>
 
-	<!-- Developers -->
-	<developers>
-		<developer>
-			<name>Shawn Hatch</name>
-			<organization>Leidos</organization>
-			<organizationUrl>https://www.leidos.com</organizationUrl>
-		</developer>
-		<developer>
-			<name>Chris Ludka</name>
-			<organization>Leidos</organization>
-			<organizationUrl>https://www.leidos.com</organizationUrl>
-		</developer>
-		<developer>
-			<name>Baldwin-Akin Varner</name>
-			<organization>Leidos</organization>
-			<organizationUrl>https://www.leidos.com</organizationUrl>
-		</developer>
-		<developer>
-			<name>Zachary Bischoff</name>
-			<organization>Leidos</organization>
-			<organizationUrl>https://www.leidos.com</organizationUrl>
-		</developer>
-	</developers>
-
 	<!-- Configure Build -->
 	<build>
 		<plugins>
@@ -110,7 +113,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- runs a jacoco process -->
+			<!-- Jacoco Coverage Check -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -160,7 +163,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- attaches java source to jar -->
+
+			<!-- Attachs source jar to project -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -183,7 +187,7 @@
 			<id>release</id>
 			<build>
 				<plugins>
-					<!-- attaches javadoc -->
+					<!--Attaches javadoc jar to project -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
@@ -208,7 +212,7 @@
 								<additionalJOption>65536</additionalJOption>
 								<additionalJOption>-Xmaxwarns</additionalJOption>
 								<additionalJOption>65536</additionalJOption>
-							  </additionalJOptions>
+							</additionalJOptions>
 						</configuration>
 						<executions>
 							<execution>
@@ -224,4 +228,5 @@
 			</build>
 		</profile>
 	</profiles>
+
 </project>
