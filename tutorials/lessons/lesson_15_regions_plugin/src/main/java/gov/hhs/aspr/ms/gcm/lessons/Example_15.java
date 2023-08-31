@@ -71,7 +71,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_getting_regions_plugin|code_cap=The regions plugin is initialized with the starting regions and people, with each person is assigned to a randomly selected region. The two region-based reports are also initialized and added to the report plugin's data.*/
+	/* start code_ref= regions_plugin_example_getting_regions_plugin|code_cap=The regions plugin is initialized with the starting regions and people, with each person is assigned to a randomly selected region. The two region-based reports are also initialized and added to the region plugin's data.*/
 	private Plugin getRegionsPlugin() {
 		// create the region plugin with an initial five regions, each region
 		// having 200 people
