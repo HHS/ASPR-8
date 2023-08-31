@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class Vaccinator {
-
+	/* start code_ref= people_plugin_vaccinator|code_cap=The vaccinator administers 300 vaccine doses over 100 days.*/
 	public void init(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
 		RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -29,4 +29,5 @@ public final class Vaccinator {
 			planTime += randomGenerator.nextDouble() / 3;
 		}
 	}
+	/* end */
 }

@@ -217,7 +217,6 @@ public final class PeoplePluginData implements PluginData {
 
 		private Builder(Data data) {
 			this.data = data;
-
 		}
 
 		/**
