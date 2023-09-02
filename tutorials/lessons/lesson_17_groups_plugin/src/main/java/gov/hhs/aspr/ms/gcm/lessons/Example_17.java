@@ -255,7 +255,7 @@ public final class Example_17 {
 				.addDimension(getSchoolDimension())//
 
 				.addExperimentContextConsumer(getNIOReportItemHandler())//
-				.setExperimentParameterData(experimentParameterData)//
+				.setExperimentParameterData(experimentParameterData)//				
 				.build()//
 				.execute();//
 	}
