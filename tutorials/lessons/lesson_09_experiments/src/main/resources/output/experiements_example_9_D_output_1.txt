@@ -1,0 +1,16 @@
+/* start code_ref=experiements_example_9_D_output_1|code_cap=The first two scenarios.*/
+Model Actor initializing
+	r0 = 1.5
+	asymptomatic days = 4.0
+	symptomatic days = 12.0
+	school closing infection rate = 0.05
+	distribute vaccine locally = false
+
+Model Actor initializing
+	r0 = 2.0
+	asymptomatic days = 4.0
+	symptomatic days = 12.0
+	school closing infection rate = 0.05
+	distribute vaccine locally = false
+	
+/* end */

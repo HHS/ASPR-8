@@ -1,0 +1,32 @@
+/* start code_ref=plugin_dependencies_output|code_cap=The output shows the combined reporting from actors and data managers as they report vaccination progress.*/
+Person 7 was vaccinated at time = 1.0
+Person 2 was vaccinated at time = 2.0
+Person 5 was vaccinated at time = 3.0
+Vaccination Data Manager is removing person 2 at time = 3.0
+Family Data Manager is removing person 2 at time = 3.0
+Person 6 was vaccinated at time = 4.0
+Vaccination Data Manager is removing person 1 at time = 4.0
+Family Data Manager is removing person 1 at time = 4.0
+Person 3 was vaccinated at time = 5.0
+Vaccination Data Manager is removing person 8 at time = 5.0
+Family Data Manager is removing person 8 at time = 5.0
+Failed to vaccinate Person 1 at time = 6.0
+Vaccination Data Manager is removing person 6 at time = 6.0
+Family Data Manager is removing person 6 at time = 6.0
+Person 0 was vaccinated at time = 7.0
+Vaccination Data Manager is removing person 7 at time = 7.0
+Family Data Manager is removing person 7 at time = 7.0
+Person 9 was vaccinated at time = 8.0
+Vaccination Data Manager is removing person 5 at time = 8.0
+Family Data Manager is removing person 5 at time = 8.0
+Failed to vaccinate Person 8 at time = 9.0
+Vaccination Data Manager is removing person 3 at time = 9.0
+Family Data Manager is removing person 3 at time = 9.0
+Person 4 was vaccinated at time = 10.0
+Vaccination Data Manager is removing person 4 at time = 10.0
+Family Data Manager is removing person 4 at time = 10.0
+Vaccination Data Manager is removing person 0 at time = 11.0
+Family Data Manager is removing person 0 at time = 11.0
+Vaccination Data Manager is removing person 9 at time = 12.0
+Family Data Manager is removing person 9 at time = 12.0
+/* end */
