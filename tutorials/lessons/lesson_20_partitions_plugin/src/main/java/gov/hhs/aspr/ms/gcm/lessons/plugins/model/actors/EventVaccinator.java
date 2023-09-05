@@ -29,12 +29,17 @@ public class EventVaccinator {
 	private double interVaccinationTime;
 	private ActorContext actorContext;
 	private Well randomGenerator;
-	private double personInterVaccinationDelay;	
+	private double personInterVaccinationDelay;
 	private Object planId = new Object();
 	private Map<MultiKey, Double> weights = new LinkedHashMap<>();
 	private Map<MultiKey, List<PersonId>> candidates = new LinkedHashMap<>();
 	private Map<PersonId, MultiKey> groupMap = new LinkedHashMap<>();
-	
+
+	/*
+	 * start code_ref=partitions_plugin_event_init|code_cap=The event-based
+	 * vaccinator improves on the inspection-based vaccinator by maintaining the
+	 * eligible sub-populations.
+	 */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 
@@ -44,17 +49,18 @@ public class EventVaccinator {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		establishWorkingVaribles();		
+		establishWorkingVaribles();
 		subscribeToPersonPropertyUpdateEvents();
 		intializeCandidatesAndWeights();
 		planNextVaccination();
 	}
-	
+
+	/* end */
 	private void establishWorkingVaribles() {
 		int vaccinationsPerDay = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
 		interVaccinationTime = 1.0 / vaccinationsPerDay;
-		
+
 		personInterVaccinationDelay = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.INTER_VACCINATION_DELAY_TIME);
 	}
@@ -65,11 +71,16 @@ public class EventVaccinator {
 		actorContext.subscribe(diseaseEventFilter, this::handlePersonPropertyChange);
 	}
 
+	/*
+	 * start code_ref=partitions_plugin_event_handle_property_update|code_cap=The
+	 * event-based vaccinator processes each person property update event by first
+	 * removing the person from the sub-populations and then adding them back in if
+	 * required.
+	 */
 	private void handlePersonPropertyChange(ActorContext actorContext,
 			PersonPropertyUpdateEvent personPropertyUpdateEvent) {
-		
+
 		PersonId personId = personPropertyUpdateEvent.personId();
-		
 
 		// remove the person if they are being tracked
 		MultiKey multiKey = groupMap.remove(personId);
@@ -85,24 +96,25 @@ public class EventVaccinator {
 		if (diseaseState != DiseaseState.SUSCEPTIBLE) {
 			return;
 		}
-		
+
 		Integer vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(personId,
 				PersonProperty.VACCINATION_COUNT);
-		
-		if(vaccinationCount>2) {
+
+		if (vaccinationCount > 2) {
 			return;
 		}
 
 		int age = personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.AGE);
 		AgeGroup ageGroup = AgeGroup.getAgeGroup(age);
-		if(ageGroup==AgeGroup.CHILD) {
+		if (ageGroup == AgeGroup.CHILD) {
 			return;
 		}
-		boolean waitingForNextDose =  personPropertiesDataManager.getPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE);
-		if(waitingForNextDose) {
+		boolean waitingForNextDose = personPropertiesDataManager.getPersonPropertyValue(personId,
+				PersonProperty.WAITING_FOR_NEXT_DOSE);
+		if (waitingForNextDose) {
 			return;
 		}
-		
+
 		multiKey = new MultiKey(ageGroup, vaccinationCount);
 
 		list = candidates.get(multiKey);
@@ -110,18 +122,9 @@ public class EventVaccinator {
 			list.add(personId);
 			groupMap.put(personId, multiKey);
 		}
-		
-	}
 
-	private void planNextVaccination() {
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-		.setTime(interVaccinationTime + actorContext.getTime())//
-		.setKey(planId)
-		.setCallbackConsumer(this::vaccinatePerson)
-		.build();
-		
-		actorContext.addPlan(plan);		
 	}
+	/* end */
 
 	private double getWeight(AgeGroup ageGroup, int vaccineCount) {
 
@@ -207,6 +210,18 @@ public class EventVaccinator {
 		}
 	}
 
+	/*
+	 * start code_ref=partitions_plugin_event_vaccinate|code_cap= The event-based
+	 * vaccinator selects from maintained sub-populations.
+	 */
+	private void planNextVaccination() {
+		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
+				.setTime(interVaccinationTime + actorContext.getTime())//
+				.setKey(planId).setCallbackConsumer(this::vaccinatePerson).build();
+
+		actorContext.addPlan(plan);
+	}
+
 	private void vaccinatePerson(ActorContext actorContext) {
 
 		Map<MultiKey, Double> extendedWeights = new LinkedHashMap<>();
@@ -240,27 +255,34 @@ public class EventVaccinator {
 
 			int vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(selectedCandidate,
 					PersonProperty.VACCINATION_COUNT);
-			vaccinationCount++;			
+			vaccinationCount++;
 			personPropertiesDataManager.setPersonPropertyValue(selectedCandidate, PersonProperty.VACCINATION_COUNT,
 					vaccinationCount);
 			if (vaccinationCount < 3) {
-				personPropertiesDataManager.setPersonPropertyValue(selectedCandidate, PersonProperty.WAITING_FOR_NEXT_DOSE,
-						true);
+				personPropertiesDataManager.setPersonPropertyValue(selectedCandidate,
+						PersonProperty.WAITING_FOR_NEXT_DOSE, true);
 				planWaitTermination(selectedCandidate);
 			}
-			planNextVaccination();		
+			planNextVaccination();
 		}
 
 	}
-	
+	/* end */
+
 	private void planWaitTermination(PersonId personId) {
 		actorContext.addPlan((c) -> this.endWaitTime(personId), personInterVaccinationDelay + actorContext.getTime());
 	}
 
+	/*
+	 * start code_ref=partitions_plugin_event_end_wait|code_cap= The
+	 * event-vaccinator can restart the vaccination process when a person becomes
+	 * eligible after the post-vacination waiting period is over.
+	 */
 	private void endWaitTime(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
-		if(actorContext.getPlan(planId).isEmpty()) {
+		if (actorContext.getPlan(planId).isEmpty()) {
 			vaccinatePerson(actorContext);
 		}
 	}
+	/* end */
 }

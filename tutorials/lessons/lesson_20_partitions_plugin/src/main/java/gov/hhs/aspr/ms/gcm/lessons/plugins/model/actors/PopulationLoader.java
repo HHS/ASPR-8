@@ -12,6 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueI
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.Well;
 
+/*start code_ref=partitions_plugin_population_loader|code_cap=People are added to the simulation with region and age assignments.*/
 public class PopulationLoader {
 	public void init(ActorContext actorContext) {
 		StochasticsDataManager stochasticsDataManager = actorContext.getDataManager(StochasticsDataManager.class);
@@ -32,3 +33,4 @@ public class PopulationLoader {
 		}
 	}
 }
+/* end */

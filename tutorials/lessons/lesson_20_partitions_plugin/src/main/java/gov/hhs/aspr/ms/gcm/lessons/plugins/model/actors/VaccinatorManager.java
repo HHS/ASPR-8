@@ -5,6 +5,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.VaccinatorType;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 
+/*start code_ref=partitions_plugin_vaccine_manager|code_cap=The vaccine manager creates one of three vaccinator actors based on the global property,VACCINATOR_TYPE.*/
 public class VaccinatorManager {
 	public void init(ActorContext actorContext) {
 		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
@@ -25,3 +26,4 @@ public class VaccinatorManager {
 		}
 	}
 }
+/* end */

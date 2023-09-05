@@ -32,6 +32,10 @@ public class PartitionVaccinator {
 	private double personInterVaccinationDelay;
 	private ActorContext actorContext;
 
+	/*
+	 * start code_ref=partitions_plugin_partition_init|code_cap= The
+	 * partition-vaccinator manages the eligible population via partitions.
+	 */
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
@@ -41,25 +45,33 @@ public class PartitionVaccinator {
 		createPartitions();
 		planNextVaccination();
 	}
+	/* end */
 
+	/*
+	 * start code_ref=partitions_plugin_partition_create_partitions|code_cap= The
+	 * partition-vaccinator creates two partitions to help with person selection and
+	 * termination of vaccinations.
+	 */
 	private void createPartitions() {
-		
+
 		PersonPropertyFilter ageFilter = new PersonPropertyFilter(PersonProperty.AGE, Equality.GREATER_THAN_EQUAL, 18);
-		
+
 		PersonPropertyFilter diseaseFilter = new PersonPropertyFilter(PersonProperty.DISEASE_STATE, Equality.EQUAL,
 				DiseaseState.SUSCEPTIBLE);
-		
+
 		PersonPropertyFilter vaccineFilter = new PersonPropertyFilter(PersonProperty.VACCINATION_COUNT,
 				Equality.LESS_THAN, 3);
-		
+
 		PersonPropertyFilter waitFilter = new PersonPropertyFilter(PersonProperty.WAITING_FOR_NEXT_DOSE, Equality.EQUAL,
 				false);
-		
+
 		Filter filter = ageFilter.and(diseaseFilter).and(vaccineFilter).and(waitFilter);
 
-		Labeler ageLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.AGE,(value)->AgeGroup.getAgeGroup((Integer) value));
-		
-		Labeler vaccineCountLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.VACCINATION_COUNT,(value)->value);
+		Labeler ageLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.AGE,
+				(value) -> AgeGroup.getAgeGroup((Integer) value));
+
+		Labeler vaccineCountLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.VACCINATION_COUNT,
+				(value) -> value);
 
 		Partition partition = Partition.builder()//
 				.setFilter(filter)//
@@ -76,6 +88,7 @@ public class PartitionVaccinator {
 
 		partitionsDataManager.addPartition(partition, potentiallyEligibleKey);
 	}
+	/* end */
 
 	private void establishWorkingVaribles() {
 		int vaccinationsPerDay = globalPropertiesDataManager
@@ -92,13 +105,6 @@ public class PartitionVaccinator {
 
 	private void endWaitTime(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
-	}
-
-	private void planNextVaccination() {
-		if (partitionsDataManager.getPersonCount(potentiallyEligibleKey) == 0) {
-			return;
-		}
-		actorContext.addPlan(this::vaccinatePerson, vaccinatorDelay + actorContext.getTime());
 	}
 
 	private double getWeight(PartitionsContext partitionsContext, LabelSet labelSet) {
@@ -144,6 +150,17 @@ public class PartitionVaccinator {
 		return result;
 	}
 
+	/*
+	 * start code_ref=partitions_plugin_partition_vaccinate|code_cap= The
+	 * partition-vaccinator schedules and executes vaccinations using partitions.
+	 */
+	private void planNextVaccination() {
+		if (partitionsDataManager.getPersonCount(potentiallyEligibleKey) == 0) {
+			return;
+		}
+		actorContext.addPlan(this::vaccinatePerson, vaccinatorDelay + actorContext.getTime());
+	}
+
 	private void vaccinatePerson(ActorContext actorContext) {
 
 		PartitionSampler partitionSampler = PartitionSampler.builder()//
@@ -168,5 +185,6 @@ public class PartitionVaccinator {
 		}
 		planNextVaccination();
 	}
+	/* end */
 
 }

@@ -74,6 +74,7 @@ public class ContactManager {
 		}
 	}
 
+	/*start code_ref=partitions_plugin_contact_manager_infect_person|code_cap= Each time a person is infected, the contact manager schedules several follow-on infectious contacts.*/
 	private void infectPerson(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
@@ -102,16 +103,16 @@ public class ContactManager {
 		}, lastContactTime);
 
 	}
+	/* end */
 
 	private void endInfectiousness(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.RECOVERED);
 	}
 
-	private void establishPopulationPartition() {
-		partitionsDataManager.addPartition(Partition.builder().build(), partitionKey);
-	}
-
+	
+	
+	/*start code_ref=partitions_plugin_contact_manager_init|code_cap= The Contact Manager uses a simple partition that contains the entire population and uses it to randomly select infectious contacts.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		partitionsDataManager = actorContext.getDataManager(PartitionsDataManager.class);
@@ -124,9 +125,15 @@ public class ContactManager {
 		loadGlobalProperties();
 		establishPopulationPartition();
 		initializeInfections();
-
 	}
+	
+	private void establishPopulationPartition() {
+		partitionsDataManager.addPartition(Partition.builder().build(), partitionKey);
+	}
+	/* end */
 
+	
+	/*start code_ref=partitions_plugin_contact_manager_infectious_contact|code_cap= Infectious contacts are subject to mitigation.  To be infected, the contacted person must be susceptible and may having varying degrees of protection from previous vaccinations.*/
 	private void processInfectiousContact(PersonId personId) {
 		
 		PartitionSampler partitionSampler = PartitionSampler.builder().setExcludedPerson(personId).build();
@@ -168,4 +175,5 @@ public class ContactManager {
 		}
 
 	}
+	/* end */
 }

@@ -29,6 +29,7 @@ public class InspectionVaccinator {
 	private double personInterVaccinationDelay;
 	private boolean potentialEligiblePeopleExist;
 
+	/*start code_ref=partitions_plugin_inspection_init|code_cap=The inspection-based vaccinator establishes its working variables and begins planning the next vaccination.*/
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 
@@ -41,6 +42,7 @@ public class InspectionVaccinator {
 		establishWorkingVaribles();
 		planNextVaccination();
 	}
+	/* end */
 
 	private void establishWorkingVaribles() {
 		int vaccinationsPerDay = globalPropertiesDataManager
@@ -50,10 +52,7 @@ public class InspectionVaccinator {
 		interVaccinationTime = 1.0 / vaccinationsPerDay;
 	}
 
-	private void planNextVaccination() {
-		actorContext.addPlan(this::vaccinatePerson, interVaccinationTime + actorContext.getTime());
-	}
-
+	/*start code_ref=partitions_plugin_inspection_weighing|code_cap=The inspection-based vaccinator assigns a probability weight to each person based on their age and number of vaccine doses administered.*/
 	private double getWeight(AgeGroup ageGroup, int vaccineCount) {
 
 		double result = 1;
@@ -92,6 +91,7 @@ public class InspectionVaccinator {
 
 		return result;
 	}
+	/* end */
 
 	private void planWaitTermination(PersonId personId) {
 		actorContext.addPlan((c) -> this.endWaitTime(personId), personInterVaccinationDelay + actorContext.getTime());
@@ -100,6 +100,13 @@ public class InspectionVaccinator {
 	private void endWaitTime(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
 	}
+
+	
+	/*start code_ref=partitions_plugin_inspection_vaccination|code_cap=The inspection-based vaccinator vaccinates 100 people per day. Each vaccination attempt considers every person in the simulation.*/
+	private void planNextVaccination() {
+		actorContext.addPlan(this::vaccinatePerson, interVaccinationTime + actorContext.getTime());
+	}
+	
 
 	private void vaccinatePerson(ActorContext actorContext) {
 		List<PersonId> people = peopleDataManager.getPeople();
@@ -202,4 +209,6 @@ public class InspectionVaccinator {
 			}
 		}
 	}
+	/* end */
+	
 }
