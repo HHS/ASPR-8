@@ -1,0 +1,21 @@
+/* start code_ref=experiements_example_9_E_output|code_cap=The output from the four threads running the twelve scenarios is a bit jumbled and hard to follow.  This will get resolved later with improved output handling.*/
+Model Actor initializing
+Model Actor initializing
+	r0 = 1.5
+Model Actor initializing
+Model Actor initializing
+	r0 = 1.5
+	asymptomatic days = 4.0
+	symptomatic days = 12.0
+	r0 = 2.5
+	school closing infection rate = 0.05
+	asymptomatic days = 4.0
+	asymptomatic days = 4.0
+	symptomatic days = 12.0
+	r0 = 2.0
+	school closing infection rate = 0.1
+	distribute vaccine locally = false
+
+...		
+
+/* end */

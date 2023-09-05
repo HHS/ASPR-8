@@ -91,7 +91,7 @@ public class ContactManager {
 	}
 
 	/* end */
-	/* start code_ref=materials_plugin_contact_manager_init|code_cap=The infection manager initializes by infecting the initially infected people in the first day.*/
+	/* start code_ref=materials_plugin_contact_manager_init|code_cap=The contact manager initializes by infecting the initially infected people in the first day.*/
 	public void init(final ActorContext actorContext) {
 		this.actorContext = actorContext;
 

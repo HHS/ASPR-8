@@ -17,8 +17,8 @@ public final class GammaActor {
 						.getDataManager(GlobalPropertiesDataManager.class);
 				Double alpha = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.ALPHA);
 				Double beta = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.BETA);
-				double delta = (beta - alpha) * i / count + alpha;
-				globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.GAMMA, delta);
+				double gamma = (beta - alpha) * i / count + alpha;
+				globalPropertiesDataManager.setGlobalPropertyValue(GlobalProperty.GAMMA, gamma);
 			}, i + 1);
 		});
 	}

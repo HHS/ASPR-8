@@ -38,7 +38,7 @@ public class VaccineEducator {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_vaccine_educator_handle_new_person|code_cap= The planning of an educational attempt on a person is scheduled to a random time in the future based on the global property, EDUCATION_ATTEMPT_INTERVAL. */
+	/* start code_ref= person_properties_vaccine_educator_handle_new_person|code_cap= Attempts to educate a person on vaccination are scheduled at random times in the future based on the global property, EDUCATION_ATTEMPT_INTERVAL. */
 	private void planEducation(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * educationAttemptInterval;
 		Consumer<ActorContext> plan = (c) -> educatePerson(personId);

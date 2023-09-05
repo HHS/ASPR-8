@@ -61,7 +61,7 @@ public final class MaterialManufactureSpecification {
 			deliveryAmount = data.deliveryAmount;
 			deliveryDelay = data.deliveryDelay;
 			stageAmount = data.stageAmount;
-			data.batchId = batchId;
+			batchId = data.batchId;
 		}
 	}
 

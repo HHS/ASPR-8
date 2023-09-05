@@ -491,7 +491,11 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonExists(personId);
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyAssignmentTimesTracked(personPropertyId);
-		return propertyTimes.get(personPropertyId).getValue(personId.getValue());
+		DoubleValueContainer doubleValueContainer = propertyTimes.get(personPropertyId);
+		if(doubleValueContainer == null) {
+			return propertyDefinitionTimes.get(personPropertyId);
+		}
+		return doubleValueContainer.getValue(personId.getValue());
 	}
 
 	/**

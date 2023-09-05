@@ -1,0 +1,26 @@
+/* start code_ref=reports_plugin_family_vaccine_output|code_cap=Excerpt of the family vaccine report.*/
+ scenario	max_family_size	time	unvacinated_families	partially_vaccinated_families	fully_vaccinated_families	unvaccinated_individuals	vaccinated_individuals
+0	3.0	0.0	0	0	0	0	0
+0	3.0	0.0	1	0	0	0	0
+0	3.0	0.0	1	0	0	1	0
+0	3.0	0.0	1	0	0	2	0
+0	3.0	0.0	2	0	0	2	0
+...
+0	3.0	0.0	15	0	0	30	0
+0	3.0	0.0	16	0	0	30	0
+0	3.0	0.0	16	0	0	31	0
+0	3.0	0.0	16	0	0	32	0
+0	3.0	0.0	17	0	0	32	0
+...
+0	3.0	1.0603090039611633	28	2	0	63	0
+0	3.0	1.114413651330966	27	3	0	63	0
+0	3.0	1.1516487861564502	26	4	0	63	0
+0	3.0	1.1871612468129367	25	5	0	63	0
+0	3.0	1.2426374003057261	25	4	1	63	0
+...
+3	10.0	8.981789652547315	0	4	26	163	3
+3	10.0	9.047774924066472	0	3	27	163	3
+3	10.0	9.101648563188967	0	2	28	163	3
+3	10.0	9.18260688675053	0	1	29	163	3
+3	10.0	9.210064962863902	0	0	30	163	3 	
+/* end */

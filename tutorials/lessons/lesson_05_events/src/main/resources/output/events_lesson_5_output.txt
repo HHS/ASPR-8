@@ -1,0 +1,17 @@
+/* start code_ref=events_lesson_5_output|code_cap=Output from Actors 2 and 3 as they observe changes to the alpha and beta properties.*/
+Actor2 observes event AlphaChangeEvent [previousAlpha=7, currentAlpha=8] at time = 1.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=8, currentAlpha=9] at time = 2.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=9, currentAlpha=10] at time = 3.0
+Actor3 observes event BetaChangeEvent [previousBeta=1.2345, currentBeta=2.469] at time = 3.5
+Actor2 observes event AlphaChangeEvent [previousAlpha=10, currentAlpha=11] at time = 4.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=11, currentAlpha=12] at time = 5.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=12, currentAlpha=13] at time = 6.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=13, currentAlpha=14] at time = 7.0
+Actor3 observes event BetaChangeEvent [previousBeta=2.469, currentBeta=4.938] at time = 7.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=14, currentAlpha=15] at time = 8.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=15, currentAlpha=16] at time = 9.0
+Actor2 observes event AlphaChangeEvent [previousAlpha=16, currentAlpha=17] at time = 10.0
+Actor3 observes event BetaChangeEvent [previousBeta=4.938, currentBeta=9.876] at time = 10.5
+Actor3 observes event BetaChangeEvent [previousBeta=9.876, currentBeta=19.752] at time = 14.0
+Actor3 observes event BetaChangeEvent [previousBeta=19.752, currentBeta=39.504] at time = 17.5
+/* end */

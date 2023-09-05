@@ -121,7 +121,7 @@ public final class DiseasePluginData implements PluginData {
 	}
 	/* end */
 
-	/* start code_ref=plugin_data_clone_builder|code_cap=The disease plugin data creates a copy of its data an places it in the returned plugin data builder.*/
+	/* start code_ref=plugin_data_clone_builder|code_cap=The disease plugin data creates a copy of its data and places it in the returned plugin data builder.*/
 	@Override
 	public PluginDataBuilder getCloneBuilder() {
 		return new Builder(new Data(data));

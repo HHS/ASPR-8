@@ -1,0 +1,14 @@
+/* start code_ref=data_managers_lesson_4_output|code_cap=Output from the example actor and example data manager showing the alpha property initialization and subsequent evolution.*/
+ExampleDataManager is initialized
+Example Actor is initialized and will plan to set Alpha
+ExampleDataManager sets alpha = 8 at time = 0.0
+ExampleDataManager sets alpha = 9 at time = 1.0
+ExampleDataManager sets alpha = 10 at time = 2.0
+ExampleDataManager sets alpha = 11 at time = 3.0
+ExampleDataManager sets alpha = 12 at time = 4.0
+ExampleDataManager sets alpha = 13 at time = 5.0
+ExampleDataManager sets alpha = 14 at time = 6.0
+ExampleDataManager sets alpha = 15 at time = 7.0
+ExampleDataManager sets alpha = 16 at time = 8.0
+ExampleDataManager sets alpha = 17 at time = 9.0
+/* end */
