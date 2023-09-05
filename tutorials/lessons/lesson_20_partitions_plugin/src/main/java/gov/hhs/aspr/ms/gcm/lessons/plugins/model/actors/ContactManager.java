@@ -25,7 +25,7 @@ public class ContactManager {
 	private int infectionCount;
 	private double transmissionProbabilty;
 
-	private final Object partitionKey = "full_population_key";
+	private final Object partitionKey = new Object();
 
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 	private PersonPropertiesDataManager personPropertiesDataManager;
@@ -61,7 +61,7 @@ public class ContactManager {
 		infectionCount = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INITIAL_INFECTION_COUNT);
 	}
 
-	private void initializeInfectiousContacts() {
+	private void initializeInfections() {
 		List<PersonId> people = peopleDataManager.getPeople();
 
 		if (infectionCount > people.size()) {
@@ -70,11 +70,11 @@ public class ContactManager {
 
 		for (int i = 0; i < infectionCount; i++) {
 			PersonId personId = people.get(i);
-			planInfectiousContacts(personId);
+			infectPerson(personId);
 		}
 	}
 
-	private void planInfectiousContacts(PersonId personId) {
+	private void infectPerson(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);
 
@@ -100,11 +100,12 @@ public class ContactManager {
 		actorContext.addPlan((c2) -> {
 			endInfectiousness(personId);
 		}, lastContactTime);
-		
+
 	}
-	
+
 	private void endInfectiousness(PersonId personId) {
-		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE, DiseaseState.RECOVERED);
+		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.DISEASE_STATE,
+				DiseaseState.RECOVERED);
 	}
 
 	private void establishPopulationPartition() {
@@ -121,22 +122,23 @@ public class ContactManager {
 		randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 		loadGlobalProperties();
-		initializeInfectiousContacts();
 		establishPopulationPartition();
+		initializeInfections();
 
 	}
 
 	private void processInfectiousContact(PersonId personId) {
+		
 		PartitionSampler partitionSampler = PartitionSampler.builder().setExcludedPerson(personId).build();
 		Optional<PersonId> optionalPersonId = partitionsDataManager.samplePartition(partitionKey, partitionSampler);
 		if (optionalPersonId.isPresent()) {
-			
+
 			PersonId contactedPersonId = optionalPersonId.get();
 			
+
 			DiseaseState diseaseState = personPropertiesDataManager.getPersonPropertyValue(contactedPersonId,
 					PersonProperty.DISEASE_STATE);
 			if (diseaseState == DiseaseState.SUSCEPTIBLE) {
-				
 
 				int vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(contactedPersonId,
 						PersonProperty.VACCINATION_COUNT);
@@ -158,12 +160,12 @@ public class ContactManager {
 				}
 
 				mitigatedTransmissionProbability *= transmissionProbabilty;
-				
 
 				if (randomGenerator.nextDouble() < mitigatedTransmissionProbability) {
-					planInfectiousContacts(contactedPersonId);
+					infectPerson(contactedPersonId);
 				}
 			}
 		}
+
 	}
 }

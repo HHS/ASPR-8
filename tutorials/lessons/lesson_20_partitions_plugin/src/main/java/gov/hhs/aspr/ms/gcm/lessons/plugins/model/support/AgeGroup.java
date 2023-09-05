@@ -5,19 +5,19 @@ import org.apache.commons.math3.random.RandomGenerator;
 public enum AgeGroup {
 
 	CHILD, //
-	ADULT_18_30, // adults 18 to 29 inclusive
-	ADULT_30_55, // adults 30 to 54 inclusive
+	ADULT_18_44, // adults 18 to 29 inclusive
+	ADULT_45_64, // adults 30 to 54 inclusive
 	SENIOR;// adults 55 and over
 
 	public static AgeGroup getAgeGroup(int age) {
 		if (age < 18) {
 			return CHILD;
 		}
-		if (age < 30) {
-			return ADULT_18_30;
+		if (age < 45) {
+			return ADULT_18_44;
 		}
-		if (age < 55) {
-			return ADULT_30_55;
+		if (age < 65) {
+			return ADULT_45_64;
 		}
 		return SENIOR;
 	}

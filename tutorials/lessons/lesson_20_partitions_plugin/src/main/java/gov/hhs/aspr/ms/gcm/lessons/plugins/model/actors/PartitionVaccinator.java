@@ -11,75 +11,94 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertie
 import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelSet;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Partition;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionSampler;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.FunctionalPersonPropertyLabeler;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyFilter;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyLabeler;
 
-public class Vaccinator {
+public class PartitionVaccinator {
 
-	private Object partitionKey = "key";
+	private Object currentlyEligibleKey = new Object();
+	private Object potentiallyEligibleKey = new Object();
 	private PartitionsDataManager partitionsDataManager;
 	private PersonPropertiesDataManager personPropertiesDataManager;
-	private double interVaccinationTime;
+	private GlobalPropertiesDataManager globalPropertiesDataManager;
+	private double vaccinatorDelay;
+	private double personInterVaccinationDelay;
 	private ActorContext actorContext;
 
 	public void init(ActorContext actorContext) {
 		this.actorContext = actorContext;
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		partitionsDataManager = actorContext.getDataManager(PartitionsDataManager.class);
-		GlobalPropertiesDataManager globalPropertiesDataManager = actorContext
-				.getDataManager(GlobalPropertiesDataManager.class);
-		int vaccinationsPerDay = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
-		interVaccinationTime = 1.0 / vaccinationsPerDay;
+		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
+		establishWorkingVaribles();
+		createPartitions();
+		planNextVaccination();
+	}
 
-		// only adults
+	private void createPartitions() {
+		
 		PersonPropertyFilter ageFilter = new PersonPropertyFilter(PersonProperty.AGE, Equality.GREATER_THAN_EQUAL, 18);
-
-		// only susceptible
+		
 		PersonPropertyFilter diseaseFilter = new PersonPropertyFilter(PersonProperty.DISEASE_STATE, Equality.EQUAL,
 				DiseaseState.SUSCEPTIBLE);
-
-		// only vaccine count <3
+		
 		PersonPropertyFilter vaccineFilter = new PersonPropertyFilter(PersonProperty.VACCINATION_COUNT,
 				Equality.LESS_THAN, 3);
+		
+		PersonPropertyFilter waitFilter = new PersonPropertyFilter(PersonProperty.WAITING_FOR_NEXT_DOSE, Equality.EQUAL,
+				false);
+		
+		Filter filter = ageFilter.and(diseaseFilter).and(vaccineFilter).and(waitFilter);
 
-		PersonPropertyLabeler ageLabeler = new PersonPropertyLabeler(PersonProperty.AGE) {
-			@Override
-			protected Object getLabelFromValue(Object value) {
-				int age = (Integer) value;
-				return AgeGroup.getAgeGroup(age);
-			}
-		};
-
-		PersonPropertyLabeler vaccineCountLabeler = new PersonPropertyLabeler(PersonProperty.VACCINATION_COUNT) {
-			@Override
-			protected Object getLabelFromValue(Object value) {
-				return value;
-			}
-		};
+		Labeler ageLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.AGE,(value)->AgeGroup.getAgeGroup((Integer) value));
+		
+		Labeler vaccineCountLabeler = new FunctionalPersonPropertyLabeler(PersonProperty.VACCINATION_COUNT,(value)->value);
 
 		Partition partition = Partition.builder()//
-				.setFilter(ageFilter.and(diseaseFilter).and(vaccineFilter))//
+				.setFilter(filter)//
 				.addLabeler(ageLabeler)//
 				.addLabeler(vaccineCountLabeler)//
 				.build();
 
-		partitionsDataManager.addPartition(partition, partitionKey);
+		partitionsDataManager.addPartition(partition, currentlyEligibleKey);
 
-		planNextVaccination();
+		filter = ageFilter.and(diseaseFilter).and(vaccineFilter);
+		partition = Partition.builder()//
+				.setFilter(filter)//
+				.build();
 
+		partitionsDataManager.addPartition(partition, potentiallyEligibleKey);
+	}
+
+	private void establishWorkingVaribles() {
+		int vaccinationsPerDay = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
+
+		personInterVaccinationDelay = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.INTER_VACCINATION_DELAY_TIME);
+		vaccinatorDelay = 1.0 / vaccinationsPerDay;
+	}
+
+	private void planWaitTermination(PersonId personId) {
+		actorContext.addPlan((c) -> this.endWaitTime(personId), personInterVaccinationDelay + actorContext.getTime());
+	}
+
+	private void endWaitTime(PersonId personId) {
+		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
 	}
 
 	private void planNextVaccination() {
-		if (partitionsDataManager.getPersonCount(partitionKey) == 0) {
+		if (partitionsDataManager.getPersonCount(potentiallyEligibleKey) == 0) {
 			return;
 		}
-		actorContext.addPlan(this::vaccinatePerson, interVaccinationTime + actorContext.getTime());
+		actorContext.addPlan(this::vaccinatePerson, vaccinatorDelay + actorContext.getTime());
 	}
 
 	private double getWeight(PartitionsContext partitionsContext, LabelSet labelSet) {
@@ -91,10 +110,10 @@ public class Vaccinator {
 		double result = 1;
 
 		switch (ageGroup) {
-		case ADULT_18_30:
+		case ADULT_18_44:
 			result += 0;
 			break;
-		case ADULT_30_55:
+		case ADULT_45_64:
 			result += 3;
 			break;
 		case CHILD:
@@ -131,7 +150,8 @@ public class Vaccinator {
 				.setLabelSetWeightingFunction(this::getWeight)//
 				.build();
 
-		Optional<PersonId> optionalPersonId = partitionsDataManager.samplePartition(partitionKey, partitionSampler);
+		Optional<PersonId> optionalPersonId = partitionsDataManager.samplePartition(currentlyEligibleKey,
+				partitionSampler);
 		if (optionalPersonId.isPresent()) {
 			PersonId personId = optionalPersonId.get();
 			int vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(personId,
@@ -139,6 +159,12 @@ public class Vaccinator {
 			vaccinationCount++;
 			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATION_COUNT,
 					vaccinationCount);
+			if (vaccinationCount < 3) {
+				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE,
+						true);
+				planWaitTermination(personId);
+			}
+
 		}
 		planNextVaccination();
 	}
