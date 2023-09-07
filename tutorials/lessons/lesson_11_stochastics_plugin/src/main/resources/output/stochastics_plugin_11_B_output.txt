@@ -1,5 +1,5 @@
 /* start code_ref=stochastics_plugin_11_B_output|code_cap=The output show that twelve scearnios result in 36 output lines since the model actor update R0 three times per scenario.*/
- scenario	school_closing_infection_rate	seed index	seed value	output
+ scenario	school_closing_infection_rate	seed_index	seed_value	output
  3	0.2	0	1768604912325913878L	setting R0 to 1.4595120508977955 at time = 5.672294645832067
  2	0.15	0	1768604912325913878L	setting R0 to 1.4595120508977955 at time = 5.672294645832067
  3	0.2	0	1768604912325913878L	setting R0 to 1.672857576347001 at time = 9.396161237311702
