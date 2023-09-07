@@ -1,5 +1,5 @@
 /* start code_ref=regions_plugin_output_2|code_cap=Excerpts from the region property report.*/
-scenario	seed index	seed value	Time	Region	Property	Value
+scenario	seed_index	seed_value	time	region	property	value
 0	0	-7834265884293137617L	0.0	Region_0	LAT	45.08307901948476
 0	0	-7834265884293137617L	0.0	Region_0	LON	128.5497267736204
 0	0	-7834265884293137617L	0.0	Region_1	LAT	45.73317078392115
