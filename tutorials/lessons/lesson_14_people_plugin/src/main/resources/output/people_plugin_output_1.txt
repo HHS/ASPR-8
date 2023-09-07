@@ -1,5 +1,5 @@
 /* start code_ref=people_plugin_output_1|code_cap=An excerpt of the population trace report.*/
-scenario	seed index	seed value	time	personId	action
+scenario	seed_index	seed_value	time	personId	action
 0	0	1126862960420803077L	0.0	1	ADDITION
 0	0	1126862960420803077L	0.0	3	ADDITION
 0	0	1126862960420803077L	0.0	5	ADDITION

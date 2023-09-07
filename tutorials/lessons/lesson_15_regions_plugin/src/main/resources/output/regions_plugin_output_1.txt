@@ -1,5 +1,5 @@
 /* start code_ref=regions_plugin_output_1|code_cap=Excerpts from the region transfer report.*/
-scenario	seed index	seed value	source_region	destination_region	transfers
+scenario	seed_index	seed_value	source_region	destination_region	transfers
 0	0	-7834265884293137617L	Region_2	Region_2	215
 0	0	-7834265884293137617L	Region_0	Region_0	188
 0	0	-7834265884293137617L	Region_3	Region_3	208

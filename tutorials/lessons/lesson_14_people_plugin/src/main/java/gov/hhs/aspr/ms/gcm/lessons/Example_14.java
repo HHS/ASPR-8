@@ -59,8 +59,8 @@ public final class Example_14 {
 			});//
 		});
 
-		builder.addMetaDatum("seed index");//
-		builder.addMetaDatum("seed value");//
+		builder.addMetaDatum("seed_index");//
+		builder.addMetaDatum("seed_value");//
 
 		return builder.build();
 	}
