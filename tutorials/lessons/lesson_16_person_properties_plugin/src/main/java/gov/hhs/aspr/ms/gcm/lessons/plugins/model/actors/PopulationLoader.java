@@ -28,8 +28,7 @@ public class PopulationLoader {
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
 	/*
-	 * start code_ref=
-	 * person_properties_population_loader_add_immunity_property|code_cap=At the
+	 * start code_ref= person_properties_population_loader_add_immunity_property|code_cap=At the
 	 * time set via the global property, IMMUNITY_START_TIME, the population loader
 	 * defines the person property, IS_IMMUNE, and sets the property value for each
 	 * person.
