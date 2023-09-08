@@ -1,0 +1,25 @@
+/* start code_ref=global_proerties_plugin_output|code_cap=An excerpt of the global property report showing the three global property values over time in the five scenarios.*/
+scenario	ALPHA	BETA	time	property	value
+0	3.0	10.0	0.0	ALPHA	3.0
+0	3.0	10.0	0.0	BETA	10.0
+0	3.0	10.0	0.0	GAMMA	1.0
+0	3.0	10.0	1.0	GAMMA	3.0
+0	3.0	10.0	2.0	GAMMA	3.7
+0	3.0	10.0	3.0	GAMMA	4.4
+0	3.0	10.0	4.0	GAMMA	5.1
+0	3.0	10.0	5.0	GAMMA	5.8
+0	3.0	10.0	6.0	GAMMA	6.5
+0	3.0	10.0	7.0	GAMMA	7.2
+...
+1	12.0	25.0	9.0	GAMMA	22.4
+1	12.0	25.0	10.0	GAMMA	23.7
+2	30.0	40.0	0.0	ALPHA	30.0
+2	30.0	40.0	0.0	BETA	40.0
+2	30.0	40.0	0.0	GAMMA	1.0
+2	30.0	40.0	1.0	GAMMA	30.0
+...
+4	80.0	100.0	7.0	GAMMA	92.0
+4	80.0	100.0	8.0	GAMMA	94.0
+4	80.0	100.0	9.0	GAMMA	96.0
+4	80.0	100.0	10.0	GAMMA	98.0
+/* end */

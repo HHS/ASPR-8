@@ -1,0 +1,36 @@
+.chapter-number::before {
+  content: "Chapter ";
+}
+.chapter-number::after {
+  content: ":";
+}
+.header-section-number{
+  color: black
+}
+
+.table{
+	background:cornsilk;
+	border-width:2px;
+	border-style:solid;
+	font-size:14px;
+}
+
+.figure-img {
+    margin-top: 1.5rem;
+    margin-bottom: -.5rem;
+    line-height: 1;
+}
+
+.listing p{
+  font-weight:bold;
+  font-size:smaller;
+  color:black;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.figure-caption {
+  font-weight:bold;
+  font-style:italic;
+  font-size:smaller;
+  color:black;
+  font-family: Arial, Helvetica, sans-serif;
+}

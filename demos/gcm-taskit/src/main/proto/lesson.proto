@@ -1,0 +1,29 @@
+syntax = "proto3";
+package gov.hhs.aspr.ms.gcm.taskit.protobuf.demo;
+
+option java_multiple_files = true;
+option java_package = "lesson.input";
+
+
+enum PersonPropertyInput {
+    REFUSES_VACCINE = 0;
+    EDUCATION_ATTEMPTS = 1; 
+    VACCINE_ATTEMPTS = 2;
+    IS_IMMUNE = 3;
+    VACCINATED = 4;
+}
+
+enum GlobalPropertyInput {
+    IMMUNITY_START_TIME = 0;
+    IMMUNITY_PROBABILITY = 1;
+    VACCINE_ATTEMPT_INTERVAL = 2; 
+    EDUCATION_ATTEMPT_INTERVAL = 3;
+    EDUCATION_SUCCESS_RATE = 4;
+    POPULATION_SIZE = 5;
+    VACCINE_REFUSAL_PROBABILITY = 6;
+    SIMULATION_DURATION = 7;
+}
+
+message RegionInput {
+    int32 id = 1;
+}

@@ -1,0 +1,15 @@
+/* start code_ref=output_consumer_D_output|code_cap=The output of consumer D showing the scenario meta data for the twelve scenarios.*/
+scenario	r0	school_closing_infection_rate	distribute_vaccine_locally
+0	1.5	0.05	false
+1	2.0	0.05	false
+2	2.5	0.05	false
+3	1.5	0.1	false
+4	2.0	0.1	false
+5	2.5	0.1	false
+6	1.5	0.05	true
+7	2.0	0.05	true
+8	2.5	0.05	true
+9	1.5	0.1	true
+10	2.0	0.1	true
+11	2.5	0.1	true	
+/* end */

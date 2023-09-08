@@ -1,0 +1,232 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Artifact -->
+	<groupId>gov.hhs.aspr.ms</groupId>
+	<artifactId>gcm</artifactId>
+	<version>4.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>General Computational Model</name>
+	<description>GCM is a Java based simulation framework for building disease progression models.</description>
+	<url>https://github.com/HHS/ASPR-8</url>
+
+	<!-- License Information -->
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE v3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+		</license>
+	</licenses>
+
+	<!-- Developers -->
+	<developers>
+		<developer>
+			<name>Shawn Hatch</name>
+			<email>shawn.r.hatch@leidos.com</email>
+			<organization>Leidos</organization>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Zachary Bischoff</name>
+			<organization>Leidos</organization>
+			<email>zachary.bischoff@leidos.com</email>
+			<organizationUrl>https://www.leidos.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<!-- SCM Information -->
+	<scm>
+		<connection>scm:git:git://github.com/HHS/ASPR-8.git</connection>
+		<developerConnection>scm:git:ssh://github.com:HHS/ASPR-8.git</developerConnection>
+		<url>https://github.com/HHS/ASPR-8/tree/main</url>
+	</scm>
+
+	<!-- Properties -->
+	<properties>
+		<!-- basic project properties -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+
+		<!-- plugin versions -->
+		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+		<maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
+		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+
+		<!-- dependency versions -->
+		<util.version>4.0.0</util.version>
+		<mockito-core.version>3.11.2</mockito-core.version>
+		<jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
+		<junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
+	</properties>
+
+	<!-- Dependencies -->
+	<dependencies>
+		<dependency>
+			<groupId>gov.hhs.aspr.ms</groupId>
+			<artifactId>util</artifactId>
+			<version>${util.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito-core.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>${jacoco-maven-plugin.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit-jupiter-engine.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-jupiter-engine.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- Configure Build -->
+	<build>
+		<plugins>
+			<!-- Runs unit tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<includes>
+						<include>AT_*.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<!-- Jacoco Coverage Check -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.0</minimum>
+										</limit>
+										<limit>
+											<counter>BRANCH</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.0</minimum>
+										</limit>
+										<limit>
+											<counter>INSTRUCTION</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.0</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Attachs source jar to project -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!--Attaches javadoc jar to project -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>${maven-javadoc-plugin.version}</version>
+						<configuration>
+							<doclint>all,-missing</doclint>
+							<additionalDependencies>
+								<additionalDependency>
+									<groupId>gov.hhs.aspr.ms</groupId>
+									<artifactId>util</artifactId>
+									<version>${util.version}</version>
+								</additionalDependency>
+								<additionalDependency>
+									<groupId>org.junit.jupiter</groupId>
+									<artifactId>junit-jupiter-api</artifactId>
+									<version>${junit-jupiter-engine.version}</version>
+								</additionalDependency>
+							</additionalDependencies>
+							<author>false</author>
+							<additionalJOptions>
+								<additionalJOption>-Xmaxerrs</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+								<additionalJOption>-Xmaxwarns</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+							</additionalJOptions>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

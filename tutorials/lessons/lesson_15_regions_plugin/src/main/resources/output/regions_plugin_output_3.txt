@@ -1,0 +1,8 @@
+/* start code_ref=regions_plugin_output_3|code_cap=The vaccine report shows vaccine counts at the end of each simulation.*/
+scenario	seed_index	seed_value	count_0	count_1	count_2	count_3	count_4	count_5	count_6+
+0	0	-7834265884293137617L	13	67	145	168	170	148	289
+1	1	-7320358285742045393L	13	63	141	181	187	133	282
+2	2	-4619948863677044400L	17	53	157	196	176	140	261
+3	3	3282202756261196294L	10	72	159	166	163	146	284
+4	4	-7584580254621783722L	4	66	153	198	163	136	280
+/* end */
