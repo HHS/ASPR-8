@@ -78,7 +78,7 @@ public final class VaccineProducer {
 		materialsDataManager.removeStage(stageId, true);
 	}
 
-	/* start code_ref=materials_plugin_vaccine_producer_end_vaccine_preparation|code_cap=When an vaccine production stage is ready for release, the vaccine producer converts the stage doses of vaccine and places them in its resource inventory.*/
+	/* start code_ref=materials_plugin_vaccine_producer_end_vaccine_preparation|code_cap=When a vaccine production stage is ready for release, the vaccine producer converts the stage doses of vaccine and places them in its resource inventory.*/
 	private void endVaccinePreparation(final StageId stageId) {
 		materialsDataManager.convertStageToResource(stageId, Resource.VACCINE, vaccineUnits);
 		planVaccinePrepartion();

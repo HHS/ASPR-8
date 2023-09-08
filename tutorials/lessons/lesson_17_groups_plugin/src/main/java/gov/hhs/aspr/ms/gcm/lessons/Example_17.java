@@ -68,7 +68,7 @@ public final class Example_17 {
 		return PeoplePlugin.getPeoplePlugin(peoplePluginData);
 	}
 
-	/* start code_ref= groups_plugin_example_17_groups_plugin|code_cap=The groups plugin includes a tele-work property for work places and open status property for schools.*/
+	/* start code_ref= groups_plugin_example_17_groups_plugin|code_cap=The groups plugin includes a tele-work property for work places and open status properties for schools.*/
 	private Plugin getGroupsPlugin() {
 		GroupsPluginData.Builder builder = GroupsPluginData.builder();
 		for (GroupType groupType : GroupType.values()) {

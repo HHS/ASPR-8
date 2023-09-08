@@ -59,7 +59,7 @@ public class SchoolManager {
 
 	/* end */
 
-	/* start code_ref= groups_plugin_school_manager_review_school|code_cap=Each school is review on a weekly basis.  As the fraction of students who are infected increases, the school transitions from OPEN to COHORT to CLOSED.*/
+	/* start code_ref= groups_plugin_school_manager_review_school|code_cap=Each school is reviewed on a weekly basis.  As the fraction of students who are infected increases, the school transitions from OPEN to COHORT to CLOSED.*/
 	private void reviewSchool(GroupId groupId) {
 
 		int infectiousCount = 0;

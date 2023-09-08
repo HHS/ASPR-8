@@ -51,7 +51,7 @@ public final class Example_18 {
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9032703880551658180L);
 
-	/* start code_ref=resources_getResourcesPlugin|code_cap=The resource plugin is initialized with by defining the two resource ids at time zero with time tracking turned on. The person resource report is set to report at the end of the simulation.*/
+	/* start code_ref=resources_getResourcesPlugin|code_cap=The resource plugin is initialized with defining the two resource ids at time zero with time tracking turned on. The person resource report is set to report at the end of the simulation.*/
 	private Plugin getResourcesPlugin() {
 		ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
 		for (ResourceId resourceId : Resource.values()) {

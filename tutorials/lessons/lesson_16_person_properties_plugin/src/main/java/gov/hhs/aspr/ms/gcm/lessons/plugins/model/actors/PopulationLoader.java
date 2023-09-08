@@ -27,7 +27,13 @@ public class PopulationLoader {
 	private PersonPropertiesDataManager personPropertiesDataManager;
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 
-	/* start code_ref= person_properties_population_loader_add_immunity_property|code_cap=At the time set via the global property, IMMUNITY_START_TIME, the population loader defines the person property IS_IMMUNE and sets the property value for each person.*/
+	/*
+	 * start code_ref=
+	 * person_properties_population_loader_add_immunity_property|code_cap=At the
+	 * time set via the global property, IMMUNITY_START_TIME, the population loader
+	 * defines the person property, IS_IMMUNE, and sets the property value for each
+	 * person.
+	 */
 	private void addImmunityProperty() {
 		PersonPropertyDefinitionInitialization.Builder builder = PersonPropertyDefinitionInitialization.builder();
 		builder.setPersonPropertyId(PersonProperty.IS_IMMUNE);
@@ -45,7 +51,13 @@ public class PopulationLoader {
 	}
 	/* end */
 
-	/* start code_ref= person_properties_population_loader_init|code_cap=The population loader initializes by creating people dictated by the POPULATION_SIZE global property. Each person is assigned a region and random value for the person property REFUSES_VACCINE based on the global property VACCINE_REFUSAL_PROBABILITY. */
+	/*
+	 * start code_ref= person_properties_population_loader_init|code_cap= The
+	 * population loader initializes by creating people dictated by the
+	 * POPULATION_SIZE global property. Each person is assigned a region and random
+	 * value for the person property, REFUSES_VACCINE, based on the global property,
+	 * VACCINE_REFUSAL_PROBABILITY.
+	 */
 	public void init(ActorContext actorContext) {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);

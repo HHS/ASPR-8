@@ -96,7 +96,7 @@ public final class Example_12 {
 				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
 				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
 				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
-				.addExperimentReport(outputDirectory.resolve("experiment_report.xls")).build();
+				.build();
 		/* end */
 
 		/* start code_ref=reports_plugin_example_12_execution|code_cap=The experiment is executed using the NIOReportItemHandler as an experiment output consumer.*/
