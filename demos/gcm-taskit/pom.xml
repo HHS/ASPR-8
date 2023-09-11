@@ -34,7 +34,7 @@
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 
 		<!-- dependency versions -->
-		<gcm.version>4.0.0-SNAPSHOT</gcm.version>
+		<gcm.version>4.0.0</gcm.version>
 		<gcm-taskit-protobuf.version>2.4.0-SNAPSHOT</gcm-taskit-protobuf.version>
 		<protoc.version>3.21.12</protoc.version>
 	</properties>
