@@ -413,119 +413,174 @@ public final class AT_PersonPropertyDataManager {
 			PersonPropertyId.class })
 	public void testGetPersonPropertyTime() {
 
-		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+		List<Integer> initialPopulationSizes = new ArrayList<>();
+		initialPopulationSizes.add(0);
+		initialPopulationSizes.add(10);
 
-		// show that all person property times are 0 for the time-tracked
-		// properties
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+		for (Integer initialPopulationSize : initialPopulationSizes) {
+			TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
+			// show that all person property times are 0 for the time-tracked
+			// properties
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			List<PersonId> people = peopleDataManager.getPeople();
-			for (PersonId personId : people) {
-				double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
-				assertEquals(0.0, personPropertyTime);
-				personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK);
-				assertEquals(0.0, personPropertyTime);
-				personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK);
-				assertEquals(0.0, personPropertyTime);
-			}
-		}));
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
 
-		// Set property 5 for all people at time 1
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				List<PersonId> people = peopleDataManager.getPeople();
+				for (PersonId personId : people) {
+					double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
+					assertEquals(0.0, personPropertyTime);
+					personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK);
+					assertEquals(0.0, personPropertyTime);
+					personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK);
+					assertEquals(0.0, personPropertyTime);
+				}
+			}));
 
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
-			List<PersonId> people = peopleDataManager.getPeople();
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			for (PersonId personId : people) {
-				personPropertiesDataManager.setPersonPropertyValue(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK, randomGenerator.nextInt());
-			}
-		}));
+			// Set property 5 for all people at time 1
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
-		// Set property 6 for all people at time 2
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				List<PersonId> people = peopleDataManager.getPeople();
+				RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+				for (PersonId personId : people) {
+					personPropertiesDataManager.setPersonPropertyValue(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK, randomGenerator.nextInt());
+				}
+			}));
 
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
-			List<PersonId> people = peopleDataManager.getPeople();
-			RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
-			for (PersonId personId : people) {
-				personPropertiesDataManager.setPersonPropertyValue(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK, randomGenerator.nextDouble());
-			}
-		}));
+			// Set property 6 for all people at time 2
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
 
-		// show that the person property times agree with the times above
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			List<PersonId> people = peopleDataManager.getPeople();
-			for (PersonId personId : people) {
-				double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
-				assertEquals(0.0, personPropertyTime);
-				personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK);
-				assertEquals(1.0, personPropertyTime);
-				personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
-						TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK);
-				assertEquals(2.0, personPropertyTime);
-			}
-		}));
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				List<PersonId> people = peopleDataManager.getPeople();
+				RandomGenerator randomGenerator = c.getDataManager(StochasticsDataManager.class).getRandomGenerator();
+				for (PersonId personId : people) {
+					personPropertiesDataManager.setPersonPropertyValue(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK, randomGenerator.nextDouble());
+				}
+			}));
 
-		// precondition tests
-		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(4, (c) -> {
-			PersonPropertiesDataManager personPropertiesDataManager = c
-					.getDataManager(PersonPropertiesDataManager.class);
+			// show that the person property times agree with the times above
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+				List<PersonId> people = peopleDataManager.getPeople();
+				for (PersonId personId : people) {
+					double personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK);
+					assertEquals(0.0, personPropertyTime);
+					personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK);
+					assertEquals(1.0, personPropertyTime);
+					personPropertyTime = personPropertiesDataManager.getPersonPropertyTime(personId,
+							TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK);
+					assertEquals(2.0, personPropertyTime);
+				}
+			}));
 
-			PersonId personId = new PersonId(0);
-			PersonId unknownPersonId = new PersonId(100000);
-			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK;
-			PersonPropertyId unknownPersonPropertyId = TestPersonPropertyId.getUnknownPersonPropertyId();
-			PersonPropertyId untrackedPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			TestPluginData testPluginData = pluginBuilder.build();
+			Factory factory = PersonPropertiesTestPluginFactory.factory(initialPopulationSize, 6980289425630085602L,
+					testPluginData);
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		}
 
-			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getPersonPropertyTime(null, personPropertyId));
-			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
+		// precondition test: if the person id is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				PersonPropertyId selectedPersonPropertyId = null;
+				for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
+					if (personPropertiesDataManager.isPropertyTimeTracked(personPropertyId)) {
+						selectedPersonPropertyId = personPropertyId;
+						break;
+					}
+				}
+				assertNotNull(selectedPersonPropertyId);
+				personPropertiesDataManager.getPersonPropertyTime(null, selectedPersonPropertyId);
+			});
 
-			// if the person id is unknown
-			contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getPersonPropertyTime(unknownPersonId, personPropertyId));
-			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});//
 
-			// if the person property id is null
-			contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getPersonPropertyTime(personId, null));
-			assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
-			// if the person property id is unknown
-			contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getPersonPropertyTime(personId, unknownPersonPropertyId));
-			assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+		// precondition test: if the person id is unknown
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				PersonPropertyId selectedPersonPropertyId = null;
+				for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
+					if (personPropertiesDataManager.isPropertyTimeTracked(personPropertyId)) {
+						selectedPersonPropertyId = personPropertyId;
+						break;
+					}
+				}
+				assertNotNull(selectedPersonPropertyId);
+				personPropertiesDataManager.getPersonPropertyTime(new PersonId(10000), selectedPersonPropertyId);
+			});
 
-			// if the person property does not have time tracking turned on in
-			// the associated property definition
-			contractException = assertThrows(ContractException.class,
-					() -> personPropertiesDataManager.getPersonPropertyTime(personId, untrackedPersonPropertyId));
-			assertEquals(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED, contractException.getErrorType());
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});//
+		assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
-		}));
+		// precondition test: if the person property id is null
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				personPropertiesDataManager.getPersonPropertyTime(new PersonId(0), null);
+			});
 
-		TestPluginData testPluginData = pluginBuilder.build();
-		Factory factory = PersonPropertiesTestPluginFactory.factory(10, 6980289425630085602L, testPluginData);
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});//
+		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the person property id is unknown
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				personPropertiesDataManager.getPersonPropertyTime(new PersonId(0),
+						TestPersonPropertyId.getUnknownPersonPropertyId());
+			});
+
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});//
+		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
+
+		// precondition test: if the person property does not have time tracking turned on in the associated property definition
+		contractException = assertThrows(ContractException.class, () -> {
+			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
+				PersonPropertiesDataManager personPropertiesDataManager = c
+						.getDataManager(PersonPropertiesDataManager.class);
+				PersonPropertyId selectedPersonPropertyId = null;
+				for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
+					if (!personPropertiesDataManager.isPropertyTimeTracked(personPropertyId)) {
+						selectedPersonPropertyId = personPropertyId;
+						break;
+					}
+				}
+				assertNotNull(selectedPersonPropertyId);
+				personPropertiesDataManager.getPersonPropertyTime(new PersonId(0), selectedPersonPropertyId);
+			});
+
+			TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		});//
+		assertEquals(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED, contractException.getErrorType());
+
 	}
 
 	@Test
@@ -2461,19 +2516,17 @@ public final class AT_PersonPropertyDataManager {
 		Plugin stochasticsPlugin = StochasticsPlugin.getStochasticsPlugin(stochasticsPluginData);
 
 		/*
-		 * Generate the test plugin. We will assign the actor plan to execute at time = 2 days after the
-		 * last definition time
+		 * Generate the test plugin. We will assign the actor plan to execute at time =
+		 * 2 days after the last definition time
 		 */
 		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
 		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(defTime + 2, (c) -> {
 			PersonPropertiesDataManager personPropertiesDataManager = c
 					.getDataManager(PersonPropertiesDataManager.class);
 			String actualValue = personPropertiesDataManager.toString();
-			
-			
-			//Expected value verified by inspection
-			String expectedValue = "PersonPropertiesDataManager ["
-					+ "propertyDefinitions={"
+
+			// Expected value verified by inspection
+			String expectedValue = "PersonPropertiesDataManager [" + "propertyDefinitions={"
 					+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], "
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], "
 					+ "PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0], "
@@ -2483,20 +2536,16 @@ public final class AT_PersonPropertyDataManager {
 					+ "PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], "
 					+ "PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, defaultValue=null]}, "
-					
-					
-					+ "propertyDefinitionTimes={"
-					+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=0.0, "
+
+					+ "propertyDefinitionTimes={" + "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=0.0, "
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=10.0, "
 					+ "PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK=20.0, "
 					+ "PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK=30.0, "
-					+ "PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK=40.0, "
-					+ "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=50.0, "
+					+ "PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK=40.0, " + "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=50.0, "
 					+ "PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=60.0, "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=70.0, "
 					+ "PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK=80.0}, "
-					
-					
+
 					+ "propertyValues={"
 					+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[5=false, 7=true, 9=false, 11=false, 13=true, 15=false, 17=false, 19=false, 21=false, 23=true]]], "
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[5=-1784993732, 7=-109471333, 9=-641697795, 11=-853847212, 13=1855748319, 15=1827577953, 17=177514276, 19=-1799284826, 21=-626016377, 23=-1823346824], defaultValue=0]], intValueType=INT], "
@@ -2507,14 +2556,12 @@ public final class AT_PersonPropertyDataManager {
 					+ "PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[5=false, 7=false, 9=true, 11=false, 13=false, 15=true, 17=false, 19=true, 21=true, 23=true]]], "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[5=1695573863, 7=-1825255758, 9=-699523552, 11=415571646, 13=-1764338201, 15=1365442318, 17=-1168885721, 19=-217000921, 21=-1935999918, 23=1816541785], defaultValue=0]], intValueType=INT], "
 					+ "PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[5=0.9464229716200492, 7=0.8780260194201455, 9=0.9049661618368101, 11=0.5378088867498643, 13=0.8768640339684239, 15=0.5485275606992501, 17=0.13054650062513473, 19=0.05010982715562107, 21=0.007152764713832971, 23=0.9936814752334928], defaultValue=0.0]]}, propertyTrackingPolicies={PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=false, PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=true, PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK=false, PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK=true, PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK=false, PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=true, PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=false, PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=true, PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK=false}, "
-					
-					
+
 					+ "propertyTimes={"
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=DoubleValueContainer [values=[5=15.08171142451204, 7=15.411062205893236, 9=16.542833291164307, 11=16.253824882614325, 13=11.303675742845412, 15=16.871251981539427, 17=14.77701648273313, 19=12.925171654145231, 21=16.51055558262879, 23=12.211953000397838], defaultValue=10.0], "
 					+ "PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK=DoubleValueContainer [values=[5=36.989398748334274, 7=32.63875498464337, 9=39.665805066056954, 11=37.97975065250025, 13=34.12721167419171, 15=38.78454108049003, 17=38.1994261250516, 19=39.056507171734374, 21=36.24325158296854, 23=34.51135513069816], defaultValue=30.0], "
 					+ "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=DoubleValueContainer [values=[5=52.56714915599213, 7=57.138725245642775, 9=56.84920656152565, 11=57.252923547109155, 13=54.44141841857151, 15=56.536139013953296, 17=58.95502858796634, 19=55.16555180553936, 21=51.29647283837218, 23=55.85289756382876], defaultValue=50.0], "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=DoubleValueContainer [values=[5=71.29830149062961, 7=71.9966285794095, 9=79.56528585286935, 11=78.67607305409997, 13=71.7323823816627, 15=71.42041658535238, 17=79.30789515021706, 19=73.03586146032546, 21=79.23203253002579, 23=70.76649742399243], defaultValue=70.0]}]";
-			
 
 			assertEquals(expectedValue, actualValue);
 		}));
@@ -2526,8 +2573,7 @@ public final class AT_PersonPropertyDataManager {
 		// time
 		SimulationState simulationState = SimulationState.builder().setStartTime(defTime + 1).build();
 
-		
-		//Execute the simulation
+		// Execute the simulation
 		TestSimulation.builder()//
 				.addPlugin(peoplePlugin)//
 				.addPlugin(testPlugin)//
