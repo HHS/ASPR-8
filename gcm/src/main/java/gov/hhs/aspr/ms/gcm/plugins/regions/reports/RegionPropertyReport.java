@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionPropertyDefinitionEvent;
@@ -14,7 +15,6 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 
 /**
@@ -32,10 +32,10 @@ public final class RegionPropertyReport {
 	private final boolean includeNewPropertyIds;
 
 	private final ReportHeader reportHeader = ReportHeader.builder()//
-			.add("Time")//
-			.add("Region")//
-			.add("Property")//
-			.add("Value")//
+			.add("time")//
+			.add("region")//
+			.add("property")//
+			.add("value")//
 			.build();//
 
 	private boolean isCurrentProperty(RegionPropertyId regionPropertyId) {

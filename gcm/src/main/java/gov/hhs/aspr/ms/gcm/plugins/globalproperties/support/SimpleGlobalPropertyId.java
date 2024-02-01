@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import util.errors.ContractException;
 
 /**

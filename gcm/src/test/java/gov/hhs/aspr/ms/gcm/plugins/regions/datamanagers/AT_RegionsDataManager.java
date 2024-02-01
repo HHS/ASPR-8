@@ -48,6 +48,8 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionAdditionEvent;
@@ -63,8 +65,6 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.RegionsTestPluginFactory.
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -2276,7 +2276,7 @@ public class AT_RegionsDataManager {
 	@Test
 	@UnitTestMethod(target = RegionsDataManager.class, name = "getEventFilterForRegionPropertyUpdateEvent", args = {
 			RegionId.class, RegionPropertyId.class })
-	public void getEventFilterForRegionPropertyUpdateEvent_Region_Property() {
+	public void testGetEventFilterForRegionPropertyUpdateEvent_Region_Property() {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		// create containers to hold actual and expected observations

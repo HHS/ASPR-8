@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.plugins.groups.support;
 
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import util.errors.ContractException;
 
 public record GroupPropertyValue(GroupPropertyId groupPropertyId, Object value) {

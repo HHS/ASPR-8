@@ -45,6 +45,8 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyDe
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageConversionInfo;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
@@ -53,8 +55,6 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.events.RegionResourceUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
 import util.errors.ContractException;
 import util.wrappers.MutableLong;
 

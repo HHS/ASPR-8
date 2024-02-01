@@ -30,19 +30,19 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyDefini
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.BooleanPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.DoublePropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.EnumPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.FloatPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.IndexedPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.IntPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.ObjectPropertyManager;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.DoubleValueContainer;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.BooleanPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.DoublePropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.EnumPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.FloatPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.IndexedPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.IntPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.ObjectPropertyManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.arraycontainers.DoubleValueContainer;
 import util.errors.ContractException;
 
 /**
