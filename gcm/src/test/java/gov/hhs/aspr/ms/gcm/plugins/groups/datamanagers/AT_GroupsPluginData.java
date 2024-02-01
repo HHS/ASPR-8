@@ -208,7 +208,7 @@ public class AT_GroupsPluginData {
         for (int i = 0; i < 100; i++) {
             TestGroupTypeId randomGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
 
-            GroupId groupId = new GroupId(i);
+            GroupId groupId = new GroupId(i*2+1);
             builder.addGroup(groupId, randomGroupTypeId);
             // adding duplicate group data to show the last value persists
             randomGroupTypeId = randomGroupTypeId.next();
