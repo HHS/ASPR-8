@@ -37,6 +37,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
@@ -54,7 +55,6 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginDat
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.testsupport.TestRandomGeneratorId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
 import util.random.RandomGeneratorProvider;

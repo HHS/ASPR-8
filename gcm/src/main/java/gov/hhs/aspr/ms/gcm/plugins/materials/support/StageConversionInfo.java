@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 

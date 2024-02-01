@@ -2,8 +2,8 @@ package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
 import java.util.Optional;
 
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 

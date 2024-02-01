@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.personproperties.events;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import net.jcip.annotations.Immutable;
 import util.errors.ContractException;
 

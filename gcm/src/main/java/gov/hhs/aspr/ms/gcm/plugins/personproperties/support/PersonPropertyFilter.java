@@ -13,8 +13,8 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import util.errors.ContractException;
 
 public final class PersonPropertyFilter extends Filter {

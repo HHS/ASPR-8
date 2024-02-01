@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 
 /**
  * A test support enumeration that contains a variety of materials producer

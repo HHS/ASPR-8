@@ -17,6 +17,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
@@ -34,7 +35,6 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import util.annotations.UnitTestConstructor;
 import util.annotations.UnitTestMethod;
 import util.errors.ContractException;
@@ -645,5 +645,5 @@ public class AT_RegionPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("Time").add("Region").add("Property").add("Value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("region").add("property").add("value").build();
 }

@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 
 /**
  * Enumeration that identifies person property definitions

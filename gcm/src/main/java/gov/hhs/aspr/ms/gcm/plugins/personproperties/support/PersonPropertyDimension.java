@@ -7,8 +7,8 @@ import java.util.Objects;
 import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyError;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import util.errors.ContractException;
 
 /**

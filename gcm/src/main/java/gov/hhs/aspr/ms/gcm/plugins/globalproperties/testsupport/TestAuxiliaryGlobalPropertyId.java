@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 
 /**
  * Enumeration that provides a variety of global property definitions for
