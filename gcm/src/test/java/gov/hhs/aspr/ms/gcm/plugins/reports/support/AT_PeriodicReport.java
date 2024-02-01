@@ -67,7 +67,8 @@ public class AT_PeriodicReport {
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
+					.build();
 
 			int dayValue = (int) FastMath.ceil(reportContext.getTime());
 
@@ -108,7 +109,8 @@ public class AT_PeriodicReport {
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
+					.build();
 			double time = reportContext.getTime();
 
 			int hour = (int) FastMath.ceil(time * 24);
@@ -153,7 +155,8 @@ public class AT_PeriodicReport {
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader).build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
+					.build();
 
 			assertEquals(0, reportItem.size());
 		}
@@ -177,10 +180,12 @@ public class AT_PeriodicReport {
 	@Test
 	@UnitTestConstructor(target = PeriodicReport.class, args = { ReportLabel.class, ReportPeriod.class })
 	public void testConstructor() {
-		ContractException contractException = assertThrows(ContractException.class, () -> new TestReport(null, ReportPeriod.DAILY));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> new TestReport(null, ReportPeriod.DAILY));
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 
-		contractException = assertThrows(ContractException.class, () -> new TestReport(new SimpleReportLabel("report"), null));
+		contractException = assertThrows(ContractException.class,
+				() -> new TestReport(new SimpleReportLabel("report"), null));
 		assertEquals(ReportError.NULL_REPORT_PERIOD, contractException.getErrorType());
 
 	}
@@ -228,12 +233,12 @@ public class AT_PeriodicReport {
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		DailyTestReport dailyTestReport = new DailyTestReport(reportLabel, ReportPeriod.DAILY);
 
-		plugins.add(Plugin	.builder()//
-							.setPluginId(new SimplePluginId("anonymous plugin"))//
-							.setInitializer((pc) -> {
-								pc.addReport(dailyTestReport::init);
-							})//
-							.build());
+		plugins.add(Plugin.builder()//
+				.setPluginId(new SimplePluginId("anonymous plugin"))//
+				.setInitializer((pc) -> {
+					pc.addReport(dailyTestReport::init);
+				})//
+				.build());
 
 		// add the reports plugin
 
@@ -250,8 +255,7 @@ public class AT_PeriodicReport {
 
 		// build and execute the simulation
 
-		
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(plugins)//
 				.build()//
 				.execute();
@@ -282,7 +286,7 @@ public class AT_PeriodicReport {
 		ReportLabel reportLabel = new SimpleReportLabel("report");
 		HourlyTestReport hourlyTestReport = new HourlyTestReport(reportLabel, ReportPeriod.HOURLY);
 
-		plugins.add(Plugin	.builder()//
+		plugins.add(Plugin.builder()//
 				.setPluginId(new SimplePluginId("anonymous plugin"))//
 				.setInitializer((pc) -> {
 					pc.addReport(hourlyTestReport::init);
@@ -300,7 +304,7 @@ public class AT_PeriodicReport {
 		plugins.add(testPlugin);
 
 		// build and execute the engine
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(plugins)//
 				.build()//
 				.execute();
@@ -334,14 +338,14 @@ public class AT_PeriodicReport {
 		Simulation.Builder builder = Simulation.builder();
 
 		ReportLabel reportLabel = new SimpleReportLabel("report");
-		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportLabel, ReportPeriod.END_OF_SIMULATION);
-		builder.addPlugin(Plugin	.builder()//
+		EndOfSimulationTestReport endOfSimulationTestReport = new EndOfSimulationTestReport(reportLabel,
+				ReportPeriod.END_OF_SIMULATION);
+		builder.addPlugin(Plugin.builder()//
 				.setPluginId(new SimplePluginId("anonymous plugin"))//
 				.setInitializer((pc) -> {
 					pc.addReport(endOfSimulationTestReport::init);
 				})//
 				.build());
-
 
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -358,8 +362,8 @@ public class AT_PeriodicReport {
 		builder.build().execute();
 
 		/*
-		 * Show that the end of simulation test report executed its test exactly
-		 * once at the end of the simulation
+		 * Show that the end of simulation test report executed its test exactly once at
+		 * the end of the simulation
 		 */
 
 		assertEquals(1, endOfSimulationTestReport.flushCount.getValue());
@@ -379,14 +383,13 @@ public class AT_PeriodicReport {
 
 			ReportLabel reportLabel = new SimpleReportLabel("report");
 			InitTestReport initTestReport = new InitTestReport(reportLabel, reportPeriod);
-			
-			builder.addPlugin(Plugin	.builder()//
+
+			builder.addPlugin(Plugin.builder()//
 					.setPluginId(new SimplePluginId("anonymous plugin"))//
 					.setInitializer((pc) -> {
 						pc.addReport(initTestReport::init);
 					})//
 					.build());
-			
 
 			TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
@@ -448,11 +451,6 @@ public class AT_PeriodicReport {
 				assertEquals(expectedTimes.get(i), initTestReport.flushTimes.get(i), 0.00001);
 			}
 
-			// precondition tests
-
-			TestReport testReport = new TestReport(reportLabel, ReportPeriod.DAILY);
-			ContractException contractException = assertThrows(ContractException.class, () -> testReport.init(null));
-			assertEquals(ReportError.NULL_CONTEXT, contractException.getErrorType());
 		}
 
 		// precondition tests
