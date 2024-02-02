@@ -16,10 +16,10 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData.Builder
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyDefinitionInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueInitialization;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 public class PopulationLoader {
 	private RandomGenerator randomGenerator;

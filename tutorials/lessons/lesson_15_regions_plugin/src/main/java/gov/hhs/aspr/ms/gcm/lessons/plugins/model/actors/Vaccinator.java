@@ -9,11 +9,11 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.RegionProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyDefinitionInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 public final class Vaccinator {
 

@@ -24,13 +24,13 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData.Builder;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 
 public final class Example_20 {
 
