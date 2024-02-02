@@ -27,6 +27,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
@@ -38,7 +39,6 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import util.random.RandomGeneratorProvider;
 
 public final class Example_18 {

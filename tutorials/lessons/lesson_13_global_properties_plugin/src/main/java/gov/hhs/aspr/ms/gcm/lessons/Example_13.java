@@ -19,8 +19,9 @@ import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+
 
 public final class Example_13 {
 
