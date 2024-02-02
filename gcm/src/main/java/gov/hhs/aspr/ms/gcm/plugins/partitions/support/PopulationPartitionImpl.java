@@ -24,6 +24,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
+import util.combinatorics.TupleGenerator;
 import util.errors.ContractException;
 
 /**
@@ -186,7 +187,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	private class PartialKeyIterator implements KeyIterator {
-		private final Tuplator tuplator;
+		private final TupleGenerator tupleGenerator;
 		private int index;
 		private final Key baseKey;
 		private Key nextKey;
@@ -211,13 +212,13 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				}
 			}
 
-			final Tuplator.Builder builder = Tuplator.builder();
+			final TupleGenerator.Builder builder = TupleGenerator.builder();
 			for (int i = 0; i < dimensionCount; i++) {
 				final int labelIndex = keyIndexes[i];
 				final LabelManager labelManager = labelManagers[labelIndex];
 				builder.addDimension(labelManager.getLabelCount());
 			}
-			tuplator = builder.build();
+			tupleGenerator = builder.build();
 
 			// baseKey = new Key(partialKey);
 			baseKey = partialKey;
@@ -225,11 +226,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		private void calculateNextKey() {
-			if (index >= tuplator.size()) {
+			if (index >= tupleGenerator.size()) {
 				nextKey = null;
 			} else {
-				while (index < tuplator.size()) {
-					tuplator.fillTuple(index++, tuple);
+				while (index < tupleGenerator.size()) {
+					tupleGenerator.fillTuple(index++, tuple);
 					for (int j = 0; j < dimensionCount; j++) {
 						final LabelManager labelManager = labelManagers[keyIndexes[j]];
 						// unsafe mutation calculate next key
@@ -261,7 +262,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		@Override
 		public int size() {
-			return tuplator.size();
+			return tupleGenerator.size();
 		}
 
 	}
