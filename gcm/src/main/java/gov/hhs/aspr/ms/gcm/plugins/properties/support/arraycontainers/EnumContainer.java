@@ -53,11 +53,15 @@ public final class EnumContainer {
 
 		this.indexIteratorSupplier = indexIteratorSupplier;
 
-		enumClass = c;
-		Enum<?> e = (Enum<?>) defaultValue;
 		objectValueContainer = new ObjectValueContainer(null, null);
-		objectValueContainer.setValue(e.ordinal(), defaultValue);
-		intValueContainer = new IntValueContainer(e.ordinal(), null);
+		enumClass = c;
+		if (defaultValue != null) {
+			Enum<?> e = (Enum<?>) defaultValue;
+			objectValueContainer.setValue(e.ordinal(), defaultValue);
+			intValueContainer = new IntValueContainer(e.ordinal(), null);
+		} else {
+			intValueContainer = new IntValueContainer(-1, null);
+		}
 	}
 
 	/**
@@ -110,7 +114,11 @@ public final class EnumContainer {
 		/*
 		 * Convert the ordinal value into the enum member instance.
 		 */
-		return objectValueContainer.getValue(ordinal);
+		if (ordinal >= 0) {
+			return objectValueContainer.getValue(ordinal);
+		} else {
+			return null;
+		}
 	}
 
 	public int getCapacity() {

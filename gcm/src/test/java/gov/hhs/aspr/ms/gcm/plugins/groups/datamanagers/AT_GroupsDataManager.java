@@ -1459,6 +1459,8 @@ public class AT_GroupsDataManager {
 		});
 		assertEquals(GroupError.UNKNOWN_GROUP_TYPE_ID, contractException.getErrorType());
 	}
+	
+	private static enum Color{RED,YELLOW,BLUE}
 
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupPropertyValue", args = { GroupId.class,
@@ -1484,28 +1486,54 @@ public class AT_GroupsDataManager {
 
 			// show that we have enough groups to conduct the test
 			assertTrue(groupIds.size() > 10);
-
-			Set<TestGroupPropertyId> mutableTrackablePropertyIds = new LinkedHashSet<>();
-			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-				PropertyDefinition propertyDefinition = testGroupPropertyId.getPropertyDefinition();
-				if (propertyDefinition.propertyValuesAreMutable()) {
-
-					mutableTrackablePropertyIds.add(testGroupPropertyId);
-
+			
+			//define a new property that does not have a default value
+			PropertyDefinition def = PropertyDefinition.builder()//
+					.setType(Color.class)//
+					.setPropertyValueMutability(true)//
+					.build();
+			
+			GroupPropertyDefinitionInitialization.Builder propBuilder = GroupPropertyDefinitionInitialization.builder()
+					.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)
+					.setPropertyDefinition(def)
+					.setPropertyId(new GroupPropertyId() {
+					});
+			
+			List<GroupId> groupsForProp = groupsDataManager.getGroupsForGroupType(TestGroupTypeId.GROUP_TYPE_1);
+			for(GroupId groupId : groupsForProp) {
+				propBuilder.addPropertyValue(groupId, Color.RED);
+			}					
+			groupsDataManager.defineGroupProperty(propBuilder.build());
+			
+			
+			//find the mutable properties
+			int mutablePropertyCount = 0;
+			Map<GroupTypeId, Set<GroupPropertyId>> mutableTrackablePropertyIds = new LinkedHashMap<>();
+			for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
+				mutableTrackablePropertyIds.put(groupTypeId, new LinkedHashSet<>());
+				for (GroupPropertyId groupPropertyId : groupsDataManager.getGroupPropertyIds(groupTypeId)) {
+					PropertyDefinition propertyDefinition = groupsDataManager.getGroupPropertyDefinition(groupTypeId,
+							groupPropertyId);
+					if (propertyDefinition.propertyValuesAreMutable()) {
+						mutableTrackablePropertyIds.get(groupTypeId).add(groupPropertyId);
+						mutablePropertyCount++;
+					}
 				}
 			}
 
 			// show that we have at least one mutable, trackable property
-			assertTrue(mutableTrackablePropertyIds.size() > 0);
+			assertTrue(mutablePropertyCount > 0);
 
 			// Change all the mutable property values and record
 			// those values.
-			for (TestGroupPropertyId testGroupPropertyId : mutableTrackablePropertyIds) {
-				TestGroupTypeId testGroupTypeId = testGroupPropertyId.getTestGroupTypeId();
-				List<GroupId> groupsForGroupType = groupsDataManager.getGroupsForGroupType(testGroupTypeId);
-				for (GroupId groupId : groupsForGroupType) {
-					Object value = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
-					expectedValues.put(new MultiKey(groupId, testGroupPropertyId), value);
+			for (GroupTypeId groupTypeId : mutableTrackablePropertyIds.keySet()) {
+				Set<GroupPropertyId> mutableGroupPropertyIds = mutableTrackablePropertyIds.get(groupTypeId);
+				for (GroupPropertyId groupPropertyId : mutableGroupPropertyIds) {
+					List<GroupId> groupsForGroupType = groupsDataManager.getGroupsForGroupType(groupTypeId);
+					for (GroupId groupId : groupsForGroupType) {
+						Object value = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
+						expectedValues.put(new MultiKey(groupId, groupPropertyId), value);
+					}
 				}
 			}
 		}));
@@ -1521,20 +1549,26 @@ public class AT_GroupsDataManager {
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
 				GroupId groupId = multiKey.getKey(0);
-				TestGroupPropertyId testGroupPropertyId = multiKey.getKey(1);
-				Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
+				GroupPropertyId groupPropertyId = multiKey.getKey(1);
+				Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 				Object expectedValue = expectedValues.get(multiKey);
 				assertEquals(expectedValue, actualValue);
-
-				Object newValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
-				groupsDataManager.setGroupPropertyValue(groupId, testGroupPropertyId, newValue);
+				Object newValue;
+				if(groupPropertyId instanceof TestGroupPropertyId) {
+					TestGroupPropertyId testGroupPropertyId = (TestGroupPropertyId)groupPropertyId;
+					newValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);	
+				}else {			
+					int ord = randomGenerator.nextInt(Color.values().length);
+					newValue = Color.values()[ord];
+				}				
+				groupsDataManager.setGroupPropertyValue(groupId, groupPropertyId, newValue);
 				expectedValues.put(multiKey, newValue);
 			}
 
 		}));
 
 		/*
-		 * At time = 2, have the agent show that the property values still have their
+		 * At time = 3, have the agent show that the property values still have their
 		 * expected values.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(3, (c) -> {
@@ -1542,8 +1576,8 @@ public class AT_GroupsDataManager {
 
 			for (MultiKey multiKey : expectedValues.keySet()) {
 				GroupId groupId = multiKey.getKey(0);
-				TestGroupPropertyId testGroupPropertyId = multiKey.getKey(1);
-				Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, testGroupPropertyId);
+				GroupPropertyId groupPropertyId = multiKey.getKey(1);
+				Object actualValue = groupsDataManager.getGroupPropertyValue(groupId, groupPropertyId);
 				Object expectedValue = expectedValues.get(multiKey);
 				assertEquals(expectedValue, actualValue);
 			}
@@ -5173,37 +5207,31 @@ public class AT_GroupsDataManager {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "getGroupIndexIterator", args = {})
 	public void testGetGroupIndexIterator() {
 
 		Factory factory = GroupsTestPluginFactory.factory(0, 3, 10, 7388964335248251429L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
-			
+
 			//
-			
-			
+
 			// show that the iterator yields the list of existing people in the usual order
-			List<GroupId> expectedGroups = groupsDataManager.getGroupIds();			
+			List<GroupId> expectedGroups = groupsDataManager.getGroupIds();
 			List<GroupId> actualGroups = new ArrayList<>();
 			Iterator<Integer> groupIndexIterator = groupsDataManager.getGroupIndexIterator();
 			while (groupIndexIterator.hasNext()) {
 				Integer id = groupIndexIterator.next();
-				GroupId groupId = new GroupId(id);				
+				GroupId groupId = new GroupId(id);
 				assertTrue(groupsDataManager.groupExists(groupId));
 				actualGroups.add(groupId);
 			}
 			assertEquals(expectedGroups, actualGroups);
 		});
 
-		
-
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	
-	
 	@Test
 	@UnitTestMethod(target = GroupsDataManager.class, name = "toString", args = {})
 	public void testToString() {
@@ -5211,24 +5239,29 @@ public class AT_GroupsDataManager {
 		Factory factory = GroupsTestPluginFactory.factory(30, 2, 5, 929934281474564292L, (c) -> {
 			GroupsDataManager groupsDataManager = c.getDataManager(GroupsDataManager.class);
 			String actualValue = groupsDataManager.toString();
-			
-			//expected value verified by inspection
-			StringBuilder sb = new StringBuilder();			
+
+			// expected value verified by inspection
+			StringBuilder sb = new StringBuilder();
 			sb.append("GroupsDataManager [");
-			sb.append("groupPropertyManagerMap={GROUP_TYPE_1={GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=false, 3=true, 4=false, 5=false, 6=true, 7=false, 8=false, 9=true, 10=false, 11=false]]], GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=0, 5=0, 6=-1566878986, 7=0, 8=0, 9=235907035, 10=0, 11=0], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.3425156570357295, 1=0.0, 2=0.0, 3=0.0, 4=0.0, 5=0.0, 6=0.9311195847064178, 7=0.0, 8=0.0, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}, GROUP_TYPE_2={GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=false, 3=false, 4=false, 5=false, 6=false, 7=false, 8=false, 9=false, 10=true, 11=false]]], GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=-449998779, 5=0, 6=0, 7=0, 8=0, 9=0, 10=1041083617, 11=0], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.0, 1=0.0, 2=0.0, 3=0.0, 4=0.16116841623093192, 5=0.0, 6=0.0, 7=0.0, 8=0.0, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}, GROUP_TYPE_3={GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=true, 3=false, 4=false, 5=true, 6=false, 7=false, 8=false, 9=false, 10=false, 11=true]]], GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=0, 5=-348594628, 6=0, 7=0, 8=0, 9=0, 10=0, 11=-205917896], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.0, 1=0.0, 2=0.8943039222106994, 3=0.0, 4=0.0, 5=0.9032000604182797, 6=0.0, 7=0.0, 8=0.12721615664212016, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}}, ");
-			sb.append("groupPropertyDefinitions={GROUP_TYPE_1={GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0]}, GROUP_TYPE_2={GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0]}, GROUP_TYPE_3={GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, defaultValue=0.0]}}, ");
-			sb.append("typesToGroupsMap=ObjectValueContainer [elements=[0=[0, 3, 6, 9], 1=[1, 4, 7, 10], 2=[2, 5, 8, 11]], defaultValue=null], ");
-			sb.append("groupsToTypesMap=IntValueContainer [subTypeArray=ByteArray [values=[0=0, 1=1, 2=2, 3=0, 4=1, 5=2, 6=0, 7=1, 8=2, 9=0, 10=1, 11=2], defaultValue=-1]], ");
+			sb.append(
+					"groupPropertyManagerMap={GROUP_TYPE_1={GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=false, 3=true, 4=false, 5=false, 6=true, 7=false, 8=false, 9=true, 10=false, 11=false]]], GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=0, 5=0, 6=-1566878986, 7=0, 8=0, 9=235907035, 10=0, 11=0], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.3425156570357295, 1=0.0, 2=0.0, 3=0.0, 4=0.0, 5=0.0, 6=0.9311195847064178, 7=0.0, 8=0.0, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}, GROUP_TYPE_2={GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=false, 3=false, 4=false, 5=false, 6=false, 7=false, 8=false, 9=false, 10=true, 11=false]]], GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=-449998779, 5=0, 6=0, 7=0, 8=0, 9=0, 10=1041083617, 11=0], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.0, 1=0.0, 2=0.0, 3=0.0, 4=0.16116841623093192, 5=0.0, 6=0.0, 7=0.0, 8=0.0, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}, GROUP_TYPE_3={GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[0=false, 1=false, 2=true, 3=false, 4=false, 5=true, 6=false, 7=false, 8=false, 9=false, 10=false, 11=true]]], GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[0=0, 1=0, 2=0, 3=0, 4=0, 5=-348594628, 6=0, 7=0, 8=0, 9=0, 10=0, 11=-205917896], defaultValue=0]], intValueType=INT], GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[0=0.0, 1=0.0, 2=0.8943039222106994, 3=0.0, 4=0.0, 5=0.9032000604182797, 6=0.0, 7=0.0, 8=0.12721615664212016, 9=0.0, 10=0.0, 11=0.0], defaultValue=0.0]]}}, ");
+			sb.append(
+					"groupPropertyDefinitions={GROUP_TYPE_1={GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0]}, GROUP_TYPE_2={GROUP_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], GROUP_PROPERTY_2_2_INTEGER_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], GROUP_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0]}, GROUP_TYPE_3={GROUP_PROPERTY_3_1_BOOLEAN_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], GROUP_PROPERTY_3_2_INTEGER_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=false, defaultValue=0.0]}}, ");
+			sb.append(
+					"typesToGroupsMap=ObjectValueContainer [elements=[0=[0, 3, 6, 9], 1=[1, 4, 7, 10], 2=[2, 5, 8, 11]], defaultValue=null], ");
+			sb.append(
+					"groupsToTypesMap=IntValueContainer [subTypeArray=ByteArray [values=[0=0, 1=1, 2=2, 3=0, 4=1, 5=2, 6=0, 7=1, 8=2, 9=0, 10=1, 11=2], defaultValue=-1]], ");
 			sb.append("typesToIndexesMap={GROUP_TYPE_1=0, GROUP_TYPE_2=1, GROUP_TYPE_3=2}, ");
 			sb.append("indexesToTypesMap=[GROUP_TYPE_1, GROUP_TYPE_2, GROUP_TYPE_3], ");
-			sb.append("groupsToPeopleMap=ObjectValueContainer [elements=[0=[10, 2, 9, 4, 28, 24, 0], 1=[19, 26, 28, 13], 2=[1, 2, 21, 26, 8, 29, 15, 19, 0], 3=[6, 4], 4=[16, 18], 5=[8, 2, 5, 12, 3, 28, 20, 14], 6=[15, 20], 7=[20, 25, 27], 8=[2, 6, 8, 4, 0, 7, 12, 16, 21], 9=[10, 7], 10=[13, 23, 26, 28, 18, 12, 27, 22], 11=[17, 19, 14, 12]], defaultValue=null], ");
-			sb.append("peopleToGroupsMap=ObjectValueContainer [elements=[0=[8, 0, 2], 1=[2], 2=[2, 5, 0, 8], 3=[5], 4=[8, 0, 3], 5=[5], 6=[8, 3], 7=[8, 9], 8=[5, 8, 2], 9=[0], 10=[0, 9]], defaultValue=null], ");
+			sb.append(
+					"groupsToPeopleMap=ObjectValueContainer [elements=[0=[10, 2, 9, 4, 28, 24, 0], 1=[19, 26, 28, 13], 2=[1, 2, 21, 26, 8, 29, 15, 19, 0], 3=[6, 4], 4=[16, 18], 5=[8, 2, 5, 12, 3, 28, 20, 14], 6=[15, 20], 7=[20, 25, 27], 8=[2, 6, 8, 4, 0, 7, 12, 16, 21], 9=[10, 7], 10=[13, 23, 26, 28, 18, 12, 27, 22], 11=[17, 19, 14, 12]], defaultValue=null], ");
+			sb.append(
+					"peopleToGroupsMap=ObjectValueContainer [elements=[0=[8, 0, 2], 1=[2], 2=[2, 5, 0, 8], 3=[5], 4=[8, 0, 3], 5=[5], 6=[8, 3], 7=[8, 9], 8=[5, 8, 2], 9=[0], 10=[0, 9]], defaultValue=null], ");
 			sb.append("masterGroupId=12]");
 			String expectedValue = sb.toString();
-			
-			
+
 			assertEquals(expectedValue, actualValue);
-			
+
 		});
 
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
