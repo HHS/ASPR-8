@@ -40,6 +40,8 @@ public class AT_EnumPropertyManager {
 	@Test
 	@UnitTestMethod(target = EnumPropertyManager.class, name = "getPropertyValue", args = { int.class })
 	public void testGetPropertyValue() {
+		
+		//postcondition test: when the default value is not null
 		Factory factory = TestPluginFactory.factory((c) -> {
 			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5102684240650614254L);
 
@@ -74,12 +76,54 @@ public class AT_EnumPropertyManager {
 
 				}
 			}
-
-			// precondition tests
-			ContractException contractException = assertThrows(ContractException.class, () -> enumPropertyManager.getPropertyValue(-1));
-			assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
 		});
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
+		//postcondition test: when the default value is null
+		factory = TestPluginFactory.factory((c) -> {
+			RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5102684240650614254L);
+
+			
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).build();
+
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
+
+			/*
+			 * We will set the first 10 
+			 */
+			Map<Integer, Color> expectedValues = new LinkedHashMap<>();
+
+			for (int i = 0; i < 10; i++) {				
+				Color value = Color.values()[randomGenerator.nextInt(Color.values().length)];
+				expectedValues.put(i, value);
+				enumPropertyManager.setPropertyValue(i, value);
+			}
+
+			/*
+			 * if the value was set above, then it should equal the last value
+			 * place in the expected values, otherwise it will have the default
+			 * value.
+			 */
+			for (int i = 0; i < 20; i++) {
+				if (expectedValues.containsKey(i)) {
+					assertEquals(expectedValues.get(i), enumPropertyManager.getPropertyValue(i));
+
+				} else {
+					assertEquals(null, (Color) enumPropertyManager.getPropertyValue(i));
+				}
+			}
+		});
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+		
+		// precondition test: if the index is negative
+		ContractException contractException = assertThrows(ContractException.class,()->{
+			Color defaultValue = Color.YELLOW;
+			PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Color.class).setDefaultValue(defaultValue).build();
+			EnumPropertyManager enumPropertyManager = new EnumPropertyManager(propertyDefinition, this::getEmptyIndexIterator);
+			enumPropertyManager.getPropertyValue(-1);
+		});
+		assertEquals(PropertyError.NEGATIVE_INDEX, contractException.getErrorType());
+		
 	}
 
 

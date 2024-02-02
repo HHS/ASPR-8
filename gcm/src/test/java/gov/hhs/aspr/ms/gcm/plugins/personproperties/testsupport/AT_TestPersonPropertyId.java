@@ -178,7 +178,7 @@ public class AT_TestPersonPropertyId implements PersonPropertyId {
 		assertTrue(TestPersonPropertyId.PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK.isTimeTracked());
 		assertFalse(TestPersonPropertyId.PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK.isTimeTracked());
 		assertFalse(TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK.isTimeTracked());
-		assertFalse(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK.isTimeTracked());
+		assertFalse(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK.isTimeTracked());
 	}
 
 	@Test

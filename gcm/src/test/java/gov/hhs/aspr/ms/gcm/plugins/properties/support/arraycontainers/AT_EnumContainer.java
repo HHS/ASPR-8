@@ -88,7 +88,20 @@ public class AT_EnumContainer {
 		assertEquals(Animal.DOG, enumContainer.getValue(4));
 		assertEquals(Animal.CAT, enumContainer.getValue(5));
 		assertEquals(Animal.DOG, enumContainer.getValue(6));
-
+		
+		//show that a null default is tolerated and returned
+		enumContainer = new EnumContainer(Animal.class, null,this::getEmptyIndexIterator);
+		enumContainer.setValue(3, Animal.CAT);
+		enumContainer.setValue(5, Animal.CAT);
+		enumContainer.setValue(2, Animal.SHEEP);
+		
+		assertEquals(null, enumContainer.getValue(0));
+		assertEquals(null, enumContainer.getValue(1));
+		assertEquals(Animal.SHEEP, enumContainer.getValue(2));
+		assertEquals(Animal.CAT, enumContainer.getValue(3));
+		assertEquals(null, enumContainer.getValue(4));
+		assertEquals(Animal.CAT, enumContainer.getValue(5));
+		assertEquals(null, enumContainer.getValue(6));
 	}
 
 	/**

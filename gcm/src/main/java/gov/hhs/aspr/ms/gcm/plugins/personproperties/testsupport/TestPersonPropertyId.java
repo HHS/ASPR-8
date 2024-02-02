@@ -62,10 +62,10 @@ public enum TestPersonPropertyId implements PersonPropertyId {
             .setPropertyValueMutability(false)//
             .build() //
             , false), //
-    PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK(PropertyDefinition.builder()//
+    PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK(PropertyDefinition.builder()//
             .setType(Double.class)//
             // .setDefaultValue(0.0)//
-            .setPropertyValueMutability(false)//
+            .setPropertyValueMutability(true)//
             .build() //
             , false);//
 
@@ -128,7 +128,7 @@ public enum TestPersonPropertyId implements PersonPropertyId {
             return randomGenerator.nextBoolean();
         case PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK:
             return randomGenerator.nextInt();
-        case PERSON_PROPERTY_9_DOUBLE_IMMUTABLE_NO_TRACK:
+        case PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK:
             return randomGenerator.nextDouble();
         default:
             throw new RuntimeException("unhandled case: " + this);
