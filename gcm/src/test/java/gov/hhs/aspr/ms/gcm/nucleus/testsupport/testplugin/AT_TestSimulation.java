@@ -65,8 +65,7 @@ public class AT_TestSimulation {
 			assertTrue(pluginDatas.size() == 1);
 
 			RunContinuityPluginData pluginData = pluginDatas.get(0);
-			assertTrue(pluginData.allPlansComplete());
-			assertEquals(1, pluginData.getCompletionCount());
+			assertTrue(pluginData.allPlansComplete());			
 		}
 
 	}
@@ -115,7 +114,8 @@ public class AT_TestSimulation {
 
 			RunContinuityPlanData runContinuityPlanData = new RunContinuityPlanData(0);
 			RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder()
-					.addContextConsumer(planTime, (c) -> called.setValue(true)).setPlansAreScheduled(true).build();
+					.addContextConsumer(planTime, (c) -> called.setValue(true))//
+					.build();
 
 			Plugin actorPlugin = RunContinuityPlugin.builder().setRunContinuityPluginData(runContinuityPluginData)
 					.build();
@@ -145,7 +145,7 @@ public class AT_TestSimulation {
 
 			RunContinuityPluginData pluginData = pluginDatas.get(0);
 
-			assertEquals(1, pluginData.getCompletionCount());
+			
 			assertTrue(pluginData.allPlansComplete());
 		}
 
@@ -194,10 +194,8 @@ public class AT_TestSimulation {
 		Optional<RunContinuityPluginData> optionalRunContinuityPluginData = testOutputConsumer
 				.getOutputItem(RunContinuityPluginData.class);
 		assertTrue(optionalRunContinuityPluginData.isPresent());
-		runContinuityPluginData = optionalRunContinuityPluginData.get();
-		assertEquals(1, runContinuityPluginData.getCompletionCount());
+		runContinuityPluginData = optionalRunContinuityPluginData.get();		
 		assertTrue(runContinuityPluginData.allPlansComplete());
-
 	}
 
 	@Test
@@ -246,8 +244,7 @@ public class AT_TestSimulation {
 		Optional<RunContinuityPluginData> optionalRunContinuityPluginData = testOutputConsumer
 				.getOutputItem(RunContinuityPluginData.class);
 		assertTrue(optionalRunContinuityPluginData.isPresent());
-		runContinuityPluginData = optionalRunContinuityPluginData.get();
-		assertEquals(1, runContinuityPluginData.getCompletionCount());
+		runContinuityPluginData = optionalRunContinuityPluginData.get();		
 		assertTrue(runContinuityPluginData.allPlansComplete());
 	}
 
@@ -303,8 +300,7 @@ public class AT_TestSimulation {
 		Optional<RunContinuityPluginData> optionalRunContinuityPluginData = testOutputConsumer
 				.getOutputItem(RunContinuityPluginData.class);
 		assertTrue(optionalRunContinuityPluginData.isPresent());
-		runContinuityPluginData = optionalRunContinuityPluginData.get();
-		assertEquals(1, runContinuityPluginData.getCompletionCount());
+		runContinuityPluginData = optionalRunContinuityPluginData.get();		
 		assertTrue(runContinuityPluginData.allPlansComplete());
 	}
 }

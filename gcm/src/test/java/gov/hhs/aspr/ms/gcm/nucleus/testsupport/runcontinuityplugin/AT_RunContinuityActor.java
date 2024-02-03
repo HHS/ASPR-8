@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class AT_RunContinuityActor {
 				.execute();
 
 		runContinuityPluginData = outputConsumer.getOutputItem(RunContinuityPluginData.class).get();
-		assertEquals(expectedOutput.size(), runContinuityPluginData.getCompletionCount());
+		assertTrue(runContinuityPluginData.allPlansComplete());
 		
 		
 		Set<Double> actualOutput = new LinkedHashSet<>(outputConsumer.getOutputItems(Double.class));

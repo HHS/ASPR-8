@@ -27,17 +27,6 @@ public class AT_RunContinuityPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.class, name = "getCompletionCount", args = {})
-	public void testGetCompletionCount() {
-		for (int i = 0; i < 10; i++) {
-			RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder().setCompletionCount(i)
-					.build();
-			assertEquals(i, runContinuityPluginData.getCompletionCount());
-		}
-
-	}
-
-	@Test
 	@UnitTestMethod(target = RunContinuityPluginData.class, name = "getConsumers", args = {})
 	public void testGetConsumers() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5172593709525641500L);
@@ -67,10 +56,9 @@ public class AT_RunContinuityPluginData {
 
 		for (int i = 0; i < 10; i++) {
 
-			RunContinuityPluginData.Builder builder = RunContinuityPluginData.builder()//
-					.setCompletionCount(randomGenerator.nextInt(3))//
-					.setPlansAreScheduled(randomGenerator.nextBoolean());//
-			for (int j = 0; j < 3; j++) {
+			RunContinuityPluginData.Builder builder = RunContinuityPluginData.builder();//
+
+			for (int j = 0; j < i; j++) {
 				builder.addContextConsumer(randomGenerator.nextDouble(), (c) -> {
 				});
 			}
@@ -79,93 +67,29 @@ public class AT_RunContinuityPluginData {
 			RunContinuityPluginData cloneRunContinuityPluginData = //
 					(RunContinuityPluginData) runContinuityPluginData.getCloneBuilder().build();
 
-			assertEquals(runContinuityPluginData.getCompletionCount(),
-					cloneRunContinuityPluginData.getCompletionCount());
-
 			assertEquals(runContinuityPluginData.getConsumers(), cloneRunContinuityPluginData.getConsumers());
 
 		}
 	}
 
 	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.class, name = "plansAreScheduled", args = {})
-	public void testPlansAreScheduled() {
-		RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder().setPlansAreScheduled(true)
-				.build();
-		assertTrue(runContinuityPluginData.plansAreScheduled());
-
-		runContinuityPluginData = RunContinuityPluginData.builder().setPlansAreScheduled(false).build();
-		assertFalse(runContinuityPluginData.plansAreScheduled());
-
-	}
-
-	@Test
 	@UnitTestMethod(target = RunContinuityPluginData.class, name = "allPlansComplete", args = {})
 	public void testAllPlansComplete() {
 		assertTrue(RunContinuityPluginData.builder()//
-				.setCompletionCount(0)//
-				.setPlansAreScheduled(true)//				
 				.build().allPlansComplete());
-		
-		assertTrue(RunContinuityPluginData.builder()//
-				.setCompletionCount(3)//
-				.setPlansAreScheduled(true)//				
-				.build().allPlansComplete());
-		
-		
+
 		assertFalse(RunContinuityPluginData.builder()//
-				.setCompletionCount(0)//
-				.setPlansAreScheduled(true)//
 				.addContextConsumer(1.0, (c) -> {
 				})//
 				.build().allPlansComplete());
-		
-		assertTrue(RunContinuityPluginData.builder()//
-				.setCompletionCount(1)//
-				.setPlansAreScheduled(true)//
-				.addContextConsumer(1.0, (c) -> {
-				})//
-				.build().allPlansComplete());
-
-		
-		assertFalse(RunContinuityPluginData.builder()//
-				.setCompletionCount(1)//
-				.setPlansAreScheduled(true)//
-				.addContextConsumer(1.0, (c) -> {
-				})//
-				.addContextConsumer(1.0, (c) -> {
-				})//
-				.build().allPlansComplete());
-		
-		assertTrue(RunContinuityPluginData.builder()//
-				.setCompletionCount(2)//
-				.setPlansAreScheduled(true)//
-				.addContextConsumer(1.0, (c) -> {
-				})//
-				.addContextConsumer(1.0, (c) -> {
-				})//
-				.build().allPlansComplete());
-
-
 
 	}
 
 	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.Builder.class, name = "build", args = {}, tags = {UnitTag.LOCAL_PROXY})
+	@UnitTestMethod(target = RunContinuityPluginData.Builder.class, name = "build", args = {}, tags = {
+			UnitTag.LOCAL_PROXY })
 	public void testBuild() {
-		//covered by other tests
-	}
-
-	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.Builder.class, name = "setPlansAreScheduled", args = {
-			boolean.class })
-	public void testSetPlansAreScheduled() {
-		RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder().setPlansAreScheduled(true)
-				.build();
-		assertTrue(runContinuityPluginData.plansAreScheduled());
-
-		runContinuityPluginData = RunContinuityPluginData.builder().setPlansAreScheduled(false).build();
-		assertFalse(runContinuityPluginData.plansAreScheduled());
+		// covered by other tests
 	}
 
 	@Test
@@ -189,16 +113,6 @@ public class AT_RunContinuityPluginData {
 		RunContinuityPluginData runContinuityPluginData = builder.build();
 
 		assertEquals(expectedPairs, runContinuityPluginData.getConsumers());
-	}
-
-	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.Builder.class, name = "setCompletionCount", args = { int.class })
-	public void testSetCompletionCount() {
-		for (int i = 0; i < 10; i++) {
-			RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder().setCompletionCount(i)
-					.build();
-			assertEquals(i, runContinuityPluginData.getCompletionCount());
-		}
 	}
 
 }
