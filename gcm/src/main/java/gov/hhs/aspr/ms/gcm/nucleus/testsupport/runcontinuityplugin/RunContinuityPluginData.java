@@ -19,10 +19,6 @@ public class RunContinuityPluginData implements PluginData {
 
 	private static class Data {
 
-		private boolean plansAreScheduled;
-
-		private int completionCount;
-
 		private List<Pair<Double, Consumer<ActorContext>>> consumers = new ArrayList<>();
 
 		private boolean locked;
@@ -30,8 +26,7 @@ public class RunContinuityPluginData implements PluginData {
 		private Data() {
 		}
 
-		private Data(Data data) {
-			completionCount = data.completionCount;
+		private Data(Data data) {			
 			consumers.addAll(data.consumers);
 			locked = data.locked;
 		}
@@ -81,15 +76,6 @@ public class RunContinuityPluginData implements PluginData {
 		}
 
 		/**
-		 * Sets the plan scheduling state. Defaults to false.
-		 */
-		public Builder setPlansAreScheduled(boolean plansAreScheduled) {
-			ensureDataMutability();
-			data.plansAreScheduled = plansAreScheduled;
-			return this;
-		}
-
-		/**
 		 * Schedules a context consumer
 		 */
 		public Builder addContextConsumer(final double time, final Consumer<ActorContext> consumer) {
@@ -98,14 +84,6 @@ public class RunContinuityPluginData implements PluginData {
 			return this;
 		}
 
-		/**
-		 * Sets the completion count
-		 */
-		public Builder setCompletionCount(final int completionCount) {
-			ensureDataMutability();
-			data.completionCount = completionCount;
-			return this;
-		}
 
 		private void validateData() {
 			// do nothing
@@ -117,13 +95,6 @@ public class RunContinuityPluginData implements PluginData {
 
 	private RunContinuityPluginData(Data data) {
 		this.data = data;
-	}
-
-	/**
-	 * Returns the completion count
-	 */
-	public int getCompletionCount() {
-		return data.completionCount;
 	}
 
 	/**
@@ -139,19 +110,11 @@ public class RunContinuityPluginData implements PluginData {
 	}
 
 	/**
-	 * Returns true if plans have been scheduled from the consumers
-	 */
-	public boolean plansAreScheduled() {
-		return data.plansAreScheduled;
-	}
-
-	/**
 	 * Returns true if the completion count is greater than or equal to the number
 	 * of contained consumers.
 	 */
 	public boolean allPlansComplete() {
-		return data.completionCount >= data.consumers.size();
-
+		return data.consumers.isEmpty();
 	}
 
 }

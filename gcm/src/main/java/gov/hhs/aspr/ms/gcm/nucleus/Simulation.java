@@ -883,10 +883,12 @@ public class Simulation {
 			planRec.planner = planQueueData.getPlanner();
 			planRec.time = planQueueData.getTime();
 
-			if (planRec.isActive) {
-				activePlanCount++;
-			}
+			
 			if (planRec.plan.getCallbackConsumer() != null) {
+				if (planRec.isActive) {
+					activePlanCount++;
+				}
+				
 				planningQueue.add(planRec);
 				Map<Object, PlanRec> map;
 				if (planRec.key != null) {
@@ -1041,10 +1043,12 @@ public class Simulation {
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
+		
 		loadExistingPlans();
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
 
+		
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
 				if (planningQueue.peek().time > simulationHaltTime) {
