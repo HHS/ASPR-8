@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.groups.reports.GroupPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
 import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A plugin providing a group data manager to the simulation.

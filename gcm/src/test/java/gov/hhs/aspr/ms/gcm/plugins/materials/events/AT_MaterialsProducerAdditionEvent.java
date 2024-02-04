@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestMaterialsProducerId;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_MaterialsProducerAdditionEvent {
 

@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_MaterialsProducerResourceUpdateEvent {
 

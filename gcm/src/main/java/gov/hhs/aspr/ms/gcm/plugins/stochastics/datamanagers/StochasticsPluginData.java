@@ -10,8 +10,8 @@ import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A thread-safe container for the initial state of random generators.

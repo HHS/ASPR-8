@@ -9,8 +9,7 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertie
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReport;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
-
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A plugin providing a global property data manager to the simulation.

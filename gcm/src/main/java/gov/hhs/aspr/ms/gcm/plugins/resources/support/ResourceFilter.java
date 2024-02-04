@@ -13,7 +13,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class ResourceFilter extends Filter {
 	private final ResourceId resourceId;

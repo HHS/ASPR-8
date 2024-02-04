@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.partitions.support;
 
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A limited context that grants access to the simulation via the partition data

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.BooleanContainer;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Boolean property values

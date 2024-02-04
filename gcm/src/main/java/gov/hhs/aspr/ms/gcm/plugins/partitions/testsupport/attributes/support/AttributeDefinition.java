@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A thread-safe, immutable class that defines an attribute, but does not

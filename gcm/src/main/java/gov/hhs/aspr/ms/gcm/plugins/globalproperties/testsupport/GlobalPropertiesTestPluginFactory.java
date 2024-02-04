@@ -18,8 +18,8 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertiesError;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain GlobalPropertiesPlugin}.

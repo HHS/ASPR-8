@@ -11,8 +11,8 @@ import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An immutable container of the initial state of global components and global

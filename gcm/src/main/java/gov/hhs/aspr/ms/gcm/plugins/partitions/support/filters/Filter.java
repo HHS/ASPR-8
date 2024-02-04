@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public abstract class Filter {
 

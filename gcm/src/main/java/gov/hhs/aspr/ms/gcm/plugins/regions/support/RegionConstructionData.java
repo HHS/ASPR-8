@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class RegionConstructionData {
 

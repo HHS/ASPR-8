@@ -32,7 +32,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Mutable data manager for managing population partitions that are maintained

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A container for PluginDataBuilder instances.

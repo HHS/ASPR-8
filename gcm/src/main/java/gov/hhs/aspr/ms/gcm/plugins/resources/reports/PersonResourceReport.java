@@ -22,8 +22,8 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
-import util.errors.ContractException;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 /**
  * A periodic Report that displays number of people who have/do not have any

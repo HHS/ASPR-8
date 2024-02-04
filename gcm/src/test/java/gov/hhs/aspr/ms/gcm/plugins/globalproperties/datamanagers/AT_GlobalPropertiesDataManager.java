@@ -44,13 +44,13 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.GlobalProperties
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory.Factory;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.TestAuxiliaryGlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.TestGlobalPropertyId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
-import util.wrappers.MultiKey;
 
 public final class AT_GlobalPropertiesDataManager {
     /**

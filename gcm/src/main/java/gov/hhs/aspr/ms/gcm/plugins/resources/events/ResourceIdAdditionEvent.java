@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.resources.events;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An observation event indicating that a resource id has been added.

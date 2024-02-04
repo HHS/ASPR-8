@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.IntValueContainer;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.IntValueContainer.IntValueType;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Byte, Short, Integer or

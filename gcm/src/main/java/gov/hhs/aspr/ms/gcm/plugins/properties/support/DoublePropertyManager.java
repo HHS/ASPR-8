@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.DoubleValueContainer;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Implementor of IndexedPropertyManager that compresses Double property values

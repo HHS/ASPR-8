@@ -2,8 +2,8 @@ package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
 import java.util.Arrays;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 @ThreadSafe
 public class WellState {

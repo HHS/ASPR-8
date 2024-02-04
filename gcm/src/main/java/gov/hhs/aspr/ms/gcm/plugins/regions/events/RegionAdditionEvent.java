@@ -6,8 +6,8 @@ import java.util.List;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event indicating that a region has been added

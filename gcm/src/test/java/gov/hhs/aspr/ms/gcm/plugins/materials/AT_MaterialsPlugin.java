@@ -21,8 +21,8 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.resources.ResourcesPluginId;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_MaterialsPlugin {
 

@@ -8,8 +8,8 @@ import org.apache.commons.math3.util.Pair;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * A class for defining a material producer property with an associated property

@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A labeler for regions. The dimension of the labeler is the

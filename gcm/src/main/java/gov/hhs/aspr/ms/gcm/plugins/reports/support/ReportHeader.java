@@ -3,9 +3,9 @@ package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import util.errors.ContractException;
 
 /**
  * An immutable, ordered container for the string values in the header of a

@@ -17,7 +17,7 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginDat
 import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_RegionPlugin {
 

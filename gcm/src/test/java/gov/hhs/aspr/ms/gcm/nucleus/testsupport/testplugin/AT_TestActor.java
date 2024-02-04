@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.wrappers.MultiKey;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 
 public class AT_TestActor {
 

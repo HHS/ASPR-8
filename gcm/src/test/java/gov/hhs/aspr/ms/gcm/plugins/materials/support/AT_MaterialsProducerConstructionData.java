@@ -18,9 +18,9 @@ import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_MaterialsProducerConstructionData {
 

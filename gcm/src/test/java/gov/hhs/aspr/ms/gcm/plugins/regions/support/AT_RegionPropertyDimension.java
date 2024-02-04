@@ -21,9 +21,9 @@ import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionPropertyId;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_RegionPropertyDimension {
 	@Test

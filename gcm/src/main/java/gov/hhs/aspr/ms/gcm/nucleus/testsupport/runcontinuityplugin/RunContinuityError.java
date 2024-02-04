@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
-import util.errors.ContractError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * An enumeration supporting {@link ContractException} that acts as a general

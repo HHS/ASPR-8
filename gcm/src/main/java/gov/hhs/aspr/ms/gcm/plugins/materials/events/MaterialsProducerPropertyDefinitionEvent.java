@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event released by the materials data manager whenever a materials producer

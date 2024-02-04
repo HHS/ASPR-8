@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.util.errors.ContractError;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractError;
 
 /**
  * <p>

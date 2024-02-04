@@ -23,9 +23,9 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
-import util.wrappers.MultiKey;
 
 /**
  * An immutable container of the initial state of the GroupDataManager. It

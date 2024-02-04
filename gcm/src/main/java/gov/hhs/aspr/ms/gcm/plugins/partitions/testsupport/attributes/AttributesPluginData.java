@@ -15,8 +15,8 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.Att
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 @Immutable
 public class AttributesPluginData implements PluginData {

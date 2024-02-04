@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Test Support class that describes an action for an actor as a scheduled plan

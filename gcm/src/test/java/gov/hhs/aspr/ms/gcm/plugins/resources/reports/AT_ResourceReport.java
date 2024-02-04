@@ -20,9 +20,9 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyInitializat
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.ResourcesTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourcePropertyId;
-import util.annotations.UnitTag;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTag;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_ResourceReport {
 

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_PeoplePlugin {
 	

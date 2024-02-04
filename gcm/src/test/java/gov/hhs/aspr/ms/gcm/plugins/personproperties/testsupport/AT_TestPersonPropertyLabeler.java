@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_TestPersonPropertyLabeler {
 

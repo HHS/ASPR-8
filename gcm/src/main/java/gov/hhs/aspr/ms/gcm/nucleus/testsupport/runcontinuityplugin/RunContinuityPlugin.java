@@ -1,8 +1,8 @@
 package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A plugin providing a person property management to the simulation.

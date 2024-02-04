@@ -17,7 +17,7 @@ import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A mutable data manager for global properties.

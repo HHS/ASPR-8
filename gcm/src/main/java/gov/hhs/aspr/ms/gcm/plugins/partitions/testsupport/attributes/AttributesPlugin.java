@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeError;
 import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
-import util.errors.ContractError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * <p>

@@ -22,11 +22,11 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.wrappers.MutableDouble;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableDouble;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_PeriodicReport {
 

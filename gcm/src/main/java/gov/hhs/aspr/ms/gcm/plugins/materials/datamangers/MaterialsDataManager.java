@@ -55,8 +55,8 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.events.RegionResourceUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.events.ResourceIdAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
-import util.errors.ContractException;
-import util.wrappers.MutableLong;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableLong;
 
 /**
  * General manager for all material activities.

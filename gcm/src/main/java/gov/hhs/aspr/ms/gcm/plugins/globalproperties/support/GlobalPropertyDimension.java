@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Dimension implementation for setting a global property to a list of values in

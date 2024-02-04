@@ -7,8 +7,8 @@ import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.RegionAdditionEvent;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event indicating that a materials producer has been added

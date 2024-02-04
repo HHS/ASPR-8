@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * A generics-based data class for collecting an ordered list of predicates of

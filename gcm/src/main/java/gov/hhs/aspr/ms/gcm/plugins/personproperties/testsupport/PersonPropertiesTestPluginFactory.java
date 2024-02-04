@@ -32,8 +32,8 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 /**
  * A static test support class for the {@linkplain PersonPropertiesPlugin}.

@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.globalproperties.support;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A simple implementor of {@link GlobalPropertyId} that wraps a value.

@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.personproperties.events;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event released by the people data manager whenever a person property

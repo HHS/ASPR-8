@@ -3,9 +3,9 @@ package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A thread safe(immutable), container that supports output lines for multiple

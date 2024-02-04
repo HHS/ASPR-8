@@ -47,12 +47,12 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import util.graph.Graph;
-import util.graph.GraphDepthEvaluator;
-import util.graph.Graphs;
-import util.graph.MutableGraph;
-import util.meta.packagedependency.PackageDependencyData;
-import util.path.MapPathSolver;
+import gov.hhs.aspr.ms.util.graph.Graph;
+import gov.hhs.aspr.ms.util.graph.GraphDepthEvaluator;
+import gov.hhs.aspr.ms.util.graph.Graphs;
+import gov.hhs.aspr.ms.util.graph.MutableGraph;
+import gov.hhs.aspr.ms.util.meta.packagedependency.PackageDependencyData;
+import gov.hhs.aspr.ms.util.path.MapPathSolver;
 
 /**
  *
@@ -456,7 +456,7 @@ public class PluginDependencyInfoGenerator {
 			// }
 
 			if (pluginDependencyGraph.containsNode(originNode) && pluginDependencyGraph.containsNode(destinationNode)) {
-				Optional<util.path.Path<Edge>> optionalPath = mapPathSolver.getPath(originNode, destinationNode);
+				Optional<gov.hhs.aspr.ms.util.path.Path<Edge>> optionalPath = mapPathSolver.getPath(originNode, destinationNode);
 				if (optionalPath.isEmpty()) {
 					System.out.println("The package dependency of " + originNode + "->" + destinationNode + " violates the plugin dependency graph");
 				}

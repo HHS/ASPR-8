@@ -5,8 +5,8 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 @Immutable
 public record BatchPropertyUpdateEvent(BatchId batchId, BatchPropertyId batchPropertyId, Object previousPropertyValue,

@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class RegionPropertyDimension implements Dimension {
     private final Data data;

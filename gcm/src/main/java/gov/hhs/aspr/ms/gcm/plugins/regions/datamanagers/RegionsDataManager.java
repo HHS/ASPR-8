@@ -35,8 +35,8 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyDefinitionInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
-import util.errors.ContractException;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 /**
  * Mutable data manager for regions. This data manager is for internal use by

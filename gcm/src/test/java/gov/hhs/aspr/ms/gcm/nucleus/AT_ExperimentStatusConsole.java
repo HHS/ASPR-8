@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTag;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTag;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_ExperimentStatusConsole {
 

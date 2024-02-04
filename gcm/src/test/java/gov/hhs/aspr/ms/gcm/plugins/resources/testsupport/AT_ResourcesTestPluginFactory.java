@@ -44,10 +44,10 @@ import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
-import util.wrappers.MutableBoolean;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
 
 public class AT_ResourcesTestPluginFactory {
 

@@ -12,9 +12,9 @@ import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
 import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.groups.testsupport.TestGroupTypeId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_GroupPropertyDefinitionEvent {
 

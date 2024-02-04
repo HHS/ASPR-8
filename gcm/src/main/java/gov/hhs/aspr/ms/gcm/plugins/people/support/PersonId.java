@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.people.support;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * Identifier for all people

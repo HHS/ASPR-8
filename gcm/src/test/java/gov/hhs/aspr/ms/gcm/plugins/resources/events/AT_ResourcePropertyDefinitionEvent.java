@@ -11,9 +11,9 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.testsupport.TestResourcePropertyId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_ResourcePropertyDefinitionEvent {
 

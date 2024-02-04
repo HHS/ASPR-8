@@ -16,7 +16,7 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.reports.StageReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.ResourcesPluginId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A plugin providing a materials data manager to the simulation.

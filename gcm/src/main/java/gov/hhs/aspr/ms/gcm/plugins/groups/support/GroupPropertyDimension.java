@@ -8,7 +8,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.nucleus.DimensionContext;
 import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Dimension implementation for setting a group property to a list of values in

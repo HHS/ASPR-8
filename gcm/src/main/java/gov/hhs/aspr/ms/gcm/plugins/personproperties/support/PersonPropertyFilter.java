@@ -15,7 +15,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertie
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class PersonPropertyFilter extends Filter {
 

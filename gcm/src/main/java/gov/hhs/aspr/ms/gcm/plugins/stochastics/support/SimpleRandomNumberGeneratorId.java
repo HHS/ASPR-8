@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.stochastics.support;
 
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.SimpleGlobalPropertyId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     private final Object value;

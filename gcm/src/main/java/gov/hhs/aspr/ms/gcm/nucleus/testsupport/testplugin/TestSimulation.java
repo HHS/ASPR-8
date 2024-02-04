@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
 import gov.hhs.aspr.ms.gcm.nucleus.SimulationState;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A Testing utility class that will execute a simulation given a list of

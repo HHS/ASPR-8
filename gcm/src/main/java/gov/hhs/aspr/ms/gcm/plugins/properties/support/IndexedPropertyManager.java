@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.plugins.properties.support;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Common interface to all property managers. A property manager manages

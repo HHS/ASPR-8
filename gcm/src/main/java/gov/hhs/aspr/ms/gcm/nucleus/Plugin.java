@@ -7,8 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A plugin is the main compositional element of an experiment. Plugins contain

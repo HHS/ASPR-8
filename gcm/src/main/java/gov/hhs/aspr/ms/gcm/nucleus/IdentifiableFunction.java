@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.util.function.Function;
 
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class IdentifiableFunction<N> {
 
