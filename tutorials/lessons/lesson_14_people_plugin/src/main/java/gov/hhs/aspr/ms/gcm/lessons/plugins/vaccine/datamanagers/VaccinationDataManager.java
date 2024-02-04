@@ -16,8 +16,8 @@ import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.errors.ContractException;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class VaccinationDataManager extends DataManager {
 	/* start code_ref= people_plugin_vaccine_counts|code_cap=The vaccination data manager uses a simple map from person id to a counter to track the number of vaccinations for each person.*/

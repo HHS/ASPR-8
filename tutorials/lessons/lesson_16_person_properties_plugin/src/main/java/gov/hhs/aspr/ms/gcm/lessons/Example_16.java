@@ -35,7 +35,7 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public final class Example_16 {
 

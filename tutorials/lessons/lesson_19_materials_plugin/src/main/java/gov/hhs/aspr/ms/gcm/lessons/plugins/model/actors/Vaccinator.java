@@ -22,8 +22,8 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateE
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
-import util.wrappers.MutableDouble;
-import util.wrappers.MutableLong;
+import gov.hhs.aspr.ms.util.wrappers.MutableDouble;
+import gov.hhs.aspr.ms.util.wrappers.MutableLong;
 
 public class Vaccinator {
 
