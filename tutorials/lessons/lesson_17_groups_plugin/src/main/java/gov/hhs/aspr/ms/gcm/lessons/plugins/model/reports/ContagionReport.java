@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertie
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class ContagionReport {
 	private final ReportHeader reportHeader = ReportHeader.builder().add("infected").add("count").build();

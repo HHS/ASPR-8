@@ -1,8 +1,8 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * Identifier for all regions

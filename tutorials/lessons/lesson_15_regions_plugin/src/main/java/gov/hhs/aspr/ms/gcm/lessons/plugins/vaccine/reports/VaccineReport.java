@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class VaccineReport extends PeriodicReport {
 

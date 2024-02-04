@@ -9,7 +9,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertie
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import util.stats.MutableStat;
+import gov.hhs.aspr.ms.util.stats.MutableStat;
 
 /**
  * A report that groups people at the end of the simulation by their shared
