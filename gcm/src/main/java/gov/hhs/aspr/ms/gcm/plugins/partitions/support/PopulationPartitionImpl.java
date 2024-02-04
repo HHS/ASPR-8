@@ -24,8 +24,8 @@ import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
-import util.combinatorics.TupleGenerator;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.combinatorics.TupleGenerator;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Primary implementor for {@link PopulationPartition}

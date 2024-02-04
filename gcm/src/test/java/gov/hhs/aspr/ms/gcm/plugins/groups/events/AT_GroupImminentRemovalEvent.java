@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.groups.events;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_GroupImminentRemovalEvent {
 

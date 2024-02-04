@@ -43,7 +43,7 @@ import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.DoubleValu
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Mutable data manager for person properties

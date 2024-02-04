@@ -40,8 +40,8 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourcePropertyInitialization;
-import util.errors.ContractException;
-import util.wrappers.MutableLong;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableLong;
 
 /**
  * Data manager for resources. Resource property values are generally mutable

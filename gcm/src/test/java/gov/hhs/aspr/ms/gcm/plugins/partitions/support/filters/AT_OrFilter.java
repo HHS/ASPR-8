@@ -19,10 +19,10 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_OrFilter {
 

@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.regions.events;
 import gov.hhs.aspr.ms.gcm.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * Event indicating the addition of a region property

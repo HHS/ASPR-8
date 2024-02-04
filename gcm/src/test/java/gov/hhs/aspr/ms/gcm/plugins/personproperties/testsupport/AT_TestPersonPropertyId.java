@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
-import util.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_TestPersonPropertyId implements PersonPropertyId {
 

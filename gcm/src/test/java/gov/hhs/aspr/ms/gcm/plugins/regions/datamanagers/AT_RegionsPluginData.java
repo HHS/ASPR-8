@@ -31,10 +31,10 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.testsupport.TestRegionPropertyId;
-import util.annotations.UnitTag;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTag;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 /**
  * Test unit for {@linkplain RegionsPluginData}. Tests for

@@ -5,8 +5,8 @@ import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupTypeId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event released by the groups data manager whenever a group property

@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.events.PersonRegionUpdateEvent;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class RegionFilter extends Filter {
 

@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPluginId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A nucleus plugin for the management of population partitions. A population

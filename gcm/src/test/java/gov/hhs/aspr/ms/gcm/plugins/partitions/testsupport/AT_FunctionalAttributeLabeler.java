@@ -7,7 +7,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
-import util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 
 public class AT_FunctionalAttributeLabeler {
 	private static enum LocalAttributeId implements AttributeId {

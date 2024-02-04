@@ -18,7 +18,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.reports.PersonPropertyReport
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_PersonPropertiesPlugin {
 

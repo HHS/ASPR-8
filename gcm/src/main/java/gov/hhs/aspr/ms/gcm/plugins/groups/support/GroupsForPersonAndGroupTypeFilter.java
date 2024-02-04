@@ -13,7 +13,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 	private final GroupTypeId groupTypeId;

@@ -9,7 +9,7 @@ import java.util.Map;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class MaterialsProducerConstructionData {
 

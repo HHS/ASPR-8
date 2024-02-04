@@ -6,8 +6,8 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.FilterSensitivity;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 @Immutable
 public final class AndFilter extends Filter {

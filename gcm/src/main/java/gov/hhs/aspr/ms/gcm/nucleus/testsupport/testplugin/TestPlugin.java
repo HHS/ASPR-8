@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginContext;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Static test support plugin that is designed to work with a unit testing

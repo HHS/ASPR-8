@@ -24,10 +24,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
-import util.wrappers.MutableBoolean;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_ExperimentStateManager {
 

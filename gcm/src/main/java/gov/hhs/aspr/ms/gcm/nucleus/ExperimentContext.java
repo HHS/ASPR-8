@@ -6,8 +6,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.nucleus.util.TriConsumer;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * Interface for the thread safe access of experiment/scenario state and meta

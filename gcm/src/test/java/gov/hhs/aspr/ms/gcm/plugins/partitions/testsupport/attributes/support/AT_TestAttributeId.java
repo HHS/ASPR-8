@@ -13,9 +13,9 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_TestAttributeId {
 

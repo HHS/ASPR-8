@@ -13,8 +13,8 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
-import util.wrappers.MultiKey;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 /**
  * A periodic Report that displays the number of times a person transferred from

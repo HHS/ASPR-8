@@ -2,8 +2,8 @@ package gov.hhs.aspr.ms.gcm.plugins.properties.support;
 
 import java.util.Optional;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A thread-safe, immutable class that defines a property, but does not indicate

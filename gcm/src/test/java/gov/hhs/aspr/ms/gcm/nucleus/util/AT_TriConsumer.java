@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import util.annotations.UnitTestMethod;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_TriConsumer {
 

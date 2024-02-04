@@ -12,7 +12,7 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.resources.events.PersonResourceUpdateEvent;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A a labeler for resources. The dimension of the labeler is the given

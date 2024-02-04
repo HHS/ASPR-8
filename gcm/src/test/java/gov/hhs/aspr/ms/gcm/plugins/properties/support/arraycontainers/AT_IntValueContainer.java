@@ -14,8 +14,8 @@ import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.IntValueContainer.IntValueType;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_IntValueContainer {
 	

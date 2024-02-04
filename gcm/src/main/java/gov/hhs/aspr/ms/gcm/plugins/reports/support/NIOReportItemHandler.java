@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * An experiment-level output management utility for writing report items to

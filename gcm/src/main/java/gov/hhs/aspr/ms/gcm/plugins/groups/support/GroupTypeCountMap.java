@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Partition;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
-import util.errors.ContractException;
 
 /**
  * Represents the mapping from the various {@link GroupTypeId} values to the

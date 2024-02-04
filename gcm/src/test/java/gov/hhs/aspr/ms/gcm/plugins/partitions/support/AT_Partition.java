@@ -18,8 +18,8 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.FunctionalAttributeLab
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.annotations.UnitTestMethod;
-import util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_Partition {
 

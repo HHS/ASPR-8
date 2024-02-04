@@ -5,8 +5,8 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
-import util.errors.ContractException;
 
 /**
  * An event indicating the addition of a batch property for the given material.

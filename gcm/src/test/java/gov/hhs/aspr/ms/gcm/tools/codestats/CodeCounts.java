@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.tools.codestats;
 
-import util.meta.codecount.CodeCountReport;
+import gov.hhs.aspr.ms.util.meta.codecount.CodeCountReport;
 
 public class CodeCounts {
 	public static void main(String[] args) {

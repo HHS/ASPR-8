@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
-import util.annotations.UnitTestMethod;
-import util.wrappers.MutableBoolean;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
 
 public class AT_TestPlugin {
 

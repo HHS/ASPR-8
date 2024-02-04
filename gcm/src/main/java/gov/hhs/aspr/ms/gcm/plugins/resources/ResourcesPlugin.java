@@ -14,7 +14,7 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReportPlugi
 import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReport;
 import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.resources.support.ResourceError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class ResourcesPlugin {
 

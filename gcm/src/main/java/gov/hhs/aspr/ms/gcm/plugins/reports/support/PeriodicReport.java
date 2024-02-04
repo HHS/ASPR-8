@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * The abstract base class for reports that aggregate reporting aligned to a

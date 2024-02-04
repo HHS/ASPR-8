@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.Pair;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.graph.Graph;
+import gov.hhs.aspr.ms.util.graph.GraphDepthEvaluator;
+import gov.hhs.aspr.ms.util.graph.Graphs;
+import gov.hhs.aspr.ms.util.graph.MutableGraph;
+import gov.hhs.aspr.ms.util.path.MapPathSolver;
+import gov.hhs.aspr.ms.util.path.Path;
 import net.jcip.annotations.NotThreadSafe;
-import util.errors.ContractException;
-import util.graph.Graph;
-import util.graph.GraphDepthEvaluator;
-import util.graph.Graphs;
-import util.graph.MutableGraph;
-import util.path.MapPathSolver;
-import util.path.Path;
 
 /**
  * An instance of the Simulation orchestrates the execution of a scenario from a

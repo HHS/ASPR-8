@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import util.errors.ContractException;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 /**
  * A Testing utility class that will consume simulation output and includes a

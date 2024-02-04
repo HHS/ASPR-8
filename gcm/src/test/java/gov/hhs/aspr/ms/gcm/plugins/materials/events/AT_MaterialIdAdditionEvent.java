@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsError;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_MaterialIdAdditionEvent {
 

@@ -14,8 +14,8 @@ import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFa
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.TestPartitionsContext;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_FilterSensitivity {
 

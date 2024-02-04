@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.plugins.materials.events;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
-import util.annotations.UnitTestConstructor;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_BatchImminentRemovalEvent {
 

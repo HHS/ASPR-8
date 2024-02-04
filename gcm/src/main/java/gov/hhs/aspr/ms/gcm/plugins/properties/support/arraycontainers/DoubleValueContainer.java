@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.function.Supplier;
 
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * A container that maps non-negative int index values to doubles by storing

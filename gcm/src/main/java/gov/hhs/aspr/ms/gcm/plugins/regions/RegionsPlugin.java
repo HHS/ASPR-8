@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionPropertyReportPluginDat
 import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReport;
 import gov.hhs.aspr.ms.gcm.plugins.regions.reports.RegionTransferReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionError;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class RegionsPlugin {
 

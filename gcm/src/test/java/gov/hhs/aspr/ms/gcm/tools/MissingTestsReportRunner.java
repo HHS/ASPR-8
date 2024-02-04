@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.tools;
 
-import util.meta.unittestcoverage.reports.MissingTestsReport;
+import gov.hhs.aspr.ms.util.meta.unittestcoverage.reports.MissingTestsReport;
 
 public class MissingTestsReportRunner {
     public static void main(String[] args) {

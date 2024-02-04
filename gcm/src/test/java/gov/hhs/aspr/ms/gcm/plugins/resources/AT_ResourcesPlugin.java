@@ -19,7 +19,7 @@ import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.resources.reports.PersonResourceReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourcePropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.resources.reports.ResourceReportPluginData;
-import util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_ResourcesPlugin {
 

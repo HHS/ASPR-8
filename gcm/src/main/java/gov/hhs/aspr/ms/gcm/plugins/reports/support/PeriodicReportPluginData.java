@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.reports.support;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public abstract class PeriodicReportPluginData implements PluginData {
 

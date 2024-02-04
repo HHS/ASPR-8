@@ -12,8 +12,8 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.reports.PersonPropertyReport
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.reports.PersonPropertyReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPluginId;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
-import util.errors.ContractException;
 
 /**
  * A plugin providing a person property management to the simulation.

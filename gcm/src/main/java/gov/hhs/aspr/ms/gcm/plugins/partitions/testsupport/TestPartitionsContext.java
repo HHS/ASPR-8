@@ -4,7 +4,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.nucleus.NucleusError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Test support implementor of PartitionsContext that uses an ActorContext

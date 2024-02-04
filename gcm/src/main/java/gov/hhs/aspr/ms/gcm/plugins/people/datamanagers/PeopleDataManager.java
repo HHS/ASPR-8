@@ -19,7 +19,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
-import util.errors.ContractException;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Mutable data manager for people.
