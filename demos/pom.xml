@@ -1,0 +1,48 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.hhs.aspr.ms</groupId>
+        <artifactId>gcm</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <!-- Artifact -->
+    <groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
+    <artifactId>gcm-demos</artifactId>
+    <packaging>pom</packaging>
+
+    <name>GCM: Demos</name>
+    <description>Parent Pom for GCM Demos</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.hhs.aspr.ms.gcm</groupId>
+                <artifactId>gcm-simulation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.ms.gcm</groupId>
+            <artifactId>gcm-simulation</artifactId>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>gcm-taskit</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build />
+        </profile>
+    </profiles>
+</project>

@@ -17,7 +17,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueI
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.PersonProperty;
 
