@@ -19,7 +19,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertie
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.events.PersonPropertyUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.Well;
-import util.wrappers.MultiKey;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 
 public class EventVaccinator {
 

@@ -18,7 +18,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class FamilyVaccineReport {
 

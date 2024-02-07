@@ -1,0 +1,67 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.hhs.aspr.ms</groupId>
+        <artifactId>gcm</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <!-- Artifact -->
+    <groupId>gov.hhs.aspr.ms.gcm.lessons</groupId>
+    <artifactId>gcm-lessons</artifactId>
+    <packaging>pom</packaging>
+
+    <name>GCM: Lessons</name>
+    <description>Parent Pom for GCM Lessons</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.hhs.aspr.ms.gcm</groupId>
+                <artifactId>gcm-simulation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.ms.gcm</groupId>
+            <artifactId>gcm-simulation</artifactId>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>lesson_01_hello_world</module>
+        <module>lesson_02_plugins</module>
+        <module>lesson_03_actors</module>
+        <module>lesson_04_data_managers</module>
+        <module>lesson_05_events</module>
+        <module>lesson_06_plugin_dependencies</module>
+        <module>lesson_07_plugin_dependency_graph</module>
+        <module>lesson_08_plugin_data</module>
+        <module>lesson_09_experiments</module>
+        <module>lesson_10_output</module>
+        <module>lesson_11_stochastics_plugin</module>
+        <module>lesson_12_reports_plugin</module>
+        <module>lesson_13_global_properties_plugin</module>
+        <module>lesson_14_people_plugin</module>
+        <module>lesson_15_regions_plugin</module>
+        <module>lesson_16_person_properties_plugin</module>
+        <module>lesson_17_groups_plugin</module>
+        <module>lesson_18_resources_plugin</module>
+        <module>lesson_19_materials_plugin</module>
+        <module>lesson_20_partitions_plugin</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build />
+        </profile>
+    </profiles>
+</project>

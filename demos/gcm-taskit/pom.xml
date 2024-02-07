@@ -4,17 +4,16 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- Organization -->
-	<organization>
-		<name>ASPR</name>
-		<url>https://www.phe.gov</url>
-	</organization>
+	
+	<parent>
+        <groupId>gov.hhs.aspr.ms.gcm.lessons</groupId>
+        <artifactId>gcm-lessons</artifactId>
+        <version>${revision}</version>
+    </parent>
 
 	<!-- Artifact -->
 	<groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
 	<artifactId>gcm-taskit</artifactId>
-	<version>${revision}</version>
-	<packaging>jar</packaging>
 	<name>serialization demo</name>
 	<description>Demonstrate serialization integration with simulation</description>
 
@@ -188,6 +187,4 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>
-
-</project>
+	</build></project>

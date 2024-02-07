@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Artifact -->
-    <groupId>gov.hhs.aspr.ms.gcm</groupId>
+    <groupId>gov.hhs.aspr.ms</groupId>
     <artifactId>gcm</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>General Computational Model</name>
-    <description>GCM is a Java based simulation framework for building disease progression models.</description>
+    <name>GCM</name>
+    <description>Parent pom for the GCM Simulation.</description>
     <url>https://github.com/HHS/ASPR-8</url>
 
     <!-- License Information -->
@@ -117,7 +117,7 @@
     <modules>
         <module>simulation</module>
         <module>lessons</module>
-        <module>taskit</module>
+        <!-- <module>taskit</module> -->
     </modules>
 
     <build>

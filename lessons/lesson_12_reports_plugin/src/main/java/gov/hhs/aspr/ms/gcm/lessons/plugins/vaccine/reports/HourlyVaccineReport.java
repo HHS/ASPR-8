@@ -20,7 +20,7 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class HourlyVaccineReport extends PeriodicReport {
 	/* start code_ref=reports_plugin_hourly_vaccine_constructor|code_cap=The hourly vaccine report covers the same content as the family vaccine report. Rather than report events as they happen, it instead periodically summarizes these events.*/

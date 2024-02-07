@@ -16,7 +16,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.Well;
-import util.wrappers.MultiKey;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 
 public class InspectionVaccinator {
 

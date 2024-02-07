@@ -5,13 +5,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>gov.hhs.aspr.ms.gcm</groupId>
+		<groupId>gov.hhs.aspr.ms</groupId>
 		<artifactId>gcm</artifactId>
 		<version>${revision}</version>
 	</parent>
 	<!-- Artifact -->
 
 	<artifactId>gcm-simulation</artifactId>
-	<packaging>jar</packaging>
-
-</project>
+	<name>GCM: Simulation</name>
+	<description>The General Comuptational Model (GCM) is a Java based simulation framework for building disease progression models.</description>
+</project>	

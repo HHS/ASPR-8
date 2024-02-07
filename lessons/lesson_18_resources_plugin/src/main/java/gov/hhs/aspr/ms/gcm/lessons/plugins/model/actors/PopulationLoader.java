@@ -15,7 +15,7 @@ import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueI
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import util.wrappers.MutableDouble;
+import gov.hhs.aspr.ms.util.wrappers.MutableDouble;
 
 public class PopulationLoader {
 	private RegionId defaultRegionId;

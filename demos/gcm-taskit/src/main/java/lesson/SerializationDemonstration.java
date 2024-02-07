@@ -54,8 +54,8 @@ import lesson.plugins.model.Region;
 import lesson.translatorSpecs.GlobalPropertyTranslatorSpec;
 import lesson.translatorSpecs.PersonPropertyTranslatorSpec;
 import lesson.translatorSpecs.RegionTranslatorSpec;
-import util.random.RandomGeneratorProvider;
-import util.time.Stopwatch;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.time.Stopwatch;
 
 public final class SerializationDemonstration {
 
