@@ -36,26 +36,26 @@
     </dependencies>
 
     <modules>
-        <module>lesson_01_hello_world</module>
-        <module>lesson_02_plugins</module>
-        <module>lesson_03_actors</module>
-        <module>lesson_04_data_managers</module>
-        <module>lesson_05_events</module>
-        <module>lesson_06_plugin_dependencies</module>
-        <module>lesson_07_plugin_dependency_graph</module>
-        <module>lesson_08_plugin_data</module>
-        <module>lesson_09_experiments</module>
-        <module>lesson_10_output</module>
-        <module>lesson_11_stochastics_plugin</module>
-        <module>lesson_12_reports_plugin</module>
-        <module>lesson_13_global_properties_plugin</module>
-        <module>lesson_14_people_plugin</module>
-        <module>lesson_15_regions_plugin</module>
-        <module>lesson_16_person_properties_plugin</module>
-        <module>lesson_17_groups_plugin</module>
-        <module>lesson_18_resources_plugin</module>
-        <module>lesson_19_materials_plugin</module>
-        <module>lesson_20_partitions_plugin</module>
+        <module>lesson-01</module>
+        <module>lesson-02</module>
+        <module>lesson-03</module>
+        <module>lesson-04</module>
+        <module>lesson-05</module>
+        <module>lesson-06</module>
+        <module>lesson-07</module>
+        <module>lesson-08</module>
+        <module>lesson-09</module>
+        <module>lesson-10</module>
+        <module>lesson-11</module>
+        <module>lesson-12</module>
+        <module>lesson-13</module>
+        <module>lesson-14</module>
+        <module>lesson-15</module>
+        <module>lesson-16</module>
+        <module>lesson-17</module>
+        <module>lesson-18</module>
+        <module>lesson-19</module>
+        <module>lesson-20</module>
     </modules>
 
     <profiles>
