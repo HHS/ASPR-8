@@ -57,11 +57,4 @@
         <module>lesson-19</module>
         <module>lesson-20</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build />
-        </profile>
-    </profiles>
 </project>
