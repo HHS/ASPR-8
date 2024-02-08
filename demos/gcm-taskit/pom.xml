@@ -4,27 +4,18 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- Organization -->
-	<organization>
-		<name>ASPR</name>
-		<url>https://www.phe.gov</url>
-	</organization>
+	<parent>
+		<groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
+		<artifactId>gcm-demos</artifactId>
+		<version>${revision}</version>
+	</parent>
 
 	<!-- Artifact -->
-	<groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
-	<artifactId>gcm-taskit</artifactId>
-	<version>${revision}</version>
-	<packaging>jar</packaging>
-	<name>serialization demo</name>
+	<artifactId>gcm-taskit-demo</artifactId>
+	<name>GCM: Demo: Serialization Demo</name>
 	<description>Demonstrate serialization integration with simulation</description>
 
 	<properties>
-		<!-- basic project properties -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-		<revision>${gcm.version}</revision>
-
 		<!-- plugin versions -->
 		<os-maven-plugin.version>1.7.0</os-maven-plugin.version>
 		<build-helper-maven-plugin.version>3.3.0</build-helper-maven-plugin.version>
@@ -34,33 +25,18 @@
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 
 		<!-- dependency versions -->
-		<gcm.version>4.0.0</gcm.version>
-		<gcm-taskit-protobuf.version>2.4.0-SNAPSHOT</gcm-taskit-protobuf.version>
+		<gcm-taskit-protobuf.version>2.6.3-SNAPSHOT</gcm-taskit-protobuf.version>
 		<protoc.version>3.21.12</protoc.version>
 	</properties>
 
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>gov.hhs.aspr.ms</groupId>
-			<artifactId>gcm</artifactId>
-			<version>${gcm.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>gov.hhs.aspr.ms.gcm.taskit.protobuf</groupId>
+			<groupId>gov.hhs.aspr.ms.gcm</groupId>
 			<artifactId>gcm-taskit-protobuf</artifactId>
 			<version>${gcm-taskit-protobuf.version}</version>
 		</dependency>
 	</dependencies>
-
-	<!-- Developers -->
-	<developers>
-		<developer>
-			<name>Shawn Hatch</name>
-			<organization>Leidos</organization>
-			<organizationUrl>https://www.leidos.com</organizationUrl>
-		</developer>
-	</developers>
 
 	<!-- Configure Build -->
 	<build>
@@ -94,34 +70,6 @@
 								<source>${project.build.directory}/generated-sources/protobuf/java</source>
 							</sources>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>flatten-maven-plugin</artifactId>
-				<version>${flatten-maven-plugin.version}</version>
-				<executions>
-					<!-- enable flattening -->
-					<execution>
-						<id>flatten</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>flatten</goal>
-						</goals>
-						<configuration>
-							<updatePomFile>true</updatePomFile>
-						</configuration>
-					</execution>
-					<!-- ensure proper cleanup -->
-					<execution>
-						<id>flatten.clean</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>clean</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -173,21 +121,6 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>${maven-source-plugin.version}</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
 </project>

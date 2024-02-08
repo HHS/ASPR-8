@@ -1,4 +1,4 @@
-package lesson.plugins.model;
+package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
 import net.jcip.annotations.Immutable;
@@ -11,6 +11,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 
 @Immutable
+/* start code_ref= regions_plugin_implementing_regionId|code_cap=The region id is implemented as a wrapper class of int.*/
 public final class Region implements RegionId {
 
 	private final int id;
@@ -57,3 +58,4 @@ public final class Region implements RegionId {
 		return "Region_" + id;
 	}
 }
+/* end */

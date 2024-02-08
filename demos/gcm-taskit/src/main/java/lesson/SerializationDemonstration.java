@@ -1,9 +1,9 @@
 package lesson;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -24,6 +24,7 @@ import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePlugin;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.PersonPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.regions.RegionsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.ReportsPlugin;
@@ -31,7 +32,6 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
-import gov.hhs.aspr.ms.gcm.plugins.util.properties.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.nucleus.NucleusTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.GlobalPropertiesTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.globalproperties.data.input.GlobalPropertiesPluginDataInput;
@@ -44,18 +44,16 @@ import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.regions.data.input.RegionsPlu
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.reports.ReportsTranslator;
 import gov.hhs.aspr.ms.gcm.taskit.protobuf.plugins.stochastics.StochasticsTranslator;
 import gov.hhs.aspr.ms.taskit.core.TranslationController;
-import gov.hhs.aspr.ms.taskit.core.Translator;
+import gov.hhs.aspr.ms.taskit.core.TranslationEngineType;
 import gov.hhs.aspr.ms.taskit.protobuf.ProtobufTranslationEngine;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
+import gov.hhs.aspr.ms.util.time.Stopwatch;
 import lesson.plugins.model.GlobalProperty;
 import lesson.plugins.model.ModelPlugin;
 import lesson.plugins.model.ModelReportLabel;
 import lesson.plugins.model.PersonProperty;
 import lesson.plugins.model.Region;
-import lesson.translatorSpecs.GlobalPropertyTranslatorSpec;
-import lesson.translatorSpecs.PersonPropertyTranslatorSpec;
-import lesson.translatorSpecs.RegionTranslatorSpec;
-import util.random.RandomGeneratorProvider;
-import util.time.Stopwatch;
 
 public final class SerializationDemonstration {
 
@@ -88,29 +86,31 @@ public final class SerializationDemonstration {
 
 			this.readingTranslationController = TranslationController
 					.builder()
-					.addTranslator(
-							PersonPropertiesTranslator.getTranslator())
-					.addTranslator(PropertiesTranslator.getTranslator())
-					.addTranslator(PeopleTranslator.getTranslator())
-					.addTranslator(RegionsTranslator.getTranslator())
-					.addTranslator(
-							GlobalPropertiesTranslator.getTranslator())
-					.addTranslator(ReportsTranslator.getTranslator())
-					.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-							.addTranslationSpec(new PersonPropertyTranslatorSpec())
-							.addTranslationSpec(new GlobalPropertyTranslatorSpec())
-							.addTranslationSpec(new RegionTranslatorSpec()))
+					.addTranslationEngine(getTranslationEngine())
 					.addInputFilePath(peopleInputPath,
-							PeoplePluginDataInput.class)
+							PeoplePluginDataInput.class, TranslationEngineType.PROTOBUF)
 					.addInputFilePath(regionsInputPath,
-							RegionsPluginDataInput.class)
+							RegionsPluginDataInput.class, TranslationEngineType.PROTOBUF)
 					.addInputFilePath(globalPropsInputPath,
-							GlobalPropertiesPluginDataInput.class)
+							GlobalPropertiesPluginDataInput.class, TranslationEngineType.PROTOBUF)
 					.build();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 
+	}
+
+	private ProtobufTranslationEngine getTranslationEngine() {
+		return ProtobufTranslationEngine.builder()
+				.addTranslator(PersonPropertiesTranslator.getTranslator())
+				.addTranslator(GlobalPropertiesTranslator.getTranslator())
+				.addTranslator(RegionsTranslator.getTranslator())
+				.addTranslator(PeopleTranslator.getTranslator())
+				.addTranslator(StochasticsTranslator.getTranslator())
+				.addTranslator(PropertiesTranslator.getTranslator())
+				.addTranslator(ReportsTranslator.getTranslator())
+				.addTranslator(NucleusTranslator.getTranslator())
+				.build();
 	}
 
 	private RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(524055747550937602L);
@@ -385,48 +385,31 @@ public final class SerializationDemonstration {
 
 		TranslationController.Builder translationControllerBuilder = TranslationController.builder();
 
-		Translator personPropertiesTranslator = PersonPropertiesTranslator.getTranslator();
-		Translator globalPropertiesTranslator = GlobalPropertiesTranslator.getTranslator();
-		Translator regionsTranslator = RegionsTranslator.getTranslator();
-		Translator peopleTranslator = PeopleTranslator.getTranslator();
-		Translator stochasticsTranslator = StochasticsTranslator.getTranslator();
-		Translator nucleusTranslator = NucleusTranslator.getTranslator();
+		translationControllerBuilder.addTranslationEngine(this.getTranslationEngine());
 
+		List<Integer> scenarioIds = new ArrayList<>();
 		for (int i = 0; i < experimentContext.getScenarioCount(); i++) {
-			File outputDir = this.outputDirectory.resolve("scenario" + i).toFile();
-			outputDir.mkdir();
-
-			Path personPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(personPropertiesOutputFileName);
-			Path globalPropertiesPath = Paths.get(outputDir.getAbsolutePath()).resolve(globalPropertiesOutputFileName);
-			Path regionsPath = Paths.get(outputDir.getAbsolutePath()).resolve(regionsOutputFileName);
-			Path peoplePath = Paths.get(outputDir.getAbsolutePath()).resolve(peopleOutputFileName);
-			Path stochasticsPath = Paths.get(outputDir.getAbsolutePath()).resolve(stochasticsOutputFileName);
-			Path simStatepath = Paths.get(outputDir.getAbsolutePath()).resolve(simStateOutputFileName);
-
-			translationControllerBuilder
-					.addOutputFilePath(personPropertiesPath, PersonPropertiesPluginData.class, i)
-					.addOutputFilePath(globalPropertiesPath, GlobalPropertiesPluginData.class, i)
-					.addOutputFilePath(regionsPath, RegionsPluginData.class, i)
-					.addOutputFilePath(peoplePath, PeoplePluginData.class, i)
-					.addOutputFilePath(stochasticsPath, StochasticsPluginData.class, i)
-					.addOutputFilePath(simStatepath, SimulationState.class,
-							i);
-
+			scenarioIds.add(i);
 		}
 
-		translationControllerBuilder
-				.addTranslator(personPropertiesTranslator)
-				.addTranslator(globalPropertiesTranslator)
-				.addTranslator(regionsTranslator)
-				.addTranslator(peopleTranslator)
-				.addTranslator(stochasticsTranslator)
-				.addTranslator(nucleusTranslator)
-				.addTranslator(PropertiesTranslator.getTranslator())
-				.addTranslator(ReportsTranslator.getTranslator())
-				.setTranslationEngineBuilder(ProtobufTranslationEngine.builder()
-						.addTranslationSpec(new PersonPropertyTranslatorSpec())
-						.addTranslationSpec(new GlobalPropertyTranslatorSpec())
-						.addTranslationSpec(new RegionTranslatorSpec()));
+		scenarioIds.parallelStream().forEach(scenarioId -> {
+			Path scenarioOutputDir = this.outputDirectory.resolve("scenario_" + scenarioId);
+			ResourceHelper.makeOutputDir(scenarioOutputDir);
+
+			translationControllerBuilder
+					.addOutputFilePath(scenarioOutputDir.resolve(personPropertiesOutputFileName),
+							PersonPropertiesPluginData.class, scenarioId, TranslationEngineType.PROTOBUF)
+					.addOutputFilePath(scenarioOutputDir.resolve(globalPropertiesOutputFileName),
+							GlobalPropertiesPluginData.class, scenarioId, TranslationEngineType.PROTOBUF)
+					.addOutputFilePath(scenarioOutputDir.resolve(regionsOutputFileName), RegionsPluginData.class,
+							scenarioId, TranslationEngineType.PROTOBUF)
+					.addOutputFilePath(scenarioOutputDir.resolve(peopleOutputFileName), PeoplePluginData.class,
+							scenarioId, TranslationEngineType.PROTOBUF)
+					.addOutputFilePath(scenarioOutputDir.resolve(stochasticsOutputFileName),
+							StochasticsPluginData.class, scenarioId, TranslationEngineType.PROTOBUF)
+					.addOutputFilePath(scenarioOutputDir.resolve(simStateOutputFileName), SimulationState.class,
+							scenarioId, TranslationEngineType.PROTOBUF);
+		});
 
 		this.writingTranslationController = translationControllerBuilder.build();
 	}
