@@ -10,7 +10,7 @@
 	</parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-4</artifactId>
+	<artifactId>lesson-04-data-managers</artifactId>
 	<name>GCM: Lesson 04: Data Managers</name>
 	<description>GCM Lesson introducing Data Managers</description>
 </project>

@@ -9,8 +9,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-3</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>lesson-03-actors</artifactId>
 	<name>GCM: Lesson 03: Actors</name>
 	<description>GCM Lesson introducing Actors</description>
 </project>

@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-7</artifactId>
+	<artifactId>lesson-07-plugin-dependency-graph</artifactId>
 	<name>GCM: Lesson 07: Plugin Dependency Graph</name>
 	<description>GCM Lesson introducing the Plugin Dependency acyclic, directed Graph</description>
 </project>

@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-5</artifactId>
+	<artifactId>lesson-05-events</artifactId>
 	<name>GCM: Lesson 05: Events</name>
 	<description>GCM Lesson introducing Events</description>
 </project>

@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-20</artifactId>
+	<artifactId>lesson-20-partitions-plugin</artifactId>
 	<name>GCM: Lesson 20: Partitions Plugin</name>
 	<description>GCM Lesson introducing the Partitions Plugin</description>
 </project>

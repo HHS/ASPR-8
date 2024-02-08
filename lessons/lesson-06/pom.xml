@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-6</artifactId>
+	<artifactId>lesson-06-plugin-dependencies</artifactId>
 	<name>GCM: Lesson 06: Plugin Dependencies</name>
 	<description>GCM Lesson introducing Plugin Dependencies</description>
 </project>

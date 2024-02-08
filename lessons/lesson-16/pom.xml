@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-16</artifactId>
+	<artifactId>lesson-16-person-properties-plugin</artifactId>
 	<name>GCM: Lesson 16: Person Properties Plugin</name>
 	<description>GCM Lesson introducing the Person Properties Plugin</description>
 </project>

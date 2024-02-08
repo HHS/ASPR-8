@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-19</artifactId>
+	<artifactId>lesson-19-materials-plugin</artifactId>
 	<name>GCM: Lesson 19: Materials Plugin</name>
 	<description>GCM Lesson introducing the Materials Plugin</description>
 </project>

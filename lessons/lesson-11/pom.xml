@@ -10,7 +10,7 @@
     </parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-11</artifactId>
-	<name>GCM: Lesson 11: Stochastic Plugin</name>
+	<artifactId>lesson-11-stochastics-plugin</artifactId>
+	<name>GCM: Lesson 11: Stochastics Plugin</name>
 	<description>GCM Lesson introducing the Stochastics Plugin</description>
 </project>

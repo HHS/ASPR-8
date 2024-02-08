@@ -10,7 +10,7 @@
 	</parent>
 
 	<!-- Artifact -->
-	<artifactId>gcm-lesson-1</artifactId>
+	<artifactId>lesson-01-hello-world</artifactId>
 	<name>GCM: Lesson 01: Hello World Lesson</name>
 	<description>GCM Lesson introducting GCM via a single line of code that executes the simulation</description>
 </project>
