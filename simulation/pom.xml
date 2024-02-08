@@ -25,7 +25,6 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>default-prepare-agent</id>
@@ -75,7 +74,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>${maven-javadoc-plugin.version}</version>
 						<configuration>
 							<doclint>all,-missing</doclint>
 							<additionalDependencies>
