@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
@@ -18,8 +16,6 @@ public class SimulationState {
     private static class Data {
         private double startTime = 0;
         private LocalDate baseDate = LocalDate.now();
-        private long planningQueueArrivalId;
-        private List<PlanQueueData> planQueueDatas = new ArrayList<>();
 
         public Data() {
         }
@@ -27,8 +23,6 @@ public class SimulationState {
         public Data(Data data) {
             startTime = data.startTime;
             baseDate = data.baseDate;
-            planningQueueArrivalId = data.planningQueueArrivalId;
-            planQueueDatas.addAll(data.planQueueDatas);
         }
 
         @Override
@@ -36,8 +30,6 @@ public class SimulationState {
             final int prime = 31;
             int result = 1;
             result = prime * result + ((baseDate == null) ? 0 : baseDate.hashCode());
-            result = prime * result + ((planQueueDatas == null) ? 0 : planQueueDatas.hashCode());
-            result = prime * result + (int) (planningQueueArrivalId ^ (planningQueueArrivalId >>> 32));
             long temp;
             temp = Double.doubleToLongBits(startTime);
             result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -58,16 +50,6 @@ public class SimulationState {
                     return false;
                 }
             } else if (!baseDate.equals(other.baseDate)) {
-                return false;
-            }
-            if (planQueueDatas == null) {
-                if (other.planQueueDatas != null) {
-                    return false;
-                }
-            } else if (!planQueueDatas.equals(other.planQueueDatas)) {
-                return false;
-            }
-            if (planningQueueArrivalId != other.planningQueueArrivalId) {
                 return false;
             }
             if (Double.doubleToLongBits(startTime) != Double.doubleToLongBits(other.startTime)) {
@@ -98,16 +80,6 @@ public class SimulationState {
         }
 
         private void validate() {
-
-            for (PlanQueueData planQueueData : data.planQueueDatas) {
-                if (planQueueData.getTime() < data.startTime) {
-                    throw new ContractException(NucleusError.PLANNING_QUEUE_TIME);
-
-                }
-                if (planQueueData.getArrivalId() >= data.planningQueueArrivalId) {
-                    throw new ContractException(NucleusError.PLANNING_QUEUE_ARRIVAL_INVALID);
-                }
-            }
 
         }
 
@@ -153,27 +125,6 @@ public class SimulationState {
             return this;
         }
 
-        /**
-         * Adds a PlanQueueData used for plan queue reconstruction
-         * 
-         * @throws ContractException {@linkplain NucleusError#NULL_PLAN_QUEUE_DATA} if
-         *                           the plan queue data is null
-         */
-        public Builder addPlanQueueData(PlanQueueData planQueueData) {
-            if (planQueueData == null) {
-                throw new ContractException(NucleusError.NULL_PLAN_QUEUE_DATA);
-            }
-            data.planQueueDatas.add(planQueueData);
-            return this;
-        }
-
-        /**
-         * Sets the next arrival id available to the planning queue
-         */
-        public Builder setPlanningQueueArrivalId(long planningQueueArrivalId) {
-            data.planningQueueArrivalId = planningQueueArrivalId;
-            return this;
-        }
     }
 
     /**
@@ -188,21 +139,6 @@ public class SimulationState {
      */
     public LocalDate getBaseDate() {
         return data.baseDate;
-    }
-
-    /**
-     * Returns the list of PlanQueueData objects.
-     */
-    public List<PlanQueueData> getPlanQueueDatas() {
-        return new ArrayList<>(data.planQueueDatas);
-    }
-
-    /**
-     * Returns the planning queue arrival id that should be used as the first free
-     * arrival id.
-     */
-    public long getPlanningQueueArrivalId() {
-        return data.planningQueueArrivalId;
     }
 
     @Override

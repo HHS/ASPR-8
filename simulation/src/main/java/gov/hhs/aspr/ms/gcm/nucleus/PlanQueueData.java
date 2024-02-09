@@ -11,7 +11,6 @@ public final class PlanQueueData {
 		private double time;
 		private boolean active = true;
 		private Object key;
-		private PlanData planData;
 		private Planner planner;
 		private int plannerId;
 		private long arrivalId;
@@ -23,7 +22,6 @@ public final class PlanQueueData {
 			time = data.time;
 			active = data.active;
 			key = data.key;
-			planData = data.planData;
 			planner = data.planner;
 			plannerId = data.plannerId;
 			arrivalId = data.arrivalId;
@@ -36,7 +34,6 @@ public final class PlanQueueData {
 			result = prime * result + (active ? 1231 : 1237);
 			result = prime * result + (int) (arrivalId ^ (arrivalId >>> 32));
 			result = prime * result + ((key == null) ? 0 : key.hashCode());
-			result = prime * result + ((planData == null) ? 0 : planData.hashCode());
 			result = prime * result + ((planner == null) ? 0 : planner.hashCode());
 			result = prime * result + plannerId;
 			long temp;
@@ -65,13 +62,6 @@ public final class PlanQueueData {
 					return false;
 				}
 			} else if (!key.equals(other.key)) {
-				return false;
-			}
-			if (planData == null) {
-				if (other.planData != null) {
-					return false;
-				}
-			} else if (!planData.equals(other.planData)) {
 				return false;
 			}
 			if (planner != other.planner) {
@@ -105,11 +95,6 @@ public final class PlanQueueData {
 		}
 
 		private void validate() {
-
-			if (data.planData == null) {
-				throw new ContractException(NucleusError.NULL_PLAN_DATA);
-			}
-
 			if (data.planner == null) {
 				throw new ContractException(NucleusError.NULL_PLANNER);
 			}
@@ -152,14 +137,6 @@ public final class PlanQueueData {
 		 */
 		public Builder setKey(Object key) {
 			data.key = key;
-			return this;
-		}
-
-		/**
-		 * Set the plan's data. Defaults to null.
-		 */
-		public Builder setPlanData(PlanData planData) {
-			data.planData = planData;
 			return this;
 		}
 
@@ -214,13 +191,6 @@ public final class PlanQueueData {
 	 */
 	public Object getKey() {
 		return data.key;
-	}
-
-	/**
-	 * Returns the plan data for the plan
-	 */
-	public PlanData getPlanData() {
-		return data.planData;
 	}
 
 	/**

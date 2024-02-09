@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 import org.apache.commons.math3.util.Pair;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.nucleus.Plan;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorPlan;
 
 public class RunContinuityActor implements Consumer<ActorContext> {
 	private final RunContinuityPluginData runContinuityPluginData;
@@ -22,25 +22,19 @@ public class RunContinuityActor implements Consumer<ActorContext> {
 	public void accept(ActorContext actorContext) {
 
 		List<Pair<Double, Consumer<ActorContext>>> consumers = runContinuityPluginData.getConsumers();
-		IntStream.range(0,consumers.size()).forEach((i)->{
-			
+		IntStream.range(0, consumers.size()).forEach((i) -> {
+
 			Pair<Double, Consumer<ActorContext>> pair = consumers.get(i);
 			planMap.put(i, pair);
 			double time = pair.getFirst();
 			Consumer<ActorContext> consumer = pair.getSecond();
 
-			RunContinuityPlanData continuityPluginData = new RunContinuityPlanData(i);
+			ActorPlan actorPlan = new ActorPlan(time, (c) -> {
+				planMap.remove(i);
+				consumer.accept(actorContext);
+			});
 
-			Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-					.setTime(time)//
-					.setCallbackConsumer((c) -> {
-						planMap.remove(i);
-						consumer.accept(actorContext);	
-					})//
-					.setPlanData(continuityPluginData)//
-					.build();
-
-			actorContext.addPlan(plan);
+			actorContext.addPlan(actorPlan);
 
 		});
 
@@ -48,12 +42,12 @@ public class RunContinuityActor implements Consumer<ActorContext> {
 	}
 
 	private void recordState(ActorContext actorContext) {
-		RunContinuityPluginData.Builder builder = RunContinuityPluginData.builder();		
+		RunContinuityPluginData.Builder builder = RunContinuityPluginData.builder();
 		for (Pair<Double, Consumer<ActorContext>> pair : planMap.values()) {
 			double time = pair.getFirst();
 			Consumer<ActorContext> consumer = pair.getSecond();
 			builder.addContextConsumer(time, consumer);
-		}		
+		}
 		actorContext.releaseOutput(builder.build());
 	}
 
