@@ -45,8 +45,6 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class Simulation {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
 	private static class PlanRec {
 		private Plan plan;
 
@@ -65,71 +63,6 @@ public class Simulation {
 
 		private Consumer<DataManagerContext> dataManagerPlan;
 		private DataManagerId dataManagerId;
-
-		@Override
-		public String toString() {
-
-			StringBuilder builder = new StringBuilder();
-
-			builder.append("\t");
-			builder.append("time = ");
-			builder.append(time);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("arrivalId = ");
-			builder.append(arrivalId);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("isActive = ");
-			builder.append(isActive);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("key = ");
-			builder.append(key);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append(planner);
-			builder.append(" = ");
-			switch (planner) {
-				case ACTOR:
-					builder.append(actorId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(actorPlan);
-					break;
-				case DATA_MANAGER:
-					builder.append(dataManagerId);
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(dataManagerPlan);
-					break;
-				case REPORT:
-					builder.append(reportId);
-					builder.append("\t");
-					builder.append(LINE_SEPARATOR);
-					builder.append("\t");
-					builder.append(reportPlan);
-					break;
-				default:
-					throw new RuntimeException("unhandled planner case");
-			}
-
-			builder.append(LINE_SEPARATOR);
-			builder.append("\t");
-			builder.append("plan = ");
-			builder.append(LINE_SEPARATOR);
-			builder.append("\t");
-			builder.append(plan);
-
-			builder.append(LINE_SEPARATOR);
-			builder.append(LINE_SEPARATOR);
-
-			return builder.toString();
-		}
 	}
 
 	public static class Builder {
