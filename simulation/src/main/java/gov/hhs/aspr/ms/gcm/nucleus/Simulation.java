@@ -177,7 +177,7 @@ public class Simulation {
 			int result = Double.compare(plan1.time, plan2.time);
 			if (result == 0) {
 
-				result = plan1.getPlanner().compareTo(plan2.getPlanner());
+				result = plan1.planner.compareTo(plan2.planner);
 
 				if (result == 0) {
 					result = Long.compare(plan1.arrivalId, plan2.arrivalId);
@@ -224,21 +224,9 @@ public class Simulation {
 		this.data = data;
 	}
 
-	private void validateActorPlan(final Consumer<ActorContext> plan) {
+	private void validatePlan(Plan plan) {
 		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
-	}
-
-	private void validateReportPlan(final Consumer<ReportContext> plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
-	}
-
-	private void validateDataManagerPlan(final Consumer<DataManagerContext> plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 	}
 
@@ -345,8 +333,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlanTime(plan.getTime());
-		validateActorPlan(plan.getCallbackConsumer());
+		validatePlan(plan);
+		validatePlanTime(plan.time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -365,18 +353,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		Map<Object, Plan> map;
-
 		plan.setActorId(focalActorId);
-
-		if (plan.key != null) {
-			map = actorPlanMap.get(focalActorId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				actorPlanMap.put(focalActorId, map);
-			}
-			map.put(plan.key, plan);
-		}
 
 		if (plan.isActive) {
 			activePlanCount++;
@@ -391,8 +368,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlanTime(plan.getTime());
-		validateReportPlan(plan.getCallbackConsumer());
+		validatePlan(plan);
+		validatePlanTime(plan.time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -411,18 +388,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		Map<Object, Plan> map;
-
 		plan.setReportId(focalReportId);
-
-		if (plan.key != null) {
-			map = reportPlanMap.get(focalReportId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				reportPlanMap.put(focalReportId, map);
-			}
-			map.put(plan.key, plan);
-		}
 
 		planningQueue.add(plan);
 	}
@@ -433,8 +399,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validateDataManagerPlan(plan.getCallbackConsumer());
-		validatePlanTime(plan.getTime());
+		validatePlan(plan);
+		validatePlanTime(plan.time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -453,17 +419,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		Map<Object, Plan> map;
-
 		plan.setDataManagerId(dataManagerId);
-		if (plan.key != null) {
-			map = dataManagerPlanMap.get(dataManagerId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				dataManagerPlanMap.put(dataManagerId, map);
-			}
-			map.put(plan.key, plan);
-		}
 
 		if (plan.isActive) {
 			activePlanCount++;
@@ -809,7 +765,13 @@ public class Simulation {
 			if (plan.isActive) {
 				activePlanCount--;
 			}
-			switch (plan.getPlanner()) {
+
+			// skip canceled plans
+			if(plan.canceled) {
+				continue;
+			}
+
+			switch (plan.planner) {
 				case ACTOR:
 					ActorPlan actorPlan = (ActorPlan) plan;
 					if (actorPlan.consumer != null) {
@@ -818,7 +780,7 @@ public class Simulation {
 						}
 						ActorContentRec actorContentRec = new ActorContentRec();
 						actorContentRec.actorId = actorPlan.actorId;
-						actorContentRec.actorPlan = actorPlan.consumer;
+						actorContentRec.actorPlan = actorPlan::execute;
 						actorQueue.add(actorContentRec);
 						executeActorQueue();
 					}
@@ -830,8 +792,8 @@ public class Simulation {
 							dataManagerPlanMap.get(dmPlan.dataManagerId).remove(plan.key);
 						}
 						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-						dataManagerContentRec.dmPlan = dmPlan.consumer;
 						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
+						dataManagerContentRec.dmPlan = dmPlan::execute;
 						dataManagerQueue.add(dataManagerContentRec);
 						executeDataManagerQueue();
 						executeActorQueue();
@@ -845,8 +807,8 @@ public class Simulation {
 							reportPlanMap.get(reportPlan.reportId).remove(plan.key);
 						}
 						ReportContentRec reportContentRec = new ReportContentRec();
-						reportContentRec.reportPlan = reportPlan.consumer;
 						reportContentRec.reportId = reportPlan.reportId;
+						reportContentRec.reportPlan = reportPlan::execute;
 						reportQueue.add(reportContentRec);
 						executeReportQueue();
 					}
@@ -854,7 +816,7 @@ public class Simulation {
 					break;
 
 				default:
-					throw new RuntimeException("unhandled planner type " + plan.getPlanner());
+					throw new RuntimeException("unhandled planner type " + plan.planner);
 			}
 		}
 

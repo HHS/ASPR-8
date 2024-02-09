@@ -2,38 +2,34 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.util.function.Consumer;
 
+import gov.hhs.aspr.ms.util.errors.ContractException;
+
 public class ActorPlan extends Plan {
     ActorId actorId;
-    protected Consumer<ActorContext> consumer;
+    final Planner planner = Planner.ACTOR;
+    final Consumer<ActorContext> consumer;
 
-    public ActorPlan(double time, Consumer<ActorContext> consumer) {
-        super(time);
+    public ActorPlan(double time, Consumer<ActorContext> consumer, String key) {
+        super(time, key);
+        if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		}
         this.consumer = consumer;
     }
 
-    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer) {
-        super(time, active);
+    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer, String key) {
+        super(time, active, key);
+        if (consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		}
         this.consumer = consumer;
     }
 
-    public final Planner getPlanner() {
-        return Planner.ACTOR;
-    }
-
-    public final Consumer<ActorContext> getConsumer() {
-        return this.consumer;
-    }
-
-    public void execute(ActorContext context) {
+    void execute(ActorContext context) {
         this.consumer.accept(context);
-    }
-
-    public Consumer<ActorContext> getCallbackConsumer() {
-        return this.consumer;
     }
 
     void setActorId(ActorId actorId) {
         this.actorId = actorId;
     }
-
 }
