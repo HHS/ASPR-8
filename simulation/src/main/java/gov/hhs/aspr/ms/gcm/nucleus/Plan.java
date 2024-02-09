@@ -4,6 +4,7 @@ public abstract class Plan {
 	protected double time;
 	protected boolean isActive = true;
 	long arrivalId = -1;
+	protected Object key;
 
 	protected Plan(double time) {
 		this.time = time;

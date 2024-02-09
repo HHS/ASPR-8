@@ -45,12 +45,6 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class Simulation {
 
-	private static class PlanRec {
-		private Plan plan;
-
-		private Object key;
-	}
-
 	public static class Builder {
 
 		private Data data = new Data();
@@ -176,17 +170,17 @@ public class Simulation {
 		return new Builder();
 	}
 
-	private final Comparator<PlanRec> futureComparable = new Comparator<PlanRec>() {
+	private final Comparator<Plan> futureComparable = new Comparator<Plan>() {
 
 		@Override
-		public int compare(final PlanRec plannedEvent1, final PlanRec plannedEvent2) {
-			int result = Double.compare(plannedEvent1.plan.time, plannedEvent2.plan.time);
+		public int compare(final Plan plan1, final Plan plan2) {
+			int result = Double.compare(plan1.time, plan2.time);
 			if (result == 0) {
 
-				result = plannedEvent1.plan.getPlanner().compareTo(plannedEvent2.plan.getPlanner());
+				result = plan1.getPlanner().compareTo(plan2.getPlanner());
 
 				if (result == 0) {
-					result = Long.compare(plannedEvent1.plan.arrivalId, plannedEvent2.plan.arrivalId);
+					result = Long.compare(plan1.arrivalId, plan2.arrivalId);
 				}
 			}
 			return result;
@@ -205,7 +199,7 @@ public class Simulation {
 	boolean forcedHaltPresent;
 	private boolean eventProcessingAllowed;
 	private int activePlanCount;
-	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
+	private final PriorityQueue<Plan> planningQueue = new PriorityQueue<>(futureComparable);
 	private PlanningQueueMode planningQueueMode = PlanningQueueMode.READY;
 
 	// actors
@@ -354,8 +348,6 @@ public class Simulation {
 		validatePlanTime(plan.getTime());
 		validateActorPlan(plan.getCallbackConsumer());
 
-		final PlanRec planRec = new PlanRec();
-
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
 		// if it doesn't, then it is an existing plan, and check its value against the
@@ -373,26 +365,24 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		planRec.plan = plan;
-
-		Map<Object, PlanRec> map;
+		Map<Object, Plan> map;
 
 		plan.setActorId(focalActorId);
 
-		if (planRec.key != null) {
+		if (plan.key != null) {
 			map = actorPlanMap.get(focalActorId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				actorPlanMap.put(focalActorId, map);
 			}
-			map.put(planRec.key, planRec);
+			map.put(plan.key, plan);
 		}
 
-		if (planRec.plan.isActive) {
+		if (plan.isActive) {
 			activePlanCount++;
 		}
 
-		planningQueue.add(planRec);
+		planningQueue.add(plan);
 	}
 
 	protected void addReportPlan(ReportPlan plan) {
@@ -404,8 +394,6 @@ public class Simulation {
 		validatePlanTime(plan.getTime());
 		validateReportPlan(plan.getCallbackConsumer());
 
-		final PlanRec planRec = new PlanRec();
-
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
 		// if it doesn't, then it is an existing plan, and check its value against the
@@ -423,22 +411,20 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		planRec.plan = plan;
-
-		Map<Object, PlanRec> map;
+		Map<Object, Plan> map;
 
 		plan.setReportId(focalReportId);
 
-		if (planRec.key != null) {
+		if (plan.key != null) {
 			map = reportPlanMap.get(focalReportId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				reportPlanMap.put(focalReportId, map);
 			}
-			map.put(planRec.key, planRec);
+			map.put(plan.key, plan);
 		}
-		planningQueue.add(planRec);
 
+		planningQueue.add(plan);
 	}
 
 	protected void addDataManagerPlan(DataManagerId dataManagerId, DataManagerPlan plan) {
@@ -449,7 +435,6 @@ public class Simulation {
 
 		validateDataManagerPlan(plan.getCallbackConsumer());
 		validatePlanTime(plan.getTime());
-		final PlanRec planRec = new PlanRec();
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -468,24 +453,23 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		planRec.plan = plan;
-
-		Map<Object, PlanRec> map;
+		Map<Object, Plan> map;
 
 		plan.setDataManagerId(dataManagerId);
-		if (planRec.key != null) {
+		if (plan.key != null) {
 			map = dataManagerPlanMap.get(dataManagerId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				dataManagerPlanMap.put(dataManagerId, map);
 			}
-			map.put(planRec.key, planRec);
+			map.put(plan.key, plan);
 		}
 
-		if (planRec.plan.isActive) {
+		if (plan.isActive) {
 			activePlanCount++;
 		}
-		planningQueue.add(planRec);
+
+		planningQueue.add(plan);
 	}
 
 	protected void validateActorPlanKeyNotDuplicate(final Object key) {
@@ -497,14 +481,13 @@ public class Simulation {
 	protected Optional<ActorPlan> removeActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
+		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
 
 		ActorPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (ActorPlan) planRecord.plan;
-				planRecord.plan = null;
+			final Plan plan = map.remove(key);
+			if (plan != null) {
+				result = (ActorPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -514,14 +497,13 @@ public class Simulation {
 	protected Optional<ReportPlan> removeReportPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
 
 		ReportPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (ReportPlan) planRecord.plan;
-				planRecord.plan = null;
+			final Plan plan = map.remove(key);
+			if (plan != null) {
+				result = (ReportPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -670,13 +652,11 @@ public class Simulation {
 	}
 
 	private void rebuildPlanningQueue() {
-		PlanRec planRec;
+		Plan plan;
 
-		List<PlanRec> planRecs = new ArrayList<>();
+		List<Plan> plans = new ArrayList<>();
 		// empty the planning queue to reset the arrival ids
-		while ((planRec = planningQueue.poll()) != null) {
-			Plan plan = planRec.plan;
-
+		while ((plan = planningQueue.poll()) != null) {
 			if (plan.arrivalId < 0) {
 				long id = plan.arrivalId;
 				// master - (-id) = master + id
@@ -686,13 +666,13 @@ public class Simulation {
 				masterPlanningArrivalId++;
 			}
 
-			planRecs.add(planRec);
+			plans.add(plan);
 		}
 
 		// this will cause some level of thrashing, as the order of the plans in the
 		// list is not guarenteed to be in arrival order.
 		// the planningQueue will take care of the ordering.
-		planRecs.forEach(plan -> planningQueue.add(plan));
+		plans.forEach(_plan -> planningQueue.add(_plan));
 	}
 
 	/**
@@ -817,37 +797,37 @@ public class Simulation {
 
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
-				if (planningQueue.peek().plan.time > simulationHaltTime) {
+				if (planningQueue.peek().time > simulationHaltTime) {
 					break;
 				}
 			}
 
-			final PlanRec planRec = planningQueue.poll();
-			// System.out.println(planRec);
+			final Plan plan = planningQueue.poll();
+			// System.out.println(plan);
 
-			time = planRec.plan.time;
-			if (planRec.plan.isActive) {
+			time = plan.time;
+			if (plan.isActive) {
 				activePlanCount--;
 			}
-			switch (planRec.plan.getPlanner()) {
+			switch (plan.getPlanner()) {
 				case ACTOR:
-					ActorPlan actorPlan = (ActorPlan) planRec.plan;
+					ActorPlan actorPlan = (ActorPlan) plan;
 					if (actorPlan.consumer != null) {
-						if (planRec.key != null) {
-							actorPlanMap.get(actorPlan.actorId).remove(planRec.key);
+						if (plan.key != null) {
+							actorPlanMap.get(actorPlan.actorId).remove(plan.key);
 						}
 						ActorContentRec actorContentRec = new ActorContentRec();
 						actorContentRec.actorId = actorPlan.actorId;
-						actorContentRec.plan = actorPlan.consumer;
+						actorContentRec.actorPlan = actorPlan.consumer;
 						actorQueue.add(actorContentRec);
 						executeActorQueue();
 					}
 					break;
 				case DATA_MANAGER:
-					DataManagerPlan dmPlan = (DataManagerPlan) planRec.plan;
+					DataManagerPlan dmPlan = (DataManagerPlan) plan;
 					if (dmPlan.consumer != null) {
-						if (planRec.key != null) {
-							dataManagerPlanMap.get(dmPlan.dataManagerId).remove(planRec.key);
+						if (plan.key != null) {
+							dataManagerPlanMap.get(dmPlan.dataManagerId).remove(plan.key);
 						}
 						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 						dataManagerContentRec.dmPlan = dmPlan.consumer;
@@ -859,10 +839,10 @@ public class Simulation {
 					break;
 
 				case REPORT:
-					ReportPlan reportPlan = (ReportPlan) planRec.plan;
+					ReportPlan reportPlan = (ReportPlan) plan;
 					if (reportPlan.consumer != null) {
-						if (planRec.key != null) {
-							reportPlanMap.get(reportPlan.reportId).remove(planRec.key);
+						if (plan.key != null) {
+							reportPlanMap.get(reportPlan.reportId).remove(plan.key);
 						}
 						ReportContentRec reportContentRec = new ReportContentRec();
 						reportContentRec.reportPlan = reportPlan.consumer;
@@ -874,7 +854,7 @@ public class Simulation {
 					break;
 
 				default:
-					throw new RuntimeException("unhandled planner type " + planRec.plan.getPlanner());
+					throw new RuntimeException("unhandled planner type " + plan.getPlanner());
 			}
 		}
 
@@ -920,13 +900,9 @@ public class Simulation {
 			SimulationState.Builder simulationStateBuilder = SimulationState.builder();
 			simulationStateBuilder.setBaseDate(data.simulationState.getBaseDate());
 			simulationStateBuilder.setStartTime(time);
-			// simulationStateBuilder.setPlanningQueueArrivalId(masterPlanningArrivalId);
 
 			while (!planningQueue.isEmpty()) {
-				PlanRec planRec = planningQueue.poll();
-				if (planRec.plan != null) {
-
-				}
+				planningQueue.poll();
 			}
 
 			outputConsumer.accept(simulationStateBuilder.build());
@@ -950,9 +926,9 @@ public class Simulation {
 
 			focalActorId = actorContentRec.actorId;
 			if (actorContentRec.event != null) {
-				actorContentRec.consumer.accept(actorContentRec.event);
+				actorContentRec.eventConsumer.accept(actorContentRec.event);
 			} else {
-				actorContentRec.plan.accept(actorContext);
+				actorContentRec.actorPlan.accept(actorContext);
 			}
 			focalActorId = null;
 		}
@@ -963,16 +939,15 @@ public class Simulation {
 
 	private void executeReportQueue() {
 		while (!reportQueue.isEmpty()) {
-			final ReportContentRec contentRec = reportQueue.pollFirst();
-			if (contentRec.reportPlan != null) {
-				focalReportId = contentRec.reportId;
-				contentRec.reportPlan.accept(reportContext);
-				focalReportId = null;
+			final ReportContentRec reportContentRec = reportQueue.pollFirst();
+			focalReportId = reportContentRec.reportId;
+
+			if (reportContentRec.event != null) {
+				reportContentRec.eventConsumer.accept(reportContentRec.event);
 			} else {
-				focalReportId = contentRec.reportId;
-				contentRec.consumer.accept(contentRec.event);
-				focalReportId = null;
+				reportContentRec.reportPlan.accept(reportContext);
 			}
+			focalReportId = null;
 		}
 	}
 
@@ -985,12 +960,12 @@ public class Simulation {
 			try {
 				while (!dataManagerQueue.isEmpty()) {
 					final DataManagerContentRec contentRec = dataManagerQueue.pollFirst();
-					if (contentRec.dmPlan != null) {
+					if (contentRec.event != null) {
+						contentRec.eventConsumer.accept(contentRec.event);
+					} else {
 						DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap
 								.get(contentRec.dataManagerId);
 						contentRec.dmPlan.accept(dataManagerContext);
-					} else {
-						contentRec.consumer.accept(contentRec.event);
 					}
 				}
 				executeReportQueue();
@@ -1005,12 +980,12 @@ public class Simulation {
 
 	protected Optional<ReportPlan> getReportPlan(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
 		ReportPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (ReportPlan) planRecord.plan;
+			final Plan plan = map.get(key);
+			if (plan != null) {
+				result = (ReportPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -1018,12 +993,12 @@ public class Simulation {
 
 	protected Optional<ActorPlan> getActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
+		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
 		ActorPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (ActorPlan) planRecord.plan;
+			final Plan plan = map.get(key);
+			if (plan != null) {
+				result = (ActorPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -1031,19 +1006,19 @@ public class Simulation {
 
 	protected Optional<DataManagerPlan> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
 		DataManagerPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (DataManagerPlan) planRecord.plan;
+			final Plan plan = map.get(key);
+			if (plan != null) {
+				result = (DataManagerPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
 	}
 
 	protected List<Object> getActorPlanKeys() {
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
+		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -1051,7 +1026,7 @@ public class Simulation {
 	}
 
 	protected List<Object> getReportPlanKeys() {
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
+		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -1059,7 +1034,7 @@ public class Simulation {
 	}
 
 	protected List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
 		if (map != null) {
 			return new ArrayList<>(map.keySet());
 		}
@@ -1089,13 +1064,12 @@ public class Simulation {
 	protected Optional<DataManagerPlan> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
+		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
 		DataManagerPlan result = null;
 		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (DataManagerPlan) planRecord.plan;
-				planRecord.plan = null;
+			final Plan plan = map.remove(key);
+			if (plan != null) {
+				result = (DataManagerPlan) plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -1298,7 +1272,7 @@ public class Simulation {
 			for (ReportEventConsumer reportEventConsumer : reportConsumers) {
 				ReportContentRec reportContentRec = new ReportContentRec();
 				reportContentRec.event = event;
-				reportContentRec.consumer = reportEventConsumer;
+				reportContentRec.eventConsumer = reportEventConsumer;
 				reportContentRec.reportId = reportEventConsumer.reportId;
 				reportQueue.add(reportContentRec);
 			}
@@ -1314,7 +1288,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
+				dataManagerContentRec.eventConsumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1343,7 +1317,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
+				dataManagerContentRec.eventConsumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1364,7 +1338,7 @@ public class Simulation {
 
 		final ActorContentRec actorContentRec = new ActorContentRec();
 		actorContentRec.actorId = result;
-		actorContentRec.plan = consumer;
+		actorContentRec.actorPlan = consumer;
 		actorQueue.add(actorContentRec);
 
 		return result;
@@ -1564,7 +1538,7 @@ public class Simulation {
 	private final Map<Class<? extends Event>, List<ReportEventConsumer>> reportEventMap = new LinkedHashMap<>();
 
 	// used for retrieving and canceling plans owned by data managers
-	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
+	private final Map<DataManagerId, Map<Object, Plan>> dataManagerPlanMap = new LinkedHashMap<>();
 
 	// used to locate data managers by class type
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
@@ -1595,8 +1569,8 @@ public class Simulation {
 
 	private boolean containsDeletedActors;
 
-	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
-	private final Map<ReportId, Map<Object, PlanRec>> reportPlanMap = new LinkedHashMap<>();
+	private final Map<ActorId, Map<Object, Plan>> actorPlanMap = new LinkedHashMap<>();
+	private final Map<ReportId, Map<Object, Plan>> reportPlanMap = new LinkedHashMap<>();
 
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
@@ -1609,9 +1583,9 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
-		private Consumer<ActorContext> plan;
+		private Consumer<ActorContext> actorPlan;
 
 		private ActorId actorId;
 
@@ -1621,7 +1595,7 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
 		private Consumer<ReportContext> reportPlan;
 
@@ -1633,7 +1607,7 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
 		private Consumer<DataManagerContext> dmPlan;
 
@@ -1666,7 +1640,7 @@ public class Simulation {
 				final ActorContentRec actorContentRec = new ActorContentRec();
 				actorContentRec.event = event;
 				actorContentRec.actorId = actorId;
-				actorContentRec.consumer = consumer;
+				actorContentRec.eventConsumer = consumer;
 				actorQueue.add(actorContentRec);
 			}
 		}
