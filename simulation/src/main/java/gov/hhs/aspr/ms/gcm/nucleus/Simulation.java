@@ -224,13 +224,12 @@ public class Simulation {
 		this.data = data;
 	}
 
-	@SuppressWarnings("unchecked")
 	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
 
-		PluginData result = null;
+		T result = null;
 
 		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
 		if (pluginDatas == null) {
@@ -248,13 +247,12 @@ public class Simulation {
 			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
 		}
 		if (pluginDatas.size() == 1) {
-			result = pluginDatas.get(0);
+			result = pluginDataClass.cast(pluginDatas.get(0));
 		}
 
-		return Optional.ofNullable((T) result);
+		return Optional.ofNullable(result);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
@@ -275,7 +273,7 @@ public class Simulation {
 		}
 		List<T> result = new ArrayList<>();
 		for (PluginData pluginData : pluginDatas) {
-			result.add((T) pluginData);
+			result.add(pluginDataClass.cast(pluginData));
 		}
 		return result;
 	}
