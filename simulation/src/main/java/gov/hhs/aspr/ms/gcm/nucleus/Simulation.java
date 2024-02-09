@@ -48,7 +48,6 @@ public class Simulation {
 	private static class PlanRec {
 		private Plan plan;
 
-		private boolean isActive;
 		private Object key;
 
 		private Consumer<ReportContext> reportPlan;
@@ -384,7 +383,6 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = plan.isActive();
 
 		planRec.actorPlan = plan.getCallbackConsumer();
 
@@ -403,7 +401,7 @@ public class Simulation {
 			map.put(planRec.key, planRec);
 		}
 
-		if (planRec.isActive) {
+		if (planRec.plan.isActive) {
 			activePlanCount++;
 		}
 
@@ -439,7 +437,6 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = false;
 		planRec.reportPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
@@ -488,7 +485,6 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.isActive = plan.isActive();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
@@ -505,7 +501,7 @@ public class Simulation {
 			map.put(planRec.key, planRec);
 		}
 
-		if (planRec.isActive) {
+		if (planRec.plan.isActive) {
 			activePlanCount++;
 		}
 		planningQueue.add(planRec);
@@ -849,7 +845,7 @@ public class Simulation {
 			// System.out.println(planRec);
 
 			time = planRec.plan.time;
-			if (planRec.isActive) {
+			if (planRec.plan.isActive) {
 				activePlanCount--;
 			}
 			switch (planRec.plan.getPlanner()) {

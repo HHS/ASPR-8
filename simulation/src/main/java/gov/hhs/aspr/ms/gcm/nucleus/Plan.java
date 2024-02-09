@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 public abstract class Plan {
 	protected double time;
-	private boolean active = true;
+	protected boolean isActive = true;
 	long arrivalId = -1;
 
 	protected Plan(double time) {
@@ -11,7 +11,7 @@ public abstract class Plan {
 
 	protected Plan(double time, boolean active) {
 		this.time = time;
-		this.active = active;
+		this.isActive = active;
 	}
 
 	public final double getTime() {
@@ -19,11 +19,11 @@ public abstract class Plan {
 	}
 
 	public final boolean isActive() {
-		return active;
+		return isActive;
 	}
 
 	public final void cancelPlan() {
-		this.active = false;
+		this.isActive = false;
 	}
 
 	public final long getArrivalId() {
