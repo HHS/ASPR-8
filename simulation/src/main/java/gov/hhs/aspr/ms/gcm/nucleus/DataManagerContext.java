@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -39,8 +37,8 @@ public final class DataManagerContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
-		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer, key));
+	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
+		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
 	}
 
 	/**
@@ -103,16 +101,6 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Retrieves a plan for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<DataManagerPlan> getPlan(final Object key) {
-		return simulation.getDataManagerPlan(dataManagerId, key);
-	}
-
-	/**
 	 * Broadcasts the given event to all subscribers. Reports handle the event
 	 * immediately. Data managers and actors will have the event queued for handling
 	 * after the data manager is finished with its current activation. This is used
@@ -136,24 +124,6 @@ public final class DataManagerContext {
 	 */
 	public void releaseMutationEvent(final Event event) {
 		simulation.releaseMutationEventForDataManager(event);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public void cancelPlan(final Object key) {
-		simulation.cancelDataManagerPlan(dataManagerId, key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current data
-	 * manager
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getDataManagerPlanKeys(dataManagerId);
 	}
 
 	/**

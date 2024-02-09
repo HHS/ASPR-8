@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
@@ -26,7 +24,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestScenarioReport;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
-import gov.hhs.aspr.ms.util.annotations.UnitTag;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.wrappers.MultiKey;
@@ -250,24 +247,11 @@ public class AT_ActorContext {
 			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(Plan.builder(ActorContext.class)//
-							.setActive(true)//
-							.setCallbackConsumer(null)//
-							.setKey(null)//
-							.setPlanData(null)//
-							.setTime(2)//
-							.build()));
+					() -> context.addPlan(new ActorPlan(2, true, null)));
 			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(Plan.builder(ActorContext.class)//
-							.setActive(true)//
-							.setCallbackConsumer((c) -> {
-							})//
-							.setKey(null)//
-							.setPlanData(null)//
-							.setTime(0)//
-							.build()));
+					() -> context.addPlan(new ActorPlan(0, true, null)));
 			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 		}));
 
@@ -276,20 +260,13 @@ public class AT_ActorContext {
 		 */
 
 		MutableBoolean planExecuted = new MutableBoolean();
-
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-				.setActive(true)//
-				.setCallbackConsumer((c) -> {
-					planExecuted.setValue(true);
-				})//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(5)//
-				.build();//
+		ActorPlan actorPlan = new ActorPlan(5, (c) -> {
+			planExecuted.setValue(true);
+		});
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(4, (context) -> {
 			// schedule two passive plans
-			context.addPlan(plan);
+			context.addPlan(actorPlan);
 		}));
 
 		// build the plugin
@@ -410,90 +387,6 @@ public class AT_ActorContext {
 
 		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
-	}
-
-	/**
-	 * Tests {@link AgentContext#getPlan(Object)
-	 */
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPlan", args = { Object.class }, tags = {
-			UnitTag.INCOMPLETE })
-	public void testGetPlan() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// test preconditions
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.getPlan(null));
-			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-		}));
-
-		/*
-		 * have the added test agent add a plan that can be retrieved and thus was added
-		 * successfully
-		 */
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
-			Object key = new Object();
-			assertFalse(context.getPlan(key).isPresent());
-			Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-					.setKey(key)//
-					.setTime(100).setCallbackConsumer((c) -> {
-					})//
-					.build();//
-			context.addPlan(plan);
-			assertTrue(context.getPlan(key).isPresent());
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-	}
-
-	/**
-	 * Tests {@link AgentContext#getPlanKeys()
-	 */
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPlanKeys", args = {})
-	public void testGetPlanKeys() {
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// There are no precondition tests
-		Set<Object> expectedKeys = new LinkedHashSet<>();
-		int keyCount = 20;
-		for (int i = 0; i < keyCount; i++) {
-			expectedKeys.add(new Object());
-		}
-
-		// have the test agent add some plans
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			for (Object key : expectedKeys) {
-				Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-						.setKey(key)//
-						.setTime(100)//
-						.setCallbackConsumer((c) -> {
-						})//
-						.build();//
-
-				context.addPlan(plan);
-			}
-
-			Set<Object> actualKeys = context.getPlanKeys().stream()
-					.collect(Collectors.toCollection(LinkedHashSet::new));
-			assertEquals(expectedKeys, actualKeys);
-
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
 
 	@Test
@@ -698,66 +591,6 @@ public class AT_ActorContext {
 		// build and execute the engine
 		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 
-	}
-
-	/**
-	 * Tests {@link AgentContext#cancelPlan(Object)
-	 */
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "removePlan", args = { Object.class }, tags = {
-			UnitTag.INCOMPLETE })
-	public void testRemovePlan() {
-
-		/*
-		 * The test does not show that the plan is returned through the remove
-		 * invocation
-		 */
-
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// test preconditions
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.cancelPlan(null));
-			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-		}));
-
-		Object key = new Object();
-		MutableBoolean removedPlanHasExecuted = new MutableBoolean();
-
-		// have the added test agent add a plan
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (context) -> {
-
-			Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-					.setKey(key)//
-					.setTime(4)//
-					.setCallbackConsumer((c) -> {
-						removedPlanHasExecuted.setValue(true);
-					})//
-					.build();//
-
-			context.addPlan(plan);
-		}));
-
-		// have the test agent remove the plan and show the plan no longer
-		// exists
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (context) -> {
-			assertTrue(context.getPlan(key).isPresent());
-
-			context.cancelPlan(key);
-
-			assertFalse(context.getPlan(key).isPresent());
-
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// run the simulation
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-		// show that the remove plan was not executed
-		assertFalse(removedPlanHasExecuted.getValue());
 	}
 
 	@Test
@@ -1014,47 +847,6 @@ public class AT_ActorContext {
 		// show that the expected and actual event records are the same
 		assertEquals(expectedEvents, recievedEvents);
 
-	}
-
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "setPlanDataConverter", args = { Class.class, Function.class })
-	public void testSetPlanDataConverter() {
-		MutableBoolean called = new MutableBoolean(false);
-
-		class TestPlanData1 implements PlanData {
-
-		}
-
-		Function<TestPlanData1, Consumer<ActorContext>> planDataConverter = t -> {
-			return context -> called.setValue(true);
-		};
-
-		class TestActor1 {
-			public void init(ActorContext actorContext) {
-				actorContext.setPlanDataConverter(TestPlanData1.class, planDataConverter);
-			}
-		}
-
-		Plugin actorPlugin = Plugin.builder().setPluginId(new SimplePluginId("TestActor1"))
-				.setInitializer((pContext) -> {
-					pContext.addActor(new TestActor1()::init);
-				}).build();
-
-		TestPluginData testPluginData = TestPluginData.builder()
-				.addTestActorPlan("test actor 2", new TestActorPlan(2, (context) -> {
-
-				})).build();
-
-		PlanQueueData planQueueData = PlanQueueData.builder().setPlanData(new TestPlanData1()).setTime(1)
-				.setPlanner(Planner.ACTOR).build();
-
-		SimulationState simulationState = SimulationState.builder().addPlanQueueData(planQueueData).setStartTime(1)
-				.setPlanningQueueArrivalId(2).build();
-
-		TestSimulation.builder().addPlugin(actorPlugin).addPlugin(TestPlugin.getTestPlugin(testPluginData))
-				.setSimulationState(simulationState).build().execute();
-
-		assertTrue(called.getValue());
 	}
 
 	@Test

@@ -18,16 +18,6 @@ public class ActorPlan extends Plan {
         this.consumer = consumer;
     }
 
-    public ActorPlan(double time, Consumer<ActorContext> consumer, Object key) {
-        super(time, Planner.ACTOR, key);
-        this.consumer = consumer;
-    }
-
-    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer, Object key) {
-        super(time, active, Planner.ACTOR, key);
-        this.consumer = consumer;
-    }
-
     void execute(ActorContext context) {
         this.consumer.accept(context);
     }

@@ -13,11 +13,8 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PlanQueueData;
-import gov.hhs.aspr.ms.gcm.nucleus.Planner;
 import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.nucleus.SimulationState;
-import gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin.RunContinuityPlanData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin.RunContinuityPlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin.RunContinuityPluginData;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -112,7 +109,6 @@ public class AT_TestSimulation {
 			double planTime = startTime + 2;
 			MutableBoolean called = new MutableBoolean(false);
 
-			RunContinuityPlanData runContinuityPlanData = new RunContinuityPlanData(0);
 			RunContinuityPluginData runContinuityPluginData = RunContinuityPluginData.builder()
 					.addContextConsumer(planTime, (c) -> called.setValue(true))//
 					.build();
@@ -125,11 +121,8 @@ public class AT_TestSimulation {
 
 					})).build();
 
-			PlanQueueData planQueueData = PlanQueueData.builder().setPlanData(runContinuityPlanData).setTime(planTime)
-					.setPlanner(Planner.ACTOR).build();
-
-			SimulationState simulationState = SimulationState.builder().addPlanQueueData(planQueueData)
-					.setStartTime(startTime).setPlanningQueueArrivalId(2).build();
+			SimulationState simulationState = SimulationState.builder()
+					.setStartTime(startTime).build();
 
 			TestSimulation testSimulation = TestSimulation.builder().addPlugin(actorPlugin)
 					.addPlugin(TestPlugin.getTestPlugin(testPluginData)).setSimulationState(simulationState).build();

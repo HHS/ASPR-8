@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -42,8 +40,8 @@ public final class ReportContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<ReportContext> consumer, final double planTime, final Object key) {
-		simulation.addReportPlan(new ReportPlan(planTime, consumer, key));
+	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
+		simulation.addReportPlan(new ReportPlan(planTime, consumer));
 	}
 
 	/**
@@ -68,16 +66,6 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Retrieves a plan stored for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<ReportPlan> getPlan(final Object key) {
-		return simulation.getReportPlan(key);
-	}
-
-	/**
 	 * Returns true if and only if the reports should output their state as a plugin
 	 * data instances at the end of the simulation.
 	 */
@@ -99,23 +87,6 @@ public final class ReportContext {
 	 */
 	protected boolean plansRequirePlanData(double time) {
 		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public void cancelPlan(final Object key) {
-		simulation.cancelReportPlan(key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current report
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getReportPlanKeys();
 	}
 
 	/**

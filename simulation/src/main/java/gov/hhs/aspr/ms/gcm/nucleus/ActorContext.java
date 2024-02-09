@@ -1,8 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -48,8 +46,8 @@ public final class ActorContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
-		simulation.addActorPlan(new ActorPlan(planTime, consumer, key));
+	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
+		simulation.addActorPlan(new ActorPlan(planTime, consumer));
 	}
 
 	/**
@@ -71,33 +69,6 @@ public final class ActorContext {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 		simulation.addActorPlan(plan);
-	}
-
-	/**
-	 * Retrieves a plan stored for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<ActorPlan> getPlan(final Object key) {
-		return simulation.getActorPlan(key);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public void cancelPlan(final Object key) {
-		simulation.cancelActorPlan(key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current actor
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getActorPlanKeys();
 	}
 
 	/**

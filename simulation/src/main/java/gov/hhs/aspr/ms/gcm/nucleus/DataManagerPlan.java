@@ -18,16 +18,6 @@ public class DataManagerPlan extends Plan {
         this.consumer = consumer;
     }
 
-    protected DataManagerPlan(double time, Consumer<DataManagerContext> consumer, Object key) {
-        super(time, Planner.DATA_MANAGER, key);
-        this.consumer = consumer;
-    }
-
-    protected DataManagerPlan(double time, boolean active, Consumer<DataManagerContext> consumer, Object key) {
-        super(time, active, Planner.DATA_MANAGER, key);
-        this.consumer = consumer;
-    }
-
     void execute(DataManagerContext context) {
         this.consumer.accept(context);
     }

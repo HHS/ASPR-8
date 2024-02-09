@@ -423,32 +423,6 @@ public class Simulation {
 		}
 	}
 
-	protected void cancelActorPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
-
-		if (map != null) {
-			final Plan plan = map.remove(key);
-			if (plan != null) {
-				plan.cancelPlan();
-			}
-		}
-	}
-
-	protected void cancelReportPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
-
-		if (map != null) {
-			final Plan plan = map.remove(key);
-			if (plan != null) {
-				plan.cancelPlan();
-			}
-		}
-	}
-
 	private Graph<PluginId, Object> pluginDependencyGraph;
 
 	private List<Plugin> getOrderedPlugins() {
@@ -758,9 +732,6 @@ public class Simulation {
 				case ACTOR:
 					ActorPlan actorPlan = (ActorPlan) plan;
 					if (actorPlan.consumer != null) {
-						if (plan.key != null) {
-							actorPlanMap.get(actorPlan.actorId).remove(plan.key);
-						}
 						ActorContentRec actorContentRec = new ActorContentRec();
 						actorContentRec.actorId = actorPlan.actorId;
 						actorContentRec.actorPlan = actorPlan::execute;
@@ -771,9 +742,6 @@ public class Simulation {
 				case DATA_MANAGER:
 					DataManagerPlan dmPlan = (DataManagerPlan) plan;
 					if (dmPlan.consumer != null) {
-						if (plan.key != null) {
-							dataManagerPlanMap.get(dmPlan.dataManagerId).remove(plan.key);
-						}
 						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
 						dataManagerContentRec.dmPlan = dmPlan::execute;
@@ -786,9 +754,6 @@ public class Simulation {
 				case REPORT:
 					ReportPlan reportPlan = (ReportPlan) plan;
 					if (reportPlan.consumer != null) {
-						if (plan.key != null) {
-							reportPlanMap.get(reportPlan.reportId).remove(plan.key);
-						}
 						ReportContentRec reportContentRec = new ReportContentRec();
 						reportContentRec.reportId = reportPlan.reportId;
 						reportContentRec.reportPlan = reportPlan::execute;
@@ -994,30 +959,6 @@ public class Simulation {
 	}
 
 	private Consumer<Object> outputConsumer;
-
-	/*
-	 * We drop the plan out of the plan map and thus have no way to reference the
-	 * plan directly. However, we do not remove the plan from the planQueue and
-	 * instead simply mark the plan record as cancelled. When the cancelled plan
-	 * record reaches the top of the queue, it is popped off and ignored. This
-	 * avoids the inefficiency of walking the queue and removing the plan.
-	 *
-	 * Note that we are allowing components to cancel plans that do not exist. This
-	 * was done to ease any bookkeeping burdens on the component and seems generally
-	 * harmless.
-	 */
-	protected void cancelDataManagerPlan(DataManagerId dataManagerId, final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
-
-		if (map != null) {
-			final Plan plan = map.remove(key);
-			if (plan != null) {
-				plan.cancelPlan();
-			}
-		}
-	}
 
 	protected void validatePlanKeyNotNull(final Object key) {
 		if (key == null) {

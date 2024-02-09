@@ -9,22 +9,7 @@ public class ReportPlan extends Plan {
     final Consumer<ReportContext> consumer;
 
     protected ReportPlan(double time, Consumer<ReportContext> consumer) {
-        super(time, Planner.REPORT);
-        this.consumer = consumer;
-    }
-
-    protected ReportPlan(double time, boolean active, Consumer<ReportContext> consumer) {
-        super(time, active, Planner.REPORT);
-        this.consumer = consumer;
-    }
-
-    protected ReportPlan(double time, Consumer<ReportContext> consumer, Object key) {
-        super(time, Planner.REPORT, key);
-        this.consumer = consumer;
-    }
-
-    protected ReportPlan(double time, boolean active, Consumer<ReportContext> consumer, Object key) {
-        super(time, active, Planner.REPORT, key);
+        super(time, false, Planner.REPORT);
         this.consumer = consumer;
     }
 
