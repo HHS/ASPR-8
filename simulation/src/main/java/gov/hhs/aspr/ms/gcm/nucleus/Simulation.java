@@ -48,7 +48,6 @@ public class Simulation {
 	private static class PlanRec {
 		private Plan plan;
 
-		private double time;
 		private boolean isActive;
 		private Object key;
 
@@ -191,7 +190,7 @@ public class Simulation {
 
 		@Override
 		public int compare(final PlanRec plannedEvent1, final PlanRec plannedEvent2) {
-			int result = Double.compare(plannedEvent1.time, plannedEvent2.time);
+			int result = Double.compare(plannedEvent1.plan.time, plannedEvent2.plan.time);
 			if (result == 0) {
 
 				result = plannedEvent1.plan.getPlanner().compareTo(plannedEvent2.plan.getPlanner());
@@ -387,7 +386,6 @@ public class Simulation {
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
 
-		planRec.time = plan.getTime();
 		planRec.actorPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
@@ -442,7 +440,6 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = false;
-		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
@@ -492,7 +489,6 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
-		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
@@ -844,7 +840,7 @@ public class Simulation {
 
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
-				if (planningQueue.peek().time > simulationHaltTime) {
+				if (planningQueue.peek().plan.time > simulationHaltTime) {
 					break;
 				}
 			}
@@ -852,7 +848,7 @@ public class Simulation {
 			final PlanRec planRec = planningQueue.poll();
 			// System.out.println(planRec);
 
-			time = planRec.time;
+			time = planRec.plan.time;
 			if (planRec.isActive) {
 				activePlanCount--;
 			}
