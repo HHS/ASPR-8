@@ -48,7 +48,6 @@ public class Simulation {
 	private static class PlanRec {
 		private Plan plan;
 
-		private Planner planner;
 		private long arrivalId;
 
 		private double time;
@@ -197,7 +196,7 @@ public class Simulation {
 			int result = Double.compare(plannedEvent1.time, plannedEvent2.time);
 			if (result == 0) {
 
-				result = plannedEvent1.planner.compareTo(plannedEvent2.planner);
+				result = plannedEvent1.plan.getPlanner().compareTo(plannedEvent2.plan.getPlanner());
 
 				if (result == 0) {
 					result = Long.compare(plannedEvent1.arrivalId, plannedEvent2.arrivalId);
@@ -390,7 +389,6 @@ public class Simulation {
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
 
-		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.actorPlan = plan.getCallbackConsumer();
 
@@ -446,7 +444,6 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = false;
-		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
 
@@ -497,7 +494,6 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
-		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
 
@@ -718,10 +714,6 @@ public class Simulation {
 				plan.arrivalId = masterPlanningArrivalId - id;
 			}
 
-			if (planRec.isActive) {
-				activePlanCount++;
-			}
-
 			planRecs.add(planRec);
 		}
 
@@ -864,7 +856,7 @@ public class Simulation {
 			if (planRec.isActive) {
 				activePlanCount--;
 			}
-			switch (planRec.planner) {
+			switch (planRec.plan.getPlanner()) {
 				case ACTOR:
 					if (planRec.actorPlan != null) {
 						if (planRec.key != null) {
@@ -906,7 +898,7 @@ public class Simulation {
 					break;
 
 				default:
-					throw new RuntimeException("unhandled planner type " + planRec.planner);
+					throw new RuntimeException("unhandled planner type " + planRec.plan.getPlanner());
 			}
 		}
 

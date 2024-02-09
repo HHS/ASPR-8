@@ -30,4 +30,5 @@ public abstract class Plan {
 		return arrivalId;
 	}
 
+	abstract Planner getPlanner();
 }
