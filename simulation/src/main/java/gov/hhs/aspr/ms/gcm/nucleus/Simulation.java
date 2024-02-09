@@ -48,8 +48,6 @@ public class Simulation {
 	private static class PlanRec {
 		private Plan plan;
 
-		private long arrivalId;
-
 		private double time;
 		private boolean isActive;
 		private Object key;
@@ -199,7 +197,7 @@ public class Simulation {
 				result = plannedEvent1.plan.getPlanner().compareTo(plannedEvent2.plan.getPlanner());
 
 				if (result == 0) {
-					result = Long.compare(plannedEvent1.arrivalId, plannedEvent2.arrivalId);
+					result = Long.compare(plannedEvent1.plan.arrivalId, plannedEvent2.plan.arrivalId);
 				}
 			}
 			return result;
@@ -373,6 +371,7 @@ public class Simulation {
 		// if plan has arrivalId of -1, then it is a "new" plan
 		// if it doesn't, then it is an existing plan, and check its value against the
 		// master value and set it accordingly.
+		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
 			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
@@ -381,9 +380,8 @@ public class Simulation {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-			planRec.arrivalId = plan.arrivalId;
 		} else {
-			planRec.arrivalId = masterPlanningArrivalId++;
+			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
 		planRec.plan = plan;
@@ -429,6 +427,7 @@ public class Simulation {
 		// if plan has arrivalId of -1, then it is a "new" plan
 		// if it doesn't, then it is an existing plan, and check its value against the
 		// master value and set it accordingly.
+		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
 			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
@@ -437,9 +436,8 @@ public class Simulation {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-			planRec.arrivalId = plan.arrivalId;
 		} else {
-			planRec.arrivalId = masterPlanningArrivalId++;
+			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
 		planRec.plan = plan;
@@ -479,6 +477,7 @@ public class Simulation {
 		// if plan has arrivalId of -1, then it is a "new" plan
 		// if it doesn't, then it is an existing plan, and check its value against the
 		// master value and set it accordingly.
+		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
 			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
@@ -487,9 +486,8 @@ public class Simulation {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-			planRec.arrivalId = plan.arrivalId;
 		} else {
-			planRec.arrivalId = masterPlanningArrivalId++;
+			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
 		planRec.plan = plan;
@@ -712,6 +710,8 @@ public class Simulation {
 				long id = plan.arrivalId;
 				// master - (-id) = master + id
 				plan.arrivalId = masterPlanningArrivalId - id;
+				// increment the master arrival id, since we have a plan that was "new" to this sim
+				masterPlanningArrivalId++;
 			}
 
 			planRecs.add(planRec);
