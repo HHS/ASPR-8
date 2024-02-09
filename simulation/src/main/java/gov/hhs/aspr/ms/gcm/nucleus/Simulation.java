@@ -737,99 +737,6 @@ public class Simulation {
 		return false;
 	}
 
-	private final Map<DataManagerId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>>> dataManagerPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setDataManagerPlanDataConverter(DataManagerId dataManagerId,
-			Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>> map = dataManagerPlanDataConversionMap
-				.get(dataManagerId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			dataManagerPlanDataConversionMap.put(dataManagerId, map);
-		}
-		Function<PlanData, Consumer<DataManagerContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<DataManagerContext> getDataManagerContextConsumer(DataManagerId dataManagerId, PlanData planData) {
-		Consumer<DataManagerContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>> map = dataManagerPlanDataConversionMap
-				.get(dataManagerId);
-		if (map != null) {
-			Function<PlanData, Consumer<DataManagerContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
-	private final Map<ActorId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>>> actorPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setActorPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ActorContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>> map = actorPlanDataConversionMap
-				.get(focalActorId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			actorPlanDataConversionMap.put(focalActorId, map);
-		}
-		Function<PlanData, Consumer<ActorContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<ActorContext> getActorContextConsumer(ActorId actorId, PlanData planData) {
-		Consumer<ActorContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>> map = actorPlanDataConversionMap
-				.get(actorId);
-		if (map != null) {
-			Function<PlanData, Consumer<ActorContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
-	private final Map<ReportId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>>> reportPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setReportPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ReportContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>> map = reportPlanDataConversionMap
-				.get(focalReportId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			reportPlanDataConversionMap.put(focalReportId, map);
-		}
-		Function<PlanData, Consumer<ReportContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<ReportContext> getReportContextConsumer(ReportId reportId, PlanData planData) {
-		Consumer<ReportContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>> map = reportPlanDataConversionMap
-				.get(reportId);
-		if (map != null) {
-			Function<PlanData, Consumer<ReportContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
 	private void loadExistingPlans() {
 		List<PlanQueueData> planQueueDatas = data.simulationState.getPlanQueueDatas();
 		for (PlanQueueData planQueueData : planQueueDatas) {
@@ -839,7 +746,7 @@ public class Simulation {
 			switch (planner) {
 			case ACTOR:
 				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-				planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
+				// planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ActorContext.class)//
 						.setActive(planQueueData.isActive())//
 						.setKey(planQueueData.getKey())//
@@ -851,8 +758,8 @@ public class Simulation {
 				break;
 			case DATA_MANAGER:
 				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-						planQueueData.getPlanData());
+				// planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
+				// 		planQueueData.getPlanData());
 				planRec.plan = Plan.builder(DataManagerContext.class)//
 						.setActive(planQueueData.isActive())//
 						.setKey(planQueueData.getKey())//
@@ -864,7 +771,7 @@ public class Simulation {
 				break;
 			case REPORT:
 				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-				planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
+				// planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ReportContext.class)//
 						.setActive(planQueueData.isActive())//
 						.setKey(planQueueData.getKey())//
