@@ -63,9 +63,6 @@ public enum NucleusError implements ContractError {
 	NULL_SIMULATION_CONTEXT("Null simulation context"), NULL_SIMULATION_TIME("Null simulation time"),
 	PAST_PLANNING_TIME("Plan execution time is in the past"),
 	PLANNING_QUEUE_CLOSED("The planning phase of the simulation is over and plans may not be added"),
-	PLANNING_QUEUE_ARRIVAL_INVALID(
-			"The planning queue arrival id must exceed the arrival id values for all stored plans"),
-	PLANNING_QUEUE_TIME("A planning time for a stored plan happens before the start time of the simulation"),
 	PLUGIN_INITIALIZATION_CLOSED("Plugin context is no longer valid"),
 	REPEATED_EXECUTION("Attempted repeat execution of simulation engine"),
 	REPORT_ATTEMPTING_MUTATION("A report is attempting to mutate data state"),
