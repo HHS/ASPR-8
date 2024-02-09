@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -44,14 +43,7 @@ public final class ReportContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
-				.setActive(false)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-		simulation.addReportPlan(plan);
+		simulation.addReportPlan(new ReportPlan(planTime, consumer));
 	}
 
 	/**
@@ -68,7 +60,7 @@ public final class ReportContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(Plan<ReportContext> plan) {
+	public void addPlan(ReportPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -81,7 +73,7 @@ public final class ReportContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<ReportContext>> getPlan(final Object key) {
+	public Optional<ReportPlan> getPlan(final Object key) {
 		return simulation.getReportPlan(key);
 	}
 
@@ -115,7 +107,7 @@ public final class ReportContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<ReportContext>> removePlan(final Object key) {
+	public Optional<ReportPlan> removePlan(final Object key) {
 		return simulation.removeReportPlan(key);
 	}
 
@@ -187,17 +179,6 @@ public final class ReportContext {
 
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
-	}
-
-	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ReportContext>> conversionFunction) {
-		simulation.setReportPlanDataConverter(planDataClass, conversionFunction);
 	}
 
 	/**

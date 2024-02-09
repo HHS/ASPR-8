@@ -48,7 +48,7 @@ public class Simulation {
 	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
 	private static class PlanRec {
-		private Plan<?> plan;
+		private Plan plan;
 
 		private Planner planner;
 		private long arrivalId;
@@ -425,7 +425,7 @@ public class Simulation {
 
 	}
 
-	protected void addActorPlan(Plan<ActorContext> plan) {
+	protected void addActorPlan(ActorPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
@@ -449,6 +449,8 @@ public class Simulation {
 
 		planRec.actorId = focalActorId;
 
+		plan.setActorId(focalActorId);
+
 		if (planRec.key != null) {
 			map = actorPlanMap.get(focalActorId);
 			if (map == null) {
@@ -465,7 +467,7 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	protected void addReportPlan(Plan<ReportContext> plan) {
+	protected void addReportPlan(ReportPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
@@ -488,6 +490,8 @@ public class Simulation {
 
 		planRec.reportId = focalReportId;
 
+		plan.setReportId(focalReportId);
+
 		if (planRec.key != null) {
 			map = reportPlanMap.get(focalReportId);
 			if (map == null) {
@@ -500,7 +504,7 @@ public class Simulation {
 
 	}
 
-	protected void addDataManagerPlan(DataManagerId dataManagerId, Plan<DataManagerContext> plan) {
+	protected void addDataManagerPlan(DataManagerId dataManagerId, DataManagerPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
@@ -522,6 +526,8 @@ public class Simulation {
 		Map<Object, PlanRec> map;
 
 		planRec.dataManagerId = dataManagerId;
+
+		plan.setDataManagerId(dataManagerId);
 		if (planRec.key != null) {
 			map = dataManagerPlanMap.get(dataManagerId);
 			if (map == null) {
@@ -537,35 +543,22 @@ public class Simulation {
 		planningQueue.add(planRec);
 	}
 
-	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
-		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
 	protected void validateActorPlanKeyNotDuplicate(final Object key) {
 		if (getActorPlan(key).isPresent()) {
 			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
 		}
 	}
 
-	protected void validateReportPlanKeyNotDuplicate(final Object key) {
-		if (getReportPlan(key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ActorContext>> removeActorPlan(final Object key) {
+	protected Optional<ActorPlan> removeActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
 
-		Plan<ActorContext> result = null;
+		ActorPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
-				result = (Plan<ActorContext>) planRecord.plan;
+				result = (ActorPlan) planRecord.plan;
 				planRecord.actorPlan = null;
 				planRecord.plan = null;
 			}
@@ -574,17 +567,16 @@ public class Simulation {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ReportContext>> removeReportPlan(final Object key) {
+	protected Optional<ReportPlan> removeReportPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
 
-		Plan<ReportContext> result = null;
+		ReportPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
-				result = (Plan<ReportContext>) planRecord.plan;
+				result = (ReportPlan) planRecord.plan;
 				planRecord.reportPlan = null;
 				planRecord.plan = null;
 			}
@@ -743,30 +735,18 @@ public class Simulation {
 			switch (planner) {
 			case ACTOR:
 				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-				planRec.plan = Plan.builder(ActorContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.actorPlan)//
-						.build();
-
+				ActorPlan actorPlan = new ActorPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.actorPlan);
+				planRec.plan = actorPlan;
 				break;
 			case DATA_MANAGER:
 				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				planRec.plan = Plan.builder(DataManagerContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.dataManagerPlan)//
-						.build();
-
+				DataManagerPlan dataManagerPlan = new DataManagerPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.dataManagerPlan);
+				planRec.plan = dataManagerPlan;
 				break;
 			case REPORT:
 				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-				planRec.plan = Plan.builder(ReportContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.reportPlan)//
-						.build();
-
+				ReportPlan reportPlan = new ReportPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.reportPlan);
+				planRec.plan = reportPlan;
 				break;
 			default:
 				throw new RuntimeException("unhandled case " + planner);
@@ -778,7 +758,7 @@ public class Simulation {
 			planRec.time = planQueueData.getTime();
 
 			
-			if (planRec.plan.getCallbackConsumer() != null) {
+			if (planRec.plan != null) {
 				if (planRec.isActive) {
 					activePlanCount++;
 				}
@@ -1129,43 +1109,40 @@ public class Simulation {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ReportContext>> getReportPlan(final Object key) {
+	protected Optional<ReportPlan> getReportPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
-		Plan<ReportContext> result = null;
+		ReportPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
-				result = (Plan<ReportContext>) planRecord.plan;
+				result = (ReportPlan) planRecord.plan;
 			}
 		}
 		return Optional.ofNullable(result);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ActorContext>> getActorPlan(final Object key) {
+	protected Optional<ActorPlan> getActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
-		Plan<ActorContext> result = null;
+		ActorPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
-				result = (Plan<ActorContext>) planRecord.plan;
+				result = (ActorPlan) planRecord.plan;
 			}
 		}
 		return Optional.ofNullable(result);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected Optional<DataManagerPlan> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		Plan<DataManagerContext> result = null;
+		DataManagerPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.get(key);
 			if (planRecord != null) {
-				result = (Plan<DataManagerContext>) planRecord.plan;
+				result = (DataManagerPlan) planRecord.plan;
 			}
 		}
 		return Optional.ofNullable(result);
@@ -1215,16 +1192,15 @@ public class Simulation {
 	 * was done to ease any bookkeeping burdens on the component and seems generally
 	 * harmless.
 	 */
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<DataManagerContext>> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected Optional<DataManagerPlan> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		Plan<DataManagerContext> result = null;
+		DataManagerPlan result = null;
 		if (map != null) {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
-				result = (Plan<DataManagerContext>) planRecord.plan;
+				result = (DataManagerPlan) planRecord.plan;
 				planRecord.dataManagerPlan = null;
 				planRecord.plan = null;
 			}

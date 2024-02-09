@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -50,14 +49,7 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-				.setActive(true)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-		simulation.addActorPlan(plan);
+		simulation.addActorPlan(new ActorPlan(planTime, consumer));
 	}
 
 	/**
@@ -74,7 +66,7 @@ public final class ActorContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Plan<ActorContext> plan) {
+	public void addPlan(final ActorPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -87,7 +79,7 @@ public final class ActorContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<ActorContext>> getPlan(final Object key) {
+	public Optional<ActorPlan> getPlan(final Object key) {
 		return simulation.getActorPlan(key);
 	}
 
@@ -97,7 +89,7 @@ public final class ActorContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<ActorContext>> removePlan(final Object key) {
+	public Optional<ActorPlan> removePlan(final Object key) {
 		return simulation.removeActorPlan(key);
 	}
 
@@ -213,17 +205,6 @@ public final class ActorContext {
 	 */
 	public void removeActor(ActorId actorId) {
 		simulation.removeActor(actorId);
-	}
-
-	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ActorContext>> conversionFunction) {
-		simulation.setActorPlanDataConverter(planDataClass, conversionFunction);
 	}
 
 	/**

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -39,16 +38,7 @@ public final class DataManagerContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-
-		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-				.setActive(true)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-
-		simulation.addDataManagerPlan(dataManagerId, plan);
+		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
 	}
 
 	/**
@@ -65,7 +55,7 @@ public final class DataManagerContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(Plan<DataManagerContext> plan) {
+	public void addPlan(DataManagerPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -114,7 +104,7 @@ public final class DataManagerContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<DataManagerContext>> getPlan(final Object key) {
+	public Optional<DataManagerPlan> getPlan(final Object key) {
 		return simulation.getDataManagerPlan(dataManagerId, key);
 	}
 
@@ -150,7 +140,7 @@ public final class DataManagerContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<Plan<DataManagerContext>> removePlan(final Object key) {
+	public Optional<DataManagerPlan> removePlan(final Object key) {
 		return simulation.removeDataManagerPlan(dataManagerId, key);
 	}
 
@@ -253,17 +243,6 @@ public final class DataManagerContext {
 
 	public void releaseOutput(Object output) {
 		simulation.releaseOutput(output);
-	}
-
-	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<DataManagerContext>> conversionFunction) {
-		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
 	}
 
 	/**
