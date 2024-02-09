@@ -8,6 +8,18 @@ abstract class Plan {
 	boolean canceled = false;
 	long arrivalId = -1;
 
+//	protected Plan(double time, boolean active, long arrivalId,Planner planner) {
+	/*
+	 * Do we throw an execption here if the arrival id is < -1? Or do we detect this
+	 * in the sim? Or do we just tolerate it in the sim by changing the logic for
+	 * resetting the arrival id?
+	 */
+//		this.time = time;
+//		this.isActive = active;
+//		this.arrivalId = arrivalId;
+//		this.planner = planner;
+//	}
+
 	protected Plan(double time, Planner planner) {
 		this.time = time;
 		this.planner = planner;

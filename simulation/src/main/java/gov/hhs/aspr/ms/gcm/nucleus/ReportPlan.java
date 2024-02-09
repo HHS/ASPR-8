@@ -12,6 +12,17 @@ public class ReportPlan extends Plan {
         super(time, false, Planner.REPORT);
         this.consumer = consumer;
     }
+    
+    
+//	public ReportPlan(double time, long arrivalId, Consumer<ReportContext> consumer) {
+//		super(time, false, arrivalId, Planner.REPORT);
+//		this.consumer = consumer;
+//	}
+//	
+//	public ReportPlan(double time,  Consumer<ReportContext> consumer) {
+//		super(time, false, -1, Planner.REPORT);
+//		this.consumer = consumer;
+//	}
 
     void execute(ReportContext context) {
         this.consumer.accept(context);
