@@ -3,19 +3,15 @@ package gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorPlan;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Test Support class that describes an action for an actor as a scheduled plan
  * with an optional key.
  */
-public class TestActorPlan {
-
-	private final double scheduledTime;
-
+public class TestActorPlan extends ActorPlan {
 	private boolean executed;
-
-	private final Consumer<ActorContext> plan;
 
 	/**
 	 * Constructs an actor action plan. If assignKey is false, then this actor
@@ -25,14 +21,10 @@ public class TestActorPlan {
 	 *                           null
 	 */
 	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan) {
-
+		super(scheduledTime, plan);
 		if (plan == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
-
-		this.scheduledTime = scheduledTime;
-
-		this.plan = plan;
 	}
 
 	/**
@@ -44,7 +36,7 @@ public class TestActorPlan {
 		int result = 1;
 		result = prime * result + (executed ? 1231 : 1237);
 		long temp;
-		temp = Double.doubleToLongBits(scheduledTime);
+		temp = Double.doubleToLongBits(time);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -68,7 +60,7 @@ public class TestActorPlan {
 			return false;
 		}
 
-		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
+		if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time)) {
 			return false;
 		}
 		return true;
@@ -78,9 +70,8 @@ public class TestActorPlan {
 	 * Constructs an test actor plan from another test actor plan.
 	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
-		scheduledTime = testActorPlan.scheduledTime;
+		super(testActorPlan.time, testActorPlan.consumer);
 		executed = testActorPlan.executed;
-		plan = testActorPlan.plan;
 	}
 
 	/**
@@ -90,23 +81,13 @@ public class TestActorPlan {
 		return executed;
 	}
 
-	/**
-	 * Package access. Executes the embedded action and marks this action plan as
-	 * executed.
-	 */
-	void executeAction(final ActorContext actorContext) {
+	@Override
+	protected void execute(final ActorContext actorContext) {
 		try {
-			plan.accept(actorContext);
+			consumer.accept(actorContext);
 		} finally {
 			executed = true;
 		}
-	}
-
-	/**
-	 * Returns the scheduled time for action execution
-	 */
-	public double getScheduledTime() {
-		return scheduledTime;
 	}
 
 }

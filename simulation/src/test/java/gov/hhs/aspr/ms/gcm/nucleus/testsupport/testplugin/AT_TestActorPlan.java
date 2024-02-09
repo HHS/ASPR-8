@@ -23,7 +23,7 @@ public class AT_TestActorPlan {
 
 		TestActorPlan testActorPlan = new TestActorPlan(0.0, (c) -> {
 		});
-		assertEquals(0.0, testActorPlan.getScheduledTime());
+		assertEquals(0.0, testActorPlan.getTime());
 		assertFalse(testActorPlan.executed());
 	}
 
@@ -39,7 +39,7 @@ public class AT_TestActorPlan {
 			});
 			TestActorPlan newTestActorPlan = new TestActorPlan(originalTestActorPlan);
 
-			assertEquals(scheduledTime, newTestActorPlan.getScheduledTime());
+			assertEquals(scheduledTime, newTestActorPlan.getTime());
 
 		}
 	}
@@ -55,14 +55,14 @@ public class AT_TestActorPlan {
 		TestActorPlan testActorPlan = new TestActorPlan(0.0, (c) -> {
 		});
 		assertFalse(testActorPlan.executed());
-		testActorPlan.executeAction(null);
+		testActorPlan.execute(null);
 		assertTrue(testActorPlan.executed());
 
 		TestActorPlan testActorPlanWithException = new TestActorPlan(0.0, (c) -> {
 			throw new RuntimeException();
 		});
 		assertFalse(testActorPlanWithException.executed());
-		assertThrows(RuntimeException.class, () -> testActorPlanWithException.executeAction(null));
+		assertThrows(RuntimeException.class, () -> testActorPlanWithException.execute(null));
 		assertTrue(testActorPlanWithException.executed());
 	}
 
@@ -79,15 +79,15 @@ public class AT_TestActorPlan {
 			double planTime = randomGenerator.nextDouble() * 1000;
 			TestActorPlan testActorPlan = new TestActorPlan(planTime, (c) -> {
 			});
-			assertEquals(planTime, testActorPlan.getScheduledTime());
+			assertEquals(planTime, testActorPlan.getTime());
 
 			testActorPlan = new TestActorPlan(planTime, (c) -> {
 			});
-			assertEquals(planTime, testActorPlan.getScheduledTime());
+			assertEquals(planTime, testActorPlan.getTime());
 
 			testActorPlan = new TestActorPlan(planTime, (c) -> {
 			});
-			assertEquals(planTime, testActorPlan.getScheduledTime());
+			assertEquals(planTime, testActorPlan.getTime());
 		}
 
 	}

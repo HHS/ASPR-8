@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class ActorPlan extends Plan {
     ActorId actorId;
-    final Consumer<ActorContext> consumer;
+    protected final Consumer<ActorContext> consumer;
 
     public ActorPlan(double time, Consumer<ActorContext> consumer) {
         super(time, Planner.ACTOR);
@@ -18,7 +18,7 @@ public class ActorPlan extends Plan {
         this.consumer = consumer;
     }
 
-    void execute(ActorContext context) {
+    protected void execute(ActorContext context) {
         this.consumer.accept(context);
     }
 
