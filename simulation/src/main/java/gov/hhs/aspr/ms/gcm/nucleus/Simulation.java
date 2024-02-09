@@ -95,27 +95,27 @@ public class Simulation {
 			builder.append(planner);
 			builder.append(" = ");
 			switch (planner) {
-			case ACTOR:
-				builder.append(actorId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(actorPlan);
-				break;
-			case DATA_MANAGER:
-				builder.append(dataManagerId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(dataManagerPlan);
-				break;
-			case REPORT:
-				builder.append(reportId);
-				builder.append("\t");
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(reportPlan);
-				break;
-			default:
-				throw new RuntimeException("unhandled planner case");
+				case ACTOR:
+					builder.append(actorId);
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(actorPlan);
+					break;
+				case DATA_MANAGER:
+					builder.append(dataManagerId);
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(dataManagerPlan);
+					break;
+				case REPORT:
+					builder.append(reportId);
+					builder.append("\t");
+					builder.append(LINE_SEPARATOR);
+					builder.append("\t");
+					builder.append(reportPlan);
+					break;
+				default:
+					throw new RuntimeException("unhandled planner case");
 			}
 
 			builder.append(LINE_SEPARATOR);
@@ -439,12 +439,13 @@ public class Simulation {
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
-		if(planningQueueMode == PlanningQueueMode.READY) {
-			if(plan.arrivalId == -1) {
+		// if it doesn't, then it is an existing plan, and check its value against the
+		// master value and set it accordingly.
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
 			} else {
-				if(plan.arrivalId > masterPlanningArrivalId) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
@@ -456,7 +457,7 @@ public class Simulation {
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
 
-		planRec.planner = Planner.ACTOR;
+		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.actorPlan = plan.getCallbackConsumer();
 
@@ -495,12 +496,13 @@ public class Simulation {
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
-		if(planningQueueMode == PlanningQueueMode.READY) {
-			if(plan.arrivalId == -1) {
+		// if it doesn't, then it is an existing plan, and check its value against the
+		// master value and set it accordingly.
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
 			} else {
-				if(plan.arrivalId > masterPlanningArrivalId) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
@@ -511,7 +513,7 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = false;
-		planRec.planner = Planner.REPORT;
+		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
 
@@ -545,12 +547,13 @@ public class Simulation {
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
-		if(planningQueueMode == PlanningQueueMode.READY) {
-			if(plan.arrivalId == -1) {
+		// if it doesn't, then it is an existing plan, and check its value against the
+		// master value and set it accordingly.
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			if (plan.arrivalId == -1) {
 				plan.arrivalId = initialArrivalId--;
 			} else {
-				if(plan.arrivalId > masterPlanningArrivalId) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
@@ -561,7 +564,7 @@ public class Simulation {
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
-		planRec.planner = Planner.DATA_MANAGER;
+		planRec.planner = plan.getPlanner();
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
 
@@ -768,77 +771,30 @@ public class Simulation {
 		return false;
 	}
 
-	private void loadExistingPlans() {
-		// List<PlanQueueData> planQueueDatas = data.simulationState.getPlanQueueDatas();
-		// for (PlanQueueData planQueueData : planQueueDatas) {
-		// 	PlanRec planRec = new PlanRec();
-		// 	// convert the plan data into a consumer
-		// 	Planner planner = planQueueData.getPlanner();
-		// 	switch (planner) {
-		// 	case ACTOR:
-		// 		planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-		// 		ActorPlan actorPlan = new ActorPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.actorPlan);
-		// 		planRec.plan = actorPlan;
-		// 		break;
-		// 	case DATA_MANAGER:
-		// 		planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-		// 		DataManagerPlan dataManagerPlan = new DataManagerPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.dataManagerPlan);
-		// 		planRec.plan = dataManagerPlan;
-		// 		break;
-		// 	case REPORT:
-		// 		planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-		// 		ReportPlan reportPlan = new ReportPlan(planQueueData.getTime(), planQueueData.isActive(), planRec.reportPlan);
-		// 		planRec.plan = reportPlan;
-		// 		break;
-		// 	default:
-		// 		throw new RuntimeException("unhandled case " + planner);
-		// 	}
-		// 	planRec.arrivalId = planQueueData.getArrivalId();
-		// 	planRec.isActive = planQueueData.isActive();
-		// 	planRec.key = planQueueData.getKey();
-		// 	planRec.planner = planQueueData.getPlanner();
-		// 	planRec.time = planQueueData.getTime();
+	private void rebuildPlanningQueue() {
+		PlanRec planRec;
 
-			
-		// 	if (planRec.plan != null) {
-		// 		if (planRec.isActive) {
-		// 			activePlanCount++;
-		// 		}
-				
-		// 		planningQueue.add(planRec);
-		// 		Map<Object, PlanRec> map;
-		// 		if (planRec.key != null) {
-		// 			switch (planner) {
-		// 			case ACTOR:
-		// 				map = actorPlanMap.get(planRec.actorId);
-		// 				if (map == null) {
-		// 					map = new LinkedHashMap<>();
-		// 					actorPlanMap.put(planRec.actorId, map);
-		// 				}
-		// 				map.put(planRec.key, planRec);
-		// 				break;
-		// 			case DATA_MANAGER:
-		// 				map = dataManagerPlanMap.get(planRec.dataManagerId);
-		// 				if (map == null) {
-		// 					map = new LinkedHashMap<>();
-		// 					dataManagerPlanMap.put(planRec.dataManagerId, map);
-		// 				}
-		// 				map.put(planRec.key, planRec);
-		// 				break;
-		// 			case REPORT:
-		// 				map = reportPlanMap.get(planRec.reportId);
-		// 				if (map == null) {
-		// 					map = new LinkedHashMap<>();
-		// 					reportPlanMap.put(planRec.reportId, map);
-		// 				}
-		// 				map.put(planRec.key, planRec);
-		// 				break;
-		// 			default:
-		// 				throw new RuntimeException("unhandled case " + planner);
-		// 			}
-		// 		}
-		// 	}
-		// }
+		List<PlanRec> planRecs = new ArrayList<>();
+		// empty the planning queue to reset the arrival ids
+		while ((planRec = planningQueue.poll()) != null) {
+			Plan plan = planRec.plan;
+
+			if (plan.arrivalId < 0) {
+				long id = plan.arrivalId;
+				// master - (-id) = master + id
+				plan.arrivalId = masterPlanningArrivalId - id;
+			}
+
+			if (planRec.isActive) {
+				activePlanCount++;
+			}
+
+			planRecs.add(planRec);
+		}
+
+		// this will cause some level of thrashing, as the order of the plans in the list is not guarenteed to be in arrival order.
+		// the planningQueue will take care of the ordering.
+		planRecs.forEach(plan -> planningQueue.add(plan));
 	}
 
 	/**
@@ -957,12 +913,10 @@ public class Simulation {
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
-		
-		loadExistingPlans();
+		rebuildPlanningQueue();
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
 
-		
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
 				if (planningQueue.peek().time > simulationHaltTime) {
@@ -978,48 +932,48 @@ public class Simulation {
 				activePlanCount--;
 			}
 			switch (planRec.planner) {
-			case ACTOR:
-				if (planRec.actorPlan != null) {
-					if (planRec.key != null) {
-						actorPlanMap.get(planRec.actorId).remove(planRec.key);
+				case ACTOR:
+					if (planRec.actorPlan != null) {
+						if (planRec.key != null) {
+							actorPlanMap.get(planRec.actorId).remove(planRec.key);
+						}
+						ActorContentRec actorContentRec = new ActorContentRec();
+						actorContentRec.actorId = planRec.actorId;
+						actorContentRec.plan = planRec.actorPlan;
+						actorQueue.add(actorContentRec);
+						executeActorQueue();
 					}
-					ActorContentRec actorContentRec = new ActorContentRec();
-					actorContentRec.actorId = planRec.actorId;
-					actorContentRec.plan = planRec.actorPlan;
-					actorQueue.add(actorContentRec);
-					executeActorQueue();
-				}
-				break;
-			case DATA_MANAGER:
-				if (planRec.dataManagerPlan != null) {
-					if (planRec.key != null) {
-						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+					break;
+				case DATA_MANAGER:
+					if (planRec.dataManagerPlan != null) {
+						if (planRec.key != null) {
+							dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+						}
+						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+						dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
+						dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+						dataManagerQueue.add(dataManagerContentRec);
+						executeDataManagerQueue();
+						executeActorQueue();
 					}
-					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
-					dataManagerQueue.add(dataManagerContentRec);
-					executeDataManagerQueue();
-					executeActorQueue();
-				}
-				break;
+					break;
 
-			case REPORT:
-				if (planRec.reportPlan != null) {
-					if (planRec.key != null) {
-						reportPlanMap.get(planRec.reportId).remove(planRec.key);
+				case REPORT:
+					if (planRec.reportPlan != null) {
+						if (planRec.key != null) {
+							reportPlanMap.get(planRec.reportId).remove(planRec.key);
+						}
+						ReportContentRec reportContentRec = new ReportContentRec();
+						reportContentRec.reportPlan = planRec.reportPlan;
+						reportContentRec.reportId = planRec.reportId;
+						reportQueue.add(reportContentRec);
+						executeReportQueue();
 					}
-					ReportContentRec reportContentRec = new ReportContentRec();
-					reportContentRec.reportPlan = planRec.reportPlan;
-					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);
-					executeReportQueue();
-				}
 
-				break;
+					break;
 
-			default:
-				throw new RuntimeException("unhandled planner type " + planRec.planner);
+				default:
+					throw new RuntimeException("unhandled planner type " + planRec.planner);
 			}
 		}
 
@@ -1070,7 +1024,6 @@ public class Simulation {
 			while (!planningQueue.isEmpty()) {
 				PlanRec planRec = planningQueue.poll();
 				if (planRec.plan != null) {
-
 
 				}
 			}
