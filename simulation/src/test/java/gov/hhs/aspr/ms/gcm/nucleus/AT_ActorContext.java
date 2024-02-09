@@ -251,7 +251,7 @@ public class AT_ActorContext {
 			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new ActorPlan(0, true, null)));
+					() -> context.addPlan(new ActorPlan(0, true, (c) -> {})));
 			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 		}));
 
