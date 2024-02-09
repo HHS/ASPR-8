@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -191,5 +192,22 @@ public final class ActorContext {
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
 	}
+	
+	/**
+	 * Returns the list of queued plans belonging to the current actor. Should only
+	 * be used after notification of simulation close.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ACTIVE}
+	 *                           if this method is invoked before the termination of
+	 *                           the simulation</li>
+	 *                           </ul>
+	 * 
+	 */
+	public List<ActorPlan> retrievePlans() {
+		return simulation.retrievePlansForActor();
+	}
+
 
 }
