@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 public class DataManagerPlan extends Plan {
     DataManagerId dataManagerId;
-    private Consumer<DataManagerContext> consumer;
+    protected Consumer<DataManagerContext> consumer;
 
     protected DataManagerPlan(double time, Consumer<DataManagerContext> consumer) {
         super(time);

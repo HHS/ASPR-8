@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 public class ReportPlan extends Plan {
     ReportId reportId;
-    private Consumer<ReportContext> consumer;
+    protected Consumer<ReportContext> consumer;
 
     protected ReportPlan(double time, Consumer<ReportContext> consumer) {
         super(time);

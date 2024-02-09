@@ -49,15 +49,6 @@ public class Simulation {
 		private Plan plan;
 
 		private Object key;
-
-		private Consumer<ReportContext> reportPlan;
-		private ReportId reportId;
-
-		private Consumer<ActorContext> actorPlan;
-		private ActorId actorId;
-
-		private Consumer<DataManagerContext> dataManagerPlan;
-		private DataManagerId dataManagerId;
 	}
 
 	public static class Builder {
@@ -384,11 +375,7 @@ public class Simulation {
 
 		planRec.plan = plan;
 
-		planRec.actorPlan = plan.getCallbackConsumer();
-
 		Map<Object, PlanRec> map;
-
-		planRec.actorId = focalActorId;
 
 		plan.setActorId(focalActorId);
 
@@ -437,11 +424,8 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.reportPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
-
-		planRec.reportId = focalReportId;
 
 		plan.setReportId(focalReportId);
 
@@ -485,11 +469,8 @@ public class Simulation {
 		}
 
 		planRec.plan = plan;
-		planRec.dataManagerPlan = plan.getCallbackConsumer();
 
 		Map<Object, PlanRec> map;
-
-		planRec.dataManagerId = dataManagerId;
 
 		plan.setDataManagerId(dataManagerId);
 		if (planRec.key != null) {
@@ -523,7 +504,6 @@ public class Simulation {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
 				result = (ActorPlan) planRecord.plan;
-				planRecord.actorPlan = null;
 				planRecord.plan = null;
 			}
 		}
@@ -541,7 +521,6 @@ public class Simulation {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
 				result = (ReportPlan) planRecord.plan;
-				planRecord.reportPlan = null;
 				planRecord.plan = null;
 			}
 		}
@@ -702,14 +681,16 @@ public class Simulation {
 				long id = plan.arrivalId;
 				// master - (-id) = master + id
 				plan.arrivalId = masterPlanningArrivalId - id;
-				// increment the master arrival id, since we have a plan that was "new" to this sim
+				// increment the master arrival id, since we have a plan that was "new" to this
+				// sim
 				masterPlanningArrivalId++;
 			}
 
 			planRecs.add(planRec);
 		}
 
-		// this will cause some level of thrashing, as the order of the plans in the list is not guarenteed to be in arrival order.
+		// this will cause some level of thrashing, as the order of the plans in the
+		// list is not guarenteed to be in arrival order.
 		// the planningQueue will take care of the ordering.
 		planRecs.forEach(plan -> planningQueue.add(plan));
 	}
@@ -850,25 +831,27 @@ public class Simulation {
 			}
 			switch (planRec.plan.getPlanner()) {
 				case ACTOR:
-					if (planRec.actorPlan != null) {
+					ActorPlan actorPlan = (ActorPlan) planRec.plan;
+					if (actorPlan.consumer != null) {
 						if (planRec.key != null) {
-							actorPlanMap.get(planRec.actorId).remove(planRec.key);
+							actorPlanMap.get(actorPlan.actorId).remove(planRec.key);
 						}
 						ActorContentRec actorContentRec = new ActorContentRec();
-						actorContentRec.actorId = planRec.actorId;
-						actorContentRec.plan = planRec.actorPlan;
+						actorContentRec.actorId = actorPlan.actorId;
+						actorContentRec.plan = actorPlan.consumer;
 						actorQueue.add(actorContentRec);
 						executeActorQueue();
 					}
 					break;
 				case DATA_MANAGER:
-					if (planRec.dataManagerPlan != null) {
+					DataManagerPlan dmPlan = (DataManagerPlan) planRec.plan;
+					if (dmPlan.consumer != null) {
 						if (planRec.key != null) {
-							dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
+							dataManagerPlanMap.get(dmPlan.dataManagerId).remove(planRec.key);
 						}
 						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-						dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-						dataManagerContentRec.dataManagerId = planRec.dataManagerId;
+						dataManagerContentRec.dmPlan = dmPlan.consumer;
+						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
 						dataManagerQueue.add(dataManagerContentRec);
 						executeDataManagerQueue();
 						executeActorQueue();
@@ -876,13 +859,14 @@ public class Simulation {
 					break;
 
 				case REPORT:
-					if (planRec.reportPlan != null) {
+					ReportPlan reportPlan = (ReportPlan) planRec.plan;
+					if (reportPlan.consumer != null) {
 						if (planRec.key != null) {
-							reportPlanMap.get(planRec.reportId).remove(planRec.key);
+							reportPlanMap.get(reportPlan.reportId).remove(planRec.key);
 						}
 						ReportContentRec reportContentRec = new ReportContentRec();
-						reportContentRec.reportPlan = planRec.reportPlan;
-						reportContentRec.reportId = planRec.reportId;
+						reportContentRec.reportPlan = reportPlan.consumer;
+						reportContentRec.reportId = reportPlan.reportId;
 						reportQueue.add(reportContentRec);
 						executeReportQueue();
 					}
@@ -1111,7 +1095,6 @@ public class Simulation {
 			final PlanRec planRecord = map.remove(key);
 			if (planRecord != null) {
 				result = (DataManagerPlan) planRecord.plan;
-				planRecord.dataManagerPlan = null;
 				planRecord.plan = null;
 			}
 		}
