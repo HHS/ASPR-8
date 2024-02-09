@@ -8,7 +8,6 @@ public class Plan<T> {
 		private double time;
 		private Consumer<K> callbackConsumer;
 		private boolean active = true;
-		private PlanData planData;
 
 		public Data() {
 		}
@@ -17,7 +16,6 @@ public class Plan<T> {
 			time = data.time;
 			callbackConsumer = data.callbackConsumer;
 			active = data.active;
-			planData = data.planData;
 		}
 
 		@Override
@@ -29,8 +27,6 @@ public class Plan<T> {
 			builder.append(callbackConsumer);
 			builder.append(", active=");
 			builder.append(active);
-			builder.append(", planData=");
-			builder.append(planData);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -78,18 +74,6 @@ public class Plan<T> {
 		}
 
 		/**
-		 * Sets the auxiliary plan data that will be used when the simulation is
-		 * recording the content of the planning queue for use in a continued
-		 * simulation. A non-null value is required when adding a plan that is scheduled
-		 * at or after the simulation halt time when the simulation has been instructed
-		 * to record state on halt. Defaults to false;
-		 */
-		public Builder<K> setPlanData(PlanData planData) {
-			data.planData = planData;
-			return this;
-		}
-
-		/**
 		 * Sets the required call back behavior for this plan. The call back is executed
 		 * when the plan reaches the top of the queue and the simulation's time is set
 		 * to the plan's time. No default is allowed.
@@ -116,10 +100,6 @@ public class Plan<T> {
 
 	public boolean isActive() {
 		return data.active;
-	}
-
-	public PlanData getPlanData() {
-		return data.planData;
 	}
 
 	@Override

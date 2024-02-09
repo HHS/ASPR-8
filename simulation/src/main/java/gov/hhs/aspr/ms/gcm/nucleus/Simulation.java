@@ -743,11 +743,8 @@ public class Simulation {
 			switch (planner) {
 			case ACTOR:
 				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-				// planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ActorContext.class)//
 						.setActive(planQueueData.isActive())//
-						// .setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.actorPlan)//
 						.build();
@@ -755,12 +752,8 @@ public class Simulation {
 				break;
 			case DATA_MANAGER:
 				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				// planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-				// 		planQueueData.getPlanData());
 				planRec.plan = Plan.builder(DataManagerContext.class)//
 						.setActive(planQueueData.isActive())//
-						// .setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.dataManagerPlan)//
 						.build();
@@ -768,11 +761,8 @@ public class Simulation {
 				break;
 			case REPORT:
 				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-				// planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ReportContext.class)//
 						.setActive(planQueueData.isActive())//
-						// .setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.reportPlan)//
 						.build();
@@ -1057,37 +1047,11 @@ public class Simulation {
 			simulationStateBuilder.setStartTime(time);
 			simulationStateBuilder.setPlanningQueueArrivalId(masterPlanningArrivalId);
 
-			PlanQueueData.Builder planQueueDataBuilder = PlanQueueData.builder();
 			while (!planningQueue.isEmpty()) {
 				PlanRec planRec = planningQueue.poll();
 				if (planRec.plan != null) {
 
-					PlanData planData = planRec.plan.getPlanData();
-					if (planData != null) {
-						planQueueDataBuilder.setActive(planRec.isActive)//
-								.setArrivalId(planRec.arrivalId)//
-								.setKey(planRec.key)//
-								.setPlanData(planData)//
-								.setPlanner(planRec.planner)//
-								.setTime(planRec.time);//
 
-						switch (planRec.planner) {
-						case ACTOR:
-							planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
-							break;
-						case DATA_MANAGER:
-							planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
-							break;
-						case REPORT:
-							planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
-							break;
-						default:
-							throw new RuntimeException("unhandled case " + planRec.planner);
-						}
-
-						PlanQueueData planQueueData = planQueueDataBuilder.build();
-						simulationStateBuilder.addPlanQueueData(planQueueData);
-					}
 				}
 			}
 
