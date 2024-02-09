@@ -6,22 +6,25 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class ActorPlan extends Plan {
     ActorId actorId;
-    final Planner planner = Planner.ACTOR;
     final Consumer<ActorContext> consumer;
 
-    public ActorPlan(double time, Consumer<ActorContext> consumer, String key) {
-        super(time, key);
-        if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
+    public ActorPlan(double time, Consumer<ActorContext> consumer) {
+        super(time, Planner.ACTOR);
         this.consumer = consumer;
     }
 
-    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer, String key) {
-        super(time, active, key);
-        if (consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
+    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer) {
+        super(time, active, Planner.ACTOR);
+        this.consumer = consumer;
+    }
+
+    public ActorPlan(double time, Consumer<ActorContext> consumer, Object key) {
+        super(time, Planner.ACTOR, key);
+        this.consumer = consumer;
+    }
+
+    public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer, Object key) {
+        super(time, active, Planner.ACTOR, key);
         this.consumer = consumer;
     }
 
@@ -31,5 +34,15 @@ public class ActorPlan extends Plan {
 
     void setActorId(ActorId actorId) {
         this.actorId = actorId;
+    }
+
+    void validate(double simTime) {
+        if (consumer == null) {
+            throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+        }
+
+        if (time < simTime) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
     }
 }

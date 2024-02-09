@@ -402,7 +402,7 @@ public class AT_DataManagerContext {
         // test preconditions
         pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
         pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-            ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
+            ContractException contractException = assertThrows(ContractException.class, () -> context.cancelPlan(null));
             assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
         }));
 
@@ -427,7 +427,7 @@ public class AT_DataManagerContext {
         pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (context) -> {
             assertTrue(context.getPlan(key).isPresent());
 
-            context.removePlan(key);
+            context.cancelPlan(key);
 
             assertFalse(context.getPlan(key).isPresent());
 

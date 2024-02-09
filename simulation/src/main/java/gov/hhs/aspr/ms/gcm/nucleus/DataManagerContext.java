@@ -30,6 +30,8 @@ public final class DataManagerContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
+	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -37,8 +39,8 @@ public final class DataManagerContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
+	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime, final Object key) {
+		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer, key));
 	}
 
 	/**
@@ -47,6 +49,8 @@ public final class DataManagerContext {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the plan consumer is
 	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
@@ -140,8 +144,8 @@ public final class DataManagerContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<DataManagerPlan> removePlan(final Object key) {
-		return simulation.removeDataManagerPlan(dataManagerId, key);
+	public void cancelPlan(final Object key) {
+		simulation.cancelDataManagerPlan(dataManagerId, key);
 	}
 
 	/**

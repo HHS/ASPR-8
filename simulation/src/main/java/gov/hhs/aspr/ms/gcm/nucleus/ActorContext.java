@@ -39,7 +39,7 @@ public final class ActorContext {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
 	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past</li>
@@ -48,8 +48,8 @@ public final class ActorContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		simulation.addActorPlan(new ActorPlan(planTime, consumer));
+	public void addPlan(final Consumer<ActorContext> consumer, final double planTime, final Object key) {
+		simulation.addActorPlan(new ActorPlan(planTime, consumer, key));
 	}
 
 	/**
@@ -89,8 +89,8 @@ public final class ActorContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<ActorPlan> removePlan(final Object key) {
-		return simulation.removeActorPlan(key);
+	public void cancelPlan(final Object key) {
+		simulation.cancelActorPlan(key);
 	}
 
 	/**

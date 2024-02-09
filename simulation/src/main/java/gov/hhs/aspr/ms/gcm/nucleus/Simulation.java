@@ -224,12 +224,6 @@ public class Simulation {
 		this.data = data;
 	}
 
-	private void validatePlan(Plan plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
@@ -333,8 +327,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlan(plan);
-		validatePlanTime(plan.time);
+		plan.validate(time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -368,8 +361,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlan(plan);
-		validatePlanTime(plan.time);
+		plan.validate(time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -399,8 +391,7 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlan(plan);
-		validatePlanTime(plan.time);
+		plan.validate(time);
 
 		// for adding plans before sim starts
 		// if plan has arrivalId of -1, then it is a "new" plan
@@ -434,36 +425,30 @@ public class Simulation {
 		}
 	}
 
-	protected Optional<ActorPlan> removeActorPlan(final Object key) {
+	protected void cancelActorPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
 
-		ActorPlan result = null;
 		if (map != null) {
 			final Plan plan = map.remove(key);
 			if (plan != null) {
-				result = (ActorPlan) plan;
+				plan.cancelPlan();
 			}
 		}
-		return Optional.ofNullable(result);
-
 	}
 
-	protected Optional<ReportPlan> removeReportPlan(final Object key) {
+	protected void cancelReportPlan(final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
 
-		ReportPlan result = null;
 		if (map != null) {
 			final Plan plan = map.remove(key);
 			if (plan != null) {
-				result = (ReportPlan) plan;
+				plan.cancelPlan();
 			}
 		}
-		return Optional.ofNullable(result);
-
 	}
 
 	private Graph<PluginId, Object> pluginDependencyGraph;
@@ -1019,33 +1004,26 @@ public class Simulation {
 	 * record reaches the top of the queue, it is popped off and ignored. This
 	 * avoids the inefficiency of walking the queue and removing the plan.
 	 *
-	 * Note that we are allowing components to delete plans that do not exist. This
+	 * Note that we are allowing components to cancel plans that do not exist. This
 	 * was done to ease any bookkeeping burdens on the component and seems generally
 	 * harmless.
 	 */
-	protected Optional<DataManagerPlan> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
+	protected void cancelDataManagerPlan(DataManagerId dataManagerId, final Object key) {
 		validatePlanKeyNotNull(key);
 
 		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
-		DataManagerPlan result = null;
+
 		if (map != null) {
 			final Plan plan = map.remove(key);
 			if (plan != null) {
-				result = (DataManagerPlan) plan;
+				plan.cancelPlan();
 			}
 		}
-		return Optional.ofNullable(result);
 	}
 
 	protected void validatePlanKeyNotNull(final Object key) {
 		if (key == null) {
 			throw new ContractException(NucleusError.NULL_PLAN_KEY, "");
-		}
-	}
-
-	private void validatePlanTime(final double planTime) {
-		if (planTime < time) {
-			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
 		}
 	}
 

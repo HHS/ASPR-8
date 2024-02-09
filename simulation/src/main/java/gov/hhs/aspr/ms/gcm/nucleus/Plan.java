@@ -1,23 +1,33 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
-public abstract class Plan {
+abstract class Plan {
 	protected final double time;
+	protected final Planner planner;
 	protected boolean isActive = true;
-	protected Planner planner;
 
 	boolean canceled = false;
 	long arrivalId = -1;
-	
-	final String key;
 
-	protected Plan(double time, String key) {
+	Object key = new Object();
+
+	protected Plan(double time, Planner planner) {
 		this.time = time;
+		this.planner = planner;
+	}
+
+	protected Plan(double time, boolean active, Planner planner) {
+		this(time, planner);
+		this.isActive = active;
+	}
+
+	protected Plan(double time, Planner planner, Object key) {
+		this(time, planner);
 		this.key = key;
 	}
 
-	protected Plan(double time, boolean active, String key) {
-		this(time, key);
-		this.isActive = active;
+	protected Plan(double time, boolean active, Planner planner, Object key) {
+		this(time, active, planner);
+		this.key = key;
 	}
 
 	public final double getTime() {
@@ -35,4 +45,6 @@ public abstract class Plan {
 	public final void cancelPlan() {
 		this.canceled = true;
 	}
+
+	abstract void validate(double simTime);
 }

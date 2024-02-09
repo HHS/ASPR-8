@@ -701,7 +701,7 @@ public class AT_ActorContext {
 	}
 
 	/**
-	 * Tests {@link AgentContext#removePlan(Object)
+	 * Tests {@link AgentContext#cancelPlan(Object)
 	 */
 	@Test
 	@UnitTestMethod(target = ActorContext.class, name = "removePlan", args = { Object.class }, tags = {
@@ -717,7 +717,7 @@ public class AT_ActorContext {
 
 		// test preconditions
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
+			ContractException contractException = assertThrows(ContractException.class, () -> context.cancelPlan(null));
 			assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
 		}));
 
@@ -743,7 +743,7 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(3, (context) -> {
 			assertTrue(context.getPlan(key).isPresent());
 
-			context.removePlan(key);
+			context.cancelPlan(key);
 
 			assertFalse(context.getPlan(key).isPresent());
 

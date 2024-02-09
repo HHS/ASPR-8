@@ -42,8 +42,8 @@ public final class ReportContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		simulation.addReportPlan(new ReportPlan(planTime, consumer));
+	public void addPlan(final Consumer<ReportContext> consumer, final double planTime, final Object key) {
+		simulation.addReportPlan(new ReportPlan(planTime, consumer, key));
 	}
 
 	/**
@@ -107,8 +107,8 @@ public final class ReportContext {
 	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
 	 *                           is null
 	 */
-	public Optional<ReportPlan> removePlan(final Object key) {
-		return simulation.removeReportPlan(key);
+	public void cancelPlan(final Object key) {
+		simulation.cancelReportPlan(key);
 	}
 
 	/**
