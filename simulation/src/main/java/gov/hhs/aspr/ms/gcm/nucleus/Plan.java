@@ -9,7 +9,6 @@ public class Plan<T> {
 		private Consumer<K> callbackConsumer;
 		private boolean active = true;
 		private PlanData planData;
-		private Object key;
 
 		public Data() {
 		}
@@ -19,7 +18,6 @@ public class Plan<T> {
 			callbackConsumer = data.callbackConsumer;
 			active = data.active;
 			planData = data.planData;
-			key = data.key;
 		}
 
 		@Override
@@ -33,8 +31,6 @@ public class Plan<T> {
 			builder.append(active);
 			builder.append(", planData=");
 			builder.append(planData);
-			builder.append(", key=");
-			builder.append(key);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -94,16 +90,6 @@ public class Plan<T> {
 		}
 
 		/**
-		 * Sets the key value for this plan. The key value is optional and should only
-		 * be used if the plan may be cancelled or retrieved before the plan time since
-		 * it incurs a significant overhead memory cost. Defaults to null.
-		 */
-		public Builder<K> setKey(Object key) {
-			data.key = key;
-			return this;
-		}
-
-		/**
 		 * Sets the required call back behavior for this plan. The call back is executed
 		 * when the plan reaches the top of the queue and the simulation's time is set
 		 * to the plan's time. No default is allowed.
@@ -134,10 +120,6 @@ public class Plan<T> {
 
 	public PlanData getPlanData() {
 		return data.planData;
-	}
-
-	public Object getKey() {
-		return data.key;
 	}
 
 	@Override

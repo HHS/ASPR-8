@@ -444,7 +444,6 @@ public class Simulation {
 		planRec.planner = Planner.ACTOR;
 		planRec.time = plan.getTime();
 		planRec.actorPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
 
 		Map<Object, PlanRec> map;
 
@@ -484,7 +483,6 @@ public class Simulation {
 		planRec.planner = Planner.REPORT;
 		planRec.time = plan.getTime();
 		planRec.reportPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
 
 		Map<Object, PlanRec> map;
 
@@ -520,7 +518,6 @@ public class Simulation {
 		planRec.planner = Planner.DATA_MANAGER;
 		planRec.time = plan.getTime();
 		planRec.dataManagerPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
 
 		Map<Object, PlanRec> map;
 
@@ -749,7 +746,7 @@ public class Simulation {
 				// planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ActorContext.class)//
 						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
+						// .setKey(planQueueData.getKey())//
 						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.actorPlan)//
@@ -762,7 +759,7 @@ public class Simulation {
 				// 		planQueueData.getPlanData());
 				planRec.plan = Plan.builder(DataManagerContext.class)//
 						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
+						// .setKey(planQueueData.getKey())//
 						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.dataManagerPlan)//
@@ -774,7 +771,7 @@ public class Simulation {
 				// planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
 				planRec.plan = Plan.builder(ReportContext.class)//
 						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
+						// .setKey(planQueueData.getKey())//
 						.setPlanData(planQueueData.getPlanData())//
 						.setTime(planQueueData.getTime())//
 						.setCallbackConsumer(planRec.reportPlan)//
