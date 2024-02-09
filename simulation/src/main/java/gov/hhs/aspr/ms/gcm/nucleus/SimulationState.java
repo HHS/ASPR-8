@@ -85,17 +85,6 @@ public class SimulationState {
 
         /**
          * Builds the SimulationState from the collected data
-         * 
-         * @throws ContractException
-         *                           <ul>
-         *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ARRIVAL_INVALID}
-         *                           if the planning queue arrival id does not exceed
-         *                           the arrival id values for all stored
-         *                           PlanQueueData</li>
-         *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_TIME}
-         *                           if the simulation start time is exceeded by any
-         *                           time value stored for a plan</li>
-         *                           </ul>
          */
         public SimulationState build() {
             validate();
