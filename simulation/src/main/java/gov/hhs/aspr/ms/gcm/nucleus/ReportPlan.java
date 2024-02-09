@@ -8,7 +8,7 @@ public class ReportPlan extends Plan {
     ReportId reportId;
     final Consumer<ReportContext> consumer;
 
-    protected ReportPlan(double time, Consumer<ReportContext> consumer) {
+    public ReportPlan(double time, Consumer<ReportContext> consumer) {
         super(time, false, Planner.REPORT);
         this.consumer = consumer;
     }

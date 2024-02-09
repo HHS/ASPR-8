@@ -417,12 +417,6 @@ public class Simulation {
 		planningQueue.add(plan);
 	}
 
-	protected void validateActorPlanKeyNotDuplicate(final Object key) {
-		if (getActorPlan(key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
 	private Graph<PluginId, Object> pluginDependencyGraph;
 
 	private List<Plugin> getOrderedPlugins() {
@@ -724,7 +718,7 @@ public class Simulation {
 			}
 
 			// skip canceled plans
-			if(plan.canceled) {
+			if (plan.canceled) {
 				continue;
 			}
 
@@ -886,69 +880,6 @@ public class Simulation {
 		} finally {
 			dataManagerQueueActive = false;
 		}
-	}
-
-	protected Optional<ReportPlan> getReportPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
-		ReportPlan result = null;
-		if (map != null) {
-			final Plan plan = map.get(key);
-			if (plan != null) {
-				result = (ReportPlan) plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	protected Optional<ActorPlan> getActorPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
-		ActorPlan result = null;
-		if (map != null) {
-			final Plan plan = map.get(key);
-			if (plan != null) {
-				result = (ActorPlan) plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	protected Optional<DataManagerPlan> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
-		DataManagerPlan result = null;
-		if (map != null) {
-			final Plan plan = map.get(key);
-			if (plan != null) {
-				result = (DataManagerPlan) plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	protected List<Object> getActorPlanKeys() {
-		Map<Object, Plan> map = actorPlanMap.get(focalActorId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
-	}
-
-	protected List<Object> getReportPlanKeys() {
-		Map<Object, Plan> map = reportPlanMap.get(focalReportId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
-	}
-
-	protected List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
-		Map<Object, Plan> map = dataManagerPlanMap.get(dataManagerId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
 	}
 
 	protected void halt() {
@@ -1416,9 +1347,6 @@ public class Simulation {
 	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<ReportEventConsumer>> reportEventMap = new LinkedHashMap<>();
 
-	// used for retrieving and canceling plans owned by data managers
-	private final Map<DataManagerId, Map<Object, Plan>> dataManagerPlanMap = new LinkedHashMap<>();
-
 	// used to locate data managers by class type
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
@@ -1447,9 +1375,6 @@ public class Simulation {
 	private final List<ReportId> reportIds = new ArrayList<>();
 
 	private boolean containsDeletedActors;
-
-	private final Map<ActorId, Map<Object, Plan>> actorPlanMap = new LinkedHashMap<>();
-	private final Map<ReportId, Map<Object, Plan>> reportPlanMap = new LinkedHashMap<>();
 
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
