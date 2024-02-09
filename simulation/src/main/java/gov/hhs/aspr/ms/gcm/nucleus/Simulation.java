@@ -279,7 +279,8 @@ public class Simulation {
 	}
 
 	// planning
-	private long masterPlanningArrivalId = -1;
+	private long masterPlanningArrivalId = 0;
+	private long initialArrivalId = -1;
 	protected double time;
 	double simulationHaltTime;
 	boolean forcedHaltPresent;
@@ -436,7 +437,21 @@ public class Simulation {
 
 		final PlanRec planRec = new PlanRec();
 
-		planRec.arrivalId = masterPlanningArrivalId++;
+		// for adding plans before sim starts
+		// if plan has arrivalId of -1, then it is a "new" plan
+		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
+		if(planningQueueMode == PlanningQueueMode.READY) {
+			if(plan.arrivalId == -1) {
+				plan.arrivalId = initialArrivalId--;
+			} else {
+				if(plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			planRec.arrivalId = plan.arrivalId;
+		} else {
+			planRec.arrivalId = masterPlanningArrivalId++;
+		}
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
@@ -478,7 +493,21 @@ public class Simulation {
 
 		final PlanRec planRec = new PlanRec();
 
-		planRec.arrivalId = masterPlanningArrivalId++;
+		// for adding plans before sim starts
+		// if plan has arrivalId of -1, then it is a "new" plan
+		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
+		if(planningQueueMode == PlanningQueueMode.READY) {
+			if(plan.arrivalId == -1) {
+				plan.arrivalId = initialArrivalId--;
+			} else {
+				if(plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			planRec.arrivalId = plan.arrivalId;
+		} else {
+			planRec.arrivalId = masterPlanningArrivalId++;
+		}
 
 		planRec.plan = plan;
 		planRec.isActive = false;
@@ -512,10 +541,23 @@ public class Simulation {
 
 		validateDataManagerPlan(plan.getCallbackConsumer());
 		validatePlanTime(plan.getTime());
-
 		final PlanRec planRec = new PlanRec();
 
-		planRec.arrivalId = masterPlanningArrivalId++;
+		// for adding plans before sim starts
+		// if plan has arrivalId of -1, then it is a "new" plan
+		// if it doesn't, then it is an existing plan, and check its value against the master value and set it accordingly.
+		if(planningQueueMode == PlanningQueueMode.READY) {
+			if(plan.arrivalId == -1) {
+				plan.arrivalId = initialArrivalId--;
+			} else {
+				if(plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			planRec.arrivalId = plan.arrivalId;
+		} else {
+			planRec.arrivalId = masterPlanningArrivalId++;
+		}
 
 		planRec.plan = plan;
 		planRec.isActive = plan.isActive();
