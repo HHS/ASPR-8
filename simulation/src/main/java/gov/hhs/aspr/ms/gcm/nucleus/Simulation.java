@@ -570,7 +570,9 @@ public class Simulation {
 				plan.arrivalId = masterPlanningArrivalId - id;
 				// increment the master arrival id, since we have a plan that was "new" to this
 				// sim
-				masterPlanningArrivalId++;
+				if(id > masterPlanningArrivalId) {
+					masterPlanningArrivalId = id;
+				}
 			}
 
 			plans.add(plan);

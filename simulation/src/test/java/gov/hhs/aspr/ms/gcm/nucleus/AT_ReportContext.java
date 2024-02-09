@@ -216,7 +216,7 @@ public class AT_ReportContext {
 
         // precondition test : if the plan is scheduled for the past
         contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-            c.addPlan(new ReportPlan(-1, null));
+            c.addPlan(new ReportPlan(-1, (c1) -> {}));
         }));
         assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
