@@ -279,7 +279,7 @@ public class Simulation {
 	}
 
 	// planning
-	private long masterPlanningArrivalId;
+	private long masterPlanningArrivalId = -1;
 	protected double time;
 	double simulationHaltTime;
 	boolean forcedHaltPresent;
@@ -837,8 +837,6 @@ public class Simulation {
 		started = true;
 
 		time = data.simulationState.getStartTime();
-
-		// masterPlanningArrivalId = data.simulationState.getPlanningQueueArrivalId();
 
 		forcedHaltPresent = false;
 		if (data.simulationHaltTime != null) {
