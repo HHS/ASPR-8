@@ -559,24 +559,27 @@ public class Simulation {
 	}
 
 	private void rebuildPlanningQueue() {
-		Plan plan;
-
 		List<Plan> plans = new ArrayList<>();
 		// empty the planning queue to reset the arrival ids
-		while ((plan = planningQueue.poll()) != null) {
+		while (!planningQueue.isEmpty()) {
+			Plan plan = planningQueue.poll();
 			if (plan.arrivalId < 0) {
 				long id = plan.arrivalId;
 				// master - (-id) = master + id
-				plan.arrivalId = masterPlanningArrivalId - id;				
+				plan.arrivalId = masterPlanningArrivalId - id;
 			}
 			plans.add(plan);
 		}
+		// by subtracting the intialArrivalId, which is guarenteed to be 1 less than the
+		// last plan recieved during READY, the masterPlanningArrivalId will be 1 more
+		// than the total number of plans.
 		masterPlanningArrivalId -= initialArrivalId;
 
 		// this will cause some level of thrashing, as the order of the plans in the
 		// list is not guarenteed to be in arrival order.
 		// the planningQueue will take care of the ordering.
 		plans.forEach(_plan -> planningQueue.add(_plan));
+		plans = null;
 	}
 
 	/**
@@ -1650,52 +1653,51 @@ public class Simulation {
 	protected LocalDate getBaseDate() {
 		return data.simulationState.getBaseDate();
 	}
-	
+
 	private Map<ActorId, List<ActorPlan>> actorPlanDump = new LinkedHashMap<>();
 	private Map<DataManagerId, List<DataManagerPlan>> dataManagerPlanDump = new LinkedHashMap<>();
 	private Map<ReportId, List<ReportPlan>> reportPlanDump = new LinkedHashMap<>();
 
 	private void dumpPlanningQueue() {
-		
+
 		actorPlanDump = new LinkedHashMap<>();
 		dataManagerPlanDump = new LinkedHashMap<>();
 		reportPlanDump = new LinkedHashMap<>();
 
-		
 		while (!planningQueue.isEmpty()) {
 			Plan plan = planningQueue.poll();
 			if (!plan.canceled) {
 
 				switch (plan.planner) {
-				case ACTOR:
-					ActorPlan actorPlan = (ActorPlan) plan;
-					List<ActorPlan> actorPlans = actorPlanDump.get(actorPlan.actorId);
-					if (actorPlans == null) {
-						actorPlans = new ArrayList<>();
-						actorPlanDump.put(actorPlan.actorId, actorPlans);
-					}
-					actorPlans.add(actorPlan);
-					break;
-				case DATA_MANAGER:
-					DataManagerPlan dataManagerPlan = (DataManagerPlan) plan;
-					List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerPlan.dataManagerId);
-					if (dataManagerPlans == null) {
-						dataManagerPlans = new ArrayList<>();
-						dataManagerPlanDump.put(dataManagerPlan.dataManagerId, dataManagerPlans);
-					}
-					dataManagerPlans.add(dataManagerPlan);
-					break;
-				case REPORT:
-					ReportPlan reportPlan = (ReportPlan) plan;
-					List<ReportPlan> reportPlans = reportPlanDump.get(reportPlan.reportId);
-					if (reportPlans == null) {
-						reportPlans = new ArrayList<>();
-						reportPlanDump.put(reportPlan.reportId, reportPlans);
-					}
-					reportPlans.add(reportPlan);
-					break;
-				default:
-					throw new RuntimeException("unhandled planner type " + plan.planner);
+					case ACTOR:
+						ActorPlan actorPlan = (ActorPlan) plan;
+						List<ActorPlan> actorPlans = actorPlanDump.get(actorPlan.actorId);
+						if (actorPlans == null) {
+							actorPlans = new ArrayList<>();
+							actorPlanDump.put(actorPlan.actorId, actorPlans);
+						}
+						actorPlans.add(actorPlan);
+						break;
+					case DATA_MANAGER:
+						DataManagerPlan dataManagerPlan = (DataManagerPlan) plan;
+						List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerPlan.dataManagerId);
+						if (dataManagerPlans == null) {
+							dataManagerPlans = new ArrayList<>();
+							dataManagerPlanDump.put(dataManagerPlan.dataManagerId, dataManagerPlans);
+						}
+						dataManagerPlans.add(dataManagerPlan);
+						break;
+					case REPORT:
+						ReportPlan reportPlan = (ReportPlan) plan;
+						List<ReportPlan> reportPlans = reportPlanDump.get(reportPlan.reportId);
+						if (reportPlans == null) {
+							reportPlans = new ArrayList<>();
+							reportPlanDump.put(reportPlan.reportId, reportPlans);
+						}
+						reportPlans.add(reportPlan);
+						break;
+					default:
+						throw new RuntimeException("unhandled planner type " + plan.planner);
 				}
 			}
 		}
@@ -1705,42 +1707,42 @@ public class Simulation {
 		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
 		}
-		if(actorPlanDump == null) {
+		if (actorPlanDump == null) {
 			dumpPlanningQueue();
 		}
 		List<ActorPlan> result = new ArrayList<>();
 		List<ActorPlan> actorPlans = actorPlanDump.get(focalActorId);
-		if(actorPlans != null) {
+		if (actorPlans != null) {
 			result.addAll(actorPlans);
 		}
 		return result;
 	}
-	
+
 	protected List<ReportPlan> retrievePlansForReport() {
 		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
 		}
-		if(reportPlanDump == null) {
+		if (reportPlanDump == null) {
 			dumpPlanningQueue();
 		}
 		List<ReportPlan> result = new ArrayList<>();
 		List<ReportPlan> reportPlans = reportPlanDump.get(focalReportId);
-		if(reportPlans != null) {
+		if (reportPlans != null) {
 			result.addAll(reportPlans);
 		}
 		return result;
 	}
-	
+
 	protected List<DataManagerPlan> retrievePlansForDataManager(DataManagerId dataManagerId) {
 		if (planningQueueMode != PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
 		}
-		if(dataManagerPlanDump == null) {
+		if (dataManagerPlanDump == null) {
 			dumpPlanningQueue();
 		}
 		List<DataManagerPlan> result = new ArrayList<>();
 		List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerId);
-		if(dataManagerPlans != null) {
+		if (dataManagerPlans != null) {
 			result.addAll(dataManagerPlans);
 		}
 		return result;
