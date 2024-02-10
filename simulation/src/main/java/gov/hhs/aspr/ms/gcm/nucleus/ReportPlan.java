@@ -12,15 +12,11 @@ public class ReportPlan extends Plan {
     }
 
     public ReportPlan(double time, Consumer<ReportContext> consumer) {
-        super(time, false, -1, Planner.REPORT);
+        super(time, false, -1L, Planner.REPORT);
         this.consumer = consumer;
     }
 
     void execute(ReportContext context) {
         this.consumer.accept(context);
-    }
-
-    void setReportId(ReportId reportId) {
-        this.reportId = reportId;
     }
 }

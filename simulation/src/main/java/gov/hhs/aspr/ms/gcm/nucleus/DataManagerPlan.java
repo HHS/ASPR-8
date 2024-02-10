@@ -12,20 +12,16 @@ public class DataManagerPlan extends Plan {
     }
 
     public DataManagerPlan(double time, boolean active, Consumer<DataManagerContext> consumer) {
-        super(time, active, -1, Planner.DATA_MANAGER);
+        super(time, active, -1L, Planner.DATA_MANAGER);
         this.consumer = consumer;
     }
 
     public DataManagerPlan(double time, Consumer<DataManagerContext> consumer) {
-        super(time, true, -1, Planner.DATA_MANAGER);
+        super(time, true, -1L, Planner.DATA_MANAGER);
         this.consumer = consumer;
     }
 
     void execute(DataManagerContext context) {
         this.consumer.accept(context);
-    }
-
-    void setDataManagerId(DataManagerId dataManagerId) {
-        this.dataManagerId = dataManagerId;
     }
 }

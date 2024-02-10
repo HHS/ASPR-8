@@ -363,7 +363,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		plan.setActorId(focalActorId);
+		plan.actorId = focalActorId;
 
 		if (plan.isActive) {
 			activePlanCount++;
@@ -416,7 +416,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		plan.setReportId(focalReportId);
+		plan.reportId = focalReportId;
 
 		planningQueue.add(plan);
 	}
@@ -465,7 +465,7 @@ public class Simulation {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
-		plan.setDataManagerId(dataManagerId);
+		plan.dataManagerId = dataManagerId;
 
 		if (plan.isActive) {
 			activePlanCount++;

@@ -8,7 +8,7 @@ abstract class Plan {
 	boolean canceled = false;
 	long arrivalId = -1;
 
-	protected Plan(double time, boolean active, long arrivalId, Planner planner) {
+	Plan(double time, boolean active, long arrivalId, Planner planner) {
 		/*
 		 * Do we throw an execption here if the arrival id is < -1? Or do we detect this
 		 * in the sim? Or do we just tolerate it in the sim by changing the logic for
@@ -30,5 +30,9 @@ abstract class Plan {
 
 	public final void cancelPlan() {
 		this.canceled = true;
+	}
+	
+	public final long getArrivalId() {
+		return arrivalId;
 	}
 }

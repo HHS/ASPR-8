@@ -12,20 +12,17 @@ public class ActorPlan extends Plan {
     }
 
     public ActorPlan(double time, Consumer<ActorContext> consumer) {
-        super(time, true, -1, Planner.ACTOR);
+        super(time, true, -1L, Planner.ACTOR);
         this.consumer = consumer;
     }
 
     public ActorPlan(double time, boolean active, Consumer<ActorContext> consumer) {
-        super(time, active, -1, Planner.ACTOR);
+        super(time, active, -1L, Planner.ACTOR);
         this.consumer = consumer;
     }
 
     protected void execute(ActorContext context) {
         this.consumer.accept(context);
     }
-
-    void setActorId(ActorId actorId) {
-        this.actorId = actorId;
-    }
+    
 }
