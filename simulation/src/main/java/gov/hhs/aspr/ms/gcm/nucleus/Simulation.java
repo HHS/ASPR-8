@@ -325,22 +325,41 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		plan.validate(time);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		}
+
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
 
 		// for adding plans before sim starts
-		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the
-		// master value and set it accordingly.
-		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
-			if (plan.arrivalId == -1) {
-				plan.arrivalId = initialArrivalId--;
-			} else {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
 				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-		} else {
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
@@ -359,22 +378,41 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		plan.validate(time);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		}
+
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
 
 		// for adding plans before sim starts
-		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the
-		// master value and set it accordingly.
-		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
-			if (plan.arrivalId == -1) {
-				plan.arrivalId = initialArrivalId--;
-			} else {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
 				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-		} else {
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
@@ -389,22 +427,41 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		plan.validate(time);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		}
+
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
 
 		// for adding plans before sim starts
-		// if plan has arrivalId of -1, then it is a "new" plan
-		// if it doesn't, then it is an existing plan, and check its value against the
-		// master value and set it accordingly.
-		// otherwise, set plan arrival id to the next master planning id
 		if (planningQueueMode == PlanningQueueMode.READY) {
-			if (plan.arrivalId == -1) {
-				plan.arrivalId = initialArrivalId--;
-			} else {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
 				if (plan.arrivalId > masterPlanningArrivalId) {
 					masterPlanningArrivalId = plan.arrivalId;
 				}
 			}
-		} else {
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
 			plan.arrivalId = masterPlanningArrivalId++;
 		}
 
