@@ -94,14 +94,6 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
 	 * Broadcasts the given event to all subscribers. Reports handle the event
 	 * immediately. Data managers and actors will have the event queued for handling
 	 * after the data manager is finished with its current activation. This is used

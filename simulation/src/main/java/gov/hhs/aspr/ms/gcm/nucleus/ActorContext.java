@@ -155,14 +155,6 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
 	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException

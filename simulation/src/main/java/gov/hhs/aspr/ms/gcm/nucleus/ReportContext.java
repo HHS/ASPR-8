@@ -83,14 +83,6 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
 	 * Subscribes the report to events of the given type for the purpose of
 	 * execution of data changes.
 	 * 

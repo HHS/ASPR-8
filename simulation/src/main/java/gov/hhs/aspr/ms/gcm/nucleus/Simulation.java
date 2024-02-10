@@ -549,15 +549,6 @@ public class Simulation {
 		return data.stateRecordingIsScheduled;
 	}
 
-	protected boolean plansRequirePlanData(double time) {
-		if (data.stateRecordingIsScheduled) {
-			if (time > data.simulationHaltTime) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private void rebuildPlanningQueue() {
 		List<Plan> plans = new ArrayList<>();
 		// empty the planning queue to reset the arrival ids
