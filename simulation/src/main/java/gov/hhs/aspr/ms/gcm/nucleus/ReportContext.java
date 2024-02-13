@@ -2,10 +2,8 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -28,9 +26,10 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Schedules a passive plan that will be executed at the given time. Passive
-	 * plans are not required to execute and the simulation will terminate if only
-	 * passive plans remain on the planning schedule.
+	 * Schedules a passive report plan with a default arrival id that will be
+	 * executed at the given time. Passive plans are not required to execute and the
+	 * simulation will terminate if only passive plans remain on the planning
+	 * schedule.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -44,18 +43,16 @@ public final class ReportContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		Plan<ReportContext> plan = Plan.builder(ReportContext.class)//
-				.setActive(false)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-		simulation.addReportPlan(plan);
+		simulation.addReportPlan(new ReportPlan(planTime, consumer));
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules a report plan. Plans arrival ids are ignored after the first wave
+	 * of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -68,21 +65,11 @@ public final class ReportContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(Plan<ReportContext> plan) {
+	public void addPlan(ReportPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 		simulation.addReportPlan(plan);
-	}
-
-	/**
-	 * Retrieves a plan stored for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<ReportContext>> getPlan(final Object key) {
-		return simulation.getReportPlan(key);
 	}
 
 	/**
@@ -99,31 +86,6 @@ public final class ReportContext {
 	 */
 	public double getScheduledSimulationHaltTime() {
 		return simulation.getScheduledSimulationHaltTime();
-	}
-
-	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<ReportContext>> removePlan(final Object key) {
-		return simulation.removeReportPlan(key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current report
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getReportPlanKeys();
 	}
 
 	/**
@@ -149,7 +111,7 @@ public final class ReportContext {
 	 * handling.
 	 * 
 	 * @throws ContractException {@link NucleusError#NULL_EVENT_CLASS} if the event
-	 *                            class is null
+	 *                           class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeReportFromEvent(eventClass);
@@ -190,17 +152,6 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ReportContext>> conversionFunction) {
-		simulation.setReportPlanDataConverter(planDataClass, conversionFunction);
-	}
-
-	/**
 	 * Returns the time (floating point days) of simulation start.
 	 */
 	public double getStartTime() {
@@ -212,6 +163,22 @@ public final class ReportContext {
 	 */
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
+	}
+
+	/**
+	 * Returns the list of queued plans belonging to the current report. Should only
+	 * be used after notification of simulation close.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ACTIVE}
+	 *                           if this method is invoked before the termination of
+	 *                           the simulation</li>
+	 *                           </ul>
+	 * 
+	 */
+	public List<ReportPlan> retrievePlans() {
+		return simulation.retrievePlansForReport();
 	}
 
 }

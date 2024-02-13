@@ -10,8 +10,8 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorPlan;
 import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
-import gov.hhs.aspr.ms.gcm.nucleus.Plan;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
@@ -30,7 +30,7 @@ public class EventVaccinator {
 	private ActorContext actorContext;
 	private Well randomGenerator;
 	private double personInterVaccinationDelay;
-	private Object planId = new Object();
+	private ActorPlan futurePlan;
 	private Map<MultiKey, Double> weights = new LinkedHashMap<>();
 	private Map<MultiKey, List<PersonId>> candidates = new LinkedHashMap<>();
 	private Map<PersonId, MultiKey> groupMap = new LinkedHashMap<>();
@@ -215,11 +215,8 @@ public class EventVaccinator {
 	 * vaccinator selects from maintained sub-populations.
 	 */
 	private void planNextVaccination() {
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-				.setTime(interVaccinationTime + actorContext.getTime())//
-				.setKey(planId).setCallbackConsumer(this::vaccinatePerson).build();
-
-		actorContext.addPlan(plan);
+		futurePlan = new ActorPlan(interVaccinationTime + actorContext.getTime(), this::vaccinatePerson);
+		actorContext.addPlan(futurePlan);
 	}
 
 	private void vaccinatePerson(ActorContext actorContext) {
@@ -280,7 +277,7 @@ public class EventVaccinator {
 	 */
 	private void endWaitTime(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
-		if (actorContext.getPlan(planId).isEmpty()) {
+		if (futurePlan == null) {
 			vaccinatePerson(actorContext);
 		}
 	}

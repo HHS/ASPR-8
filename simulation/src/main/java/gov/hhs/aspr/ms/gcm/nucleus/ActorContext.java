@@ -2,10 +2,8 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -36,12 +34,15 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Schedules a plan that will be executed at the given time.
+	 * Schedules an active actor plan with a default arrival id that will be
+	 * executed at the given time.
+	 * 
+	 * 
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -50,18 +51,16 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-				.setActive(true)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-		simulation.addActorPlan(plan);
+		simulation.addActorPlan(new ActorPlan(planTime, consumer));
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules an actor plan. Plans arrival ids are ignored after the first wave
+	 * of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -74,38 +73,11 @@ public final class ActorContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(final Plan<ActorContext> plan) {
+	public void addPlan(final ActorPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 		simulation.addActorPlan(plan);
-	}
-
-	/**
-	 * Retrieves a plan stored for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<ActorContext>> getPlan(final Object key) {
-		return simulation.getActorPlan(key);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<ActorContext>> removePlan(final Object key) {
-		return simulation.removeActorPlan(key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current actor
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getActorPlanKeys();
 	}
 
 	/**
@@ -191,14 +163,6 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
 	 * Removes the given actor from the simulation.
 	 * 
 	 * @throws ContractException
@@ -216,17 +180,6 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ActorContext>> conversionFunction) {
-		simulation.setActorPlanDataConverter(planDataClass, conversionFunction);
-	}
-
-	/**
 	 * Returns the time (floating point days) of simulation start.
 	 */
 	public double getStartTime() {
@@ -238,6 +191,22 @@ public final class ActorContext {
 	 */
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
+	}
+
+	/**
+	 * Returns the list of queued plans belonging to the current actor. Should only
+	 * be used after notification of simulation close.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ACTIVE}
+	 *                           if this method is invoked before the termination of
+	 *                           the simulation</li>
+	 *                           </ul>
+	 * 
+	 */
+	public List<ActorPlan> retrievePlans() {
+		return simulation.retrievePlansForActor();
 	}
 
 }

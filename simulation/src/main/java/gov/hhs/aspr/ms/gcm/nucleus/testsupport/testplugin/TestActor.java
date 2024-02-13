@@ -32,7 +32,7 @@ public final class TestActor {
 
 		List<TestActorPlan> testActorPlans = testPlanDataManager.getTestActorPlans(alias);
 		for (final TestActorPlan testActorPlan : testActorPlans) {
-			actorContext.addPlan(testActorPlan::executeAction, testActorPlan.getScheduledTime());
+			actorContext.addPlan(testActorPlan::execute, testActorPlan.getTime());
 		}
 	}
 

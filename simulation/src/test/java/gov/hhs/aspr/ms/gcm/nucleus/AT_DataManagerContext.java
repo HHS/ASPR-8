@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.util.Pair;
@@ -28,7 +26,6 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPlugin;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestScenarioReport;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
-import gov.hhs.aspr.ms.util.annotations.UnitTag;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
@@ -278,7 +275,7 @@ public class AT_DataManagerContext {
     }
 
     @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "addPlan", args = { Plan.class })
+    @UnitTestMethod(target = DataManagerContext.class, name = "addPlan", args = { DataManagerPlan.class })
     public void testAddPlan_Plan() {
 
         TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -289,27 +286,15 @@ public class AT_DataManagerContext {
             double scheduledTime = context.getTime() + 1;
 
             ContractException contractException = assertThrows(ContractException.class,
-                    () -> context.addPlan(Plan.builder(DataManagerContext.class)//
-                            .setActive(true)//
-                            .setCallbackConsumer(null)//
-                            .setKey(null)//
-                            .setPlanData(null)//
-                            .setTime(scheduledTime)//
-                            .build()));
+                    () -> context.addPlan(new DataManagerPlan(scheduledTime, null)));
             assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
 
             contractException = assertThrows(ContractException.class, () -> context.addPlan(null));
             assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
 
             contractException = assertThrows(ContractException.class,
-                    () -> context.addPlan(Plan.builder(DataManagerContext.class)//
-                            .setActive(true)//
-                            .setCallbackConsumer((c) -> {
-                            })//
-                            .setKey(null)//
-                            .setPlanData(null)//
-                            .setTime(-1)//
-                            .build()));
+                    () -> context.addPlan(new DataManagerPlan(-1, (c) -> {
+                    })));
             assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
         }));
@@ -322,15 +307,9 @@ public class AT_DataManagerContext {
 
         pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
             // schedule two passive plans
-            context.addPlan(Plan.builder(DataManagerContext.class)//
-                    .setActive(true)//
-                    .setCallbackConsumer((c) -> {
-                        planExecuted.setValue(true);
-                    })//
-                    .setKey(null)//
-                    .setPlanData(null)//
-                    .setTime(5)//
-                    .build());
+            context.addPlan(new DataManagerPlan(5, (c) -> {
+                planExecuted.setValue(true);
+            }));
         }));
 
         // build the plugin
@@ -348,141 +327,6 @@ public class AT_DataManagerContext {
         // show that the last two passive plans did not execute
         assertTrue(planExecuted.getValue());
 
-    }
-
-    @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "getPlan", args = { Object.class }, tags = {
-            UnitTag.INCOMPLETE })
-    public void testGetPlan() {
-        TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-        // test preconditions
-        pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-            ContractException contractException = assertThrows(ContractException.class, () -> context.getPlan(null));
-            assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-        }));
-
-        /*
-         * have the added test agent add a plan that can be retrieved and thus
-         * was added successfully
-         */
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
-            Object key = new Object();
-            assertFalse(context.getPlan(key).isPresent());
-            Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-                    .setCallbackConsumer((c) -> {
-                    })//
-                    .setTime(100)//
-                    .setKey(key).build();
-            context.addPlan(plan);
-            assertTrue(context.getPlan(key).isPresent());
-        }));
-
-        // build the plugin
-        TestPluginData testPluginData = pluginDataBuilder.build();
-        Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-        // run the simulation
-        TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-    }
-
-    @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "removePlan", args = { Object.class }, tags = {
-            UnitTag.INCOMPLETE })
-    public void testRemovePlan() {
-        /*
-         * The test does not show that the plan is returned through the remove
-         * invocation
-         */
-
-        TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-        // test preconditions
-        pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-            ContractException contractException = assertThrows(ContractException.class, () -> context.removePlan(null));
-            assertEquals(NucleusError.NULL_PLAN_KEY, contractException.getErrorType());
-        }));
-
-        Object key = new Object();
-        MutableBoolean removedPlanHasExecuted = new MutableBoolean();
-
-        // have the added test agent add a plan
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (context) -> {
-            Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-                    .setCallbackConsumer((c) -> {
-                        removedPlanHasExecuted.setValue(true);
-                    })//
-                    .setTime(4)//
-                    .setKey(key)//
-                    .build();
-
-            context.addPlan(plan);
-        }));
-
-        // have the test agent remove the plan and show the plan no longer
-        // exists
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (context) -> {
-            assertTrue(context.getPlan(key).isPresent());
-
-            context.removePlan(key);
-
-            assertFalse(context.getPlan(key).isPresent());
-
-        }));
-
-        // build the plugin
-        TestPluginData testPluginData = pluginDataBuilder.build();
-        Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-        // run the simulation
-        TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-        // show that the remove plan was not executed
-        assertFalse(removedPlanHasExecuted.getValue());
-    }
-
-    @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "getPlanKeys", args = {})
-    public void testGetPlanKeys() {
-        TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-        // There are no precondition tests
-        Set<Object> expectedKeys = new LinkedHashSet<>();
-        int keyCount = 20;
-        for (int i = 0; i < keyCount; i++) {
-            expectedKeys.add(new Object());
-        }
-
-        // have the test agent add some plans
-        pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-        pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-            for (Object key : expectedKeys) {
-
-                Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-                        .setCallbackConsumer((c) -> {
-                        })//
-                        .setTime(100)//
-                        .setKey(key)//
-                        .build();
-
-                context.addPlan(plan);
-            }
-
-            Set<Object> actualKeys = context.getPlanKeys().stream()
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-            assertEquals(expectedKeys, actualKeys);
-
-        }));
-
-        // build the plugin
-        TestPluginData testPluginData = pluginDataBuilder.build();
-        Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-        // run the simulation
-        TestSimulation.builder().addPlugin(testPlugin).build().execute();
     }
 
     @Test
@@ -1114,65 +958,6 @@ public class AT_DataManagerContext {
     }
 
     @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "setPlanDataConverter", args = { Class.class,
-            Function.class })
-    public void testSetPlanDataConverter() {
-        MutableBoolean called = new MutableBoolean(false);
-
-        class TestPlanData1 implements PlanData {
-
-        }
-
-        Function<TestPlanData1, Consumer<DataManagerContext>> planDataConverter = t -> {
-            return context -> called.setValue(true);
-        };
-
-        class TestDM1 extends DataManager {
-            public void init(DataManagerContext dataManagerContext) {
-                super.init(dataManagerContext);
-                dataManagerContext.setPlanDataConverter(TestPlanData1.class, planDataConverter);
-            }
-        }
-
-        Plugin actorPlugin = Plugin.builder()
-                .setPluginId(new SimplePluginId("TestDM1"))
-                .setInitializer((pContext) -> {
-                    pContext.addDataManager(new TestDM1());
-                })
-                .build();
-
-        TestPluginData testPluginData = TestPluginData.builder()
-                .addTestDataManagerPlan("dm1", new TestDataManagerPlan(2, (context) -> {
-
-                }))
-                .addTestDataManager("dm1", () -> new TestDataManager())
-                .build();
-
-        PlanQueueData planQueueData = PlanQueueData.builder()
-                .setPlanData(new TestPlanData1())
-                .setTime(1)
-                .setPlanner(Planner.DATA_MANAGER)
-                .build();
-
-        SimulationState simulationState = SimulationState.builder()
-                .addPlanQueueData(planQueueData)
-                .setStartTime(1)
-                .setPlanningQueueArrivalId(2)
-                .build();
-
-        TestSimulation.builder()
-                .addPlugin(actorPlugin)
-                .addPlugin(TestPlugin.getTestPlugin(testPluginData))
-                .setSimulationState(simulationState)
-                .build()
-                .execute();
-
-        assertTrue(called.getValue());
-    }
-    
-   
-    
-    @Test
 	@UnitTestMethod(target = DataManagerContext.class, name = "getBaseDate", args = {})
 	public void testGetBaseDate() {
 
@@ -1235,5 +1020,60 @@ public class AT_DataManagerContext {
 			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 		});
 
+	}
+
+    @Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "retrievePlans", args = {})
+	public void testRetrievePlans() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.retrievePlans());
+			assertEquals(NucleusError.PLANNING_QUEUE_ACTIVE, contractException.getErrorType());
+		}));
+
+		List<DataManagerPlan> dmPlans = new ArrayList<>();
+		List<DataManagerPlan> expectedPlans = new ArrayList<>();
+		double haltTime = 50;
+
+		for(int i = 1; i <= 100; i++) {
+			DataManagerPlan actorPlan = new DataManagerPlan(i, (c) -> {});
+			if (i > 50) {
+				expectedPlans.add(actorPlan);
+			}
+			dmPlans.add(actorPlan);
+		}
+		/*
+		 * Have the actor add a plan and show that that plan executes
+		 */
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (context) -> {
+			for(DataManagerPlan plan : dmPlans) {
+				context.addPlan(plan);
+			}
+
+			context.subscribeToSimulationClose(c -> planRetrievalSimCloseSubscribe(c, expectedPlans));
+		}));
+
+        pluginDataBuilder.addTestDataManager("dm",()->new TestDataManager1());
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.setSimulationHaltTime(haltTime)
+				.build()//
+				.execute();//
+	}
+
+	private void planRetrievalSimCloseSubscribe(DataManagerContext context, List<DataManagerPlan> expectedPlans) {
+		List<DataManagerPlan> plans = context.retrievePlans();
+
+		assertEquals(expectedPlans.size(), plans.size());
+		assertEquals(expectedPlans, plans);
 	}
 }

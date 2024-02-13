@@ -2,10 +2,8 @@ package gov.hhs.aspr.ms.gcm.nucleus;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -25,12 +23,15 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Schedules a plan that will be executed at the given time.
+	 * Schedules an active data manager plan with a default arrival id that will be
+	 * executed at the given time.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -39,25 +40,24 @@ public final class DataManagerContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-
-		Plan<DataManagerContext> plan = Plan.builder(DataManagerContext.class)//
-				.setActive(true)//
-				.setCallbackConsumer(consumer)//
-				.setKey(null)//
-				.setPlanData(null)//
-				.setTime(planTime)//
-				.build();//
-
-		simulation.addDataManagerPlan(dataManagerId, plan);
+		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules a data manager plan. Plans arrival ids are ignored after the first
+	 * wave of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
+	 * 
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           plan consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -65,7 +65,7 @@ public final class DataManagerContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(Plan<DataManagerContext> plan) {
+	public void addPlan(DataManagerPlan plan) {
 		if (plan == null) {
 			throw new ContractException(NucleusError.NULL_PLAN);
 		}
@@ -101,24 +101,6 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Returns true if and only if there a state recording is scheduled and the
-	 * given time exceeds the recording time.
-	 */
-	protected boolean plansRequirePlanData(double time) {
-		return simulation.plansRequirePlanData(time);
-	}
-
-	/**
-	 * Retrieves a plan for the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<DataManagerContext>> getPlan(final Object key) {
-		return simulation.getDataManagerPlan(dataManagerId, key);
-	}
-
-	/**
 	 * Broadcasts the given event to all subscribers. Reports handle the event
 	 * immediately. Data managers and actors will have the event queued for handling
 	 * after the data manager is finished with its current activation. This is used
@@ -142,24 +124,6 @@ public final class DataManagerContext {
 	 */
 	public void releaseMutationEvent(final Event event) {
 		simulation.releaseMutationEventForDataManager(event);
-	}
-
-	/**
-	 * Removes and returns the plan associated with the given key.
-	 * 
-	 * @throws ContractException {@link NucleusError#NULL_PLAN_KEY} if the plan key
-	 *                           is null
-	 */
-	public Optional<Plan<DataManagerContext>> removePlan(final Object key) {
-		return simulation.removeDataManagerPlan(dataManagerId, key);
-	}
-
-	/**
-	 * Returns a list of the current plan keys associated with the current data
-	 * manager
-	 */
-	public List<Object> getPlanKeys() {
-		return simulation.getDataManagerPlanKeys(dataManagerId);
 	}
 
 	/**
@@ -256,17 +220,6 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Sets a function for converting plan data instances into consumers of actor
-	 * context that will be used to convert stored plans from a previous simulation
-	 * execution into current plans. Only used during the initialization of the
-	 * simulation before time flows.
-	 */
-	public <T extends PlanData> void setPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<DataManagerContext>> conversionFunction) {
-		simulation.setDataManagerPlanDataConverter(dataManagerId, planDataClass, conversionFunction);
-	}
-
-	/**
 	 * Returns the time (floating point days) of simulation start.
 	 */
 	public double getStartTime() {
@@ -279,4 +232,21 @@ public final class DataManagerContext {
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
 	}
+
+	/**
+	 * Returns the list of queued plans belonging to the current data manager.
+	 * Should only be used after notification of simulation close.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#PLANNING_QUEUE_ACTIVE}
+	 *                           if this method is invoked before the termination of
+	 *                           the simulation</li>
+	 *                           </ul>
+	 * 
+	 */
+	public List<DataManagerPlan> retrievePlans() {
+		return simulation.retrievePlansForDataManager(dataManagerId);
+	}
+
 }

@@ -45,93 +45,6 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 public class Simulation {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
-	private static class PlanRec {
-		private Plan<?> plan;
-
-		private Planner planner;
-		private long arrivalId;
-
-		private double time;
-		private boolean isActive;
-		private Object key;
-
-		private Consumer<ReportContext> reportPlan;
-		private ReportId reportId;
-
-		private Consumer<ActorContext> actorPlan;
-		private ActorId actorId;
-
-		private Consumer<DataManagerContext> dataManagerPlan;
-		private DataManagerId dataManagerId;
-
-		@Override
-		public String toString() {
-
-			StringBuilder builder = new StringBuilder();
-
-			builder.append("\t");
-			builder.append("time = ");
-			builder.append(time);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("arrivalId = ");
-			builder.append(arrivalId);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("isActive = ");
-			builder.append(isActive);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append("key = ");
-			builder.append(key);
-			builder.append(LINE_SEPARATOR);
-
-			builder.append("\t");
-			builder.append(planner);
-			builder.append(" = ");
-			switch (planner) {
-			case ACTOR:
-				builder.append(actorId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(actorPlan);
-				break;
-			case DATA_MANAGER:
-				builder.append(dataManagerId);
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(dataManagerPlan);
-				break;
-			case REPORT:
-				builder.append(reportId);
-				builder.append("\t");
-				builder.append(LINE_SEPARATOR);
-				builder.append("\t");
-				builder.append(reportPlan);
-				break;
-			default:
-				throw new RuntimeException("unhandled planner case");
-			}
-
-			builder.append(LINE_SEPARATOR);
-			builder.append("\t");
-			builder.append("plan = ");
-			builder.append(LINE_SEPARATOR);
-			builder.append("\t");
-			builder.append(plan);
-
-			builder.append(LINE_SEPARATOR);
-			builder.append(LINE_SEPARATOR);
-
-			return builder.toString();
-		}
-	}
-
 	public static class Builder {
 
 		private Data data = new Data();
@@ -257,17 +170,17 @@ public class Simulation {
 		return new Builder();
 	}
 
-	private final Comparator<PlanRec> futureComparable = new Comparator<PlanRec>() {
+	private final Comparator<Plan> futureComparable = new Comparator<Plan>() {
 
 		@Override
-		public int compare(final PlanRec plannedEvent1, final PlanRec plannedEvent2) {
-			int result = Double.compare(plannedEvent1.time, plannedEvent2.time);
+		public int compare(final Plan plan1, final Plan plan2) {
+			int result = Double.compare(plan1.time, plan2.time);
 			if (result == 0) {
 
-				result = plannedEvent1.planner.compareTo(plannedEvent2.planner);
+				result = plan1.planner.compareTo(plan2.planner);
 
 				if (result == 0) {
-					result = Long.compare(plannedEvent1.arrivalId, plannedEvent2.arrivalId);
+					result = Long.compare(plan1.arrivalId, plan2.arrivalId);
 				}
 			}
 			return result;
@@ -279,13 +192,14 @@ public class Simulation {
 	}
 
 	// planning
-	private long masterPlanningArrivalId;
+	private long masterPlanningArrivalId = 0;
+	private long initialArrivalId = -1;
 	protected double time;
 	double simulationHaltTime;
 	boolean forcedHaltPresent;
 	private boolean eventProcessingAllowed;
 	private int activePlanCount;
-	private final PriorityQueue<PlanRec> planningQueue = new PriorityQueue<>(futureComparable);
+	private final PriorityQueue<Plan> planningQueue = new PriorityQueue<>(futureComparable);
 	private PlanningQueueMode planningQueueMode = PlanningQueueMode.READY;
 
 	// actors
@@ -310,31 +224,12 @@ public class Simulation {
 		this.data = data;
 	}
 
-	private void validateActorPlan(final Consumer<ActorContext> plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
-	}
-
-	private void validateReportPlan(final Consumer<ReportContext> plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
-	}
-
-	private void validateDataManagerPlan(final Consumer<DataManagerContext> plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	protected <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
 
-		PluginData result = null;
+		T result = null;
 
 		List<PluginData> pluginDatas = workingPluginDataMap.get(pluginDataClass);
 		if (pluginDatas == null) {
@@ -352,13 +247,12 @@ public class Simulation {
 			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
 		}
 		if (pluginDatas.size() == 1) {
-			result = pluginDatas.get(0);
+			result = pluginDataClass.cast(pluginDatas.get(0));
 		}
 
-		return Optional.ofNullable((T) result);
+		return Optional.ofNullable(result);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
 		if (pluginDataClass == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
@@ -379,7 +273,7 @@ public class Simulation {
 		}
 		List<T> result = new ArrayList<>();
 		for (PluginData pluginData : pluginDatas) {
-			result.add((T) pluginData);
+			result.add(pluginDataClass.cast(pluginData));
 		}
 		return result;
 	}
@@ -425,175 +319,159 @@ public class Simulation {
 
 	}
 
-	protected void addActorPlan(Plan<ActorContext> plan) {
+	protected void addActorPlan(ActorPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlanTime(plan.getTime());
-		validateActorPlan(plan.getCallbackConsumer());
-
-		final PlanRec planRec = new PlanRec();
-
-		planRec.arrivalId = masterPlanningArrivalId++;
-
-		planRec.plan = plan;
-		planRec.isActive = plan.isActive();
-
-		planRec.planner = Planner.ACTOR;
-		planRec.time = plan.getTime();
-		planRec.actorPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
-
-		Map<Object, PlanRec> map;
-
-		planRec.actorId = focalActorId;
-
-		if (planRec.key != null) {
-			map = actorPlanMap.get(focalActorId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				actorPlanMap.put(focalActorId, map);
-			}
-			map.put(planRec.key, planRec);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
 		}
 
-		if (planRec.isActive) {
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
+
+		// for adding plans before sim starts
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
+			plan.arrivalId = masterPlanningArrivalId++;
+		}
+
+		plan.actorId = focalActorId;
+
+		if (plan.isActive) {
 			activePlanCount++;
 		}
 
-		planningQueue.add(planRec);
+		planningQueue.add(plan);
 	}
 
-	protected void addReportPlan(Plan<ReportContext> plan) {
+	protected void addReportPlan(ReportPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validatePlanTime(plan.getTime());
-		validateReportPlan(plan.getCallbackConsumer());
-
-		final PlanRec planRec = new PlanRec();
-
-		planRec.arrivalId = masterPlanningArrivalId++;
-
-		planRec.plan = plan;
-		planRec.isActive = false;
-		planRec.planner = Planner.REPORT;
-		planRec.time = plan.getTime();
-		planRec.reportPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
-
-		Map<Object, PlanRec> map;
-
-		planRec.reportId = focalReportId;
-
-		if (planRec.key != null) {
-			map = reportPlanMap.get(focalReportId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				reportPlanMap.put(focalReportId, map);
-			}
-			map.put(planRec.key, planRec);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
 		}
-		planningQueue.add(planRec);
 
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
+
+		// for adding plans before sim starts
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
+			plan.arrivalId = masterPlanningArrivalId++;
+		}
+
+		plan.reportId = focalReportId;
+
+		planningQueue.add(plan);
 	}
 
-	protected void addDataManagerPlan(DataManagerId dataManagerId, Plan<DataManagerContext> plan) {
+	protected void addDataManagerPlan(DataManagerId dataManagerId, DataManagerPlan plan) {
 
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		validateDataManagerPlan(plan.getCallbackConsumer());
-		validatePlanTime(plan.getTime());
-
-		final PlanRec planRec = new PlanRec();
-
-		planRec.arrivalId = masterPlanningArrivalId++;
-
-		planRec.plan = plan;
-		planRec.isActive = plan.isActive();
-		planRec.planner = Planner.DATA_MANAGER;
-		planRec.time = plan.getTime();
-		planRec.dataManagerPlan = plan.getCallbackConsumer();
-		planRec.key = plan.getKey();
-
-		Map<Object, PlanRec> map;
-
-		planRec.dataManagerId = dataManagerId;
-		if (planRec.key != null) {
-			map = dataManagerPlanMap.get(dataManagerId);
-			if (map == null) {
-				map = new LinkedHashMap<>();
-				dataManagerPlanMap.put(dataManagerId, map);
-			}
-			map.put(planRec.key, planRec);
+		if (plan.consumer == null) {
+			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
 		}
 
-		if (planRec.isActive) {
+		if (plan.time < time) {
+			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
+		}
+
+		// plan arrival ids when added should either be -1, meaning it is a "new" plan
+		// or >=0 meaning it is an existing plan from a previous simulation run.
+		// if it is neither of those, then it is invalid.
+		if (plan.arrivalId < -1) {
+			throw new ContractException(NucleusError.INVALID_PLAN_ARRIVAL_ID, plan.arrivalId);
+		}
+
+		// for adding plans before sim starts
+		if (planningQueueMode == PlanningQueueMode.READY) {
+			// if the plan arrival id is >= 0, it is an existing plan. Update the
+			// masterPlanningArrivalId if the plan arrival id is greater than it.
+			if (plan.arrivalId >= 0) {
+				if (plan.arrivalId > masterPlanningArrivalId) {
+					masterPlanningArrivalId = plan.arrivalId;
+				}
+			}
+			// because of the contract, if the plan arrival id isn't >= 0, then it MUST be
+			// -1
+			// and as such, we need to set the arrival id equal to the initialArrivalId and
+			// then decrement it
+			else {
+				plan.arrivalId = initialArrivalId--;
+			}
+		}
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// arrivalId to the current masterPlanningArrivalId and increment it.
+		else {
+			plan.arrivalId = masterPlanningArrivalId++;
+		}
+
+		plan.dataManagerId = dataManagerId;
+
+		if (plan.isActive) {
 			activePlanCount++;
 		}
-		planningQueue.add(planRec);
-	}
 
-	protected void validateDataManagerPlanKeyNotDuplicate(DataManagerId dataManagerId, final Object key) {
-		if (getDataManagerPlan(dataManagerId, key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
-	protected void validateActorPlanKeyNotDuplicate(final Object key) {
-		if (getActorPlan(key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
-	protected void validateReportPlanKeyNotDuplicate(final Object key) {
-		if (getReportPlan(key).isPresent()) {
-			throw new ContractException(NucleusError.DUPLICATE_PLAN_KEY);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ActorContext>> removeActorPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
-
-		Plan<ActorContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (Plan<ActorContext>) planRecord.plan;
-				planRecord.actorPlan = null;
-				planRecord.plan = null;
-			}
-		}
-		return Optional.ofNullable(result);
-
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ReportContext>> removeReportPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
-
-		Plan<ReportContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (Plan<ReportContext>) planRecord.plan;
-				planRecord.reportPlan = null;
-				planRecord.plan = null;
-			}
-		}
-		return Optional.ofNullable(result);
-
+		planningQueue.add(plan);
 	}
 
 	private Graph<PluginId, Object> pluginDependencyGraph;
@@ -728,201 +606,28 @@ public class Simulation {
 		return data.stateRecordingIsScheduled;
 	}
 
-	protected boolean plansRequirePlanData(double time) {
-		if (data.stateRecordingIsScheduled) {
-			if (time > data.simulationHaltTime) {
-				return true;
+	private void rebuildPlanningQueue() {
+		List<Plan> plans = new ArrayList<>();
+		// empty the planning queue to reset the arrival ids
+		while (!planningQueue.isEmpty()) {
+			Plan plan = planningQueue.poll();
+			if (plan.arrivalId < 0) {
+				long id = plan.arrivalId;
+				// master - (-id) = master + id
+				plan.arrivalId = masterPlanningArrivalId - id;
 			}
+			plans.add(plan);
 		}
-		return false;
-	}
+		// by subtracting the intialArrivalId, which is guarenteed to be 1 less than the
+		// last plan recieved during READY, the masterPlanningArrivalId will be 1 more
+		// than the total number of plans.
+		masterPlanningArrivalId -= initialArrivalId;
 
-	private final Map<DataManagerId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>>> dataManagerPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setDataManagerPlanDataConverter(DataManagerId dataManagerId,
-			Class<T> planDataClass, Function<T, Consumer<DataManagerContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>> map = dataManagerPlanDataConversionMap
-				.get(dataManagerId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			dataManagerPlanDataConversionMap.put(dataManagerId, map);
-		}
-		Function<PlanData, Consumer<DataManagerContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<DataManagerContext> getDataManagerContextConsumer(DataManagerId dataManagerId, PlanData planData) {
-		Consumer<DataManagerContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<DataManagerContext>>> map = dataManagerPlanDataConversionMap
-				.get(dataManagerId);
-		if (map != null) {
-			Function<PlanData, Consumer<DataManagerContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
-	private final Map<ActorId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>>> actorPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setActorPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ActorContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>> map = actorPlanDataConversionMap
-				.get(focalActorId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			actorPlanDataConversionMap.put(focalActorId, map);
-		}
-		Function<PlanData, Consumer<ActorContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<ActorContext> getActorContextConsumer(ActorId actorId, PlanData planData) {
-		Consumer<ActorContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ActorContext>>> map = actorPlanDataConversionMap
-				.get(actorId);
-		if (map != null) {
-			Function<PlanData, Consumer<ActorContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
-	private final Map<ReportId, Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>>> reportPlanDataConversionMap = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
-	protected <T extends PlanData> void setReportPlanDataConverter(Class<T> planDataClass,
-			Function<T, Consumer<ReportContext>> conversionFunction) {
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>> map = reportPlanDataConversionMap
-				.get(focalReportId);
-
-		if (map == null) {
-			map = new LinkedHashMap<>();
-			reportPlanDataConversionMap.put(focalReportId, map);
-		}
-		Function<PlanData, Consumer<ReportContext>> f = (planData) -> {
-			return conversionFunction.apply((T) planData);
-		};
-		map.put(planDataClass, f);
-	}
-
-	private Consumer<ReportContext> getReportContextConsumer(ReportId reportId, PlanData planData) {
-		Consumer<ReportContext> result = null;
-		Map<Class<? extends PlanData>, Function<PlanData, Consumer<ReportContext>>> map = reportPlanDataConversionMap
-				.get(reportId);
-		if (map != null) {
-			Function<PlanData, Consumer<ReportContext>> function = map.get(planData.getClass());
-			if (function != null) {
-				result = function.apply(planData);
-			}
-		}
-		return result;
-	}
-
-	private void loadExistingPlans() {
-		List<PlanQueueData> planQueueDatas = data.simulationState.getPlanQueueDatas();
-		for (PlanQueueData planQueueData : planQueueDatas) {
-			PlanRec planRec = new PlanRec();
-			// convert the plan data into a consumer
-			Planner planner = planQueueData.getPlanner();
-			switch (planner) {
-			case ACTOR:
-				planRec.actorId = actorIds.get(planQueueData.getPlannerId());
-				planRec.actorPlan = getActorContextConsumer(planRec.actorId, planQueueData.getPlanData());
-				planRec.plan = Plan.builder(ActorContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.actorPlan)//
-						.build();
-
-				break;
-			case DATA_MANAGER:
-				planRec.dataManagerId = dataManagerIds.get(planQueueData.getPlannerId());
-				planRec.dataManagerPlan = getDataManagerContextConsumer(planRec.dataManagerId,
-						planQueueData.getPlanData());
-				planRec.plan = Plan.builder(DataManagerContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.dataManagerPlan)//
-						.build();
-
-				break;
-			case REPORT:
-				planRec.reportId = reportIds.get(planQueueData.getPlannerId());
-				planRec.reportPlan = getReportContextConsumer(planRec.reportId, planQueueData.getPlanData());
-				planRec.plan = Plan.builder(ReportContext.class)//
-						.setActive(planQueueData.isActive())//
-						.setKey(planQueueData.getKey())//
-						.setPlanData(planQueueData.getPlanData())//
-						.setTime(planQueueData.getTime())//
-						.setCallbackConsumer(planRec.reportPlan)//
-						.build();
-
-				break;
-			default:
-				throw new RuntimeException("unhandled case " + planner);
-			}
-			planRec.arrivalId = planQueueData.getArrivalId();
-			planRec.isActive = planQueueData.isActive();
-			planRec.key = planQueueData.getKey();
-			planRec.planner = planQueueData.getPlanner();
-			planRec.time = planQueueData.getTime();
-
-			
-			if (planRec.plan.getCallbackConsumer() != null) {
-				if (planRec.isActive) {
-					activePlanCount++;
-				}
-				
-				planningQueue.add(planRec);
-				Map<Object, PlanRec> map;
-				if (planRec.key != null) {
-					switch (planner) {
-					case ACTOR:
-						map = actorPlanMap.get(planRec.actorId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							actorPlanMap.put(planRec.actorId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					case DATA_MANAGER:
-						map = dataManagerPlanMap.get(planRec.dataManagerId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							dataManagerPlanMap.put(planRec.dataManagerId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					case REPORT:
-						map = reportPlanMap.get(planRec.reportId);
-						if (map == null) {
-							map = new LinkedHashMap<>();
-							reportPlanMap.put(planRec.reportId, map);
-						}
-						map.put(planRec.key, planRec);
-						break;
-					default:
-						throw new RuntimeException("unhandled case " + planner);
-					}
-				}
-			}
-		}
+		// this will cause some level of thrashing, as the order of the plans in the
+		// list is not guarenteed to be in arrival order.
+		// the planningQueue will take care of the ordering.
+		plans.forEach(_plan -> planningQueue.add(_plan));
+		plans = null;
 	}
 
 	/**
@@ -963,8 +668,6 @@ public class Simulation {
 		started = true;
 
 		time = data.simulationState.getStartTime();
-
-		masterPlanningArrivalId = data.simulationState.getPlanningQueueArrivalId();
 
 		forcedHaltPresent = false;
 		if (data.simulationHaltTime != null) {
@@ -1043,12 +746,10 @@ public class Simulation {
 		// initialize the actors by flushing the actor queue
 		executeActorQueue();
 
-		
-		loadExistingPlans();
+		rebuildPlanningQueue();
 
 		planningQueueMode = PlanningQueueMode.RUNNING;
 
-		
 		while (activePlanCount > 0) {
 			if (forcedHaltPresent) {
 				if (planningQueue.peek().time > simulationHaltTime) {
@@ -1056,56 +757,56 @@ public class Simulation {
 				}
 			}
 
-			final PlanRec planRec = planningQueue.poll();
-			// System.out.println(planRec);
+			final Plan plan = planningQueue.poll();
+			// System.out.println(plan);
 
-			time = planRec.time;
-			if (planRec.isActive) {
+			time = plan.time;
+			if (plan.isActive) {
 				activePlanCount--;
 			}
-			switch (planRec.planner) {
-			case ACTOR:
-				if (planRec.actorPlan != null) {
-					if (planRec.key != null) {
-						actorPlanMap.get(planRec.actorId).remove(planRec.key);
-					}
-					ActorContentRec actorContentRec = new ActorContentRec();
-					actorContentRec.actorId = planRec.actorId;
-					actorContentRec.plan = planRec.actorPlan;
-					actorQueue.add(actorContentRec);
-					executeActorQueue();
-				}
-				break;
-			case DATA_MANAGER:
-				if (planRec.dataManagerPlan != null) {
-					if (planRec.key != null) {
-						dataManagerPlanMap.get(planRec.dataManagerId).remove(planRec.key);
-					}
-					DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-					dataManagerContentRec.dmPlan = planRec.dataManagerPlan;
-					dataManagerContentRec.dataManagerId = planRec.dataManagerId;
-					dataManagerQueue.add(dataManagerContentRec);
-					executeDataManagerQueue();
-					executeActorQueue();
-				}
-				break;
 
-			case REPORT:
-				if (planRec.reportPlan != null) {
-					if (planRec.key != null) {
-						reportPlanMap.get(planRec.reportId).remove(planRec.key);
+			// skip canceled plans
+			if (plan.canceled) {
+				continue;
+			}
+
+			switch (plan.planner) {
+				case ACTOR:
+					ActorPlan actorPlan = (ActorPlan) plan;
+					if (actorPlan.consumer != null) {
+						ActorContentRec actorContentRec = new ActorContentRec();
+						actorContentRec.actorId = actorPlan.actorId;
+						actorContentRec.actorPlan = actorPlan::execute;
+						actorQueue.add(actorContentRec);
+						executeActorQueue();
 					}
-					ReportContentRec reportContentRec = new ReportContentRec();
-					reportContentRec.reportPlan = planRec.reportPlan;
-					reportContentRec.reportId = planRec.reportId;
-					reportQueue.add(reportContentRec);
-					executeReportQueue();
-				}
+					break;
+				case DATA_MANAGER:
+					DataManagerPlan dmPlan = (DataManagerPlan) plan;
+					if (dmPlan.consumer != null) {
+						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
+						dataManagerContentRec.dmPlan = dmPlan::execute;
+						dataManagerQueue.add(dataManagerContentRec);
+						executeDataManagerQueue();
+						executeActorQueue();
+					}
+					break;
 
-				break;
+				case REPORT:
+					ReportPlan reportPlan = (ReportPlan) plan;
+					if (reportPlan.consumer != null) {
+						ReportContentRec reportContentRec = new ReportContentRec();
+						reportContentRec.reportId = reportPlan.reportId;
+						reportContentRec.reportPlan = reportPlan::execute;
+						reportQueue.add(reportContentRec);
+						executeReportQueue();
+					}
 
-			default:
-				throw new RuntimeException("unhandled planner type " + planRec.planner);
+					break;
+
+				default:
+					throw new RuntimeException("unhandled planner type " + plan.planner);
 			}
 		}
 
@@ -1151,40 +852,9 @@ public class Simulation {
 			SimulationState.Builder simulationStateBuilder = SimulationState.builder();
 			simulationStateBuilder.setBaseDate(data.simulationState.getBaseDate());
 			simulationStateBuilder.setStartTime(time);
-			simulationStateBuilder.setPlanningQueueArrivalId(masterPlanningArrivalId);
 
-			PlanQueueData.Builder planQueueDataBuilder = PlanQueueData.builder();
 			while (!planningQueue.isEmpty()) {
-				PlanRec planRec = planningQueue.poll();
-				if (planRec.plan != null) {
-
-					PlanData planData = planRec.plan.getPlanData();
-					if (planData != null) {
-						planQueueDataBuilder.setActive(planRec.isActive)//
-								.setArrivalId(planRec.arrivalId)//
-								.setKey(planRec.key)//
-								.setPlanData(planData)//
-								.setPlanner(planRec.planner)//
-								.setTime(planRec.time);//
-
-						switch (planRec.planner) {
-						case ACTOR:
-							planQueueDataBuilder.setPlannerId(planRec.actorId.getValue());
-							break;
-						case DATA_MANAGER:
-							planQueueDataBuilder.setPlannerId(planRec.dataManagerId.getValue());
-							break;
-						case REPORT:
-							planQueueDataBuilder.setPlannerId(planRec.reportId.getValue());
-							break;
-						default:
-							throw new RuntimeException("unhandled case " + planRec.planner);
-						}
-
-						PlanQueueData planQueueData = planQueueDataBuilder.build();
-						simulationStateBuilder.addPlanQueueData(planQueueData);
-					}
-				}
+				planningQueue.poll();
 			}
 
 			outputConsumer.accept(simulationStateBuilder.build());
@@ -1208,9 +878,9 @@ public class Simulation {
 
 			focalActorId = actorContentRec.actorId;
 			if (actorContentRec.event != null) {
-				actorContentRec.consumer.accept(actorContentRec.event);
+				actorContentRec.eventConsumer.accept(actorContentRec.event);
 			} else {
-				actorContentRec.plan.accept(actorContext);
+				actorContentRec.actorPlan.accept(actorContext);
 			}
 			focalActorId = null;
 		}
@@ -1221,16 +891,15 @@ public class Simulation {
 
 	private void executeReportQueue() {
 		while (!reportQueue.isEmpty()) {
-			final ReportContentRec contentRec = reportQueue.pollFirst();
-			if (contentRec.reportPlan != null) {
-				focalReportId = contentRec.reportId;
-				contentRec.reportPlan.accept(reportContext);
-				focalReportId = null;
+			final ReportContentRec reportContentRec = reportQueue.pollFirst();
+			focalReportId = reportContentRec.reportId;
+
+			if (reportContentRec.event != null) {
+				reportContentRec.eventConsumer.accept(reportContentRec.event);
 			} else {
-				focalReportId = contentRec.reportId;
-				contentRec.consumer.accept(contentRec.event);
-				focalReportId = null;
+				reportContentRec.reportPlan.accept(reportContext);
 			}
+			focalReportId = null;
 		}
 	}
 
@@ -1243,12 +912,12 @@ public class Simulation {
 			try {
 				while (!dataManagerQueue.isEmpty()) {
 					final DataManagerContentRec contentRec = dataManagerQueue.pollFirst();
-					if (contentRec.dmPlan != null) {
+					if (contentRec.event != null) {
+						contentRec.eventConsumer.accept(contentRec.event);
+					} else {
 						DataManagerContext dataManagerContext = dataManagerIdToDataManagerContextMap
 								.get(contentRec.dataManagerId);
 						contentRec.dmPlan.accept(dataManagerContext);
-					} else {
-						contentRec.consumer.accept(contentRec.event);
 					}
 				}
 				executeReportQueue();
@@ -1261,72 +930,6 @@ public class Simulation {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ReportContext>> getReportPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
-		Plan<ReportContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (Plan<ReportContext>) planRecord.plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<ActorContext>> getActorPlan(final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
-		Plan<ActorContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (Plan<ActorContext>) planRecord.plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<DataManagerContext>> getDataManagerPlan(DataManagerId dataManagerId, final Object key) {
-		validatePlanKeyNotNull(key);
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		Plan<DataManagerContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.get(key);
-			if (planRecord != null) {
-				result = (Plan<DataManagerContext>) planRecord.plan;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
-	protected List<Object> getActorPlanKeys() {
-		Map<Object, PlanRec> map = actorPlanMap.get(focalActorId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
-	}
-
-	protected List<Object> getReportPlanKeys() {
-		Map<Object, PlanRec> map = reportPlanMap.get(focalReportId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
-	}
-
-	protected List<Object> getDataManagerPlanKeys(DataManagerId dataManagerId) {
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		if (map != null) {
-			return new ArrayList<>(map.keySet());
-		}
-		return new ArrayList<>();
-	}
-
 	protected void halt() {
 		if (!data.stateRecordingIsScheduled) {
 			simulationHaltTime = time;
@@ -1336,43 +939,9 @@ public class Simulation {
 
 	private Consumer<Object> outputConsumer;
 
-	/*
-	 * We drop the plan out of the plan map and thus have no way to reference the
-	 * plan directly. However, we do not remove the plan from the planQueue and
-	 * instead simply mark the plan record as cancelled. When the cancelled plan
-	 * record reaches the top of the queue, it is popped off and ignored. This
-	 * avoids the inefficiency of walking the queue and removing the plan.
-	 *
-	 * Note that we are allowing components to delete plans that do not exist. This
-	 * was done to ease any bookkeeping burdens on the component and seems generally
-	 * harmless.
-	 */
-	@SuppressWarnings("unchecked")
-	protected Optional<Plan<DataManagerContext>> removeDataManagerPlan(DataManagerId dataManagerId, final Object key) {
-		validatePlanKeyNotNull(key);
-
-		Map<Object, PlanRec> map = dataManagerPlanMap.get(dataManagerId);
-		Plan<DataManagerContext> result = null;
-		if (map != null) {
-			final PlanRec planRecord = map.remove(key);
-			if (planRecord != null) {
-				result = (Plan<DataManagerContext>) planRecord.plan;
-				planRecord.dataManagerPlan = null;
-				planRecord.plan = null;
-			}
-		}
-		return Optional.ofNullable(result);
-	}
-
 	protected void validatePlanKeyNotNull(final Object key) {
 		if (key == null) {
 			throw new ContractException(NucleusError.NULL_PLAN_KEY, "");
-		}
-	}
-
-	private void validatePlanTime(final double planTime) {
-		if (planTime < time) {
-			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
 		}
 	}
 
@@ -1561,7 +1130,7 @@ public class Simulation {
 			for (ReportEventConsumer reportEventConsumer : reportConsumers) {
 				ReportContentRec reportContentRec = new ReportContentRec();
 				reportContentRec.event = event;
-				reportContentRec.consumer = reportEventConsumer;
+				reportContentRec.eventConsumer = reportEventConsumer;
 				reportContentRec.reportId = reportEventConsumer.reportId;
 				reportQueue.add(reportContentRec);
 			}
@@ -1577,7 +1146,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
+				dataManagerContentRec.eventConsumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1606,7 +1175,7 @@ public class Simulation {
 
 				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 				dataManagerContentRec.event = event;
-				dataManagerContentRec.consumer = dataManagerEventConsumer.consumer;
+				dataManagerContentRec.eventConsumer = dataManagerEventConsumer.consumer;
 				dataManagerContentRec.dataManagerId = dataManagerEventConsumer.dataManagerId;
 				dataManagerQueue.add(dataManagerContentRec);
 
@@ -1627,7 +1196,7 @@ public class Simulation {
 
 		final ActorContentRec actorContentRec = new ActorContentRec();
 		actorContentRec.actorId = result;
-		actorContentRec.plan = consumer;
+		actorContentRec.actorPlan = consumer;
 		actorQueue.add(actorContentRec);
 
 		return result;
@@ -1826,9 +1395,6 @@ public class Simulation {
 	private final Map<Class<? extends Event>, List<DataManagerEventConsumer>> dataManagerEventMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<ReportEventConsumer>> reportEventMap = new LinkedHashMap<>();
 
-	// used for retrieving and canceling plans owned by data managers
-	private final Map<DataManagerId, Map<Object, PlanRec>> dataManagerPlanMap = new LinkedHashMap<>();
-
 	// used to locate data managers by class type
 	private Map<Class<?>, DataManager> baseClassToDataManagerMap = new LinkedHashMap<>();
 	private Map<Class<?>, DataManager> workingClassToDataManagerMap = new LinkedHashMap<>();
@@ -1858,9 +1424,6 @@ public class Simulation {
 
 	private boolean containsDeletedActors;
 
-	private final Map<ActorId, Map<Object, PlanRec>> actorPlanMap = new LinkedHashMap<>();
-	private final Map<ReportId, Map<Object, PlanRec>> reportPlanMap = new LinkedHashMap<>();
-
 	private final Deque<ActorContentRec> actorQueue = new ArrayDeque<>();
 	private final Deque<DataManagerContentRec> dataManagerQueue = new ArrayDeque<>();
 	private final Deque<ReportContentRec> reportQueue = new ArrayDeque<>();
@@ -1872,9 +1435,9 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
-		private Consumer<ActorContext> plan;
+		private Consumer<ActorContext> actorPlan;
 
 		private ActorId actorId;
 
@@ -1884,7 +1447,7 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
 		private Consumer<ReportContext> reportPlan;
 
@@ -1896,7 +1459,7 @@ public class Simulation {
 
 		private Event event;
 
-		private Consumer<Event> consumer;
+		private Consumer<Event> eventConsumer;
 
 		private Consumer<DataManagerContext> dmPlan;
 
@@ -1929,7 +1492,7 @@ public class Simulation {
 				final ActorContentRec actorContentRec = new ActorContentRec();
 				actorContentRec.event = event;
 				actorContentRec.actorId = actorId;
-				actorContentRec.consumer = consumer;
+				actorContentRec.eventConsumer = consumer;
 				actorQueue.add(actorContentRec);
 			}
 		}
@@ -2137,6 +1700,100 @@ public class Simulation {
 	 */
 	protected LocalDate getBaseDate() {
 		return data.simulationState.getBaseDate();
+	}
+
+	private Map<ActorId, List<ActorPlan>> actorPlanDump = null;
+	private Map<DataManagerId, List<DataManagerPlan>> dataManagerPlanDump = null;
+	private Map<ReportId, List<ReportPlan>> reportPlanDump = null;
+
+	private void dumpPlanningQueue() {
+
+		actorPlanDump = new LinkedHashMap<>();
+		dataManagerPlanDump = new LinkedHashMap<>();
+		reportPlanDump = new LinkedHashMap<>();
+
+		while (!planningQueue.isEmpty()) {
+			Plan plan = planningQueue.poll();
+			if (!plan.canceled) {
+
+				switch (plan.planner) {
+					case ACTOR:
+						ActorPlan actorPlan = (ActorPlan) plan;
+						List<ActorPlan> actorPlans = actorPlanDump.get(actorPlan.actorId);
+						if (actorPlans == null) {
+							actorPlans = new ArrayList<>();
+							actorPlanDump.put(actorPlan.actorId, actorPlans);
+						}
+						actorPlans.add(actorPlan);
+						break;
+					case DATA_MANAGER:
+						DataManagerPlan dataManagerPlan = (DataManagerPlan) plan;
+						List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerPlan.dataManagerId);
+						if (dataManagerPlans == null) {
+							dataManagerPlans = new ArrayList<>();
+							dataManagerPlanDump.put(dataManagerPlan.dataManagerId, dataManagerPlans);
+						}
+						dataManagerPlans.add(dataManagerPlan);
+						break;
+					case REPORT:
+						ReportPlan reportPlan = (ReportPlan) plan;
+						List<ReportPlan> reportPlans = reportPlanDump.get(reportPlan.reportId);
+						if (reportPlans == null) {
+							reportPlans = new ArrayList<>();
+							reportPlanDump.put(reportPlan.reportId, reportPlans);
+						}
+						reportPlans.add(reportPlan);
+						break;
+					default:
+						throw new RuntimeException("unhandled planner type " + plan.planner);
+				}
+			}
+		}
+	}
+
+	protected List<ActorPlan> retrievePlansForActor() {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
+			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
+		}
+		if (actorPlanDump == null) {
+			dumpPlanningQueue();
+		}
+		List<ActorPlan> result = new ArrayList<>();
+		List<ActorPlan> actorPlans = actorPlanDump.get(focalActorId);
+		if (actorPlans != null) {
+			result.addAll(actorPlans);
+		}
+		return result;
+	}
+
+	protected List<ReportPlan> retrievePlansForReport() {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
+			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
+		}
+		if (reportPlanDump == null) {
+			dumpPlanningQueue();
+		}
+		List<ReportPlan> result = new ArrayList<>();
+		List<ReportPlan> reportPlans = reportPlanDump.get(focalReportId);
+		if (reportPlans != null) {
+			result.addAll(reportPlans);
+		}
+		return result;
+	}
+
+	protected List<DataManagerPlan> retrievePlansForDataManager(DataManagerId dataManagerId) {
+		if (planningQueueMode != PlanningQueueMode.CLOSED) {
+			throw new ContractException(NucleusError.PLANNING_QUEUE_ACTIVE);
+		}
+		if (dataManagerPlanDump == null) {
+			dumpPlanningQueue();
+		}
+		List<DataManagerPlan> result = new ArrayList<>();
+		List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerId);
+		if (dataManagerPlans != null) {
+			result.addAll(dataManagerPlans);
+		}
+		return result;
 	}
 
 }

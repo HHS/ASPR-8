@@ -8,6 +8,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * description of the exception.
  */
 public enum NucleusError implements ContractError {
+	PLANNING_QUEUE_ACTIVE("The planning queue is still active and plans cannot be retrieved"),
 	ACCESS_VIOLATION("A contributed behavior is accessing locked state during a state change"),
 	DATA_MANAGER_ACCESS_VIOLATION(
 			"A data manager is attempting to access another data manager that is incompatible with the plugin dependencies"),
@@ -53,7 +54,7 @@ public enum NucleusError implements ContractError {
 	NULL_LABELER_ID_IN_EVENT_LABELER("Event labeler returns a null id"), NULL_META_DATA("Null meta data"),
 	NULL_OUTPUT_HANDLER("Null output item handler"), NULL_OUTPUT_ITEM("Null output"), NULL_PLAN("Null plan"),
 	NULL_PLAN_CONSUMER("Null plan consumer"), NULL_PLAN_DATA("Null plan data"),
-	NULL_PLAN_QUEUE_DATA("Null plan queue data"), NULL_PLANNER("Null planner type"), NULL_PLAN_KEY("Null planning key"),
+	NULL_PLAN_KEY("Null planning key"),
 	NULL_PLUGIN("Null plugin"), NULL_PLUGINS("Null collection of plugins"), NULL_PLUGIN_CONTEXT("Null plugin context"),
 	NULL_PLUGIN_DATA("Null plugin data"),
 	NULL_PLUGIN_DATA_BUILDER("A null plugin data builder instance was added to the context"),
@@ -63,9 +64,6 @@ public enum NucleusError implements ContractError {
 	NULL_SIMULATION_CONTEXT("Null simulation context"), NULL_SIMULATION_TIME("Null simulation time"),
 	PAST_PLANNING_TIME("Plan execution time is in the past"),
 	PLANNING_QUEUE_CLOSED("The planning phase of the simulation is over and plans may not be added"),
-	PLANNING_QUEUE_ARRIVAL_INVALID(
-			"The planning queue arrival id must exceed the arrival id values for all stored plans"),
-	PLANNING_QUEUE_TIME("A planning time for a stored plan happens before the start time of the simulation"),
 	PLUGIN_INITIALIZATION_CLOSED("Plugin context is no longer valid"),
 	REPEATED_EXECUTION("Attempted repeat execution of simulation engine"),
 	REPORT_ATTEMPTING_MUTATION("A report is attempting to mutate data state"),
@@ -88,7 +86,8 @@ public enum NucleusError implements ContractError {
 			"An observation event is being released during a mutation by a data manager without the use of a corresponding mutation event"),
 	UNKNOWN_FUNCTION_ID("Unknown event function id"), NULL_FUNCTION_ID("Null function id"),
 	NULL_FUNCTION_VALUE("Null event function value"), NULL_FUNCTION("Null function"),
-	NULL_IDENTIFIABLE_FUNCTION("Null identifiable function"), NULL_EVENT_FILTER("Null event filter"),;
+	NULL_IDENTIFIABLE_FUNCTION("Null identifiable function"), NULL_EVENT_FILTER("Null event filter"),
+	INVALID_PLAN_ARRIVAL_ID("The given plan id is invalid. It either needs to be >=0, or -1, and nothing else"),;
 
 	private final String description;
 
