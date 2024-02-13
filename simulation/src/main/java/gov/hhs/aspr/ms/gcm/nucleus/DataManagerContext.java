@@ -23,14 +23,15 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Schedules a plan that will be executed at the given time.
+	 * Schedules an active data manager plan with a default arrival id that will be
+	 * executed at the given time.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -43,14 +44,20 @@ public final class DataManagerContext {
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules a data manager plan. Plans arrival ids are ignored after the first
+	 * wave of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
+	 * 
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the plan consumer is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           plan consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -225,10 +232,10 @@ public final class DataManagerContext {
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
 	}
-	
+
 	/**
-	 * Returns the list of queued plans belonging to the current data manager. Should only
-	 * be used after notification of simulation close.
+	 * Returns the list of queued plans belonging to the current data manager.
+	 * Should only be used after notification of simulation close.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>

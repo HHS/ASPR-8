@@ -26,9 +26,10 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Schedules a passive plan that will be executed at the given time. Passive
-	 * plans are not required to execute and the simulation will terminate if only
-	 * passive plans remain on the planning schedule.
+	 * Schedules a passive report plan with a default arrival id that will be
+	 * executed at the given time. Passive plans are not required to execute and the
+	 * simulation will terminate if only passive plans remain on the planning
+	 * schedule.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -46,7 +47,12 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules a report plan. Plans arrival ids are ignored after the first wave
+	 * of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -105,7 +111,7 @@ public final class ReportContext {
 	 * handling.
 	 * 
 	 * @throws ContractException {@link NucleusError#NULL_EVENT_CLASS} if the event
-	 *                            class is null
+	 *                           class is null
 	 */
 	public void unsubscribe(Class<? extends Event> eventClass) {
 		simulation.unsubscribeReportFromEvent(eventClass);
@@ -158,7 +164,7 @@ public final class ReportContext {
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
 	}
-	
+
 	/**
 	 * Returns the list of queued plans belonging to the current report. Should only
 	 * be used after notification of simulation close.
@@ -174,6 +180,5 @@ public final class ReportContext {
 	public List<ReportPlan> retrievePlans() {
 		return simulation.retrievePlansForReport();
 	}
-
 
 }

@@ -34,12 +34,15 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Schedules a plan that will be executed at the given time.
+	 * Schedules an active actor plan with a default arrival id that will be
+	 * executed at the given time.
+	 * 
+	 * 
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -52,7 +55,12 @@ public final class ActorContext {
 	}
 
 	/**
-	 * Schedules a plan.
+	 * Schedules an actor plan. Plans arrival ids are ignored after the first wave
+	 * of agent, report and data manager initialization during the simulation
+	 * bootstrap. During the initialization phase, all plans with non-negative
+	 * arrival ids (plans that were serialized) keep their arrival ids and all new
+	 * plans (having arrival id = -1) are scheduled in the planning queue with
+	 * higher arrival ids than all the serialized plans.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
@@ -184,7 +192,7 @@ public final class ActorContext {
 	public LocalDate getBaseDate() {
 		return simulation.getBaseDate();
 	}
-	
+
 	/**
 	 * Returns the list of queued plans belonging to the current actor. Should only
 	 * be used after notification of simulation close.
@@ -200,6 +208,5 @@ public final class ActorContext {
 	public List<ActorPlan> retrievePlans() {
 		return simulation.retrievePlansForActor();
 	}
-
 
 }
