@@ -1702,9 +1702,9 @@ public class Simulation {
 		return data.simulationState.getBaseDate();
 	}
 
-	private Map<ActorId, List<ActorPlan>> actorPlanDump = new LinkedHashMap<>();
-	private Map<DataManagerId, List<DataManagerPlan>> dataManagerPlanDump = new LinkedHashMap<>();
-	private Map<ReportId, List<ReportPlan>> reportPlanDump = new LinkedHashMap<>();
+	private Map<ActorId, List<ActorPlan>> actorPlanDump = null;
+	private Map<DataManagerId, List<DataManagerPlan>> dataManagerPlanDump = null;
+	private Map<ReportId, List<ReportPlan>> reportPlanDump = null;
 
 	private void dumpPlanningQueue() {
 

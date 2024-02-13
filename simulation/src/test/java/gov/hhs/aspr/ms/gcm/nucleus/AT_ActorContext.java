@@ -235,7 +235,7 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "addPlan", args = { Plan.class })
+	@UnitTestMethod(target = ActorContext.class, name = "addPlan", args = { ActorPlan.class })
 	public void testAddPlan_Plan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -909,5 +909,59 @@ public class AT_ActorContext {
 			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 		});
 
+	}
+
+	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "retrievePlans", args = {})
+	public void testRetrievePlans() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.retrievePlans());
+			assertEquals(NucleusError.PLANNING_QUEUE_ACTIVE, contractException.getErrorType());
+		}));
+
+		List<ActorPlan> actorPlans = new ArrayList<>();
+		List<ActorPlan> expectedPlans = new ArrayList<>();
+		double haltTime = 50;
+
+		for(int i = 1; i <= 100; i++) {
+			ActorPlan actorPlan = new ActorPlan(i, (c) -> {});
+			if (i > 50) {
+				expectedPlans.add(actorPlan);
+			}
+			actorPlans.add(actorPlan);
+		}
+		/*
+		 * Have the actor add a plan and show that that plan executes
+		 */
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (context) -> {
+			for(ActorPlan plan : actorPlans) {
+				context.addPlan(plan);
+			}
+
+			context.subscribeToSimulationClose(c -> planRetrievalSimCloseSubscribe(c, expectedPlans));
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.setSimulationHaltTime(haltTime)
+				.build()//
+				.execute();//
+	}
+
+	private void planRetrievalSimCloseSubscribe(ActorContext context, List<ActorPlan> expectedPlans) {
+		List<ActorPlan> plans = context.retrievePlans();
+
+		assertEquals(expectedPlans.size(), plans.size());
+		assertEquals(expectedPlans, plans);
 	}
 }

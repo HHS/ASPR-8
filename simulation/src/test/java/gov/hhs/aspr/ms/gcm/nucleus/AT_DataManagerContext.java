@@ -275,7 +275,7 @@ public class AT_DataManagerContext {
     }
 
     @Test
-    @UnitTestMethod(target = DataManagerContext.class, name = "addPlan", args = { Plan.class })
+    @UnitTestMethod(target = DataManagerContext.class, name = "addPlan", args = { DataManagerPlan.class })
     public void testAddPlan_Plan() {
 
         TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1020,5 +1020,60 @@ public class AT_DataManagerContext {
 			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 		});
 
+	}
+
+    @Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "retrievePlans", args = {})
+	public void testRetrievePlans() {
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// test preconditions
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
+
+			ContractException contractException = assertThrows(ContractException.class, () -> context.retrievePlans());
+			assertEquals(NucleusError.PLANNING_QUEUE_ACTIVE, contractException.getErrorType());
+		}));
+
+		List<DataManagerPlan> dmPlans = new ArrayList<>();
+		List<DataManagerPlan> expectedPlans = new ArrayList<>();
+		double haltTime = 50;
+
+		for(int i = 1; i <= 100; i++) {
+			DataManagerPlan actorPlan = new DataManagerPlan(i, (c) -> {});
+			if (i > 50) {
+				expectedPlans.add(actorPlan);
+			}
+			dmPlans.add(actorPlan);
+		}
+		/*
+		 * Have the actor add a plan and show that that plan executes
+		 */
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (context) -> {
+			for(DataManagerPlan plan : dmPlans) {
+				context.addPlan(plan);
+			}
+
+			context.subscribeToSimulationClose(c -> planRetrievalSimCloseSubscribe(c, expectedPlans));
+		}));
+
+        pluginDataBuilder.addTestDataManager("dm",()->new TestDataManager1());
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.setSimulationHaltTime(haltTime)
+				.build()//
+				.execute();//
+	}
+
+	private void planRetrievalSimCloseSubscribe(DataManagerContext context, List<DataManagerPlan> expectedPlans) {
+		List<DataManagerPlan> plans = context.retrievePlans();
+
+		assertEquals(expectedPlans.size(), plans.size());
+		assertEquals(expectedPlans, plans);
 	}
 }
