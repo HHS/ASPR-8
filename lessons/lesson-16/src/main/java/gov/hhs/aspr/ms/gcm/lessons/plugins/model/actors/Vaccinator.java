@@ -1,14 +1,16 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.PersonProperty;
 import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.nucleus.ActorPlan;
 import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
-import gov.hhs.aspr.ms.gcm.nucleus.Plan;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
@@ -24,6 +26,7 @@ public final class Vaccinator {
 	private GlobalPropertiesDataManager globalPropertiesDataManager;
 	private double vaccineAttemptInterval;
 	private ActorContext actorContext;
+	private Map<PersonId,ActorPlan> actorPlans = new LinkedHashMap<>();
 
 	/* start code_ref= person_properties_vaccinator_vaccinate_person|code_cap= With each vaccination attempt, the vaccinator updates the VACCINE_ATTEMPTS person property for the person.  People who refuse vaccination are scheduled for another vaccination attempt. */
 	private void vaccinatePerson(PersonId personId) {
@@ -42,15 +45,11 @@ public final class Vaccinator {
 		if (!isImmune) {
 			if (refusesVaccine) {
 				double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
-				Object planKey = personId;
 
-				Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-						.setCallbackConsumer((c) -> vaccinatePerson(personId))//
-						.setKey(planKey)//
-						.setTime(planTime)//
-						.build();//
-
+				ActorPlan plan = new ActorPlan(planTime, (c) -> vaccinatePerson(personId));				
 				actorContext.addPlan(plan);
+				//record the plan for possible cancellation
+				actorPlans.put(personId, plan);
 			} else {
 				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATED, true);
 			}
@@ -69,7 +68,10 @@ public final class Vaccinator {
 		if (!refusesVaccine) {
 			PersonId personId = personPropertyUpdateEvent.personId();
 			// drop the current plan
-			actorContext.cancelPlan(personId);
+			ActorPlan actorPlan = actorPlans.remove(personId);
+			if(actorPlan != null) {
+				actorPlan.cancelPlan();				
+			}			
 			vaccinatePerson(personId);
 		}
 	}
@@ -77,14 +79,11 @@ public final class Vaccinator {
 
 	/* start code_ref= person_properties_vaccinator_plan_vaccination|code_cap= Each unvaccinated person has a planned vaccination based on the VACCINE_ATTEMPT_INTERVAL global property. */
 	private void planVaccination(PersonId personId) {
-		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
-		Object planKey = personId;
-		Plan<ActorContext> plan = Plan.builder(ActorContext.class)//
-				.setCallbackConsumer((c) -> vaccinatePerson(personId))//
-				.setKey(planKey)//
-				.setTime(planTime)//
-				.build();//
+		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;		
+		ActorPlan plan = new ActorPlan(planTime, (c) -> vaccinatePerson(personId));				
 		actorContext.addPlan(plan);
+		//record the plan for possible cancellation
+		actorPlans.put(personId, plan);
 	}
 
 	private void handleNewPerson(PersonId personId) {
