@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -26,21 +25,25 @@ import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 import gov.hhs.aspr.ms.util.wrappers.MutableBoolean;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class AT_ExperimentStateManager {
+	private final static Path RESOURCES_DIR = ResourceHelper.getResourceDir(AT_ExperimentStateManager.class);
 
-	private final static Path PROGRESS_LOG_PATH = Paths.get("src/test/resources/nucleus/progress_log.txt");
-	private final static Path NONEXISTENT_PROGRESS_LOG_PATH = Paths
-			.get("src/test/resources/nucleus/nonexistentfile.txt");
-	private final static Path NONFILE_PROGRESS_LOG_PATH = Paths.get("src/test/resources/nucleus");
+	private final static Path PROGRESS_LOG_PATH = RESOURCES_DIR.resolve("progress_log.txt");
+	private final static Path NONEXISTENT_PROGRESS_LOG_PATH = RESOURCES_DIR.resolve("nonexistentfile.txt");
+	private final static Path NONFILE_PROGRESS_LOG_PATH = RESOURCES_DIR;
 
 	/*
 	 * Tests that the set of scenario ids found in the progress log matches the
 	 * given expected scenario ids.
 	 */
 	private static void testProgressLogContents(Set<Integer> expectedScenarioIds) {
+		
+	
+		
 		Set<Integer> actualScenarioIds = new LinkedHashSet<>();
 		try {
 			List<String> lines = Files.readAllLines(PROGRESS_LOG_PATH);
