@@ -7,13 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -251,7 +252,8 @@ public class AT_ActorContext {
 			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
 
 			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new ActorPlan(0, true, (c) -> {})));
+					() -> context.addPlan(new ActorPlan(0, true, (c) -> {
+					})));
 			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 		}));
 
@@ -850,64 +852,68 @@ public class AT_ActorContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getBaseDate", args = {})
-	public void testGetBaseDate() {
+	@UnitTestMethod(target = ActorContext.class, name = "getSimulationTime", args = { LocalDateTime.class })
+	public void testGetSimulationTime() {
 
 		// create some base dates to test
-		List<LocalDate> localDates = new ArrayList<>();
 
-		localDates.add(LocalDate.of(2023, 1, 10));
-		localDates.add(LocalDate.of(2024, 6, 13));
-		localDates.add(LocalDate.of(2020, 3, 15));
-		localDates.add(LocalDate.of(2023, 12, 25));
+		LocalDate localDate = LocalDate.of(2020, 4, 1);
 
-		// loop over the base dates
-		IntStream.range(0, localDates.size()).forEach((i) -> {
-			LocalDate localDate = localDates.get(i);
-			// build a single actor that will show that the base date returned by the
-			// context is correct
-			TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-				assertEquals(localDate, c.getBaseDate());
-			}));
-			TestPluginData testPluginData = pluginDataBuilder.build();
-			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		List<LocalDateTime> localDateTimes = new ArrayList<>();
 
-			// execute the engine
-			SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
-			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
-		});
+		localDateTimes.add(LocalDateTime.of(2023, 1, 10, 2, 17, 45));
+		localDateTimes.add(LocalDateTime.of(2024, 6, 13, 8, 45, 37));
+		localDateTimes.add(LocalDateTime.of(2020, 3, 15, 22, 13, 18));
+		localDateTimes.add(LocalDateTime.of(2023, 12, 25, 15, 38, 19));
+
+		
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter( LocalDateTime.of(localDate, LocalTime.of(0, 0)));
+			for(LocalDateTime localDateTime : localDateTimes) {
+				assertEquals(simulationTimeConverter.getSimulationTime(localDateTime), c.getSimulationTime(localDateTime));
+			}
+			
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+
+		SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
+		TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 
 	}
 
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getStartTime", args = {})
-	public void testGetStartTime() {
+	@UnitTestMethod(target = ActorContext.class, name = "getLocalDateTime", args = { double.class })
+	public void testGetLocalDateTime() {
 
-		// create some start times to test
-		List<Double> startTimes = new ArrayList<>();
+		
 
-		startTimes.add(-100.0);
-		startTimes.add(30.23);
-		startTimes.add(17.63);
-		startTimes.add(45.5);
+		LocalDate localDate = LocalDate.of(2020, 4, 1);
+		List<Double> times = new ArrayList<>();
+		times.add(-5.7);
+		times.add(-2.234);
+		times.add(0.0);
+		times.add(3.9);
+		times.add(137.765);
+		times.add(4000.5437);
 
-		// loop over the base dates
-		IntStream.range(0, startTimes.size()).forEach((i) -> {
-			Double startTime = startTimes.get(i);
-			// build a single actor that will show that the start time returned by the
-			// context is correct
-			TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-			pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(startTime+10, (c) -> {
-				assertEquals(startTime, c.getStartTime());
-			}));
-			TestPluginData testPluginData = pluginDataBuilder.build();
-			Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter(LocalDateTime.of(localDate, LocalTime.of(0, 0)));
+			for (Double time : times) {
+				assertEquals(simulationTimeConverter.getLocalDateTime(time), c.getLocalDateTime(time));
+			}
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-			// execute the engine
-			SimulationState simulationState = SimulationState.builder().setStartTime(startTime).build();
-			TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
-		});
+		
+		SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
+		TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 
 	}
 
@@ -927,8 +933,9 @@ public class AT_ActorContext {
 		List<ActorPlan> expectedPlans = new ArrayList<>();
 		double haltTime = 50;
 
-		for(int i = 1; i <= 100; i++) {
-			ActorPlan actorPlan = new ActorPlan(i, (c) -> {});
+		for (int i = 1; i <= 100; i++) {
+			ActorPlan actorPlan = new ActorPlan(i, (c) -> {
+			});
 			if (i > 50) {
 				expectedPlans.add(actorPlan);
 			}
@@ -939,7 +946,7 @@ public class AT_ActorContext {
 		 */
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (context) -> {
-			for(ActorPlan plan : actorPlans) {
+			for (ActorPlan plan : actorPlans) {
 				context.addPlan(plan);
 			}
 
@@ -953,8 +960,7 @@ public class AT_ActorContext {
 		// run the simulation
 		Simulation.builder()//
 				.addPlugin(testPlugin)//
-				.setSimulationHaltTime(haltTime)
-				.build()//
+				.setSimulationHaltTime(haltTime).build()//
 				.execute();//
 	}
 

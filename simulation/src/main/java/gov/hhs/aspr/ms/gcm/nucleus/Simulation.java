@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,6 +196,7 @@ public class Simulation {
 	private long masterPlanningArrivalId = 0;
 	private long initialArrivalId = -1;
 	protected double time;
+	private SimulationTimeConverter simulationTimeConverter;
 	double simulationHaltTime;
 	boolean forcedHaltPresent;
 	private boolean eventProcessingAllowed;
@@ -668,6 +670,12 @@ public class Simulation {
 		started = true;
 
 		time = data.simulationState.getStartTime();
+		
+		LocalDateTime dateTime = LocalDateTime.of(data.simulationState.getBaseDate(), LocalTime.of(0, 0));
+		
+		
+		simulationTimeConverter = new SimulationTimeConverter(dateTime);
+		
 
 		forcedHaltPresent = false;
 		if (data.simulationHaltTime != null) {
@@ -1688,20 +1696,6 @@ public class Simulation {
 
 	}
 
-	/**
-	 * Returns the time (floating point days) of simulation start.
-	 */
-	protected double getStartTime() {
-		return data.simulationState.getStartTime();
-	}
-
-	/**
-	 * Returns the base date that synchronizes with simulation time zero.
-	 */
-	protected LocalDate getBaseDate() {
-		return data.simulationState.getBaseDate();
-	}
-
 	private Map<ActorId, List<ActorPlan>> actorPlanDump = null;
 	private Map<DataManagerId, List<DataManagerPlan>> dataManagerPlanDump = null;
 	private Map<ReportId, List<ReportPlan>> reportPlanDump = null;
@@ -1794,6 +1788,27 @@ public class Simulation {
 			result.addAll(dataManagerPlans);
 		}
 		return result;
+	}
+	
+	/*
+	 * Registers the given consumer to be executed at the end of the simulation.
+	 * Activity associated with the consumer should be limited to querying data
+	 * state and releasing output.
+	 * 
+	 * @throws ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
+	 *                           the consumer is null
+	 */
+	protected double getSimulationTime(LocalDateTime localDateTime) {
+		return simulationTimeConverter.getSimulationTime(localDateTime);
+	}
+
+	/*
+	 * Returns the LocalDateTime from the given simulation time based on the
+	 * LocalDate associated with simulation time=0 in the SimulationState used to
+	 * initialize the simulation.
+	 */
+	protected LocalDateTime getLocalDateTime(double simulationTime) {
+		return simulationTimeConverter.getLocalDateTime(simulationTime);
 	}
 
 }
