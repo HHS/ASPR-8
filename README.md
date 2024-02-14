@@ -14,7 +14,7 @@ GCM is a Java based simulation framework for building disease progression models
 Users of GCM should have a general familiarity with Java and object oriented programming and would benefit from some exposure to event based modeling.
 
 ## Overview
-THere are 3 core tenants to GCM.
+There are 3 core tenants to GCM.
 
 ### Simulation
 GCM is an event based simulation composed of data managers, actors and an event engine.  
