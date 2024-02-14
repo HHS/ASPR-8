@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.nucleus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -152,17 +152,21 @@ public final class ReportContext {
 	}
 
 	/**
-	 * Returns the time (floating point days) of simulation start.
+	 * Returns the simulation time in days from the given LocalDateTime based on the
+	 * LocalDate associated with simulation time=0 in the SimulationState used to
+	 * initialize the simulation.
 	 */
-	public double getStartTime() {
-		return simulation.getStartTime();
+	public double getSimulationTime(LocalDateTime localDateTime) {
+		return simulation.getSimulationTime(localDateTime);
 	}
 
 	/**
-	 * Returns the base date that synchronizes with simulation time zero.
+	 * Returns the LocalDateTime from the given simulation time based on the
+	 * LocalDate associated with simulation time=0 in the SimulationState used to
+	 * initialize the simulation.
 	 */
-	public LocalDate getBaseDate() {
-		return simulation.getBaseDate();
+	public LocalDateTime getLocalDateTime(double simulationTime) {
+		return simulation.getLocalDateTime(simulationTime);
 	}
 
 	/**
