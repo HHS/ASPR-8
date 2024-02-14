@@ -1,18 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
-		<artifactId>gcm-demos</artifactId>
+		<artifactId>parent</artifactId>
 		<version>${revision}</version>
 	</parent>
 
 	<!-- Artifact -->
 	<artifactId>gcm-taskit-demo</artifactId>
-	<name>GCM: Demo: Serialization Demo</name>
+	<name>GCM Serialization Demo</name>
 	<description>Demonstrate serialization integration with simulation</description>
 
 	<properties>
@@ -25,16 +25,16 @@
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 
 		<!-- dependency versions -->
-		<gcm-taskit-protobuf.version>2.6.3-SNAPSHOT</gcm-taskit-protobuf.version>
+		<gcm-taskit.version>2.6.3-SNAPSHOT</gcm-taskit.version>
 		<protoc.version>3.21.12</protoc.version>
 	</properties>
 
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>gov.hhs.aspr.ms.gcm</groupId>
-			<artifactId>gcm-taskit-protobuf</artifactId>
-			<version>${gcm-taskit-protobuf.version}</version>
+			<groupId>gov.hhs.aspr.ms.gcm.taskit</groupId>
+			<artifactId>protobuf</artifactId>
+			<version>${gcm-taskit.version}</version>
 		</dependency>
 	</dependencies>
 
