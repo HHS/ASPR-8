@@ -41,11 +41,15 @@ The complete set of all combinations (scenarios) of the variant plugin data obje
 - Modeling Utilities located [here](https://github.com/HHS/ASPR-ms-util)
 
 ## Building
-Once you have cloned the repo and imported it into your favorite IDE, navigate into the gcm directory on the command line.  
+Once you have cloned the repo and imported it into your favorite IDE, navigate into the root directory on the command line.  
 Once there, run the following command: ```mvn clean install```  
 That's all there is to building the project.  
-After running the above command, the next place you should start looking is at the Modeling Guide located in [doc](doc) and following the lessons.
 
+## Documentation
+The documentation can be found at [https://hhs.github.io/ASPR-8/](https://hhs.github.io/ASPR-8/)
+
+## Lessons
+The documentation contains lessons which the code can be found in [lessons](lessons).
 
 ## License
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
