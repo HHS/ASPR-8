@@ -138,17 +138,33 @@ public class AT_GroupPopulationReportPluginData {
 			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
 			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
 
-			GroupPopulationReportPluginData proupPopulationReportPluginData = //
+			GroupPopulationReportPluginData groupPopulationReportPluginData = //
 					GroupPopulationReportPluginData	.builder()//
 													.setReportPeriod(reportPeriod)//
-													.setReportLabel(reportLabel).build();
+													.setReportLabel(reportLabel)//
+													.build();
 
-			// create the clone builder and have it build
-			GroupPopulationReportPluginData cloneGroupPopulationReportPluginData = proupPopulationReportPluginData.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			GroupPopulationReportPluginData.Builder cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(groupPopulationReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(proupPopulationReportPluginData, cloneGroupPopulationReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// setReportLabel
+			cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(groupPopulationReportPluginData, cloneBuilder.build());
+
+			// setReportPeriod
+			cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();			
+			int index = (reportPeriod.ordinal()+1)%ReportPeriod.values().length;
+			reportPeriod = ReportPeriod.values()[index];
+			cloneBuilder.setReportPeriod(reportPeriod);
+			assertNotEquals(groupPopulationReportPluginData, cloneBuilder.build());
+			
 
 		}
 	}
