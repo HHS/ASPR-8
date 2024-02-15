@@ -447,7 +447,7 @@ public class PersonPropertiesPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
 

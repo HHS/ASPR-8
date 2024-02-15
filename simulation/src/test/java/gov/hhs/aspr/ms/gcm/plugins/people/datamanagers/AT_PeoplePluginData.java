@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.people.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +15,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
@@ -210,13 +210,41 @@ public final class AT_PeoplePluginData {
 	@UnitTestMethod(target = PeoplePluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
 
-		PeoplePluginData pluginData = PeoplePluginData.builder()//
-				.addPersonRange(new PersonRange(3, 9)).addPersonRange(new PersonRange(8, 12))
-				.addPersonRange(new PersonRange(15, 19)).build();
+		PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+				.addPersonRange(new PersonRange(3, 9))//
+				.addPersonRange(new PersonRange(8, 12))//
+				.addPersonRange(new PersonRange(15, 19))//
+				.setPersonCount(50).build();
 
-		PluginData pluginData2 = pluginData.getCloneBuilder().build();
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		PeoplePluginData.Builder cloneBuilder = peoplePluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(peoplePluginData, cloneBuilder.build());
 
-		assertEquals(pluginData, pluginData2);
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addPersonRange
+		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder.addPersonRange(new PersonRange(22, 25));
+		assertNotEquals(peoplePluginData, cloneBuilder.build());
+
+		// setAssignmentTime
+		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder.setAssignmentTime(123.4);
+		assertNotEquals(peoplePluginData, cloneBuilder.build());
+
+		// setPersonCount
+		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder.setPersonCount(123);
+		assertNotEquals(peoplePluginData, cloneBuilder.build());
+
+		// resetPersonCount
+		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder.resetPersonCount();
+		assertNotEquals(peoplePluginData, cloneBuilder.build());
+
 	}
 
 	@Test
@@ -295,22 +323,22 @@ public final class AT_PeoplePluginData {
 		int low = 1;
 		int high = 1;
 		int rangeCount = randomGenerator.nextInt(3) + 1;
-		
+
 		for (int i = 0; i < rangeCount; i++) {
 			low += randomGenerator.nextInt(10);
-			high = low + randomGenerator.nextInt(10) + 1;			
-			builder.addPersonRange(new PersonRange(low, high));			
-			low = high+1;
-			
+			high = low + randomGenerator.nextInt(10) + 1;
+			builder.addPersonRange(new PersonRange(low, high));
+			low = high + 1;
+
 		}
 
 		builder.setAssignmentTime(randomGenerator.nextDouble() * 100 - 50);
-		int personCount = high+randomGenerator.nextInt(5)+1;		
+		int personCount = high + randomGenerator.nextInt(5) + 1;
 		builder.setPersonCount(personCount);
 		return builder.build();
 
 	}
- 
+
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
@@ -347,50 +375,46 @@ public final class AT_PeoplePluginData {
 		}
 		assertEquals(100, set.size());
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6496930019491275913L);
-		
-		//equal objects have equal hash codes
+
+		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			PeoplePluginData pluginData1 = getRandomPeoplePluginData(seed);
 			PeoplePluginData pluginData2 = getRandomPeoplePluginData(seed);
-			
-				assertEquals(pluginData1 ,pluginData2);
-				assertEquals(pluginData1.hashCode() ,pluginData2.hashCode());
-			
+
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
+
 		}
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			PeoplePluginData pluginData = getRandomPeoplePluginData(randomGenerator.nextLong());
 			hashCodes.add(pluginData.hashCode());
 		}
-		assertTrue(hashCodes.size()>95);
+		assertTrue(hashCodes.size() > 95);
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "toString", args = {})
 	public void testToString() {
 		PeoplePluginData pluginData = getRandomPeoplePluginData(8839731936101813165L);
-		
+
 		String actualValue = pluginData.toString();
-		
-		//Expected value validated by inspection
-		String expectedValue = "PeoplePluginData [data=Data ["
-				+ "personCount=34, "
-				+ "personRanges=["
-				+ "PersonRange [lowPersonId=4, highPersonId=13], "
-				+ "PersonRange [lowPersonId=19, highPersonId=20], "
-				+ "PersonRange [lowPersonId=27, highPersonId=30]], "
-				+ "assignmentTime=49.458417619948875, "
+
+		// Expected value validated by inspection
+		String expectedValue = "PeoplePluginData [data=Data [" + "personCount=34, " + "personRanges=["
+				+ "PersonRange [lowPersonId=4, highPersonId=13], " + "PersonRange [lowPersonId=19, highPersonId=20], "
+				+ "PersonRange [lowPersonId=27, highPersonId=30]], " + "assignmentTime=49.458417619948875, "
 				+ "locked=true]]";
 		assertEquals(expectedValue, actualValue);
-		
+
 	}
 
 }

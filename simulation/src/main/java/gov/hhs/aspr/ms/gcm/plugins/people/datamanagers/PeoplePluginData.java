@@ -265,6 +265,14 @@ public final class PeoplePluginData implements PluginData {
 			data.personCount = personCount;
 			return this;
 		}
+		/**
+		 * Resets the person count
+		 */
+		public Builder resetPersonCount() {
+			ensureDataMutability();			
+			data.personCount = -1;
+			return this;
+		}
 
 		/**
 		 * Sets the time for the last person added to the population. Defaults to zero.
@@ -297,7 +305,7 @@ public final class PeoplePluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
 

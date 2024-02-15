@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.personproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -150,16 +151,39 @@ public class AT_PersonPropertyInteractionReportPluginData {
 					builder.addPersonPropertyId(testPersonPropertyId);
 				}
 			}
-
+			builder.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
+			
 			PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			PersonPropertyInteractionReportPluginData clonePersonPropertyInteractionReportPluginData = personPropertyInteractionReportPluginData
-					.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			PersonPropertyInteractionReportPluginData.Builder cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(personPropertyInteractionReportPluginData, clonePersonPropertyInteractionReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// addPersonPropertyId
+			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder.addPersonPropertyId(TestPersonPropertyId.getUnknownPersonPropertyId());
+			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
+			
+			// removePersonPropertyId
+			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder.removePersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
+			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
+			
+			// setReportLabel
+			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
+			
+			// setReportPeriod
+			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			ReportPeriod nextReportPeriod = personPropertyInteractionReportPluginData.getReportPeriod().next();
+			cloneBuilder.setReportPeriod(nextReportPeriod);
+			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
 		}
 	}

@@ -109,7 +109,7 @@ public final class PartitionsPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(new Data(data));
 	}
 

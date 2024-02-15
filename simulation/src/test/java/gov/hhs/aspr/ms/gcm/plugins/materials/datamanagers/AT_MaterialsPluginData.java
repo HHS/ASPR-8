@@ -18,8 +18,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
@@ -2423,19 +2421,111 @@ public class AT_MaterialsPluginData {
 		}
 
 		MaterialsPluginData materialsPluginData = builder.build();
-		// show the clone builder is not null
-		PluginDataBuilder cloneBuilder = materialsPluginData.getCloneBuilder();
+
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		MaterialsPluginData.Builder cloneBuilder = materialsPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
-		// show that the clone plugin data is not null
-		PluginData pluginData = cloneBuilder.build();
-		assertNotNull(pluginData);
+		assertEquals(materialsPluginData, cloneBuilder.build());
 
-		// show that the clone plugin data has the correct type
-		assertTrue(pluginData instanceof MaterialsPluginData);
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
 
-		MaterialsPluginData clonePluginData = (MaterialsPluginData) pluginData;
+		// addBatch and addBatchToMaterialsProducerInventory
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.addBatch(new BatchId(1000), TestMaterialId.MATERIAL_2, 123.3);
+		cloneBuilder.addBatchToMaterialsProducerInventory(new BatchId(1000),
+				TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+		assertFalse(materialsPluginData.getBatchIds().contains(new BatchId(1000)));
 
-		assertEquals(materialsPluginData, clonePluginData);
+		// addBatchToStage
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.addBatch(new BatchId(1000), TestMaterialId.MATERIAL_2, 123.3);
+		StageId stageId = materialsPluginData.getStageIds().iterator().next();
+		cloneBuilder.addBatchToStage(stageId, new BatchId(1000));
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+		assertFalse(materialsPluginData.getBatchIds().contains(new BatchId(1000)));
+
+		// addMaterial
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.addMaterial(TestMaterialId.getUnknownMaterialId());
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// addMaterialsProducerId
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
+		cloneBuilder.addMaterialsProducerId(materialsProducerId);
+		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
+				.values()) {
+			if (testMaterialsProducerPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				Object propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+				cloneBuilder.setMaterialsProducerPropertyValue(materialsProducerId, testMaterialsProducerPropertyId,
+						propertyValue);
+			}
+		}
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+		assertFalse(materialsPluginData.getMaterialsProducerIds().contains(materialsProducerId));
+
+		// addStage and addStageToMaterialProducer
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.addStage(new StageId(1000), false);
+		cloneBuilder.addStageToMaterialProducer(new StageId(1000), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+		assertFalse(materialsPluginData.getStageIds().contains(new StageId(1000)));
+
+		// defineBatchProperty
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12)
+				.setPropertyValueMutability(true).build();
+		BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
+		cloneBuilder.defineBatchProperty(TestMaterialId.MATERIAL_1, batchPropertyId, propertyDefinition);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+		assertFalse(materialsPluginData.getBatchPropertyIds(TestMaterialId.MATERIAL_1).contains(batchPropertyId));
+
+		// defineMaterialsProducerProperty
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.defineMaterialsProducerProperty(
+				TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyDefinition);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// setBatchPropertyValue
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		TestMaterialId batchMaterial = materialsPluginData.getBatchMaterial(new BatchId(0));
+		TestBatchPropertyId selectedTestBatchPropertyId = null;
+		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
+			if (testBatchPropertyId.getTestMaterialId().equals(batchMaterial)) {
+				selectedTestBatchPropertyId = testBatchPropertyId;
+				break;
+			}
+		}
+		Object propertyValue = selectedTestBatchPropertyId.getRandomPropertyValue(randomGenerator);
+		cloneBuilder.setBatchPropertyValue(new BatchId(0), selectedTestBatchPropertyId, propertyValue);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// setMaterialsProducerPropertyValue
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
+		propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
+		cloneBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1,
+				testMaterialsProducerPropertyId, propertyValue);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// setMaterialsProducerPropertyValue
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1,
+				TestResourceId.RESOURCE_2, 56L);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// setNextBatchRecordId
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.setNextBatchRecordId(100000);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
+
+		// setNextStageRecordId
+		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder.setNextStageRecordId(100000);
+		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 	}
 
@@ -2731,15 +2821,14 @@ public class AT_MaterialsPluginData {
 		assertTrue(hashCodes.size() > 95);
 	}
 
- 
 	@Test
 	@UnitTestMethod(target = MaterialsPluginData.class, name = "toString", args = {})
 	public void testToString() {
 		MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(8064459530862960720L);
 
-		//The expected value was manually verified
+		// The expected value was manually verified
 		String expectedValue = "MaterialsPluginData [data=Data [materialsProducerIds=[MATERIALS_PRODUCER_1], materialIds=[MATERIAL_1, MATERIAL_2], batchPropertyDefinitions={MATERIAL_1={BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=null], BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=null]}, MATERIAL_2={BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0]}}, materialsProducerPropertyDefinitions={MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=true, defaultValue=false], MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=null]}, materialsProducerPropertyValues={MATERIALS_PRODUCER_1={MATERIALS_PRODUCER_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=true, MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=-1137930538}}, materialsProducerResourceLevels={MATERIALS_PRODUCER_1={RESOURCE_1=354}}, batchIds=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], batchMaterials={0=MATERIAL_2, 1=MATERIAL_1, 2=MATERIAL_1, 3=MATERIAL_1, 4=MATERIAL_2, 5=MATERIAL_2, 6=MATERIAL_1, 7=MATERIAL_1, 8=MATERIAL_2, 9=MATERIAL_1, 10=MATERIAL_2}, batchAmounts={0=0.37700109658565584, 1=0.6121304249912323, 2=0.2327292009900117, 3=0.5848445304496632, 4=0.3626526310416065, 5=0.8141764231338207, 6=0.7282094630729463, 7=0.2911578167148421, 8=0.3813260302130712, 9=0.038100504160549775, 10=0.294860719409465}, materialsProducerInventoryBatches={MATERIALS_PRODUCER_1=[0, 1, 3, 6, 7, 9, 10]}, batchPropertyValues={1={BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK=true, BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=-2092162941, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.580252301720191}, 3={BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK=true, BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=1273654431, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.8140217670183427}, 6={BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK=true, BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=1631575277, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.8263248505964975}, 9={BATCH_PROPERTY_1_1_BOOLEAN_IMMUTABLE_NO_TRACK=false, BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=1716954844, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.9459982578081394}, 2={BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=-1465030731, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.828428083842786}, 7={BATCH_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK=-894472152, BATCH_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK=0.7150821622079484}, 4={BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=true, BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK=771315814}, 8={BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=true, BATCH_PROPERTY_2_2_INTEGER_IMMUTABLE_TRACK=-2000257358, BATCH_PROPERTY_2_3_DOUBLE_MUTABLE_TRACK=0.5783721359816127}, 10={BATCH_PROPERTY_2_1_BOOLEAN_MUTABLE_TRACK=true}}, stageIds=[0, 1, 2, 3, 4, 5], stageOffers={0=false, 1=true, 2=true, 3=false, 4=true, 5=true}, materialsProducerStages={MATERIALS_PRODUCER_1=[0, 1, 2, 3, 4, 5]}, stageBatches={5=[2], 4=[4], 3=[5], 2=[8]}, nextBatchRecordId=20, nextStageRecordId=14]]";
-		
+
 		String actualValue = randomMaterialsPluginData.toString();
 
 		assertEquals(expectedValue, actualValue);

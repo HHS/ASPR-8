@@ -444,19 +444,47 @@ public class AT_PersonPropertyReportPluginData {
 					builder.excludePersonProperty(testPersonPropertyId);
 				}
 			}
-
+			//forcing some values for later use
+			builder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK);
+			builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
+			
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			PersonPropertyReportPluginData clonePersonPropertyReportPluginData = personPropertyReportPluginData
-					.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			PersonPropertyReportPluginData.Builder cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(personPropertyReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(personPropertyReportPluginData, clonePersonPropertyReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
 
+			// excludePersonProperty
+			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK);
+			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
+
+			// includePersonProperty
+			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
+			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
+			
+			// setDefaultInclusion
+			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setDefaultInclusion(!personPropertyReportPluginData.getDefaultInclusionPolicy());
+			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
+			
+			// setReportLabel
+			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
+
+			// setReportPeriod
+			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportPeriod(personPropertyReportPluginData.getReportPeriod().next());
+			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 		}
 	}
 
