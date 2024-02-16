@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData.Builder;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
@@ -203,6 +204,27 @@ public final class AT_PeoplePluginData {
 					.setPersonCount(15).build();
 		});//
 		assertEquals(PersonError.INVALID_PERSON_COUNT, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.Builder.class, name = "resetPersonCount", args = {})
+	public void testResetPersonCount() {
+
+		Builder builder = PeoplePluginData.builder();
+
+		builder//
+				.addPersonRange(new PersonRange(12, 15))//
+				.addPersonRange(new PersonRange(3, 8))//
+				.addPersonRange(new PersonRange(13, 18))//
+				.addPersonRange(new PersonRange(20, 22));//				
+		assertEquals(23, builder.build().getPersonCount());
+
+		builder.setPersonCount(4000);
+		assertEquals(4000, builder.build().getPersonCount());
+
+		builder.resetPersonCount();
+		assertEquals(23, builder.build().getPersonCount());
 
 	}
 
