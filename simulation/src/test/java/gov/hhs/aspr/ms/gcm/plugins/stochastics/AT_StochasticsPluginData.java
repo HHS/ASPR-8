@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.stochastics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,7 +19,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
@@ -42,13 +42,27 @@ public class AT_StochasticsPluginData {
 				.addRNG(TestRandomGeneratorId.COMET, wellState)//
 				.build();//
 
-		// show that the clone builder is not null
-		PluginDataBuilder cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		StochasticsPluginData.Builder cloneBuilder = stochasticsPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
-		StochasticsPluginData cloneData = (StochasticsPluginData) cloneBuilder.build();
+		assertEquals(stochasticsPluginData, cloneBuilder.build());
 
-		// show that the clone builder is properly initialized
-		assertEquals(cloneData, stochasticsPluginData);
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addRNG
+		cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		wellState = WellState.builder().setSeed(6937151566492160140L).build();
+		cloneBuilder.addRNG(TestRandomGeneratorId.CUPID, wellState);
+		assertNotEquals(stochasticsPluginData, cloneBuilder.build());
+
+		// setMainRNGState
+		cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		wellState = WellState.builder().setSeed(1286993379829775736L).build();
+		cloneBuilder.setMainRNGState(wellState);
+		assertNotEquals(stochasticsPluginData, cloneBuilder.build());
+
 
 	}
 
@@ -256,7 +270,7 @@ public class AT_StochasticsPluginData {
 		}
 		assertEquals(100, hashCodes.size());
 	}
- 
+
 	@Test
 	@UnitTestMethod(target = StochasticsPluginData.class, name = "toString", args = {})
 	public void testToString() {
@@ -264,14 +278,17 @@ public class AT_StochasticsPluginData {
 		String actualValue = stochasticsPluginData.toString();
 
 		/*
-		 * Expected value manually verified. It is impractical to use the full string for verification, so we will assert that certain critical substrings are contained as expected.
+		 * Expected value manually verified. It is impractical to use the full string
+		 * for verification, so we will assert that certain critical substrings are
+		 * contained as expected.
 		 */
-		assertTrue(actualValue.contains("StochasticsPluginData [data=Data [wellState=WellState [data=Data [seed=-3890456017103968429"));
-		assertTrue(actualValue.contains("VIXEN=WellState [data=Data [seed=-9202547125755605402")); 
+		assertTrue(actualValue.contains(
+				"StochasticsPluginData [data=Data [wellState=WellState [data=Data [seed=-3890456017103968429"));
+		assertTrue(actualValue.contains("VIXEN=WellState [data=Data [seed=-9202547125755605402"));
 		assertTrue(actualValue.contains("DONNER=WellState [data=Data [seed=-4994162167240462248"));
 		assertTrue(actualValue.contains("PRANCER=WellState [data=Data [seed=2580414198424993374"));
-		assertTrue(actualValue.contains("BLITZEN=WellState [data=Data [seed=-3565866373405448731")); 
-		assertTrue(actualValue.contains("DANCER=WellState [data=Data [seed=3656710085871564729"));		
+		assertTrue(actualValue.contains("BLITZEN=WellState [data=Data [seed=-3565866373405448731"));
+		assertTrue(actualValue.contains("DANCER=WellState [data=Data [seed=3656710085871564729"));
 	}
 
 }

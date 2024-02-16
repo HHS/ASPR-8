@@ -368,19 +368,43 @@ public class AT_RegionPropertyReportPluginData {
 					builder.excludeRegionProperty(testRegionPropertyId);
 				}
 			}
+			//force some values for later
+			builder.includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
+			builder.excludeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+			
 
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			RegionPropertyReportPluginData regionPropertyReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			RegionPropertyReportPluginData cloneRegionPropertyReportPluginData = regionPropertyReportPluginData
-					.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			RegionPropertyReportPluginData.Builder cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(regionPropertyReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(regionPropertyReportPluginData, cloneRegionPropertyReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
 
+			// excludeRegionProperty
+			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.excludeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
+			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
+			
+			// includeRegionProperty
+			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
+			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
+			
+			// setDefaultInclusion
+			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setDefaultInclusion(!regionPropertyReportPluginData.getDefaultInclusionPolicy());
+			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
+
+			// setReportLabel
+			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
 		}
 	}
 

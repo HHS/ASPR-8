@@ -443,17 +443,47 @@ public class AT_ResourceReportPluginData {
 					builder.excludeResource(testResourceId);
 				}
 			}
+			//force some values for later use
+			builder.includeResource(TestResourceId.RESOURCE_1);
+			builder.excludeResource(TestResourceId.RESOURCE_2);
 
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			ResourceReportPluginData resourceReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			ResourceReportPluginData cloneResourceReportPluginData = resourceReportPluginData.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			ResourceReportPluginData.Builder cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(resourceReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(resourceReportPluginData, cloneResourceReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// excludeResource
+			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder.excludeResource(TestResourceId.RESOURCE_1);
+			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
+			
+			// includeResource
+			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder.includeResource(TestResourceId.RESOURCE_2);
+			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
+
+			// setDefaultInclusion
+			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setDefaultInclusion(!resourceReportPluginData.getDefaultInclusionPolicy());
+			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
+
+			// setReportLabel
+			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
+
+			// setReportPeriod
+			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportPeriod(resourceReportPluginData.getReportPeriod().next());
+			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 
 		}
 	}

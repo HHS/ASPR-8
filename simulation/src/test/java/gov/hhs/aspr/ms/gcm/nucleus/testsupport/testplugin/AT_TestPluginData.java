@@ -46,11 +46,11 @@ public class AT_TestPluginData {
 	@Test
 	@UnitTestMethod(target = TestPluginData.class, name = "getTestDataManager", args = { Object.class })
 	public void testGetTestDataManagerType() {
-		TestPluginData testPluginData = TestPluginData	.builder()//
-														.addTestDataManager("A", () -> new TestDataManager1())//
-														.addTestDataManager("B", () -> new TestDataManager2())//
-														.addTestDataManager("C", () -> new TestDataManager3())//
-														.build();//
+		TestPluginData testPluginData = TestPluginData.builder()//
+				.addTestDataManager("A", () -> new TestDataManager1())//
+				.addTestDataManager("B", () -> new TestDataManager2())//
+				.addTestDataManager("C", () -> new TestDataManager3())//
+				.build();//
 
 		// show that the aliased data manager types are retrievable
 		Optional<TestDataManager1> optional1 = testPluginData.getTestDataManager("A");
@@ -152,7 +152,7 @@ public class AT_TestPluginData {
 		}
 
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = TestPluginData.class, name = "getTestActorAliases", args = {})
 	public void testGetTestActorAliases() {
@@ -174,7 +174,7 @@ public class AT_TestPluginData {
 		assertEquals(expectedAliases, actualAliases);
 
 	}
-	
+
 	@Test
 	@UnitTestMethod(target = TestPluginData.class, name = "getTestReportAliases", args = {})
 	public void testGetTestReportAliases() {
@@ -228,12 +228,48 @@ public class AT_TestPluginData {
 		// build the plugin data
 		TestPluginData testPluginData = builder.build();
 
-		// show that the clone builder is properly initialized -- i.e. it will
-		// immediately build a clone of the plugin data
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
 		TestPluginData.Builder cloneBuilder = testPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
+		assertEquals(testPluginData, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addPluginDependency
+		cloneBuilder = testPluginData.getCloneBuilder();
+		PluginId pluginId = new PluginId() {
+		};
+		cloneBuilder.addPluginDependency(pluginId);
+		assertNotEquals(testPluginData, cloneBuilder.build());
+
+		// addTestActorPlan
+		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
+		}));
+		assertNotEquals(testPluginData, cloneBuilder.build());
+
+		// addTestDataManager
+		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder.addTestDataManager("dm", () -> null);
+		assertNotEquals(testPluginData, cloneBuilder.build());
+
+		/*
+		 * addTestDataManager -- note that we cloned twice to ensure the dm exists in
+		 * the original and thus we can add the dm plan
+		 */
 		TestPluginData testPluginData2 = cloneBuilder.build();
-		assertEquals(testPluginData, testPluginData2);
+		cloneBuilder = testPluginData2.getCloneBuilder();
+		cloneBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4.5, (c) -> {
+		}));
+		assertNotEquals(testPluginData, cloneBuilder.build());
+
+		// addTestReportPlan
+		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder.addTestReportPlan("report", new TestReportPlan(4.5, (c) -> {
+		}));
+		assertNotEquals(testPluginData, cloneBuilder.build());
 
 	}
 
@@ -301,7 +337,8 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestActorPlan", args = { Object.class, TestActorPlan.class })
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestActorPlan", args = { Object.class,
+			TestActorPlan.class })
 	public void testAddTestActorPlan() {
 		// create a few plans
 		Map<Object, Set<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
@@ -339,9 +376,10 @@ public class AT_TestPluginData {
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
-	
+
 	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestReportPlan", args = { Object.class, TestReportPlan.class })
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestReportPlan", args = { Object.class,
+			TestReportPlan.class })
 	public void testAddTestReportPlan() {
 		// create a few plans
 		Map<Object, Set<TestReportPlan>> testReportPlanMap = new LinkedHashMap<>();
@@ -379,10 +417,10 @@ public class AT_TestPluginData {
 			assertEquals(expectedPlans, actualPlans);
 		}
 	}
-	
-	
+
 	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManager", args = { Object.class, Supplier.class })
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManager", args = { Object.class,
+			Supplier.class })
 
 	public void testAddTestDataManager() {
 		// create a few plans
@@ -400,12 +438,14 @@ public class AT_TestPluginData {
 		TestPluginData testPluginData = builder.build();
 
 		// show that the plugin data contains the expected plans
-		LinkedHashSet<Object> actualDataManagerAliases = new LinkedHashSet<>(testPluginData.getTestDataManagerAliases());
+		LinkedHashSet<Object> actualDataManagerAliases = new LinkedHashSet<>(
+				testPluginData.getTestDataManagerAliases());
 		assertEquals(expectedDataManagerAliases, actualDataManagerAliases);
 	}
 
 	@Test
-	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManagerPlan", args = { Object.class, TestDataManagerPlan.class })
+	@UnitTestMethod(target = TestPluginData.Builder.class, name = "addTestDataManagerPlan", args = { Object.class,
+			TestDataManagerPlan.class })
 	public void testAddTestDataManagerPlan() {
 		// create a few plans
 		Map<Object, Set<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
@@ -474,7 +514,8 @@ public class AT_TestPluginData {
 		}
 
 		// precondition test: if the plugin id is null
-		ContractException contractException = assertThrows(ContractException.class, () -> TestPluginData.builder().addPluginDependency(null));
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> TestPluginData.builder().addPluginDependency(null));
 		assertEquals(TestError.NULL_PLUGIN_ID, contractException.getErrorType());
 
 	}
@@ -502,74 +543,74 @@ public class AT_TestPluginData {
 		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
 		});
 
-		TestPluginData testPluginData1 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData1 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 
 		// identical inputs
-		TestPluginData testPluginData2 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData2 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 
 		assertEquals(testPluginData1, testPluginData2);
 
 		// with different plugin dependencies
-		TestPluginData testPluginData3 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdB)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData3 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 		assertNotEquals(testPluginData1, testPluginData3);
 
 		testPluginData3 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addPluginDependency(simplePluginIdB)//
-										.addTestActorPlan("actor", testActorPlan1)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-										.addTestDataManager("dm", supplier1)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 		assertNotEquals(testPluginData1, testPluginData3);
 
 		// with different actor plans
-		TestPluginData testPluginData4 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan2)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData4 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan2)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 		assertEquals(testPluginData1, testPluginData4);
 
 		testPluginData4 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addTestActorPlan("actor2", testActorPlan1)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-										.addTestDataManager("dm", supplier1)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor2", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 		assertNotEquals(testPluginData1, testPluginData4);
 
 		// with different data manager plans
-		TestPluginData testPluginData5 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData5 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 		assertEquals(testPluginData1, testPluginData5);
 
 		// with different data manager suppliers
-		TestPluginData testPluginData6 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier2)//
-														.build();
+		TestPluginData testPluginData6 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier2)//
+				.build();
 		assertNotEquals(testPluginData1, testPluginData6);
 
 	}
@@ -578,8 +619,7 @@ public class AT_TestPluginData {
 	@UnitTestMethod(target = TestPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		/*
-		 * Show that equal objects have equal hash codes over a few example
-		 * cases
+		 * Show that equal objects have equal hash codes over a few example cases
 		 */
 
 		SimplePluginId simplePluginIdA = new SimplePluginId("A");
@@ -595,58 +635,58 @@ public class AT_TestPluginData {
 		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
 		});
 
-		TestPluginData testPluginData1 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData1 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 
 		// identical inputs
-		TestPluginData testPluginData2 = TestPluginData	.builder()//
-														.addPluginDependency(simplePluginIdA)//
-														.addTestActorPlan("actor", testActorPlan1)//
-														.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-														.addTestDataManager("dm", supplier1)//
-														.build();
+		TestPluginData testPluginData2 = TestPluginData.builder()//
+				.addPluginDependency(simplePluginIdA)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier1)//
+				.build();
 
 		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
 
 		testPluginData1 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addPluginDependency(simplePluginIdB)//
-										.addTestActorPlan("actor", testActorPlan2)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-										.addTestDataManager("dm", supplier2)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan2)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier2)//
+				.build();
 
 		testPluginData2 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addPluginDependency(simplePluginIdB)//
-										.addTestActorPlan("actor", testActorPlan2)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-										.addTestDataManager("dm", supplier2)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan2)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
+				.addTestDataManager("dm", supplier2)//
+				.build();
 
 		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
 
 		testPluginData1 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addPluginDependency(simplePluginIdB)//
-										.addTestActorPlan("actor", testActorPlan1)//
-										.addTestActorPlan("actor", testActorPlan2)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-										.addTestDataManager("dm", supplier2)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestActorPlan("actor", testActorPlan2)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+				.addTestDataManager("dm", supplier2)//
+				.build();
 
 		testPluginData2 = TestPluginData.builder()//
-										.addPluginDependency(simplePluginIdA)//
-										.addPluginDependency(simplePluginIdB)//
-										.addTestActorPlan("actor", testActorPlan1)//
-										.addTestActorPlan("actor", testActorPlan2)//
-										.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-										.addTestDataManager("dm", supplier2)//
-										.build();
+				.addPluginDependency(simplePluginIdA)//
+				.addPluginDependency(simplePluginIdB)//
+				.addTestActorPlan("actor", testActorPlan1)//
+				.addTestActorPlan("actor", testActorPlan2)//
+				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
+				.addTestDataManager("dm", supplier2)//
+				.build();
 
 		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
 

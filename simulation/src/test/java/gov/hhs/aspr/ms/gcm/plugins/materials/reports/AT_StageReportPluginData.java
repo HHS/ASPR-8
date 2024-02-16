@@ -93,13 +93,21 @@ public class AT_StageReportPluginData {
 
 			StageReportPluginData stageReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			StageReportPluginData cloneStageReportPluginData = stageReportPluginData.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			StageReportPluginData.Builder cloneBuilder = stageReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(stageReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(stageReportPluginData, cloneStageReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
 
+			// setReportLabel
+			cloneBuilder = stageReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(stageReportPluginData, cloneBuilder.build());
+
+			
 		}
 	}
 
