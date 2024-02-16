@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReportPluginData.Builder;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
@@ -93,14 +94,18 @@ public class AT_BatchStatusReportPluginData {
 							.setReportLabel(reportLabel);
 
 			BatchStatusReportPluginData batchStatusReportPluginData = builder.build();
-
-			// create the clone builder and have it build
-			BatchStatusReportPluginData cloneBatchStatusReportPluginData = batchStatusReportPluginData.getCloneBuilder()
-					.build();
-
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(batchStatusReportPluginData, cloneBatchStatusReportPluginData);
+			
+			//show that the returned clone builder will build an identical instance if no mutations are made
+			Builder cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(batchStatusReportPluginData, cloneBuilder.build());
+			
+			//show that the clone builder builds a distinct instance if any mutation is made
+			
+			//setReportLabel
+			cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(batchStatusReportPluginData,cloneBuilder.build());
 
 		}
 	}

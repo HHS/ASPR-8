@@ -620,6 +620,13 @@ public final class GroupsPluginData implements PluginData {
             data.nextGroupIdValue = nextGroupIdValue;
             return this;
         }
+        
+        public Builder resetNextGroupIdValue() {
+            ensureDataMutability();            
+            data.nextGroupIdValue = -1;
+            return this;
+        }
+
 
         private void validateData() {
 
@@ -1030,7 +1037,7 @@ public final class GroupsPluginData implements PluginData {
     }
 
     @Override
-    public PluginDataBuilder getCloneBuilder() {
+    public Builder getCloneBuilder() {
         return new Builder(data);
     }
 

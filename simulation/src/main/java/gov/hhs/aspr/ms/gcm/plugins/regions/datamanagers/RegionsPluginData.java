@@ -78,8 +78,8 @@ public class RegionsPluginData implements PluginData {
 			}
 			personRegions.addAll(data.personRegions);
 			personAdditionMode = data.personAdditionMode;
-
-			locked = data.locked;
+			personArrivalTimes.addAll(data.personArrivalTimes);
+			locked = data.locked;			
 		}
 
 		@Override
@@ -327,7 +327,7 @@ public class RegionsPluginData implements PluginData {
 		public Builder addPerson(final PersonId personId, final RegionId regionId) {
 			ensureDataMutability();
 			validatePersonId(personId);
-			validateRegionIdNotNull(regionId);
+			validateRegionIdNotNull(regionId);			
 			setPersonAdditionMode(PersonAdditionMode.REGION_ONLY);
 			int personIndex = personId.getValue();
 			while (personIndex >= data.personRegions.size()) {
@@ -568,7 +568,7 @@ public class RegionsPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
 

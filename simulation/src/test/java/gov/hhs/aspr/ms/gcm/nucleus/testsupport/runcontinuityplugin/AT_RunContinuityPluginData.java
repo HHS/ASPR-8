@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.nucleus.testsupport.runcontinuityplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,10 +65,20 @@ public class AT_RunContinuityPluginData {
 			}
 			RunContinuityPluginData runContinuityPluginData = builder.build();
 
-			RunContinuityPluginData cloneRunContinuityPluginData = //
-					(RunContinuityPluginData) runContinuityPluginData.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			RunContinuityPluginData.Builder cloneBuilder = runContinuityPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(runContinuityPluginData, cloneBuilder.build());
 
-			assertEquals(runContinuityPluginData.getConsumers(), cloneRunContinuityPluginData.getConsumers());
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// addContextConsumer
+			cloneBuilder = runContinuityPluginData.getCloneBuilder();
+			cloneBuilder.addContextConsumer(2.5,(c)->{});
+			assertNotEquals(runContinuityPluginData, cloneBuilder.build());
+
 
 		}
 	}

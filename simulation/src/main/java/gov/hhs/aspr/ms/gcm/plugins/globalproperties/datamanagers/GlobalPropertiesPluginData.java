@@ -409,7 +409,7 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
 

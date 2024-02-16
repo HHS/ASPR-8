@@ -5,5 +5,10 @@ package gov.hhs.aspr.ms.gcm.plugins.reports.support;
  * periodicity of the report.
  */
 public enum ReportPeriod {
-	HOURLY, DAILY, END_OF_SIMULATION
+	HOURLY, DAILY, END_OF_SIMULATION;
+	
+	public ReportPeriod next() {
+		int index = (ordinal()+1) % ReportPeriod.values().length;
+		return ReportPeriod.values()[index];		
+	}
 }

@@ -17,8 +17,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
@@ -434,15 +432,38 @@ public class AT_PersonPropertyPluginData {
 				}
 			}
 		}
+		
+		//forcing a particular value for later use
+		pluginBuilder.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,true);
 
-		PersonPropertiesPluginData expectedPluginData = pluginBuilder.build();
+		PersonPropertiesPluginData personPropertiesPluginData = pluginBuilder.build();
 
-		PluginDataBuilder cloneBuilder = expectedPluginData.getCloneBuilder();
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		PersonPropertiesPluginData.Builder cloneBuilder = personPropertiesPluginData.getCloneBuilder();
 		assertNotNull(cloneBuilder);
-		PluginData actualPluginData = cloneBuilder.build();
+		assertEquals(personPropertiesPluginData, cloneBuilder.build());
 
-		// show that the two plugin datas are equal
-		assertEquals(expectedPluginData, actualPluginData);
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// definePersonProperty
+		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+		cloneBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 2.7,
+				false);
+		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
+
+		// setPersonPropertyTime
+		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		cloneBuilder.setPersonPropertyTime(new PersonId(0), testPersonPropertyId, 2.5);
+		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
+
+		// setPersonPropertyValue -- we know that the current value is true
+		cloneBuilder = personPropertiesPluginData.getCloneBuilder();		
+		cloneBuilder.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, false);
+		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
+
 
 	}
 
@@ -1210,10 +1231,8 @@ public class AT_PersonPropertyPluginData {
 		PersonPropertiesPluginData personPropertiesPluginData = builder.build();
 
 		String actualValue = personPropertiesPluginData.toString();
-		
-		
-		
-		String expectedValue ="PersonPropertiesPluginData [data=Data [personPropertyDefinitions="
+
+		String expectedValue = "PersonPropertiesPluginData [data=Data [personPropertyDefinitions="
 				+ "{PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean,"
 				+ " propertyValuesAreMutable=true, defaultValue=false], PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=PropertyDefinition"
 				+ " [type=class java.lang.Integer, propertyValuesAreMutable=true, defaultValue=0], "
@@ -1278,8 +1297,7 @@ public class AT_PersonPropertyPluginData {
 				+ "null, null, null, null, null, 79.52059465811621, null, 72.35392133239016, null, 75.13846509635269, "
 				+ "null, 75.4774777727181, null, 77.77386975625731, null, 76.46205411237824, null, 70.54554388234095, "
 				+ "null, 72.92650170630496, null, 78.75239401434217, null, 77.34177298897009]}]]";
-		
-		
+
 		assertEquals(expectedValue, actualValue);
 
 	}

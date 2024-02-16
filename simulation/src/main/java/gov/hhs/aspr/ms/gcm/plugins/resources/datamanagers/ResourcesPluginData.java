@@ -845,7 +845,7 @@ public final class ResourcesPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
+	public Builder getCloneBuilder() {
 		return new Builder(data);
 	}
 

@@ -93,12 +93,20 @@ public class AT_ResourcePropertyReportPluginData {
 
 			ResourcePropertyReportPluginData resourcePropertyReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			ResourcePropertyReportPluginData cloneResourcePropertyReportPluginData = resourcePropertyReportPluginData.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			ResourcePropertyReportPluginData.Builder cloneBuilder = resourcePropertyReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(resourcePropertyReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(resourcePropertyReportPluginData, cloneResourcePropertyReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// setReportLabel
+			cloneBuilder = resourcePropertyReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(resourcePropertyReportPluginData, cloneBuilder.build());
+
 
 		}
 	}

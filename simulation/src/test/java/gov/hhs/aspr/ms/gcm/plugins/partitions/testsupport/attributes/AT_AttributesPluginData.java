@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,8 +22,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeError;
 import gov.hhs.aspr.ms.gcm.plugins.partitions.testsupport.attributes.support.AttributeId;
@@ -130,21 +129,25 @@ public class AT_AttributesPluginData {
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			builder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
 		}
-
 		AttributesPluginData attributesPluginData = builder.build();
-		PluginDataBuilder cloneBuilder = attributesPluginData.getCloneBuilder();
-		assertNotNull(cloneBuilder);
-
-		PluginData pluginData = cloneBuilder.build();
-
-		assertTrue(pluginData instanceof AttributesPluginData);
-
-		AttributesPluginData clonePluginData = (AttributesPluginData) pluginData;
-		assertEquals(attributesPluginData.getAttributeIds(), clonePluginData.getAttributeIds());
-		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
-			assertEquals(attributesPluginData.getAttributeDefinition(testAttributeId),
-					clonePluginData.getAttributeDefinition(testAttributeId));
-		}
+		
+		//show that the returned clone builder will build an identical instance if no mutations are made
+		AttributesPluginData.Builder cloneBuilder = attributesPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);				
+		assertEquals(attributesPluginData,cloneBuilder.build());
+		
+		
+		//show that the clone builder builds a distinct instance if any mutation is made
+		
+		//defineAttribute
+		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder.defineAttribute(TestAttributeId.getUnknownAttributeId(), TestAttributeId.DOUBLE_0.getAttributeDefinition());
+		assertNotEquals(attributesPluginData,cloneBuilder.build());
+		
+		//setPersonAttributeValue
+		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder.setPersonAttributeValue(new PersonId(123),TestAttributeId.BOOLEAN_0, false);
+		assertNotEquals(attributesPluginData,cloneBuilder.build());
 	}
 
 	@Test

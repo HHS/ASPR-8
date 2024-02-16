@@ -25,10 +25,28 @@ public class AT_PartitionsPluginData {
 		PartitionsPluginData p1 = PartitionsPluginData.builder().setRunContinuitySupport(true).build();
 		PluginData p2 = p1.getCloneBuilder().build();
 		assertEquals(p1, p2);
+		
+		
 
 		p1 = PartitionsPluginData.builder().setRunContinuitySupport(false).build();
 		p2 = p1.getCloneBuilder().build();
 		assertEquals(p1, p2);
+		
+		
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		PartitionsPluginData.Builder cloneBuilder = p1.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(p1, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// defineGlobalProperty
+		cloneBuilder = p1.getCloneBuilder();
+		cloneBuilder.setRunContinuitySupport(true);
+		assertNotEquals(p1, cloneBuilder.build());
+
 	}
 
 	@Test

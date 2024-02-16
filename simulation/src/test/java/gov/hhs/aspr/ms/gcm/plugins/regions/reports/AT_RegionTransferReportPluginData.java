@@ -147,13 +147,24 @@ public class AT_RegionTransferReportPluginData {
 
 			RegionTransferReportPluginData regionTransferReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			RegionTransferReportPluginData cloneRegionTransferReportPluginData = regionTransferReportPluginData
-					.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			RegionTransferReportPluginData.Builder cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(regionTransferReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(regionTransferReportPluginData, cloneRegionTransferReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// setReportLabel
+			cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(regionTransferReportPluginData, cloneBuilder.build());
+			
+			// setReportPeriod
+			cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportPeriod(regionTransferReportPluginData.getReportPeriod().next());
+			assertNotEquals(regionTransferReportPluginData, cloneBuilder.build());
 
 		}
 	}

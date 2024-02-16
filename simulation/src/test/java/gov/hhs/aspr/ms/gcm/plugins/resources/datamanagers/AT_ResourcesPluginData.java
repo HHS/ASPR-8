@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,7 +18,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
@@ -1416,15 +1416,46 @@ public final class AT_ResourcesPluginData {
 
 		ResourcesPluginData resourcesPluginData = pluginDataBuilder.build();
 
-		PluginData pluginData = resourcesPluginData.getCloneBuilder().build();
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		ResourcesPluginData.Builder cloneBuilder = resourcesPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(resourcesPluginData, cloneBuilder.build());
 
-		// show that the plugin data is of the expected type
-		assertTrue(pluginData instanceof ResourcesPluginData);
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
 
-		ResourcesPluginData cloneResourcesPluginData = (ResourcesPluginData) pluginData;
+		// addResource		
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.addResource(TestResourceId.getUnknownResourceId(),2.5,false);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
+		
+		// defineResourceProperty
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(6).setType(Integer.class).setPropertyValueMutability(true).build();
+		cloneBuilder.defineResourceProperty(TestResourceId.RESOURCE_1,TestResourcePropertyId.getUnknownResourcePropertyId(),propertyDefinition);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
+		
+		// setPersonResourceLevel		
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.setPersonResourceLevel(new PersonId(1000),TestResourceId.RESOURCE_3,234L);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
-		assertEquals(resourcesPluginData, cloneResourcesPluginData);
+		// setPersonResourceTime		
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.setPersonResourceTime(new PersonId(1000),TestResourceId.RESOURCE_3,64.745);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
+		// setRegionResourceLevel		
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.setRegionResourceLevel(TestRegionId.REGION_1,TestResourceId.RESOURCE_3,234L);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
+
+		// setResourcePropertyValue		
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.setResourcePropertyValue(TestResourceId.RESOURCE_1,TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE,18.6);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
+		
 	}
 
 

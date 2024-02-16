@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,7 +22,6 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
@@ -654,88 +654,180 @@ public class AT_RegionsPluginData {
 	@Test
 	@UnitTestMethod(target = RegionsPluginData.class, name = "getCloneBuilder", args = {})
 	public void testGetCloneBuilder() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6712645837048772782L);
+		/*
+		 * The tracking of person arrival times and the existence of non-defalut region
+		 * property definition is sensitive. In order to fully test the cloneBuilder
+		 * mechanisms we must create four distinct tests that allow each mutation on the
+		 * clone to be tested properly.
+		 */
+
+		testGetCloneBuilder_subTest1();
+		testGetCloneBuilder_subTest2();
+		testGetCloneBuilder_subTest3();
+		testGetCloneBuilder_subTest4();
+	}
+
+	private RegionsPluginData getRegionsPluginData(boolean containsPeople, boolean useArrivalTracking,
+			boolean useEmptyDefaultProperties, long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		RegionsPluginData.Builder regionPluginDataBuilder = RegionsPluginData.builder();
-		regionPluginDataBuilder.setPersonRegionArrivalTracking(true);
+		regionPluginDataBuilder.setPersonRegionArrivalTracking(useArrivalTracking);
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			regionPluginDataBuilder.addRegion(testRegionId);
 		}
+
 		for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-			regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId,
-					testRegionPropertyId.getPropertyDefinition());
+			boolean defaultPresent = testRegionPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+
+			if (defaultPresent || useEmptyDefaultProperties) {
+				// this is a valid property
+				regionPluginDataBuilder.defineRegionProperty(testRegionPropertyId,
+						testRegionPropertyId.getPropertyDefinition());
+			}
 		}
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			for (TestRegionPropertyId testRegionPropertyId : TestRegionPropertyId.values()) {
-				if (testRegionPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()
-						|| randomGenerator.nextBoolean()) {
-					Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
-					regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId,
-							randomPropertyValue);
+				boolean defaultPresent = testRegionPropertyId.getPropertyDefinition().getDefaultValue().isPresent();
+				if (defaultPresent || useEmptyDefaultProperties) {
+					// this is a valid property
+
+					if (!defaultPresent || randomGenerator.nextBoolean()) {
+						Object randomPropertyValue = testRegionPropertyId.getRandomPropertyValue(randomGenerator);
+						regionPluginDataBuilder.setRegionPropertyValue(testRegionId, testRegionPropertyId,
+								randomPropertyValue);
+					}
+
 				}
 			}
 		}
-		int personCount = 100;
+
+		int personCount = 0;
+		if (containsPeople) {
+			personCount = 100;
+		}
 		for (int i = 0; i < personCount; i++) {
 			PersonId personId = new PersonId(i * 2 + 5);
 			TestRegionId randomRegionId = TestRegionId.getRandomRegionId(randomGenerator);
-			regionPluginDataBuilder.addPerson(personId, randomRegionId, 0.0);
-		}
-
-		RegionsPluginData regionsPluginData = regionPluginDataBuilder.build();
-
-		PluginData pluginData = regionsPluginData.getCloneBuilder().build();
-
-		// show that the clone plugin data has the correct type
-		assertTrue(pluginData instanceof RegionsPluginData);
-		RegionsPluginData cloneRegionPluginData = (RegionsPluginData) pluginData;
-
-		// show that the two plugin datas have the same arrival tracking policy
-		assertEquals(regionsPluginData.getPersonRegionArrivalTrackingPolicy(),
-				cloneRegionPluginData.getPersonRegionArrivalTrackingPolicy());
-
-		// show that the two plugin datas have the same region ids
-		assertEquals(regionsPluginData.getRegionIds(), cloneRegionPluginData.getRegionIds());
-
-		// show that the two plugin datas have the same region property ids
-		assertEquals(regionsPluginData.getRegionPropertyIds(), cloneRegionPluginData.getRegionPropertyIds());
-
-		// show that the two plugin datas have the same region property
-		// definitions
-		for (RegionPropertyId regionPropertyId : regionsPluginData.getRegionPropertyIds()) {
-			PropertyDefinition expectedPropertyDefinition = regionsPluginData
-					.getRegionPropertyDefinition(regionPropertyId);
-			PropertyDefinition actualPropertyDefinition = cloneRegionPluginData
-					.getRegionPropertyDefinition(regionPropertyId);
-			assertEquals(expectedPropertyDefinition, actualPropertyDefinition);
-		}
-
-		// show that the two plugin datas have the same region property values
-		for (RegionId regionId : regionsPluginData.getRegionIds()) {
-			Map<RegionPropertyId, Object> expectedRegionPropertyValues = regionsPluginData
-					.getRegionPropertyValues(regionId);
-			Map<RegionPropertyId, Object> actualRegionPropertyValues = cloneRegionPluginData
-					.getRegionPropertyValues(regionId);
-			assertEquals(expectedRegionPropertyValues, actualRegionPropertyValues);
-		}
-
-		// show that the two plugin datas have the same people and region
-		// assignments
-
-		int pluginPersonCount = regionsPluginData.getPersonCount();
-		int clonePluginPersonCount = cloneRegionPluginData.getPersonCount();
-		assertEquals(pluginPersonCount, clonePluginPersonCount);
-
-		for (int i = 0; i < pluginPersonCount; i++) {
-			PersonId personId = new PersonId(i);
-			boolean isPresentInPluginData = regionsPluginData.getPersonRegion(personId).isPresent();
-			boolean isPresentInClonePluginData = cloneRegionPluginData.getPersonRegion(personId).isPresent();
-			assertEquals(isPresentInPluginData, isPresentInClonePluginData);
-			if (isPresentInPluginData) {
-				RegionId expectedRegionId = regionsPluginData.getPersonRegion(personId).get();
-				RegionId actualRegionId = cloneRegionPluginData.getPersonRegion(personId).get();
-				assertEquals(expectedRegionId, actualRegionId);
+			if (useArrivalTracking) {
+				regionPluginDataBuilder.addPerson(personId, randomRegionId, 0.0);
+			} else {
+				regionPluginDataBuilder.addPerson(personId, randomRegionId);
 			}
 		}
+
+		return regionPluginDataBuilder.build();
+	}
+
+	private void testGetCloneBuilder_subTest1() {
+		
+		boolean containsPeople = true;
+		boolean useArrivalTracking = true;
+		boolean useEmptyDefaultProperties = true;
+		long seed = 6712645837048772782L;
+		
+		RegionsPluginData regionsPluginData = getRegionsPluginData(containsPeople, useArrivalTracking,
+				useEmptyDefaultProperties, seed);
+
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(regionsPluginData, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addPerson(PersonId, RegionId,Double)
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder.addPerson(new PersonId(1000), TestRegionId.REGION_1, 123.7);
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
+
+		// defineRegionProperty
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
+				.setDefaultValue(4)//
+				.setType(Integer.class)//
+				.setPropertyValueMutability(true)//
+				.build();
+		cloneBuilder.defineRegionProperty(TestRegionPropertyId.getUnknownRegionPropertyId(), propertyDefinition);
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
+
+		// setRegionPropertyValue
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder.setRegionPropertyValue(TestRegionId.REGION_1,
+				TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, 34.6);
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
+
+	}
+
+	private void testGetCloneBuilder_subTest2() {
+		boolean containsPeople = true;
+		boolean useArrivalTracking = false;
+		boolean useEmptyDefaultProperties = true;
+		long seed = 927079288013081717L;
+		RegionsPluginData regionsPluginData = getRegionsPluginData(containsPeople, useArrivalTracking,
+				useEmptyDefaultProperties, seed);
+
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(regionsPluginData, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addPerson(PersonId, RegionId)
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder.addPerson(new PersonId(1000), TestRegionId.REGION_1);
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
+
+	}
+
+	private void testGetCloneBuilder_subTest3() {
+		boolean containsPeople = true;
+		boolean useArrivalTracking = true;
+		boolean useEmptyDefaultProperties = false;
+		long seed = 514836872882449614L;
+		RegionsPluginData regionsPluginData = getRegionsPluginData(containsPeople, useArrivalTracking,
+				useEmptyDefaultProperties, seed);
+
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(regionsPluginData, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// addRegion
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder.addRegion(TestRegionId.getUnknownRegionId());
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
+	}
+
+	private void testGetCloneBuilder_subTest4() {
+		boolean containsPeople = false;
+		boolean useArrivalTracking = true;
+		boolean useEmptyDefaultProperties = true;
+		long seed = 5969645744439416482L;
+		RegionsPluginData regionsPluginData = getRegionsPluginData(containsPeople, useArrivalTracking,
+				useEmptyDefaultProperties, seed);
+
+		// show that the returned clone builder will build an identical instance if no
+		// mutations are made
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		assertNotNull(cloneBuilder);
+		assertEquals(regionsPluginData, cloneBuilder.build());
+
+		// show that the clone builder builds a distinct instance if any mutation is
+		// made
+
+		// setPersonRegionArrivalTracking
+		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder.setPersonRegionArrivalTracking(!regionsPluginData.getPersonRegionArrivalTrackingPolicy());
+		assertNotEquals(regionsPluginData, cloneBuilder.build());
 
 	}
 
@@ -898,60 +990,53 @@ public class AT_RegionsPluginData {
 	@UnitTestMethod(target = RegionsPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(586211957860853353L);
-		
+
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			RegionsPluginData regionsPluginData1 = getRandomRegionsPluginData(seed);
 			RegionsPluginData regionsPluginData2 = getRandomRegionsPluginData(seed);
-			assertEquals(regionsPluginData1,regionsPluginData2);
-			assertEquals(regionsPluginData1.hashCode(),regionsPluginData2.hashCode());
+			assertEquals(regionsPluginData1, regionsPluginData2);
+			assertEquals(regionsPluginData1.hashCode(), regionsPluginData2.hashCode());
 		}
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {			
+		for (int i = 0; i < 100; i++) {
 			RegionsPluginData regionsPluginData = getRandomRegionsPluginData(randomGenerator.nextLong());
 			hashCodes.add(regionsPluginData.hashCode());
 		}
 		assertEquals(100, hashCodes.size());
-		
+
 	}
-	
-	
 
 //	RegionsPluginData	public java.lang.String plugins.regions.datamanagers.RegionsPluginData.toString() 
- 
+
 	@Test
 	@UnitTestMethod(target = RegionsPluginData.class, name = "toString", args = {})
 	public void testToString() {
 		RegionsPluginData regionsPluginData = getRandomRegionsPluginData(6728844980805060979L);
-		
+
 		String actualValue = regionsPluginData.toString();
 
-		
-		//expected value manually verified
-		String expectedValue = "RegionsPluginData [data=Data ["
-				+ "regionPropertyDefinitions={"
+		// expected value manually verified
+		String expectedValue = "RegionsPluginData [data=Data [" + "regionPropertyDefinitions={"
 				+ "REGION_PROPERTY_3_DOUBLE_MUTABLE=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=0.0], "
 				+ "REGION_PROPERTY_5_INTEGER_IMMUTABLE=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0]}, "
-				
+
 				+ "regionIds=[REGION_3, REGION_1, REGION_4], "
-				
+
 				+ "trackRegionArrivalTimes=true, "
-				
-				+ "regionPropertyValues={"
-				+ "REGION_1={REGION_PROPERTY_5_INTEGER_IMMUTABLE=1769994519}, "
+
+				+ "regionPropertyValues={" + "REGION_1={REGION_PROPERTY_5_INTEGER_IMMUTABLE=1769994519}, "
 				+ "REGION_3={REGION_PROPERTY_5_INTEGER_IMMUTABLE=706454702}}, "
-				
+
 				+ "personRegions=[null, REGION_4, null, REGION_3, null, REGION_1, null, REGION_3, null, REGION_1], "
-				
-				
+
 				+ "personArrivalTimes=[null, 0.008078132587675535, null, 0.7027533190641975, null, 0.38173962849044774, null, 0.7955082969867588, null, 0.9457602126490658], "
-				
-				
+
 				+ "locked=true]]";
-		
+
 		assertEquals(expectedValue, actualValue);
 	}
 }

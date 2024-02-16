@@ -443,18 +443,47 @@ public class AT_PersonResourceReportPluginData {
 					builder.excludeResource(testResourceId);
 				}
 			}
+			// force some values for later use
+			builder.includeResource(TestResourceId.RESOURCE_1);
+			builder.excludeResource(TestResourceId.RESOURCE_2);
 
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			PersonResourceReportPluginData personResourceReportPluginData = builder.build();
 
-			// create the clone builder and have it build
-			PersonResourceReportPluginData clonePersonResourceReportPluginData = personResourceReportPluginData
-					.getCloneBuilder().build();
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
+			PersonResourceReportPluginData.Builder cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			assertNotNull(cloneBuilder);
+			assertEquals(personResourceReportPluginData, cloneBuilder.build());
 
-			// the result should equal the original if the clone builder was
-			// initialized with the correct state
-			assertEquals(personResourceReportPluginData, clonePersonResourceReportPluginData);
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// excludeResource
+			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder.excludeResource(TestResourceId.RESOURCE_1);
+			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
+
+			// includeResource
+			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder.includeResource(TestResourceId.RESOURCE_2);
+			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
+
+			// setDefaultInclusion
+			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setDefaultInclusion(!personResourceReportPluginData.getDefaultInclusionPolicy());
+			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
+
+			// setReportLabel
+			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
+			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
+			
+			// setReportPeriod
+			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder.setReportPeriod(personResourceReportPluginData.getReportPeriod().next());
+			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
 		}
 	}
@@ -601,8 +630,8 @@ public class AT_PersonResourceReportPluginData {
 		}
 
 		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
+		 * The hash codes should be dispersed -- we only show that they are unique
+		 * values -- this is dependent on the random seed
 		 */
 		assertEquals(50, observedHashCodes.size());
 
@@ -612,22 +641,21 @@ public class AT_PersonResourceReportPluginData {
 	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "toString", args = {})
 	public void testToString() {
 		PersonResourceReportPluginData personResourceReportPluginData = PersonResourceReportPluginData.builder()//
-		.setReportLabel(new SimpleReportLabel("report label"))//
-		.setDefaultInclusion(true)//
-		.setReportPeriod(ReportPeriod.DAILY)//
-		.includeResource(TestResourceId.RESOURCE_1)//
-		.includeResource(TestResourceId.RESOURCE_3)//
-		.excludeResource(TestResourceId.RESOURCE_2)//
-		.excludeResource(TestResourceId.RESOURCE_4)//
-		.build();//
-		
-		String actualValue = 
-		personResourceReportPluginData.toString();
-		
+				.setReportLabel(new SimpleReportLabel("report label"))//
+				.setDefaultInclusion(true)//
+				.setReportPeriod(ReportPeriod.DAILY)//
+				.includeResource(TestResourceId.RESOURCE_1)//
+				.includeResource(TestResourceId.RESOURCE_3)//
+				.excludeResource(TestResourceId.RESOURCE_2)//
+				.excludeResource(TestResourceId.RESOURCE_4)//
+				.build();//
+
+		String actualValue = personResourceReportPluginData.toString();
+
 		String expectedValue = "PersonResourceReportPluginData [data=Data [reportLabel=SimpleReportLabel [value=report label],"
 				+ " reportPeriod=DAILY, includedResourceIds=[RESOURCE_1, RESOURCE_3], excludedResourceIds=[RESOURCE_2, RESOURCE_4],"
 				+ " defaultInclusionPolicy=true]]";
-		
+
 		assertEquals(actualValue, expectedValue);
 	}
 
