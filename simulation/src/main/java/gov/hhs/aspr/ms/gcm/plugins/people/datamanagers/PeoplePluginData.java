@@ -128,6 +128,13 @@ public final class PeoplePluginData implements PluginData {
 						throw new ContractException(PersonError.INVALID_PERSON_COUNT);
 					}
 				}
+			} else {
+				for (PersonRange personRange : data.personRanges) {
+					if (personRange.getHighPersonId() >= data.personCount) {
+						data.personCount = personRange.getHighPersonId();
+					}
+				}
+				data.personCount++;
 			}
 		}
 
@@ -265,11 +272,12 @@ public final class PeoplePluginData implements PluginData {
 			data.personCount = personCount;
 			return this;
 		}
+
 		/**
 		 * Resets the person count
 		 */
 		public Builder resetPersonCount() {
-			ensureDataMutability();			
+			ensureDataMutability();
 			data.personCount = -1;
 			return this;
 		}

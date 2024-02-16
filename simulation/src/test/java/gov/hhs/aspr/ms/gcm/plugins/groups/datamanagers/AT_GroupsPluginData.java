@@ -191,6 +191,51 @@ public class AT_GroupsPluginData {
 				() -> GroupsPluginData.builder().addGroupTypeId(null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 	}
+	
+	
+	@Test
+	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "resetNextGroupIdValue", args = {})
+	public void testResetNextGroupIdValue() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7770961949810857427L);
+
+		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
+		for (TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			groupPluginDataBuilder.addGroupTypeId(testGroupTypeId);
+		}
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			groupPluginDataBuilder.defineGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId,
+					testGroupPropertyId.getPropertyDefinition());
+		}
+		int groupCount = 10;
+		List<GroupId> groups = new ArrayList<>();
+		for (int i = 0; i < groupCount; i++) {
+			GroupId groupId = new GroupId(i);
+			groups.add(groupId);
+			TestGroupTypeId groupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+			groupPluginDataBuilder.addGroup(groupId, groupTypeId);
+			for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.getTestGroupPropertyIds(groupTypeId)) {
+				if (randomGenerator.nextBoolean()) {
+					Object randomPropertyValue = testGroupPropertyId.getRandomPropertyValue(randomGenerator);
+					groupPluginDataBuilder.setGroupPropertyValue(groupId, testGroupPropertyId, randomPropertyValue);
+				}
+			}
+		}
+
+		GroupsPluginData pluginData = groupPluginDataBuilder.build();
+
+		assertEquals(groupCount, pluginData.getNextGroupIdValue());
+
+		pluginData = groupPluginDataBuilder.setNextGroupIdValue(groupCount + 10).build();
+
+		assertEquals(groupCount + 10, pluginData.getNextGroupIdValue());
+		
+		
+		pluginData = groupPluginDataBuilder.resetNextGroupIdValue().build();
+		assertEquals(groupCount, pluginData.getNextGroupIdValue());
+		
+
+		
+	}
 
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "addGroup", args = { GroupId.class,
@@ -944,6 +989,9 @@ public class AT_GroupsPluginData {
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.class, name = "getNextGroupIdValue", args = {})
 	public void testGetNextGroupIdValue() {
+		
+		assertEquals(0, GroupsPluginData.builder().build().getNextGroupIdValue());
+		
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2784010859295212357L);
 
 		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();

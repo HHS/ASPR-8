@@ -674,7 +674,7 @@ public class AT_ReportContext {
 	}
 
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getLocalDateTime", args = { double.class })
+	@UnitTestMethod(target = ReportContext.class, name = "getLocalDateTime", args = { double.class })
 	public void testGetLocalDateTime() {
 
 
