@@ -87,7 +87,9 @@ public enum NucleusError implements ContractError {
 	UNKNOWN_FUNCTION_ID("Unknown event function id"), NULL_FUNCTION_ID("Null function id"),
 	NULL_FUNCTION_VALUE("Null event function value"), NULL_FUNCTION("Null function"),
 	NULL_IDENTIFIABLE_FUNCTION("Null identifiable function"), NULL_EVENT_FILTER("Null event filter"),
-	INVALID_PLAN_ARRIVAL_ID("The given plan id is invalid. It either needs to be >=0, or -1, and nothing else"),;
+	INVALID_PLAN_ARRIVAL_ID("The given plan id is invalid. It either needs to be >=0, or -1, and nothing else"),
+	INVALID_DIMENSION_LEVEL("Invalid Dimension Level"),
+	UNKNOWN_DIMENSION_LEVEL_NAME("The given level name is not known"),;
 
 	private final String description;
 
