@@ -1,0 +1,113 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>gov.hhs.aspr.ms.gcm</groupId>
+		<artifactId>parent</artifactId>
+		<version>${revision}</version>
+	</parent>
+
+	<!-- Artifact -->
+	<artifactId>simulation</artifactId>
+	<name>GCM: Simulation</name>
+	<description>The General Comuptational Model (GCM) is a Java based simulation framework for building disease progression models.</description>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<!-- Jacoco Coverage Check -->
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>default-prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>default-report</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>default-check</id>
+								<goals>
+									<goal>check</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<rule>
+											<element>BUNDLE</element>
+											<limits>
+												<limit>
+													<counter>LINE</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.0</minimum>
+												</limit>
+												<limit>
+													<counter>BRANCH</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.0</minimum>
+												</limit>
+												<limit>
+													<counter>INSTRUCTION</counter>
+													<value>COVEREDRATIO</value>
+													<minimum>0.0</minimum>
+												</limit>
+											</limits>
+										</rule>
+									</rules>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!--Attaches javadoc jar to project -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<doclint>all,-missing</doclint>
+							<additionalDependencies>
+								<additionalDependency>
+									<groupId>gov.hhs.aspr.ms</groupId>
+									<artifactId>util</artifactId>
+									<version>${util.version}</version>
+								</additionalDependency>
+								<additionalDependency>
+									<groupId>org.junit.jupiter</groupId>
+									<artifactId>junit-jupiter-api</artifactId>
+									<version>${junit-jupiter-engine.version}</version>
+								</additionalDependency>
+							</additionalDependencies>
+							<author>false</author>
+							<additionalJOptions>
+								<additionalJOption>-Xmaxerrs</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+								<additionalJOption>-Xmaxwarns</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+							</additionalJOptions>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>	

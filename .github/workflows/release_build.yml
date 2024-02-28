@@ -31,7 +31,7 @@ jobs:
     
     - name: Get Util Version
       run: |
-        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
+        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
     - name: Checkout Util
       uses: actions/checkout@v4
@@ -43,16 +43,16 @@ jobs:
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build GCM
-      run: mvn clean install -Prelease --file gcm/pom.xml
+      run: mvn clean install -Prelease --file pom.xml
 
     - name: Get Version
       run: |
-        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
+        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
     - name: Make Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "gcm/target/gcm-${{ env.version }}*.jar"
+        artifacts: "simulation/target/gcm-simulation-${{ env.version }}*.jar"
         prerelease: ${{ endsWith(env.version, 'SNAPSHOT') || contains(env.version, '-RC') }}
         name: "v${{ env.version }}"
         tag: "v${{ env.version }}"

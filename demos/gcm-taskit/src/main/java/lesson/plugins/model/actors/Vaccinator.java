@@ -72,7 +72,7 @@ public final class Vaccinator {
 		if (!refusesVaccine) {
 			PersonId personId = personPropertyUpdateEvent.personId();
 			// drop the current plan
-			actorContext.removePlan(personId);
+			actorContext.cancelPlan(personId);
 			vaccinatePerson(personId);
 		}
 	}

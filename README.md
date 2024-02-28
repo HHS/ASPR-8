@@ -2,18 +2,19 @@
 [![GitHub tag (with filter)][tag-shield]][tag-url]
 [![GitHub contributors][contributors-shield]][contributors-url]
 [![GitHub Workflow Status (with event)][dev-build-shield]][dev-build-url]
+[![GitHub Workflow Status (with event)][release-build-shield]][release-build-url]
 
 
 
 # General Computational Model
-This repository contains the source code for the General Computational Model herein reffered to as GCM, along with a set of tutorials that have been created to aide new users with using this model.
+This repository contains the source code for the General Computational Model herein reffered to as GCM, along with a set of lessons that have been created to aide new users with using this model.
 
 ## What is GCM?
 GCM is a Java based simulation framework for building disease progression models.  
 Users of GCM should have a general familiarity with Java and object oriented programming and would benefit from some exposure to event based modeling.
 
 ## Overview
-THere are 3 core tenants to GCM.
+There are 3 core tenants to GCM.
 
 ### Simulation
 GCM is an event based simulation composed of data managers, actors and an event engine.  
@@ -40,11 +41,15 @@ The complete set of all combinations (scenarios) of the variant plugin data obje
 - Modeling Utilities located [here](https://github.com/HHS/ASPR-ms-util)
 
 ## Building
-Once you have cloned the repo and imported it into your favorite IDE, navigate into the gcm directory on the command line.  
+Once you have cloned the repo and imported it into your favorite IDE, navigate into the root directory on the command line.  
 Once there, run the following command: ```mvn clean install```  
 That's all there is to building the project.  
-After running the above command, the next place you should start looking is at the Modeling Guide located in [doc](doc) and following the lessons.
 
+## Documentation
+The documentation can be found at [https://hhs.github.io/ASPR-8/](https://hhs.github.io/ASPR-8/)
+
+## Lessons
+The documentation contains lessons which the code can be found in [lessons](lessons).
 
 ## License
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
@@ -54,8 +59,10 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-8
 [contributors-url]: https://github.com/HHS/ASPR-8/graphs/contributors
 [tag-shield]: https://img.shields.io/github/v/tag/HHS/ASPR-8
-[tag-url]: https://github.com/HHS/ASPR-8/releases/tag/v4.0.0-RC1
+[tag-url]: https://github.com/HHS/ASPR-8/releases/latest
 [license-shield]: https://img.shields.io/github/license/HHS/ASPR-8
 [license-url]: LICENSE
-[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-8/dev-pre-mavencentral.yml?label=dev-build
-[dev-build-url]: https://github.com/HHS/ASPR-8/actions/workflows/dev-pre-mavencentral.yml
+[dev-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-8/dev_build.yml?label=dev-build
+[dev-build-url]: https://github.com/HHS/ASPR-8/actions/workflows/dev_build.yml
+[release-build-shield]: https://img.shields.io/github/actions/workflow/status/HHS/ASPR-8/release_build.yml?label=release-build
+[release-build-url]: https://github.com/HHS/ASPR-8/actions/workflows/release_build.yml

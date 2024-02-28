@@ -1,0 +1,82 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>gov.hhs.aspr.ms.gcm</groupId>
+        <artifactId>parent</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <!-- Artifact -->
+    <groupId>gov.hhs.aspr.ms.gcm.lessons</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+
+    <name>GCM: Lessons</name>
+    <description>Parent Pom for GCM Lessons</description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>gov.hhs.aspr.ms.gcm</groupId>
+                <artifactId>simulation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>gov.hhs.aspr.ms.gcm</groupId>
+            <artifactId>simulation</artifactId>
+        </dependency>
+    </dependencies>
+
+    <modules>
+        <module>lesson-01</module>
+        <module>lesson-02</module>
+        <module>lesson-03</module>
+        <module>lesson-04</module>
+        <module>lesson-05</module>
+        <module>lesson-06</module>
+        <module>lesson-07</module>
+        <module>lesson-08</module>
+        <module>lesson-09</module>
+        <module>lesson-10</module>
+        <module>lesson-11</module>
+        <module>lesson-12</module>
+        <module>lesson-13</module>
+        <module>lesson-14</module>
+        <module>lesson-15</module>
+        <module>lesson-16</module>
+        <module>lesson-17</module>
+        <module>lesson-18</module>
+        <module>lesson-19</module>
+        <module>lesson-20</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <!-- for skipping parent install-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- for skipping parent deployment -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

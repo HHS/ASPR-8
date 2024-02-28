@@ -27,7 +27,7 @@ jobs:
     
     - name: Get Util Version
       run: |
-        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file gcm/pom.xml)" >> "$GITHUB_ENV"
+        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
     - name: Checkout Util
       uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
     - name: Build Util
       run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build GCM
-      run: mvn clean install -Prelease --file gcm/pom.xml
+      run: mvn clean install -Prelease --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph
