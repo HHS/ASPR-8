@@ -253,4 +253,12 @@ public final class DataManagerContext {
 		return simulation.retrievePlansForDataManager(dataManagerId);
 	}
 
+	/**
+	 * Returns the DataManagerId of the data manager assigned to this instance of
+	 * the data manager context.
+	 */
+	public DataManagerId getDataManagerId() {
+		return dataManagerId;
+	}
+
 }
