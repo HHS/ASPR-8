@@ -1073,4 +1073,44 @@ public class AT_DataManagerContext {
 		assertEquals(expectedPlans.size(), plans.size());
 		assertEquals(expectedPlans, plans);
 	}
+
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "getDataManagerId", args = {})
+	public void testGetDataManagerId() {
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
+		pluginDataBuilder.addTestDataManager("dm3", () -> new TestDataManager3());
+
+		/*
+		 * The TestPlugin already contains a data manager that will be added to the
+		 * simulation ahead of the ones above, so the numbering will start with 1.
+		 */
+		
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
+			assertEquals(new DataManagerId(1), context.getDataManagerId());
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(0, (context) -> {
+			assertEquals(new DataManagerId(2), context.getDataManagerId());
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm3", new TestDataManagerPlan(0, (context) -> {
+			assertEquals(new DataManagerId(3), context.getDataManagerId());
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.setOutputConsumer(testOutputConsumer).build()//
+				.execute();//
+
+	}
 }
