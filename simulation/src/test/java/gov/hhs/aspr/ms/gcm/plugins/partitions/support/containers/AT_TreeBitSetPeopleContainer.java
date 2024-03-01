@@ -26,7 +26,7 @@ public class AT_TreeBitSetPeopleContainer {
 	@UnitTestConstructor(target = TreeBitSetPeopleContainer.class,args = {PeopleDataManager.class})
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class,()->new TreeBitSetPeopleContainer(null));
-		assertEquals(PartitionError.NULL_PERSON_DATA_VIEW, contractException.getErrorType());
+		assertEquals(PartitionError.NULL_PEOPLE_DATA_MANAGER, contractException.getErrorType());
 	}
 
 	@Test
