@@ -947,12 +947,6 @@ public class Simulation {
 
 	private Consumer<Object> outputConsumer;
 
-	protected void validatePlanKeyNotNull(final Object key) {
-		if (key == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_KEY, "");
-		}
-	}
-
 	protected void releaseOutput(Object output) {
 		if (outputConsumer != null) {
 			outputConsumer.accept(output);
