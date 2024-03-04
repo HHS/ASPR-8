@@ -1,7 +1,6 @@
 package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +23,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchConstructionInfo;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyDefinitionInitialization;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
@@ -34,6 +34,7 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestBatchConstructionIn
 import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestBatchPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestMaterialId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.testsupport.TestMaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem.Builder;
@@ -86,13 +87,12 @@ public final class AT_BatchStatusReport {
 	@Test
 	@UnitTestConstructor(target = BatchStatusReport.class, args = { BatchStatusReportPluginData.class })
 	public void testConstructor() {
-		BatchStatusReport report = new BatchStatusReport(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
-
-		assertNotNull(report);
+		// nothing to test
 	}
 
 	@Test
-	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class }, tags = {UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = BatchStatusReport.class, name = "init", args = { ReportContext.class }, tags = {
+			UnitTag.INCOMPLETE })
 	public void testInit() {
 
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -103,7 +103,7 @@ public final class AT_BatchStatusReport {
 
 		for (TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
 
-			// add a few batches
+			// add a few batches -- covers BatchAdditionEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -120,7 +120,7 @@ public final class AT_BatchStatusReport {
 
 			}));
 
-			// transfer material between batches
+			// transfer material between batches -- covers BatchAmountUpdateEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
@@ -151,7 +151,7 @@ public final class AT_BatchStatusReport {
 				}
 			}));
 
-			// destroy some batches
+			// destroy some batches -- covers BatchImminentRemovalEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -167,7 +167,7 @@ public final class AT_BatchStatusReport {
 				}
 			}));
 
-			// set some batch property values
+			// set some batch property values -- covers BatchPropertyUpdateEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -185,7 +185,7 @@ public final class AT_BatchStatusReport {
 				}
 			}));
 
-			// put some of the batches on stages
+			// put some of the batches on stages -- covers StageMembershipAdditionEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -208,7 +208,7 @@ public final class AT_BatchStatusReport {
 
 			}));
 
-			// take some of the batches off of stages
+			// take some of the batches off of stages -- covers StageMembershipRemovalEvent
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -227,20 +227,76 @@ public final class AT_BatchStatusReport {
 				}
 			}));
 
+			/*
+			 * define a new Material -- covers MaterialIdAdditionEvent -- This will not have
+			 * an immediate impact. When we add a few batches for the material type.
+			 */
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				if (!materialsDataManager.materialIdExists(NewMaterialId.NEW_MATERIAL_ID)) {
+					materialsDataManager.addMaterialId(NewMaterialId.NEW_MATERIAL_ID);
+					for (int i = 0; i < 3; i++) {
+						BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo.builder()//
+								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)
+								.setAmount(15L)
+								.setMaterialsProducerId(testMaterialsProducerId)								
+								.build();						
+						BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
+						expectedReportItems.put(getReportItemFromBatch(c, batchId), 1);
+					}
+				}
+			}));
+
+			// add a new batch property for the new material -- covers
+			// BatchPropertyDefinitionEvent
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				boolean propertyDefined = materialsDataManager.batchPropertyIdExists(NewMaterialId.NEW_MATERIAL_ID,
+						NewBatchPropertyId.NEW_BATCH_PROPERTY_ID);
+				if (!propertyDefined) {
+					PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+							.setDefaultValue(7).setPropertyValueMutability(true).build();
+					BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = BatchPropertyDefinitionInitialization
+							.builder()//
+							.setMaterialId(NewMaterialId.NEW_MATERIAL_ID).setPropertyDefinition(propertyDefinition)
+							.setPropertyId(NewBatchPropertyId.NEW_BATCH_PROPERTY_ID).build();
+					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
+					
+					
+					for(BatchId batchId : materialsDataManager.getInventoryBatches(testMaterialsProducerId)) {
+						if(materialsDataManager.getBatchMaterial(batchId).equals(NewMaterialId.NEW_MATERIAL_ID)) {
+							expectedReportItems.put(getReportItemFromBatch(c, batchId), 1);
+						}
+					}
+					
+				}
+			}));
+
+			
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = MaterialsTestPluginFactory//
-				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
-				.setBatchStatusReportPluginData(BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+				.factory(0, 0, 0, 2819236410498978100L, testPluginData).setBatchStatusReportPluginData(
+						BatchStatusReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
 
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.build()//
 				.execute();
-		
-		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
+
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
+
+		assertEquals(expectedReportItems, actualReportItems);
+	}
+
+	private static enum NewBatchPropertyId implements BatchPropertyId {
+		NEW_BATCH_PROPERTY_ID
+	}
+
+	private static enum NewMaterialId implements MaterialId {
+		NEW_MATERIAL_ID
 	}
 
 	@Test
@@ -271,7 +327,6 @@ public final class AT_BatchStatusReport {
 
 			// transfer material between batches
 			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
-
 				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
 				StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 				RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -369,37 +424,74 @@ public final class AT_BatchStatusReport {
 					}
 				}
 			}));
+			
+			/*
+			 * define a new Material -- covers MaterialIdAdditionEvent -- This will not have
+			 * an immediate impact. When we add a few batches for the material type.
+			 */
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				if (!materialsDataManager.materialIdExists(NewMaterialId.NEW_MATERIAL_ID)) {
+					materialsDataManager.addMaterialId(NewMaterialId.NEW_MATERIAL_ID);
+					for (int i = 0; i < 3; i++) {
+						BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo.builder()//
+								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)
+								.setAmount(15L)
+								.setMaterialsProducerId(testMaterialsProducerId)								
+								.build();						
+						materialsDataManager.addBatch(batchConstructionInfo);						
+					}
+				}
+			}));
+
+			// add a new batch property for the new material -- covers
+			// BatchPropertyDefinitionEvent
+			pluginBuilder.addTestActorPlan("actor", new TestActorPlan(actionTime++, (c) -> {
+				MaterialsDataManager materialsDataManager = c.getDataManager(MaterialsDataManager.class);
+				boolean propertyDefined = materialsDataManager.batchPropertyIdExists(NewMaterialId.NEW_MATERIAL_ID,
+						NewBatchPropertyId.NEW_BATCH_PROPERTY_ID);
+				if (!propertyDefined) {
+					PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class)
+							.setDefaultValue(7).setPropertyValueMutability(true).build();
+					BatchPropertyDefinitionInitialization batchPropertyDefinitionInitialization = BatchPropertyDefinitionInitialization
+							.builder()//
+							.setMaterialId(NewMaterialId.NEW_MATERIAL_ID).setPropertyDefinition(propertyDefinition)
+							.setPropertyId(NewBatchPropertyId.NEW_BATCH_PROPERTY_ID).build();
+					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
+				}
+			}));
+			
 
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		BatchStatusReportPluginData batchStatusReportPluginData = BatchStatusReportPluginData.builder()
-				.setReportLabel(REPORT_LABEL)
-				.build();
+				.setReportLabel(REPORT_LABEL).build();
 
 		Factory factory = MaterialsTestPluginFactory//
 				.factory(0, 0, 0, 2819236410498978100L, testPluginData)
 				.setBatchStatusReportPluginData(batchStatusReportPluginData);
 
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(true)//
-				.setSimulationHaltTime(20)//
+				.setSimulationHaltTime(24)//
 				.build()//
 				.execute();
 
 		// show that the plugin data persists after simulation
-		Map<BatchStatusReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(BatchStatusReportPluginData.class);
+		Map<BatchStatusReportPluginData, Integer> outputItems = testOutputConsumer
+				.getOutputItemMap(BatchStatusReportPluginData.class);
 		assertEquals(1, outputItems.size());
 		BatchStatusReportPluginData batchStatusReportPluginData2 = outputItems.keySet().iterator().next();
 		assertEquals(batchStatusReportPluginData, batchStatusReportPluginData2);
 
 		// Test without producing simulation
-		testOutputConsumer = TestSimulation	.builder()//
+		testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(false)//
-				.setSimulationHaltTime(20)//
+				.setSimulationHaltTime(24)//
 				.build()//
 				.execute();
 
