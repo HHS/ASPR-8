@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -10,7 +11,9 @@ import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.BatchAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.BatchAmountUpdateEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.BatchImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.BatchPropertyDefinitionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.BatchPropertyUpdateEvent;
+import gov.hhs.aspr.ms.gcm.plugins.materials.events.MaterialIdAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageMembershipAdditionEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageMembershipRemovalEvent;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
@@ -31,6 +34,19 @@ import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
  * -- the offered state of the batch Material -- the material of the batch
  * Amount -- the amount of material in the batch Material.PropertyId -- multiple
  * columns for the batch properties selected for the report
+ * 
+ * 
+ * .add("time")// .add("batch")// .add("materials_producer")// .add("stage")//
+ * .add("material")// .add("amount");//
+ * 
+ * 
+ * 
+ * }
+ * 
+ * 
+ * 
+ * 
+ * 
  */
 public final class BatchStatusReport {
 
@@ -178,6 +194,43 @@ public final class BatchStatusReport {
 		reportBatch(reportContext, batchRecord);
 	}
 
+	private void handleMaterialIdAdditionEvent(ReportContext reportContext,
+			MaterialIdAdditionEvent materialIdAdditionEvent) {
+		batchPropertyMap.put(materialIdAdditionEvent.materialId(), new LinkedHashSet<>());
+	}
+
+	private void handleBatchPropertyDefinitionEvent(ReportContext reportContext,
+			BatchPropertyDefinitionEvent batchPropertyDefinitionEvent) {
+
+		BatchPropertyId batchPropertyId = batchPropertyDefinitionEvent.batchPropertyId();
+		MaterialId materialId = batchPropertyDefinitionEvent.materialId();
+
+		batchPropertyMap.get(batchPropertyDefinitionEvent.materialId()).add(batchPropertyId);
+		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
+			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {
+				for (BatchId batchId : materialsDataManager.getStageBatches(stageId)) {
+					BatchRecord batchRecord = batchRecords.get(batchId);
+					if (batchRecord.materialId.equals(materialId)) {
+						Object batchPropertyValue = materialsDataManager.getBatchPropertyValue(batchId,
+								batchPropertyId);
+						batchRecord.time = reportContext.getTime();
+						batchRecord.propertyValues.put(batchPropertyId, batchPropertyValue);
+						reportBatch(reportContext, batchRecord);
+					}
+				}
+			}
+			for (BatchId batchId : materialsDataManager.getInventoryBatches(materialsProducerId)) {
+				BatchRecord batchRecord = batchRecords.get(batchId);
+				if (batchRecord.materialId.equals(materialId)) {
+					Object batchPropertyValue = materialsDataManager.getBatchPropertyValue(batchId, batchPropertyId);
+					batchRecord.time = reportContext.getTime();
+					batchRecord.propertyValues.put(batchPropertyId, batchPropertyValue);
+					reportBatch(reportContext, batchRecord);
+				}
+			}
+		}
+	}
+
 	private void handleStageMembershipRemovalEvent(ReportContext reportContext,
 			StageMembershipRemovalEvent stageMembershipRemovalEvent) {
 		BatchId batchId = stageMembershipRemovalEvent.batchId();
@@ -207,6 +260,9 @@ public final class BatchStatusReport {
 		reportContext.subscribe(BatchPropertyUpdateEvent.class, this::handleBatchPropertyUpdateEvent);
 		reportContext.subscribe(StageMembershipAdditionEvent.class, this::handleStageMembershipAdditionEvent);
 		reportContext.subscribe(StageMembershipRemovalEvent.class, this::handleStageMembershipRemovalEvent);
+		reportContext.subscribe(BatchPropertyDefinitionEvent.class, this::handleBatchPropertyDefinitionEvent);
+		reportContext.subscribe(MaterialIdAdditionEvent.class, this::handleMaterialIdAdditionEvent);
+
 		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
