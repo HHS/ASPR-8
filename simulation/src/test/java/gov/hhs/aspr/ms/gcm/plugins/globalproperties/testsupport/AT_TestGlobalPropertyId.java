@@ -7,9 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class AT_TestGlobalPropertyId {
 	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getRandomGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(242770195073333036L);
-		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
+		Map<TestGlobalPropertyId, MutableInteger> idCounter = new LinkedHashMap<>();
 		Set<GlobalPropertyId> setOfRandomIds = new LinkedHashSet<>();
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
 			idCounter.put(testGlobalPropertyId, new MutableInteger());
@@ -53,7 +54,7 @@ public class AT_TestGlobalPropertyId {
 	@UnitTestMethod(target = TestGlobalPropertyId.class,name = "getRandomMutableGlobalPropertyId", args = {RandomGenerator.class})
 	public void testGetRandomMutableGlobalPropertyId() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6104930304058715301L);
-		HashMap<TestGlobalPropertyId, MutableInteger> idCounter = new HashMap<>();
+		Map<TestGlobalPropertyId, MutableInteger> idCounter = new LinkedHashMap<>();
 		Set<GlobalPropertyId> setOfRandomMutableIds = new LinkedHashSet<>();
 
 		for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
