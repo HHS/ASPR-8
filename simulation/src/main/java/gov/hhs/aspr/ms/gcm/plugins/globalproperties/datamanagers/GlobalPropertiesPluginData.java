@@ -8,6 +8,7 @@ import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
@@ -406,6 +407,22 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		if (!data.globalPropertyDefinitions.containsKey(globalPropertyId)) {
 			throw new ContractException(PropertyError.UNKNOWN_PROPERTY_ID, globalPropertyId);
 		}
+	}
+
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
 	}
 
 	@Override

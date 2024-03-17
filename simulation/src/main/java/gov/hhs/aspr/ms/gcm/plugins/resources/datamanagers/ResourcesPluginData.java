@@ -11,6 +11,7 @@ import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
@@ -844,6 +845,22 @@ public final class ResourcesPluginData implements PluginData {
 		return new LinkedHashSet<>(data.regionResourceLevels.keySet());
 	}
 
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
+	}
+	
 	@Override
 	public Builder getCloneBuilder() {
 		return new Builder(data);
