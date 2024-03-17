@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReportPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
@@ -195,6 +196,22 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 	 */
 	public static Builder builder() {
 		return new Builder(new Data());
+	}
+
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
 	}
 
 	@Override

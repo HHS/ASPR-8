@@ -6,6 +6,7 @@ import java.util.List;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonRange;
@@ -327,6 +328,22 @@ public final class PeoplePluginData implements PluginData {
 		if (personCount < 0) {
 			throw new ContractException(PersonError.NEGATIVE_PERSON_COUNT);
 		}
+	}
+
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
 	}
 
 	@Override

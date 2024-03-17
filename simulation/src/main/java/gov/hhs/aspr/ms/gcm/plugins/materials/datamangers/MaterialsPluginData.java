@@ -12,6 +12,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
@@ -1752,6 +1753,22 @@ public final class MaterialsPluginData implements PluginData {
 	public Boolean isStageOffered(final StageId stageId) {
 		validateStageExists(data, stageId);
 		return data.stageOffers.get(stageId);
+	}
+
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
 	}
 
 	@Override
