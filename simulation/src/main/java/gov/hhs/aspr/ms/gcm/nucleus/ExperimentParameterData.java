@@ -271,6 +271,22 @@ public final class ExperimentParameterData {
 		return new LinkedHashSet<>(data.explicitScenarioIds);
 	}
 
+	/**
+	 * Returns the current version of this Simulation Plugin, which is equal to the
+	 * version of the GCM Simulation
+	 */
+	public String getVersion() {
+		return StandardVersioning.VERSION;
+	}
+
+	/**
+	 * Given a version string, returns whether the version is a supported version or
+	 * not.
+	 */
+	public static boolean checkVersionSupported(String version) {
+		return StandardVersioning.checkVersionSupported(version);
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(data);
