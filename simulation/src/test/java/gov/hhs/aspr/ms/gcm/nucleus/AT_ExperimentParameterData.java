@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -392,6 +394,27 @@ public class AT_ExperimentParameterData {
 	}
 
 	@Test
+	@UnitTestMethod(target = ExperimentParameterData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		ExperimentParameterData groupsPluginData = getRandomExperimentParameterData(0);
+		assertEquals(StandardVersioning.VERSION, groupsPluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = ExperimentParameterData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(ExperimentParameterData.checkVersionSupported(version));
+			assertFalse(ExperimentParameterData.checkVersionSupported(version + "badVersion"));
+			assertFalse(ExperimentParameterData.checkVersionSupported("badVersion"));
+			assertFalse(ExperimentParameterData.checkVersionSupported(version + "0"));
+			assertFalse(ExperimentParameterData.checkVersionSupported(version + ".0.0"));
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = ExperimentParameterData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2179495435117370503L);
@@ -447,8 +470,8 @@ public class AT_ExperimentParameterData {
 			assertEquals(experimentParameterData1, experimentParameterData2);
 			assertEquals(experimentParameterData1.hashCode(), experimentParameterData2.hashCode());
 		}
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
