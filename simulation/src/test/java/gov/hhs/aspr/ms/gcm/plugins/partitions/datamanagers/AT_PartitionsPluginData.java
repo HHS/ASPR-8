@@ -6,9 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_PartitionsPluginData {
@@ -47,6 +51,27 @@ public class AT_PartitionsPluginData {
 		cloneBuilder.setRunContinuitySupport(true);
 		assertNotEquals(p1, cloneBuilder.build());
 
+	}
+
+	@Test
+	@UnitTestMethod(target = PartitionsPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PartitionsPluginData pluginData = PartitionsPluginData.builder().setRunContinuitySupport(true).build();
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PartitionsPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PartitionsPluginData.checkVersionSupported(version));
+			assertFalse(PartitionsPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PartitionsPluginData.checkVersionSupported("badVersion"));
+			assertFalse(PartitionsPluginData.checkVersionSupported(version + "0"));
+			assertFalse(PartitionsPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

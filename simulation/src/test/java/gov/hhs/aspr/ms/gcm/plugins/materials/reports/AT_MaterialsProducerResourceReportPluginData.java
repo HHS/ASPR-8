@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.SimpleReportLabel;
@@ -108,6 +112,29 @@ public class AT_MaterialsProducerResourceReportPluginData {
 			assertNotEquals(materialsProducerResourceReportPluginData, cloneBuilder.build());
 
 
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsProducerResourceReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		MaterialsProducerResourceReportPluginData pluginData = MaterialsProducerResourceReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(0)).build();
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsProducerResourceReportPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(MaterialsProducerResourceReportPluginData.checkVersionSupported(version));
+			assertFalse(MaterialsProducerResourceReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(MaterialsProducerResourceReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(MaterialsProducerResourceReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(MaterialsProducerResourceReportPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

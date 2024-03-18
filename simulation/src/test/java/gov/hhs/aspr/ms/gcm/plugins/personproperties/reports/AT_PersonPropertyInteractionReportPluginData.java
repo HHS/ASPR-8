@@ -7,12 +7,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport.TestPersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
@@ -152,12 +155,13 @@ public class AT_PersonPropertyInteractionReportPluginData {
 				}
 			}
 			builder.addPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
-			
+
 			PersonPropertyInteractionReportPluginData personPropertyInteractionReportPluginData = builder.build();
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			PersonPropertyInteractionReportPluginData.Builder cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			PersonPropertyInteractionReportPluginData.Builder cloneBuilder = personPropertyInteractionReportPluginData
+					.getCloneBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
@@ -168,17 +172,17 @@ public class AT_PersonPropertyInteractionReportPluginData {
 			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
 			cloneBuilder.addPersonPropertyId(TestPersonPropertyId.getUnknownPersonPropertyId());
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
-			
+
 			// removePersonPropertyId
 			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
 			cloneBuilder.removePersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
-			
+
 			// setReportLabel
 			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
-			
+
 			// setReportPeriod
 			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
 			ReportPeriod nextReportPeriod = personPropertyInteractionReportPluginData.getReportPeriod().next();
@@ -242,6 +246,29 @@ public class AT_PersonPropertyInteractionReportPluginData {
 		}
 
 		return builder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyInteractionReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PersonPropertyInteractionReportPluginData pluginData = getRandomPersonPropertyInteractionReportPluginData(0);
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyInteractionReportPluginData.class, name = "checkVersionSupported", args = {
+			String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PersonPropertyInteractionReportPluginData.checkVersionSupported(version));
+			assertFalse(PersonPropertyInteractionReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PersonPropertyInteractionReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(PersonPropertyInteractionReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(PersonPropertyInteractionReportPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test
@@ -319,10 +346,11 @@ public class AT_PersonPropertyInteractionReportPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertyInteractionReportPluginData.class, name = "toString", args = {})
 	public void testToString() {
-		PersonPropertyInteractionReportPluginData reportPluginData = getRandomPersonPropertyInteractionReportPluginData(7710973343170558582L);
-		
+		PersonPropertyInteractionReportPluginData reportPluginData = getRandomPersonPropertyInteractionReportPluginData(
+				7710973343170558582L);
+
 		String actualValue = reportPluginData.toString();
-		
+
 		String expectedValue = "PersonPropertyInteractionReportPluginData [data=Data ["
 				+ "reportLabel=SimpleReportLabel [value=report label0], "
 				+ "reportPeriod=HOURLY, "

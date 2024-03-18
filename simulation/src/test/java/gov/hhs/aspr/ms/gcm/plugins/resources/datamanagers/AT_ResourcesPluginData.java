@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
@@ -228,7 +230,7 @@ public final class AT_ResourcesPluginData {
 	 * Returns a randomly generated resources plugin data
 	 */
 	private ResourcesPluginData getRandomResourcesPluginData(long seed) {
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
 
@@ -308,6 +310,27 @@ public final class AT_ResourcesPluginData {
 		}
 
 		return pluginDataBuilder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		ResourcesPluginData pluginData = getRandomResourcesPluginData(0);
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(ResourcesPluginData.checkVersionSupported(version));
+			assertFalse(ResourcesPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(ResourcesPluginData.checkVersionSupported("badVersion"));
+			assertFalse(ResourcesPluginData.checkVersionSupported(version + "0"));
+			assertFalse(ResourcesPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test
@@ -1425,49 +1448,51 @@ public final class AT_ResourcesPluginData {
 		// show that the clone builder builds a distinct instance if any mutation is
 		// made
 
-		// addResource		
+		// addResource
 		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		cloneBuilder.addResource(TestResourceId.getUnknownResourceId(),2.5,false);
+		cloneBuilder.addResource(TestResourceId.getUnknownResourceId(), 2.5, false);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
-		
+
 		// defineResourceProperty
 		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(6).setType(Integer.class).setPropertyValueMutability(true).build();
-		cloneBuilder.defineResourceProperty(TestResourceId.RESOURCE_1,TestResourcePropertyId.getUnknownResourcePropertyId(),propertyDefinition);
-		assertNotEquals(resourcesPluginData, cloneBuilder.build());
-		
-		// setPersonResourceLevel		
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		cloneBuilder.setPersonResourceLevel(new PersonId(1000),TestResourceId.RESOURCE_3,234L);
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(6).setType(Integer.class)
+				.setPropertyValueMutability(true).build();
+		cloneBuilder.defineResourceProperty(TestResourceId.RESOURCE_1,
+				TestResourcePropertyId.getUnknownResourcePropertyId(), propertyDefinition);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
-		// setPersonResourceTime		
+		// setPersonResourceLevel
 		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		cloneBuilder.setPersonResourceTime(new PersonId(1000),TestResourceId.RESOURCE_3,64.745);
+		cloneBuilder.setPersonResourceLevel(new PersonId(1000), TestResourceId.RESOURCE_3, 234L);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
-		// setRegionResourceLevel		
+		// setPersonResourceTime
 		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		cloneBuilder.setRegionResourceLevel(TestRegionId.REGION_1,TestResourceId.RESOURCE_3,234L);
+		cloneBuilder.setPersonResourceTime(new PersonId(1000), TestResourceId.RESOURCE_3, 64.745);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
-		// setResourcePropertyValue		
+		// setRegionResourceLevel
 		cloneBuilder = resourcesPluginData.getCloneBuilder();
-		cloneBuilder.setResourcePropertyValue(TestResourceId.RESOURCE_1,TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE,18.6);
+		cloneBuilder.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_3, 234L);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
-		
+
+		// setResourcePropertyValue
+		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder.setResourcePropertyValue(TestResourceId.RESOURCE_1,
+				TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 18.6);
+		assertNotEquals(resourcesPluginData, cloneBuilder.build());
+
 	}
-
 
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "toString", args = {})
 	public void testToString() {
-		
+
 		ResourcesPluginData randomResourcesPluginData = getRandomResourcesPluginData(3613301633594044660L);
-		
+
 		String actualValue = randomResourcesPluginData.toString();
-		
-		//The expected value was manually verified
+
+		// The expected value was manually verified
 		String expectedValue = "ResourcesPluginData [data=Data ["
 				+ "resourceDefaultTimes={"
 				+ "RESOURCE_1=0.12069246251184063, "
@@ -1506,8 +1531,8 @@ public final class AT_ResourcesPluginData {
 				+ "REGION_4={RESOURCE_1=971, RESOURCE_5=565}, "
 				+ "REGION_5={RESOURCE_1=930, RESOURCE_3=653}, "
 				+ "REGION_6={RESOURCE_4=402}}]]";
-		
+
 		assertEquals(expectedValue, actualValue);
-		
+
 	}
 }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
 import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchPropertyId;
@@ -2759,6 +2761,27 @@ public class AT_MaterialsPluginData {
 
 		return builder.build();
 
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		MaterialsPluginData pluginData = getRandomMaterialsPluginData(0);
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(MaterialsPluginData.checkVersionSupported(version));
+			assertFalse(MaterialsPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(MaterialsPluginData.checkVersionSupported("badVersion"));
+			assertFalse(MaterialsPluginData.checkVersionSupported(version + "0"));
+			assertFalse(MaterialsPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

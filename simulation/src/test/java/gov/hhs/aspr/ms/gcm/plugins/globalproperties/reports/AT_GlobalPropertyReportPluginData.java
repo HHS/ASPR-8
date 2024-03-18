@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
@@ -396,6 +400,32 @@ public class AT_GlobalPropertyReportPluginData {
 		cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 		assertNotEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		ReportLabel reportLabel = new SimpleReportLabel(0);
+
+		GlobalPropertyReportPluginData.Builder builder = //
+				GlobalPropertyReportPluginData.builder()//
+						.setReportLabel(reportLabel);
+
+		assertEquals(StandardVersioning.VERSION, builder.build().getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(GlobalPropertyReportPluginData.checkVersionSupported(version));
+			assertFalse(GlobalPropertyReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(GlobalPropertyReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(GlobalPropertyReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(GlobalPropertyReportPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

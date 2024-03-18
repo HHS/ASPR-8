@@ -22,6 +22,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
@@ -945,6 +946,27 @@ public class AT_RegionsPluginData {
 		}
 
 		return builder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		RegionsPluginData pluginData = getRandomRegionsPluginData(0);
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionsPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(RegionsPluginData.checkVersionSupported(version));
+			assertFalse(RegionsPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(RegionsPluginData.checkVersionSupported("badVersion"));
+			assertFalse(RegionsPluginData.checkVersionSupported(version + "0"));
+			assertFalse(RegionsPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

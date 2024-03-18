@@ -1,12 +1,14 @@
 package gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -17,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyError;
@@ -432,9 +435,10 @@ public class AT_PersonPropertyPluginData {
 				}
 			}
 		}
-		
-		//forcing a particular value for later use
-		pluginBuilder.setPersonPropertyValue(new PersonId(0), TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK,true);
+
+		// forcing a particular value for later use
+		pluginBuilder.setPersonPropertyValue(new PersonId(0),
+				TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true);
 
 		PersonPropertiesPluginData personPropertiesPluginData = pluginBuilder.build();
 
@@ -460,10 +464,9 @@ public class AT_PersonPropertyPluginData {
 		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
 
 		// setPersonPropertyValue -- we know that the current value is true
-		cloneBuilder = personPropertiesPluginData.getCloneBuilder();		
+		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
 		cloneBuilder.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, false);
 		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
-
 
 	}
 
@@ -561,7 +564,8 @@ public class AT_PersonPropertyPluginData {
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
 	}
-//	PersonPropertiesPluginData	public java.util.Map plugins.personproperties.datamanagers.PersonPropertiesPluginData.getPropertyValues()
+	// PersonPropertiesPluginData public java.util.Map
+	// plugins.personproperties.datamanagers.PersonPropertiesPluginData.getPropertyValues()
 
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getPropertyValues", args = {})
@@ -930,6 +934,27 @@ public class AT_PersonPropertyPluginData {
 					TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, Double.NEGATIVE_INFINITY);
 		});
 		assertEquals(PersonPropertyError.NON_FINITE_TIME, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PersonPropertiesPluginData pluginData = PersonPropertiesPluginData.builder().build();
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PersonPropertiesPluginData.checkVersionSupported(version));
+			assertFalse(PersonPropertiesPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PersonPropertiesPluginData.checkVersionSupported("badVersion"));
+			assertFalse(PersonPropertiesPluginData.checkVersionSupported(version + "0"));
+			assertFalse(PersonPropertiesPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

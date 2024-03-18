@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.personproperties.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.personproperties.testsupport.TestPersonPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
@@ -444,10 +448,10 @@ public class AT_PersonPropertyReportPluginData {
 					builder.excludePersonProperty(testPersonPropertyId);
 				}
 			}
-			//forcing some values for later use
+			// forcing some values for later use
 			builder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK);
 			builder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
-			
+
 			builder.setDefaultInclusion(randomGenerator.nextBoolean()).build();
 
 			PersonPropertyReportPluginData personPropertyReportPluginData = builder.build();
@@ -470,12 +474,12 @@ public class AT_PersonPropertyReportPluginData {
 			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
 			cloneBuilder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
-			
+
 			// setDefaultInclusion
 			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
 			cloneBuilder.setDefaultInclusion(!personPropertyReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
-			
+
 			// setReportLabel
 			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
@@ -485,6 +489,32 @@ public class AT_PersonPropertyReportPluginData {
 			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
 			cloneBuilder.setReportPeriod(personPropertyReportPluginData.getReportPeriod().next());
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PersonPropertyReportPluginData pluginData = PersonPropertyReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(0))
+				.setReportPeriod(ReportPeriod.DAILY)
+				.build();
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertyReportPluginData.class, name = "checkVersionSupported", args = {
+			String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PersonPropertyReportPluginData.checkVersionSupported(version));
+			assertFalse(PersonPropertyReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PersonPropertyReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(PersonPropertyReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(PersonPropertyReportPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

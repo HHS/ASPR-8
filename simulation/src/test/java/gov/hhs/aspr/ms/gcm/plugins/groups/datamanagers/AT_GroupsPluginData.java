@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.groups.datamanagers.GroupsPluginData.GroupSpecification;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupError;
 import gov.hhs.aspr.ms.gcm.plugins.groups.support.GroupId;
@@ -191,8 +193,7 @@ public class AT_GroupsPluginData {
 				() -> GroupsPluginData.builder().addGroupTypeId(null));
 		assertEquals(GroupError.NULL_GROUP_TYPE_ID, contractException.getErrorType());
 	}
-	
-	
+
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.Builder.class, name = "resetNextGroupIdValue", args = {})
 	public void testResetNextGroupIdValue() {
@@ -228,13 +229,10 @@ public class AT_GroupsPluginData {
 		pluginData = groupPluginDataBuilder.setNextGroupIdValue(groupCount + 10).build();
 
 		assertEquals(groupCount + 10, pluginData.getNextGroupIdValue());
-		
-		
+
 		pluginData = groupPluginDataBuilder.resetNextGroupIdValue().build();
 		assertEquals(groupCount, pluginData.getNextGroupIdValue());
-		
 
-		
 	}
 
 	@Test
@@ -920,20 +918,19 @@ public class AT_GroupsPluginData {
 				propertyDefinition);
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
-		
 		// setGroupPropertyValue
 		cloneBuilder = groupsPluginData.getCloneBuilder();
 		GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(new GroupId(0));
 		TestGroupPropertyId selectedTestGroupPropertyId = null;
-		for(TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
-			if(testGroupPropertyId.getTestGroupTypeId().equals(groupTypeId)) {
+		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
+			if (testGroupPropertyId.getTestGroupTypeId().equals(groupTypeId)) {
 				selectedTestGroupPropertyId = testGroupPropertyId;
 				break;
 			}
 		}
-		
+
 		Object propertyValue = selectedTestGroupPropertyId.getRandomPropertyValue(randomGenerator);
-		cloneBuilder.setGroupPropertyValue(new GroupId(0),selectedTestGroupPropertyId,propertyValue);
+		cloneBuilder.setGroupPropertyValue(new GroupId(0), selectedTestGroupPropertyId, propertyValue);
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 	}
@@ -989,9 +986,9 @@ public class AT_GroupsPluginData {
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.class, name = "getNextGroupIdValue", args = {})
 	public void testGetNextGroupIdValue() {
-		
+
 		assertEquals(0, GroupsPluginData.builder().build().getNextGroupIdValue());
-		
+
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2784010859295212357L);
 
 		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
@@ -1158,6 +1155,28 @@ public class AT_GroupsPluginData {
 			GroupsPluginData pluginData = groupPluginDataBuilder.build();
 
 			assertEquals(groupPropertyDefinitions, pluginData.getGroupPropertyDefinitions());
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupsPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		GroupsPluginData groupsPluginData = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 10,
+				new ArrayList<>(), 0);
+		assertEquals(StandardVersioning.VERSION, groupsPluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = GroupsPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(GroupsPluginData.checkVersionSupported(version));
+			assertFalse(GroupsPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(GroupsPluginData.checkVersionSupported("badVersion"));
+			assertFalse(GroupsPluginData.checkVersionSupported(version + "0"));
+			assertFalse(GroupsPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

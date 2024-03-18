@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.datamangers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.StochasticsError;
@@ -62,7 +63,6 @@ public class AT_StochasticsPluginData {
 		wellState = WellState.builder().setSeed(1286993379829775736L).build();
 		cloneBuilder.setMainRNGState(wellState);
 		assertNotEquals(stochasticsPluginData, cloneBuilder.build());
-
 
 	}
 
@@ -208,6 +208,27 @@ public class AT_StochasticsPluginData {
 			}
 		}
 		return builder.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		StochasticsPluginData pluginData = getRandomStochasticsPluginData(0);
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(StochasticsPluginData.checkVersionSupported(version));
+			assertFalse(StochasticsPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(StochasticsPluginData.checkVersionSupported("badVersion"));
+			assertFalse(StochasticsPluginData.checkVersionSupported(version + "0"));
+			assertFalse(StochasticsPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test
