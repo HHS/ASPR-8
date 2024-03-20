@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeoplePluginData.Builder;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
@@ -359,6 +361,27 @@ public final class AT_PeoplePluginData {
 		builder.setPersonCount(personCount);
 		return builder.build();
 
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PeoplePluginData pluginData = getRandomPeoplePluginData(0);
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PeoplePluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PeoplePluginData.checkVersionSupported(version));
+			assertFalse(PeoplePluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PeoplePluginData.checkVersionSupported("badVersion"));
+			assertFalse(PeoplePluginData.checkVersionSupported(version + "0"));
+			assertFalse(PeoplePluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

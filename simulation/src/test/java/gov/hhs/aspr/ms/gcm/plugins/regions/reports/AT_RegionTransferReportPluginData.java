@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.regions.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
@@ -166,6 +170,32 @@ public class AT_RegionTransferReportPluginData {
 			cloneBuilder.setReportPeriod(regionTransferReportPluginData.getReportPeriod().next());
 			assertNotEquals(regionTransferReportPluginData, cloneBuilder.build());
 
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		RegionTransferReportPluginData pluginData = RegionTransferReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(0))
+				.setReportPeriod(ReportPeriod.DAILY)
+				.build();
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "checkVersionSupported", args = {
+			String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(RegionTransferReportPluginData.checkVersionSupported(version));
+			assertFalse(RegionTransferReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(RegionTransferReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(RegionTransferReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(RegionTransferReportPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

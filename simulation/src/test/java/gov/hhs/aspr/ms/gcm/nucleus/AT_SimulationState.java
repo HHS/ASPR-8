@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -123,6 +125,27 @@ public class AT_SimulationState {
 				.setStartTime(randomGenerator.nextDouble() * 100)
 				.setStartTime(randomGenerator.nextDouble()*100)
 				.build();
+	}
+
+	@Test
+	@UnitTestMethod(target = SimulationState.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		SimulationState groupsPluginData = getRandomSimulationState(0);
+		assertEquals(StandardVersioning.VERSION, groupsPluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = SimulationState.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(SimulationState.checkVersionSupported(version));
+			assertFalse(SimulationState.checkVersionSupported(version + "badVersion"));
+			assertFalse(SimulationState.checkVersionSupported("badVersion"));
+			assertFalse(SimulationState.checkVersionSupported(version + "0"));
+			assertFalse(SimulationState.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test

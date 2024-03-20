@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.resources.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
@@ -485,6 +489,32 @@ public class AT_PersonResourceReportPluginData {
 			cloneBuilder.setReportPeriod(personResourceReportPluginData.getReportPeriod().next());
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		PersonResourceReportPluginData pluginData = PersonResourceReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(0))
+				.setReportPeriod(ReportPeriod.DAILY)
+				.build();
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "checkVersionSupported", args = {
+			String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(PersonResourceReportPluginData.checkVersionSupported(version));
+			assertFalse(PersonResourceReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(PersonResourceReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(PersonResourceReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(PersonResourceReportPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

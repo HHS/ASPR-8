@@ -1,17 +1,21 @@
 package gov.hhs.aspr.ms.gcm.plugins.materials.reports;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.materials.reports.BatchStatusReportPluginData.Builder;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
@@ -94,19 +98,44 @@ public class AT_BatchStatusReportPluginData {
 							.setReportLabel(reportLabel);
 
 			BatchStatusReportPluginData batchStatusReportPluginData = builder.build();
-			
-			//show that the returned clone builder will build an identical instance if no mutations are made
+
+			// show that the returned clone builder will build an identical instance if no
+			// mutations are made
 			Builder cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(batchStatusReportPluginData, cloneBuilder.build());
-			
-			//show that the clone builder builds a distinct instance if any mutation is made
-			
-			//setReportLabel
+
+			// show that the clone builder builds a distinct instance if any mutation is
+			// made
+
+			// setReportLabel
 			cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
-			assertNotEquals(batchStatusReportPluginData,cloneBuilder.build());
+			assertNotEquals(batchStatusReportPluginData, cloneBuilder.build());
 
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		BatchStatusReportPluginData pluginData = BatchStatusReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(0)).build();
+
+		assertEquals(StandardVersioning.VERSION, pluginData.getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(BatchStatusReportPluginData.checkVersionSupported(version));
+			assertFalse(BatchStatusReportPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(BatchStatusReportPluginData.checkVersionSupported("badVersion"));
+			assertFalse(BatchStatusReportPluginData.checkVersionSupported(version + "0"));
+			assertFalse(BatchStatusReportPluginData.checkVersionSupported(version + ".0.0"));
 		}
 	}
 

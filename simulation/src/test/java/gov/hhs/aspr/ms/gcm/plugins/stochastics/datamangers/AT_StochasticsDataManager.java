@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.plugins.stochastics;
+package gov.hhs.aspr.ms.gcm.plugins.stochastics.datamangers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,6 +32,7 @@ import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestActorPlan;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestOutputConsumer;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.nucleus.testsupport.testplugin.TestSimulation;
+import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
 import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.RandomNumberGeneratorId;

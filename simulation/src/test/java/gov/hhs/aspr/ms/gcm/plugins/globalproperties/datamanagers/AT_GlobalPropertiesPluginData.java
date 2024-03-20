@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -18,8 +19,10 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.SimpleGlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.GlobalPropertiesTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.plugins.globalproperties.testsupport.TestGlobalPropertyId;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyError;
@@ -555,12 +558,13 @@ public class AT_GlobalPropertiesPluginData {
 
 		// defineGlobalProperty
 		cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
-		cloneBuilder.defineGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE,TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition(),0.0);
+		cloneBuilder.defineGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE,
+				TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition(), 0.0);
 		assertNotEquals(globalPropertiesPluginData, cloneBuilder.build());
 
 		// setGlobalPropertyValue
 		cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
-		cloneBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE,2.3,1.0);
+		cloneBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 2.3, 1.0);
 		assertNotEquals(globalPropertiesPluginData, cloneBuilder.build());
 	}
 
@@ -723,6 +727,27 @@ public class AT_GlobalPropertiesPluginData {
 		GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
 
 		assertEquals(expectedTimes, globalPropertiesPluginData.getGlobalPropertyTimes());
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getVersion", args = {})
+	public void testGetVersion() {
+		assertEquals(StandardVersioning.VERSION,
+				GlobalPropertiesTestPluginFactory.getStandardGlobalPropertiesPluginData(0).getVersion());
+	}
+
+	@Test
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "checkVersionSupported", args = { String.class })
+	public void testCheckVersionSupported() {
+		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+
+		for (String version : versions) {
+			assertTrue(GlobalPropertiesPluginData.checkVersionSupported(version));
+			assertFalse(GlobalPropertiesPluginData.checkVersionSupported(version + "badVersion"));
+			assertFalse(GlobalPropertiesPluginData.checkVersionSupported("badVersion"));
+			assertFalse(GlobalPropertiesPluginData.checkVersionSupported(version + "0"));
+			assertFalse(GlobalPropertiesPluginData.checkVersionSupported(version + ".0.0"));
+		}
 	}
 
 	@Test
