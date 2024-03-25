@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.epifast.pipeline.support;
+package gov.hhs.aspr.ms.gcm.pipeline.support;
 
 import gov.hhs.aspr.ms.util.errors.ContractError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
