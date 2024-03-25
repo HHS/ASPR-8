@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.epifast.pipeline.pipelines;
+package gov.hhs.aspr.ms.gcm.pipeline;
 
 public interface IPipeline {
     void execute();
