@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Pull Request for Main Build
+name: GCM Release Pull Request Build
 
 on: 
   pull_request:
@@ -25,19 +25,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Get Util Version
-      run: |
-        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
-
-    - name: Checkout Util
-      uses: actions/checkout@v4
-      with:
-        repository: HHS/ASPR-ms-util
-        path: util
-        ref: ${{ (endsWith(env.util_version, 'SNAPSHOT') && 'dev') || env.util_version }}
-  
-    - name: Build Util
-      run: mvn clean install -DskipTests --file util/pom.xml
     - name: Build GCM
       run: mvn clean install -Prelease --file pom.xml
 

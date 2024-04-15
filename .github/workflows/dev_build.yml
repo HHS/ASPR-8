@@ -12,7 +12,7 @@ on:
   push:
     branches: [ "dev" ]
   pull_request:
-    branches-ignore: ["main", "master"]
+    branches-ignore: ["main"]
 
 jobs:
   build:
@@ -33,14 +33,17 @@ jobs:
         echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
     - name: Checkout Util
+      if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
       uses: actions/checkout@v4
       with:
         repository: HHS/ASPR-ms-util
         path: util
-        ref: ${{ (endsWith(env.util_version, 'SNAPSHOT') && 'dev') || env.util_version }}
+        ref: dev
   
     - name: Build Util
+      if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
       run: mvn clean install -DskipTests --file util/pom.xml
+
     - name: Build GCM
       run: mvn clean install --file pom.xml
 
