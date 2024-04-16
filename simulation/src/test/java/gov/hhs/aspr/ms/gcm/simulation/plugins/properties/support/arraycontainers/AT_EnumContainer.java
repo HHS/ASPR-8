@@ -177,7 +177,7 @@ public class AT_EnumContainer {
 		enumContainer.setValue(8, Animal.SHEEP);
 		String actualValue = enumContainer.toString();
 
-		String expectedValue = "EnumContainer [values=[1=PIG, 2=HORSE, 5=DOG, 6=HORSE, 7=CAT], enumClass=class gov.hhs.aspr.ms.gcm.plugins.properties.support.arraycontainers.AT_EnumContainer$Animal]";
+		String expectedValue = "EnumContainer [values=[1=PIG, 2=HORSE, 5=DOG, 6=HORSE, 7=CAT], enumClass=class gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.arraycontainers.AT_EnumContainer$Animal]";
 		assertEquals(expectedValue, actualValue);
 	}
 

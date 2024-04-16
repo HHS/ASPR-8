@@ -303,7 +303,7 @@ public class AT_EnumPropertyManager {
 
 			String actualValue = enumPropertyManager.toString();
 			
-			String expectedValue = "EnumPropertyManager [enumContainer=EnumContainer [values=[1=RED, 2=BLUE, 5=RED, 6=BLUE, 7=YELLOW], enumClass=class gov.hhs.aspr.ms.gcm.plugins.properties.support.AT_EnumPropertyManager$Color]]";
+			String expectedValue = "EnumPropertyManager [enumContainer=EnumContainer [values=[1=RED, 2=BLUE, 5=RED, 6=BLUE, 7=YELLOW], enumClass=class gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.AT_EnumPropertyManager$Color]]";
 
 			assertEquals(expectedValue, actualValue);
 		});
