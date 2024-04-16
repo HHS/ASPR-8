@@ -11,7 +11,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinationDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 
 public final class ModelActor {
 

@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.disease.DiseaseDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 
 public final class ModelActor {
 

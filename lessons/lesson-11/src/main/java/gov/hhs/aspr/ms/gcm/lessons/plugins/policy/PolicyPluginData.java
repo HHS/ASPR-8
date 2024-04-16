@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.policy;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.PluginDataBuilder;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginDataBuilder;
 import net.jcip.annotations.Immutable;
 
 @Immutable

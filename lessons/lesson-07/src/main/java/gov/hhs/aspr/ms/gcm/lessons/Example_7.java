@@ -4,10 +4,10 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.family.FamilyDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelActor;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinationDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
-import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
-import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Simulation;
 
 public final class Example_7 {
 

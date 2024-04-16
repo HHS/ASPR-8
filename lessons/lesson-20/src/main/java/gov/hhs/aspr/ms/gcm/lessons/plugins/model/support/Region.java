@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.model.support;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support.RegionId;
 
 /**
  * Identifier for all regions

@@ -4,13 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.PersonProperty;
-import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
-import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 

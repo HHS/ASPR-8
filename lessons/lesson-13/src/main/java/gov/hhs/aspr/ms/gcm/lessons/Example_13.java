@@ -12,15 +12,15 @@ import org.apache.commons.math3.util.Pair;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelReportLabel;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
-import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
-import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
-import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.GlobalPropertiesPlugin;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
-import gov.hhs.aspr.ms.gcm.plugins.properties.support.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.NIOReportItemHandler;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.GlobalPropertiesPlugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.reports.GlobalPropertyReportPluginData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.NIOReportItemHandler;
 
 
 public final class Example_13 {

@@ -7,8 +7,8 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataM
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.FamilyVaccineReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.HourlyVaccineReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.StatelessVaccineReport;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
 
 public class VaccinePlugin {
 

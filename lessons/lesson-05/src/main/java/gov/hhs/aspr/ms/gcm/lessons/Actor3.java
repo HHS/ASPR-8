@@ -1,8 +1,8 @@
 
 package gov.hhs.aspr.ms.gcm.lessons;
 
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.EventFilter;
 
 /* start code_ref=events_actor_3_reacts_to_BetaChangeEvent|code_cap=Actor 3 reacts to changes in the beta property.*/
 public final class Actor3 {

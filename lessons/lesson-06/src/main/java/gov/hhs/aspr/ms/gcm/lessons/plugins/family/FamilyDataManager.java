@@ -11,8 +11,8 @@ import java.util.Set;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonRemovalEvent;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 
 /* start code_ref=plugin_dependencies_family_data_manager|code_cap=The family data manager manages families, their person members and various information methods.*/
 public final class FamilyDataManager extends DataManager {

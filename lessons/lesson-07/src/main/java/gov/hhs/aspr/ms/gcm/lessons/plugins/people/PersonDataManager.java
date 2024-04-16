@@ -3,9 +3,9 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.people;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
-import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 
 public final class PersonDataManager extends DataManager {
 

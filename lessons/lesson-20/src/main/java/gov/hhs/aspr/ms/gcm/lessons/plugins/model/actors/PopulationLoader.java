@@ -4,13 +4,13 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.AgeGroup;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Region;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonConstructionData;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyValueInitialization;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.Well;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonConstructionData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.PersonPropertyValueInitialization;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support.Well;
 
 /*start code_ref=partitions_plugin_population_loader|code_cap=People are added to the simulation with region and age assignments.*/
 public class PopulationLoader {

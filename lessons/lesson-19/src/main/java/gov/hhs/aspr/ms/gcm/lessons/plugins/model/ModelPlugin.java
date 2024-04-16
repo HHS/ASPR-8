@@ -7,8 +7,8 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DiseaseStateReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.VaccineProductionReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.VaccineReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.ModelReportLabel;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
 
 public final class ModelPlugin {
 	public static Plugin getModelPlugin() {

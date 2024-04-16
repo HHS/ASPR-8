@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.policy;
 
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
 
 public final class PolicyDataManager extends DataManager {
 	private double schoolClosingInfectionRate;

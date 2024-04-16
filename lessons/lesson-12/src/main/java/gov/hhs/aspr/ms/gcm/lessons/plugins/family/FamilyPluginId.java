@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.family;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
-import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.SimplePluginId;
 
 /**
  * Static plugin id implementation for the Family Plugin
