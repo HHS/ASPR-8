@@ -32,7 +32,7 @@ jobs:
     - name: Version Is Snapshot
       if: ${{ endsWith(env.version, 'SNAPSHOT') }}
       run: |
-        echo "ersion is a SNAPSHOT version. Update version to proper version."
+        echo "Version is a SNAPSHOT version. Update version to proper version."
         exit 1
 
     - name: Build GCM
