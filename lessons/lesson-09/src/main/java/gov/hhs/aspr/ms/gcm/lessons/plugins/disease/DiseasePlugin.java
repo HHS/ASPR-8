@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.disease;
 
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class DiseasePlugin {
 

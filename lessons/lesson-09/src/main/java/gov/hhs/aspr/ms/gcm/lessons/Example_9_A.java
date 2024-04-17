@@ -5,9 +5,9 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.disease.DiseasePluginData;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPlugin;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
-import gov.hhs.aspr.ms.gcm.nucleus.ExperimentStatusConsole;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentStatusConsole;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 /* start code_ref=experiments_example_9_A|code_cap=Example 9 replaces Example 8's use of the simulation with an experiment.*/
 public final class Example_9_A {

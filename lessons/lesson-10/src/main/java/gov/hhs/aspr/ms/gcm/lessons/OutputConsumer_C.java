@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons;
 
 import java.util.function.Consumer;
 
-import gov.hhs.aspr.ms.gcm.nucleus.ExperimentContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentContext;
 
 /* start code_ref=output_consumer_C|code_cap=The output consumer C demonstrates the broader life cycle of the experiment context by printing out experiment and scenario status while still printing output to the console.*/
 public class OutputConsumer_C implements Consumer<ExperimentContext> {

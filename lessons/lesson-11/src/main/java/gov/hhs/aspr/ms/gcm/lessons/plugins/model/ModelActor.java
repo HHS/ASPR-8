@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.disease.DiseaseDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public final class ModelActor {
 

@@ -122,6 +122,7 @@
 
     <modules>
         <module>simulation</module>
+        <module>pipeline</module>
         <module>lessons</module>
     </modules>
 

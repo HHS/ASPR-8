@@ -5,22 +5,22 @@ import java.util.List;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Material;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialsProducer;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Resource;
-import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
-import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.materials.events.StageOfferUpdateEvent;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionId;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
-import gov.hhs.aspr.ms.gcm.plugins.resources.datamanagers.ResourcesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.events.StageOfferUpdateEvent;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support.RegionId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.resources.datamanagers.ResourcesDataManager;
 
 public final class VaccineProductionReport extends PeriodicReport {
 

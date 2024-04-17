@@ -7,7 +7,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.TreatmentManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DeathReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.QuestionnaireReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.TreatmentReport;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

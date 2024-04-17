@@ -9,12 +9,12 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.PeriodicReport;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.PeriodicReport;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public class StatelessVaccineReport extends PeriodicReport {

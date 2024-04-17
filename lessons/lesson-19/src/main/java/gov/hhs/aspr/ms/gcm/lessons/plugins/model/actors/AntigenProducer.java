@@ -9,15 +9,15 @@ import org.apache.commons.math3.util.FastMath;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.Material;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.MaterialManufactureSpecification;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.materials.datamangers.MaterialsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchConstructionInfo;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialsProducerId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageConversionInfo;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.StageId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.datamangers.MaterialsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.BatchConstructionInfo;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialsProducerId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.StageConversionInfo;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.StageId;
 
 public final class AntigenProducer {
 	private ActorContext actorContext;

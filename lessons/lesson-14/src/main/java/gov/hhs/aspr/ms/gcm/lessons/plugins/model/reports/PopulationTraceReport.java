@@ -1,13 +1,13 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports;
 
-import gov.hhs.aspr.ms.gcm.nucleus.ReportContext;
-import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonAdditionEvent;
-import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentRemovalEvent;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportHeader;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportItem;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportLabel;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.events.PersonAdditionEvent;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.events.PersonImminentRemovalEvent;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportHeader;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportItem;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
 
 public final class PopulationTraceReport {
 	private final ReportLabel reportLabel;

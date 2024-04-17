@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model.support;
 
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.BatchId;
-import gov.hhs.aspr.ms.gcm.plugins.materials.support.MaterialId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.BatchId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialId;
 
 public final class MaterialManufactureSpecification {
 

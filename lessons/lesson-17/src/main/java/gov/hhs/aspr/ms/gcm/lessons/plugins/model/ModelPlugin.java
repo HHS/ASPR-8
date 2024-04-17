@@ -6,8 +6,8 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.SchoolManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.TeleworkManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.ContagionReport;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.DiseaseStateReport;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
 
 public final class ModelPlugin {
 	private ModelPlugin() {
