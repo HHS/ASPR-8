@@ -12,10 +12,10 @@ on:
   push:
     branches: [ "dev" ]
   pull_request:
-    branches-ignore: ["main", "master"]
+    branches-ignore: ["main"]
 
 jobs:
-  build:
+  dev-build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout GCM
@@ -33,16 +33,22 @@ jobs:
         echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
     - name: Checkout Util
+      if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
       uses: actions/checkout@v4
       with:
         repository: HHS/ASPR-ms-util
         path: util
-        ref: ${{ (endsWith(env.util_version, 'SNAPSHOT') && 'dev') || env.util_version }}
+        ref: dev
   
     - name: Build Util
+      if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
       run: mvn clean install -DskipTests --file util/pom.xml
+
     - name: Build GCM
       run: mvn clean install --file pom.xml
+
+    - name: Build GCM Pipeline
+      run: mvn clean install --file pipeline/pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph
