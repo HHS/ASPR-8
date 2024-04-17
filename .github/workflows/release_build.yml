@@ -45,6 +45,3 @@ jobs:
         tag: "v${{ env.version }}"
         generateReleaseNotes: true
         skipIfReleaseExists: true
-
-    - name: Build GCM Pipeline
-      run: mvn clean install -Pjavadoc --file pipeline/pom.xml

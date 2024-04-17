@@ -37,9 +37,6 @@ jobs:
 
     - name: Build GCM
       run: mvn clean install -Pjavadoc,jacoco --file pom.xml
-
-    - name: Build GCM Pipeline
-      run: mvn clean install -Pjavadoc,jacoco --file pipeline/pom.xml
       
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph
