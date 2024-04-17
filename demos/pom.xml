@@ -4,25 +4,33 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>gov.hhs.aspr.ms.gcm</groupId>
-        <artifactId>parent</artifactId>
-        <version>${revision}</version>
-    </parent>
-
     <!-- Artifact -->
     <groupId>gov.hhs.aspr.ms.gcm.demos</groupId>
     <artifactId>parent</artifactId>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>GCM: Demos</name>
     <description>Parent Pom for GCM Demos</description>
 
+     <!-- Properties -->
+     <properties>
+        <revision>4.2.0-SNAPSHOT</revision>
+
+        <!-- basic project properties -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+
+         <!-- plugin versions -->
+         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>gov.hhs.aspr.ms.gcm</groupId>
-                <artifactId>simulation</artifactId>
+                <groupId>gov.hhs.aspr.ms</groupId>
+                <artifactId>gcm</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>
@@ -30,33 +38,50 @@
 
     <dependencies>
         <dependency>
-            <groupId>gov.hhs.aspr.ms.gcm</groupId>
-            <artifactId>simulation</artifactId>
+            <groupId>gov.hhs.aspr.ms</groupId>
+            <artifactId>gcm</artifactId>
         </dependency>
     </dependencies>
 
-    <modules>
-        <module>gcm-taskit</module>
-    </modules>
-
     <build>
-        <plugins>
-            <!-- for skipping parent install-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${flatten-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
-            <!-- for skipping parent deployment -->
+        <plugins>
+            <!-- used with the ${revision} for versioning, creates a pom that has the version replaced with the value of ${revision} -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <!-- enable flattening -->
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <flattenMode>ossrh</flattenMode>
+                            <flattenDependencyMode>all</flattenDependencyMode>
+                        </configuration>
+                    </execution>
+                    <!-- ensure proper cleanup -->
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
