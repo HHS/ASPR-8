@@ -10,7 +10,7 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>GCM</name>
+    <name>General Computational Model</name>
     <description>Parent pom for the GCM Simulation.</description>
     <url>https://github.com/HHS/ASPR-8</url>
 
@@ -19,6 +19,10 @@
         <license>
             <name>GNU GENERAL PUBLIC LICENSE v3</name>
             <url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+        </license>
+        <license>
+            <name>HHS Vulnerability Disclosure Policy</name>
+            <url>https://www.hhs.gov/vulnerability-disclosure-policy/index.html</url>
         </license>
     </licenses>
 
@@ -59,12 +63,12 @@
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-install-plugin.version>3.1.1</maven-install-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.2</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.4.0</central-publishing-maven-plugin.version>
 
         <!-- dependency versions -->
-        <util.version>4.1.0</util.version>
+        <util.version>4.1.2</util.version>
         <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
         <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
     </properties>
@@ -151,18 +155,18 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>${maven-install-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>${maven-deploy-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -237,25 +241,6 @@
                 </executions>
             </plugin>
 
-            <!-- for skipping parent install-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <inherited>false</inherited>
-            </plugin>
-
-            <!-- for skipping parent deployment -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-                <inherited>false</inherited>
-            </plugin>
         </plugins>
     </build>
 
