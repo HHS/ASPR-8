@@ -16,7 +16,6 @@ updates:
         patterns:
           - "org.codehaus.mojo:flatten-maven-plugin"
           - "org.apache.maven.plugins*"
-          - "org.sonatype.central"
       deploy-plugins:
         patterns:
           - "org.sonatype.central"
