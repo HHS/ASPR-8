@@ -35,10 +35,6 @@
         </dependency>
     </dependencies>
 
-    <modules>
-        <module>gcm-taskit</module>
-    </modules>
-
     <build>
         <plugins>
             <!-- for skipping parent install-->

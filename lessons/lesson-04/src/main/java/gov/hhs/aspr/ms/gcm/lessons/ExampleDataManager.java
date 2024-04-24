@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons;
 
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 
 /* start code_ref=data_managers_example_data_manager|code_cap=The example data manager manages the state of two properties and prints to the console when changes are made.*/
 public final class ExampleDataManager extends DataManager {

@@ -14,10 +14,89 @@
 	<artifactId>simulation</artifactId>
 	<name>GCM: Simulation</name>
 	<description>The General Comuptational Model (GCM) is a Java based simulation framework for building disease progression models.</description>
+	<url>https://github.com/HHS/ASPR-8</url>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+					<tokenAuth>true</tokenAuth>
+					<deploymentName>ASPR MS GCM Simulation</deploymentName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>
-			<id>release</id>
+			<id>javadoc</id>
+			<build>
+				<plugins>
+					<!--Attaches javadoc jar to project -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<doclint>all,-missing</doclint>
+							<additionalDependencies>
+								<additionalDependency>
+									<groupId>gov.hhs.aspr.ms</groupId>
+									<artifactId>util</artifactId>
+									<version>${util.version}</version>
+								</additionalDependency>
+								<additionalDependency>
+									<groupId>org.junit.jupiter</groupId>
+									<artifactId>junit-jupiter-api</artifactId>
+									<version>${junit-jupiter-engine.version}</version>
+								</additionalDependency>
+							</additionalDependencies>
+							<author>false</author>
+							<additionalJOptions>
+								<additionalJOption>-Xmaxerrs</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+								<additionalJOption>-Xmaxwarns</additionalJOption>
+								<additionalJOption>65536</additionalJOption>
+							</additionalJOptions>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>sign</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jacoco</id>
 			<build>
 				<plugins>
 					<!-- Jacoco Coverage Check -->
@@ -66,43 +145,6 @@
 										</rule>
 									</rules>
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!--Attaches javadoc jar to project -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<configuration>
-							<doclint>all,-missing</doclint>
-							<additionalDependencies>
-								<additionalDependency>
-									<groupId>gov.hhs.aspr.ms</groupId>
-									<artifactId>util</artifactId>
-									<version>${util.version}</version>
-								</additionalDependency>
-								<additionalDependency>
-									<groupId>org.junit.jupiter</groupId>
-									<artifactId>junit-jupiter-api</artifactId>
-									<version>${junit-jupiter-engine.version}</version>
-								</additionalDependency>
-							</additionalDependencies>
-							<author>false</author>
-							<additionalJOptions>
-								<additionalJOption>-Xmaxerrs</additionalJOption>
-								<additionalJOption>65536</additionalJOption>
-								<additionalJOption>-Xmaxwarns</additionalJOption>
-								<additionalJOption>65536</additionalJOption>
-							</additionalJOptions>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>

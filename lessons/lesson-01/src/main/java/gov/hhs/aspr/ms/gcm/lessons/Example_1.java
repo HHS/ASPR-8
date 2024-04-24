@@ -1,7 +1,7 @@
 /*start code_ref=hello_world_short|code_cap=Building and executing an empty simulation.*/
 package gov.hhs.aspr.ms.gcm.lessons;
 
-import gov.hhs.aspr.ms.gcm.nucleus.Simulation;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Simulation;
 
 public final class Example_1 {
 

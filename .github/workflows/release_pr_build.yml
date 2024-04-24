@@ -13,7 +13,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  release-pr-build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout GCM
@@ -25,9 +25,19 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Build GCM
-      run: mvn clean install -Prelease --file pom.xml
+    - name: Get Version
+      run: |
+        echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
+    - name: Version Is Snapshot
+      if: ${{ endsWith(env.version, 'SNAPSHOT') }}
+      run: |
+        echo "Version is a SNAPSHOT version. Update version to proper version."
+        exit 1
+
+    - name: Build GCM
+      run: mvn clean install -Pjavadoc,jacoco --file pom.xml
+      
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
    # - name: Update dependency graph
      # uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6

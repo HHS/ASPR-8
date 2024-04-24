@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.family;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.family.datamanagers.FamilyDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.person.PersonPluginId;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public class FamilyPlugin {
 

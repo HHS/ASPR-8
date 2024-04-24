@@ -8,14 +8,14 @@ import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.support.VaccineError;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.support.VaccineInitialization;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
-import gov.hhs.aspr.ms.gcm.nucleus.Event;
-import gov.hhs.aspr.ms.gcm.plugins.people.datamanagers.PeopleDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonImminentAdditionEvent;
-import gov.hhs.aspr.ms.gcm.plugins.people.events.PersonRemovalEvent;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonError;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.events.PersonImminentAdditionEvent;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.events.PersonRemovalEvent;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 

@@ -1,6 +1,6 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.support.GlobalPropertyId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.support.GlobalPropertyId;
 
 public enum GlobalProperty implements GlobalPropertyId {
 	SUSCEPTIBLE_POPULATION_PROPORTION, // the fraction of the population that is susceptible

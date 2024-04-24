@@ -6,20 +6,20 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.AgeGroup;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.DiseaseState;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.datamanagers.PartitionsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Equality;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.LabelSet;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Labeler;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.Partition;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionSampler;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.PartitionsContext;
-import gov.hhs.aspr.ms.gcm.plugins.partitions.support.filters.Filter;
-import gov.hhs.aspr.ms.gcm.plugins.people.support.PersonId;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.FunctionalPersonPropertyLabeler;
-import gov.hhs.aspr.ms.gcm.plugins.personproperties.support.PersonPropertyFilter;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.datamanagers.PartitionsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Equality;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSet;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Labeler;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionSampler;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.datamanagers.PersonPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.FunctionalPersonPropertyLabeler;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.PersonPropertyFilter;
 
 public class PartitionVaccinator {
 

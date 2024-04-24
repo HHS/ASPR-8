@@ -3,7 +3,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.PersonMover;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.RegionCreator;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.Vaccinator;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

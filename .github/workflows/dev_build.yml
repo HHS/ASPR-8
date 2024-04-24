@@ -12,10 +12,10 @@ on:
   push:
     branches: [ "dev" ]
   pull_request:
-    branches-ignore: ["main"]
+    branches: [ "dev" ]
 
 jobs:
-  build:
+  dev-build:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout GCM

@@ -7,11 +7,11 @@ import org.apache.commons.math3.util.FastMath;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.Region;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.RegionProperty;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.regions.datamanagers.RegionsDataManager;
-import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData;
-import gov.hhs.aspr.ms.gcm.plugins.regions.support.RegionConstructionData.Builder;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.datamanagers.RegionsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support.RegionConstructionData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support.RegionConstructionData.Builder;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 public class RegionCreator {
 	/* start code_ref= regions_plugin_region_creator_add_region|code_cap=When the region creator actor adds a new region, it assigns a random lat-lon corrdinate and possibly assigns a vaccine priority status to the region. */

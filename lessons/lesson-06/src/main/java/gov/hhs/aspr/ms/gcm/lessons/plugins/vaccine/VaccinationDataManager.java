@@ -6,8 +6,8 @@ import java.util.Set;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.people.PersonRemovalEvent;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.DataManagerContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 
 /* start code_ref=plugin_dependencies_vaccine_data_manager|code_cap=The vaccination manager tracks the vaccination status of each person, reacting to the person removal as needed.*/
 public final class VaccinationDataManager extends DataManager {

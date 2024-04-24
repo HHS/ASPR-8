@@ -16,7 +16,7 @@ on:
     branches: ["main"]
 
 jobs:
-  create-release:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -31,9 +31,9 @@ jobs:
         distribution: 'temurin'
 
     - name: Build GCM
-      run: mvn clean install -Prelease --file pom.xml
+      run: mvn clean deploy -Pjavadoc,sign --file pom.xml
 
-    - name: Get Version
+    - name: Get GCM Version
       run: |
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 

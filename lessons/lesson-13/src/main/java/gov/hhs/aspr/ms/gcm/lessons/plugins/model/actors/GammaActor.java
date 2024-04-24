@@ -3,8 +3,8 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors;
 import java.util.stream.IntStream;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
-import gov.hhs.aspr.ms.gcm.nucleus.ActorContext;
-import gov.hhs.aspr.ms.gcm.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 
 /* start code_ref= global_proerties_plugin_gamma_actor|code_cap=The gamma actor sets the value of the GAMMA property over time as a function of the ALPHA and BETA properties.*/
 public final class GammaActor {

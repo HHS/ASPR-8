@@ -4,7 +4,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.PopulationLoader;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.Vaccinator;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.actors.VaccineEducator;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.reports.VaccineReport;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class ModelPlugin {
 	private ModelPlugin() {

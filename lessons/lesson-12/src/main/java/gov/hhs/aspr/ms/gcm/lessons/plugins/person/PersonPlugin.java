@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.person;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.person.datamanagers.PersonDataManager;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public class PersonPlugin {
 

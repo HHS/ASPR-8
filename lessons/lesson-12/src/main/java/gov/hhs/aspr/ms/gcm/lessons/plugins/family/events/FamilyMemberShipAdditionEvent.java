@@ -2,7 +2,7 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.family.events;
 
 import gov.hhs.aspr.ms.gcm.lessons.plugins.family.support.FamilyId;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.person.support.PersonId;
-import gov.hhs.aspr.ms.gcm.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 
 public final class FamilyMemberShipAdditionEvent implements Event {
 

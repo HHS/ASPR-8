@@ -8,14 +8,14 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.disease.DiseasePluginData;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelPlugin;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPlugin;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
-import gov.hhs.aspr.ms.gcm.nucleus.Dimension;
-import gov.hhs.aspr.ms.gcm.nucleus.Experiment;
-import gov.hhs.aspr.ms.gcm.nucleus.ExperimentParameterData;
-import gov.hhs.aspr.ms.gcm.nucleus.FunctionalDimension;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.StochasticsPlugin;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.datamanagers.StochasticsPluginData;
-import gov.hhs.aspr.ms.gcm.plugins.stochastics.support.WellState;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPlugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsPluginData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support.WellState;
 
 public final class Example_11_A {
 

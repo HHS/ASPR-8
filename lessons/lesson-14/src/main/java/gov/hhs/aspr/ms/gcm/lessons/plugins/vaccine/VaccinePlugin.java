@@ -3,9 +3,9 @@ package gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.ModelReportLabel;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.datamanagers.VaccinationDataManager;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.reports.VaccineReport;
-import gov.hhs.aspr.ms.gcm.nucleus.Plugin;
-import gov.hhs.aspr.ms.gcm.plugins.people.PeoplePluginId;
-import gov.hhs.aspr.ms.gcm.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.PeoplePluginId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
 
 public class VaccinePlugin {
 

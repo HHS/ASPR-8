@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.lessons.plugins.model;
 
-import gov.hhs.aspr.ms.gcm.nucleus.PluginId;
-import gov.hhs.aspr.ms.gcm.nucleus.SimplePluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginId;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.SimplePluginId;
 
 public final class ModelPluginId {
 	private ModelPluginId() {
