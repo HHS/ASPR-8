@@ -25,7 +25,7 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Get GCM Version
+    - name: Get Version
       run: |
         echo "version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
 
