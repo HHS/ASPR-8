@@ -19,11 +19,13 @@ updates:
       deploy-plugins:
         patterns:
           - "org.sonatype.central"
+      aspr-ms-dependencies:
+        patterns:
+          - "gov.hhs.aspr.ms:util"
       dependencies:
         patterns:
           - "org.apache.commons:commons-math3"
           - "net.jcip:jcip-annotations"
-          - "gov.hhs.aspr.ms.util"
       test-dependencies:
         patterns:
           - "org.jacoco*"
