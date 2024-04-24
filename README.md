@@ -11,6 +11,8 @@ Users of GCM should have a general familiarity with Java and object oriented pro
 
 This repository contains the source code, along with a set of lessons that have been created to aide new users with using this simulation framework.
 
+As of v4.2.0, this project is in Maven Central.
+
 ## License
 Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information.
 
