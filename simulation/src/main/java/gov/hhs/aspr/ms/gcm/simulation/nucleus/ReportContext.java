@@ -132,11 +132,15 @@ public final class ReportContext {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain NucleusError#NULL_DATA_VIEW_CLASS}
+	 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
 	 *                           if the class reference is null</li>
-	 *                           <li>{@linkplain NucleusError#UNKNOWN_DATA_VIEW} if
-	 *                           the class reference does not correspond to a
-	 *                           contained data view</li>
+	 *                           <li>{@linkplain NucleusError#UNKNOWN_DATA_MANAGER}
+	 *                           if the class reference does not correspond to a
+	 *                           contained datamanager</li>
+	 *                           <li>
+	 *                           {@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS}
+	 *                           if the class reference points to more than 1
+	 *                           datamanager</li>
 	 *                           </ul>
 	 */
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
@@ -179,7 +183,6 @@ public final class ReportContext {
 	 *                           if this method is invoked before the termination of
 	 *                           the simulation</li>
 	 *                           </ul>
-	 * 
 	 */
 	public List<ReportPlan> retrievePlans() {
 		return simulation.retrievePlansForReport();

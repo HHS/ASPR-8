@@ -23,8 +23,6 @@ public final class ObjectPropertyManager implements IndexedPropertyManager {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@linkplain PropertyError#NEGATIVE_INITIAL_SIZE}
-	 *                           if the initial size is negative</li>
 	 *                           <li>{@linkplain PropertyError#NULL_PROPERTY_DEFINITION}
 	 *                           if the property definition is null</li>
 	 *                           </ul>
