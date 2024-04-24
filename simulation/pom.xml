@@ -16,6 +16,12 @@
 	<description>The General Comuptational Model (GCM) is a Java based simulation framework for building disease progression models.</description>
 	<url>https://github.com/HHS/ASPR-8</url>
 
+	<scm>
+        <connection>scm:git:git://github.com/HHS/ASPR-8.git</connection>
+        <developerConnection>scm:git:ssh://github.com:HHS/ASPR-8.git</developerConnection>
+        <url>https://github.com/HHS/ASPR-8/tree/main</url>
+    </scm>
+
 	<build>
 		<plugins>
 			<plugin>
