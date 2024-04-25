@@ -1,10 +1,9 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 
@@ -32,8 +31,8 @@ public class BasePeopleContainer implements PeopleContainer {
 
 	private final boolean supportRunContinuity;
 
-	public BasePeopleContainer(PartitionsContext partitionsContext, boolean supportRunContinuity) {
-		this.peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
+	public BasePeopleContainer(PeopleDataManager peopleDataManager, boolean supportRunContinuity) {
+		this.peopleDataManager = peopleDataManager;
 		this.supportRunContinuity = supportRunContinuity;
 
 		if (supportRunContinuity) {
