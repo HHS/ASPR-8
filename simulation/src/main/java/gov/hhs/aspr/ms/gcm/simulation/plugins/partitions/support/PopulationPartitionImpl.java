@@ -16,12 +16,12 @@ import org.apache.commons.math3.util.FastMath;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers.BasePeopleContainer;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers.PeopleContainer;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.TrueFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers.BasePeopleContainer;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers.PeopleContainer;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support.RandomNumberGeneratorId;
 import gov.hhs.aspr.ms.util.combinatorics.TupleGenerator;
@@ -426,7 +426,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(partitionsContext,
+			
+			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(peopleDataManager,
 					supportRunContinuity);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			final LabelSet labelSet = getLabelSet(cleanedKey);
@@ -1020,7 +1021,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(partitionsContext, supportRunContinuity));
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(peopleDataManager, supportRunContinuity));
 			final LabelSet labelSet = getLabelSet(cleanedNewKey);
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}
