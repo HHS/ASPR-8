@@ -6,11 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: GCM Development Build
+name: GCM Development PR Build
 
 on:
-  push:
-    branches: [ "dev" ]
+  pull_request:
+    branches-ignore: ["main", "master"]
 
 jobs:
   dev-build:
