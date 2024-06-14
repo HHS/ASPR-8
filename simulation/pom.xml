@@ -17,10 +17,10 @@
 	<url>https://github.com/HHS/ASPR-8</url>
 
 	<scm>
-        <connection>scm:git:git://github.com/HHS/ASPR-8.git</connection>
-        <developerConnection>scm:git:ssh://github.com:HHS/ASPR-8.git</developerConnection>
-        <url>https://github.com/HHS/ASPR-8/tree/main</url>
-    </scm>
+		<connection>scm:git:git://github.com/HHS/ASPR-8.git</connection>
+		<developerConnection>scm:git:ssh://github.com:HHS/ASPR-8.git</developerConnection>
+		<url>https://github.com/HHS/ASPR-8/tree/main</url>
+	</scm>
 
 	<build>
 		<plugins>
@@ -32,6 +32,8 @@
 					<publishingServerId>central</publishingServerId>
 					<tokenAuth>true</tokenAuth>
 					<deploymentName>ASPR MS GCM Simulation</deploymentName>
+					<autoPublish>true</autoPublish>
+					<waitUntil>published</waitUntil>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -18,6 +18,16 @@ Distributed under the GPLv3 License. See [LICENSE](LICENSE) for more information
 
 Please read the [HHS vulnerability discloure](https://www.hhs.gov/vulnerability-disclosure-policy/index.html).
 
+## Usage 
+To use this project in your project, simply add the following dependency to your `dependencies` section of your pom.xml file.
+```
+<dependency>
+    <groupId>gov.hhs.aspr.ms.gcm</groupId>
+    <artifactId>simulation</artifactId>
+    <version>4.2.0</version>
+</dependency>
+```
+
 ## Overview
 There are 3 core tenants to GCM.
 
