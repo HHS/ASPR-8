@@ -38,7 +38,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	/**
 	 * Constructs the people container
 	 * 
-	 * @throws ContractException {@linkplain PartitionError#NULL_PEOPLE_DATA_MANAGER}
+	 * @throws ContractException {@linkplain PersonError#NULL_PEOPLE_DATA_MANAGER}
 	 *                           if the person data view is null
 	 */
 	public TreeBitSetPeopleContainer(PeopleDataManager personDataManger) {
