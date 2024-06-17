@@ -68,7 +68,7 @@ jobs:
     env:
       VERSION: ${{ needs.release.outputs.gcm_version }}
     steps:
-      - name: Checkout GCM
+      - name: Checkout GCM Taskit
         uses: actions/checkout@v4
         with:
           repository: HHS/ASPR-ms-gcm-taskit
@@ -81,9 +81,9 @@ jobs:
 
       - name: Increment GCM Taskit Version
         run: |
-          gcm_taskit_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)
-          echo GCM Taskit Version: $gcm_taskit_version
-          parts=( ${gcm_version//./ } )
+          current_version=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout --file pom.xml)
+          echo GCM Taskit Version: $current_version
+          parts=( ${current_version//./ } )
           bv=$((parts[2] + 1))
           new_version="${parts[0]}.${parts[1]}.${bv}"
           echo New GCM Taskit Version: $new_version
