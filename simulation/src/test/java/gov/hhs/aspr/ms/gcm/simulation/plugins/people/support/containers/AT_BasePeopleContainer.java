@@ -1,21 +1,21 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_BasePeopleContainer {
 
-	private PeopleContainer getPeopleContainer(PartitionsContext partitionsContext) {
-		return new BasePeopleContainer(partitionsContext,false);
+	private PeopleContainer getPeopleContainer(PeopleDataManager peopleDataManager) {
+		return new BasePeopleContainer(peopleDataManager,false);
 	}
 
 	@Test
-	@UnitTestConstructor(target = BasePeopleContainer.class, args = { PartitionsContext.class, boolean.class})
+	@UnitTestConstructor(target = BasePeopleContainer.class, args = { PeopleDataManager.class, boolean.class})
 	public void testConstructor() {
 		// nothing to test
 	}

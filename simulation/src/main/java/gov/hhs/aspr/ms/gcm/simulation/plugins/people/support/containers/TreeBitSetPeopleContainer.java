@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
@@ -38,12 +38,12 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	/**
 	 * Constructs the people container
 	 * 
-	 * @throws ContractException {@linkplain PartitionError#NULL_PEOPLE_DATA_MANAGER}
+	 * @throws ContractException {@linkplain PersonError#NULL_PEOPLE_DATA_MANAGER}
 	 *                           if the person data view is null
 	 */
 	public TreeBitSetPeopleContainer(PeopleDataManager personDataManger) {
 		if (personDataManger == null) {
-			throw new ContractException(PartitionError.NULL_PEOPLE_DATA_MANAGER);
+			throw new ContractException(PersonError.NULL_PEOPLE_DATA_MANAGER);
 		}
 		blockSize = 63;
 		this.peopleDataManager = personDataManger;

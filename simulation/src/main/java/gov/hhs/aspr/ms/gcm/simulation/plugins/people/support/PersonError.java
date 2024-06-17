@@ -21,7 +21,7 @@ public enum PersonError implements ContractError {
 	NULL_PERSON_RANGE("Null person range"),// 
 	PERSON_ASSIGNMENT_TIME_IN_FUTURE("The person assignment time from the plugin data is greater than the current time in the simulation"),//
 	UNKNOWN_PERSON_ID("Unknown person id"),//
-	
+	NULL_PEOPLE_DATA_MANAGER("Null people data manager"),//
 	;
 
 	private final String description;

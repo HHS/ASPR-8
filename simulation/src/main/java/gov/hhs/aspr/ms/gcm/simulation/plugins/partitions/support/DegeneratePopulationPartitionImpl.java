@@ -9,12 +9,12 @@ import java.util.Optional;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers.BasePeopleContainer;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers.PeopleContainer;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.TrueFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers.BasePeopleContainer;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers.PeopleContainer;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support.RandomNumberGeneratorId;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -67,10 +67,11 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			}
 			list.add(filterSensitivity);
 		}
-
-		peopleContainer = new BasePeopleContainer(partitionsContext, supportRunContinuity);
-
+		
 		final PeopleDataManager peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
+		peopleContainer = new BasePeopleContainer(peopleDataManager, supportRunContinuity);
+
+		
 		final int personIdLimit = peopleDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
 			if (peopleDataManager.personIndexExists(i)) {

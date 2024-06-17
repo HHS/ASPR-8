@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 /*
  * Manual performance tuning test turned off until adoption of JOL or another memory assessment tool for post-8 java

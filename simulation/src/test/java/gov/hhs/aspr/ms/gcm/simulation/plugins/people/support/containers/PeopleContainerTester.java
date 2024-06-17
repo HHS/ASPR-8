@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -17,12 +17,10 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestSimulation;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.TestPartitionsContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonConstructionData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.testsupport.PeopleTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 
 /*
@@ -31,18 +29,20 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.Stochasti
 
 public class PeopleContainerTester {
 
-
-
-	public static void testGetPeople(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testGetPeople(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
 
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
@@ -86,19 +86,21 @@ public class PeopleContainerTester {
 
 	}
 
-	public static void testSafeAdd(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testSafeAdd(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -132,17 +134,21 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testUnsafeAdd(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testUnsafeAdd(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -156,8 +162,8 @@ public class PeopleContainerTester {
 			}
 
 			/*
-			 * add the people to the people container -- we will not add
-			 * duplicates since this is the unsafe add.
+			 * add the people to the people container -- we will not add duplicates since
+			 * this is the unsafe add.
 			 */
 			for (PersonId personId : expectedPeople) {
 				peopleContainer.unsafeAdd(personId);
@@ -170,19 +176,21 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testRemove(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testRemove(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -197,7 +205,7 @@ public class PeopleContainerTester {
 
 			// add the people to the people container
 			for (PersonId personId : expectedPeople) {
-				peopleContainer.safeAdd(personId);				
+				peopleContainer.safeAdd(personId);
 			}
 
 			// show that the people container has the correct people with
@@ -217,17 +225,21 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testSize(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testSize(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -261,17 +273,21 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testContains(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testContains(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -310,17 +326,23 @@ public class PeopleContainerTester {
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
-	public static void testGetRandomPersonId(Function<PartitionsContext, PeopleContainer> provider, long seed) {
-		Factory factory = PartitionsTestPluginFactory.factory(100, seed, (c) -> {
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-			// get the people container to test
-			PeopleContainer peopleContainer = provider.apply(testPartitionsContext);
+	public static void testGetRandomPersonId(Function<PeopleDataManager, PeopleContainer> provider, long seed) {
+		PeopleTestPluginFactory.Factory factory = PeopleTestPluginFactory.factory(seed, (c) -> {
 
 			// get some data views that will be needed below
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
+			
+			// get the people container to test
+			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
+
+			for (int i = 0; i < 100; i++) {
+				peopleDataManager.addPerson(PersonConstructionData.builder().build());
+			}
+			
+			
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -345,8 +367,8 @@ public class PeopleContainerTester {
 			}
 
 			/*
-			 * Make some random selections from the people container. Show that
-			 * each selection is a person contained in the people container
+			 * Make some random selections from the people container. Show that each
+			 * selection is a person contained in the people container
 			 */
 			Set<PersonId> expectedPeopleSet = new LinkedHashSet<>(expectedPeopleList);
 			for (int i = 0; i < 1000; i++) {

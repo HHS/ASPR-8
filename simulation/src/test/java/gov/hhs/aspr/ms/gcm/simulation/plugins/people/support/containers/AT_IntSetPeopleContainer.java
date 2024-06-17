@@ -1,4 +1,4 @@
-package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.containers;
+package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestField;
@@ -20,7 +20,7 @@ public class AT_IntSetPeopleContainer {
 		assertEquals(80, IntSetPeopleContainer.DEFAULT_TARGET_DEPTH);
 	}
 
-	private PeopleContainer getPeopleContainer(PartitionsContext context) {
+	private PeopleContainer getPeopleContainer(PeopleDataManager peopleDataManager) {
 		return new IntSetPeopleContainer();
 	}
 
