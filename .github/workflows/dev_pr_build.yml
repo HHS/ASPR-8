@@ -26,9 +26,22 @@ jobs:
         distribution: 'temurin'
         cache: maven
     
-    - name: Get Util Version
+    - name: Get Taskit Version
       run: |
-        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
+        echo "taskit_version=v$(mvn help:evaluate -Dexpression=taskit.version -q -DforceStdout --file pom.xml)" >> "$GITHUB_ENV"
+
+    - name: Checkout Taskit
+      if: ${{ endsWith(env.taskit_version, 'SNAPSHOT') }}
+      uses: actions/checkout@v4
+      with:
+        repository: HHS/ASPR-ms-taskit
+        path: taskit
+        ref: dev
+
+    - name: Get Util Version
+      if: ${{ endsWith(env.taskit_version, 'SNAPSHOT') }}
+      run: |
+        echo "util_version=v$(mvn help:evaluate -Dexpression=util.version -q -DforceStdout --file taskit/pom.xml)" >> "$GITHUB_ENV"
 
     - name: Checkout Util
       if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
@@ -41,6 +54,10 @@ jobs:
     - name: Build Util
       if: ${{ endsWith(env.util_version, 'SNAPSHOT') }}
       run: mvn clean install -DskipTests --file util/pom.xml
+
+    - name: Build Taskit
+      if: ${{ endsWith(env.taskit_version, 'SNAPSHOT') }}
+      run: mvn clean install -DskipTests --file taskit/pom.xml
 
     - name: Build GCM
       run: mvn clean install --file pom.xml
