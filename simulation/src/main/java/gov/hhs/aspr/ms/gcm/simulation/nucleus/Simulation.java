@@ -322,15 +322,16 @@ public class Simulation {
 	}
 
 	protected void addActorPlan(ActorPlan plan) {
-
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		if (plan.consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 
+		
 		if (plan.time < time) {
 			throw new ContractException(NucleusError.PAST_PLANNING_TIME);
 		}
@@ -428,9 +429,9 @@ public class Simulation {
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
-
-		if (plan.consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 
 		if (plan.time < time) {
@@ -783,24 +784,24 @@ public class Simulation {
 			switch (plan.planner) {
 				case ACTOR:
 					ActorPlan actorPlan = (ActorPlan) plan;
-					if (actorPlan.consumer != null) {
+					
 						ActorContentRec actorContentRec = new ActorContentRec();
 						actorContentRec.actorId = actorPlan.actorId;
 						actorContentRec.actorPlan = actorPlan::execute;
 						actorQueue.add(actorContentRec);
 						executeActorQueue();
-					}
+					
 					break;
 				case DATA_MANAGER:
 					DataManagerPlan dmPlan = (DataManagerPlan) plan;
-					if (dmPlan.consumer != null) {
+					
 						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
 						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
 						dataManagerContentRec.dmPlan = dmPlan::execute;
 						dataManagerQueue.add(dataManagerContentRec);
 						executeDataManagerQueue();
 						executeActorQueue();
-					}
+					
 					break;
 
 				case REPORT:

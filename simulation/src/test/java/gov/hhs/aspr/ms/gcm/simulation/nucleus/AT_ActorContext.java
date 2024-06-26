@@ -192,20 +192,6 @@ public class AT_ActorContext {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		// test preconditions
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-			double scheduledTime = context.getTime() + 1;
-
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(null, scheduledTime));
-			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class, () -> context.addPlan((c) -> {
-			}, 0));
-			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
-
-		}));
-
 		/*
 		 * Have the actor add a plan and show that that plan executes
 		 */
@@ -233,6 +219,48 @@ public class AT_ActorContext {
 
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
+		 
+		// precondition test: if the consumer is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.addPlan(null,0);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
+
+		// precondition test: if the plan is scheduled for a time in the past
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+			.addPlugin(TestPlugin.getTestPlugin(
+					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+						c.addPlan((c2)->{},-10);
+					})).build()))//
+			.build()//
+			.execute();//
+		});
+		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+		// precondition test: if the plan is added to the simulation after event
+		// processing is finished
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+			.addPlugin(TestPlugin.getTestPlugin(
+					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+						c.subscribeToSimulationClose((c2)->{
+							c2.addPlan((c3)->{},0);	
+						});
+						
+					})).build()))//
+			.build()//
+			.execute();//
+		});
+		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
+
+		
 	}
 
 	@Test
@@ -240,22 +268,6 @@ public class AT_ActorContext {
 	public void testAddPlan_Plan() {
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		// test preconditions
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (context) -> {
-
-			ContractException contractException = assertThrows(ContractException.class, () -> context.addPlan(null));
-			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new ActorPlan(2, true, null)));
-			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new ActorPlan(0, true, (c) -> {
-					})));
-			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
-		}));
 
 		/*
 		 * Have the actor add a plan and show that that plan executes
@@ -285,6 +297,48 @@ public class AT_ActorContext {
 
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
+
+		// precondition test: if the plan is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.addPlan(null);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+		// precondition test: if the plan is scheduled for a time in the past
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+			.addPlugin(TestPlugin.getTestPlugin(
+					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+						c.addPlan(new ActorPlan(-10, (c3)->{}));
+					})).build()))//
+			.build()//
+			.execute();//
+		});
+		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+		// precondition test: if the plan is added to the simulation after event
+		// processing is finished
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+			.addPlugin(TestPlugin.getTestPlugin(
+					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+						c.subscribeToSimulationClose((c2)->{
+							c2.addPlan(new ActorPlan(0, (c3)->{}));	
+						});
+						
+					})).build()))//
+			.build()//
+			.execute();//
+		});
+		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
+
+
 	}
 
 	@Test
@@ -866,19 +920,19 @@ public class AT_ActorContext {
 		localDateTimes.add(LocalDateTime.of(2020, 3, 15, 22, 13, 18));
 		localDateTimes.add(LocalDateTime.of(2023, 12, 25, 15, 38, 19));
 
-		
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
-			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter( LocalDateTime.of(localDate, LocalTime.of(0, 0)));
-			for(LocalDateTime localDateTime : localDateTimes) {
-				assertEquals(simulationTimeConverter.getSimulationTime(localDateTime), c.getSimulationTime(localDateTime));
+			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter(
+					LocalDateTime.of(localDate, LocalTime.of(0, 0)));
+			for (LocalDateTime localDateTime : localDateTimes) {
+				assertEquals(simulationTimeConverter.getSimulationTime(localDateTime),
+						c.getSimulationTime(localDateTime));
 			}
-			
+
 		}));
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
 
 		SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
 		TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
@@ -889,8 +943,6 @@ public class AT_ActorContext {
 	@UnitTestMethod(target = ActorContext.class, name = "getLocalDateTime", args = { double.class })
 	public void testGetLocalDateTime() {
 
-		
-
 		LocalDate localDate = LocalDate.of(2020, 4, 1);
 		List<Double> times = new ArrayList<>();
 		times.add(-5.7);
@@ -900,10 +952,10 @@ public class AT_ActorContext {
 		times.add(137.765);
 		times.add(4000.5437);
 
-		
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter(LocalDateTime.of(localDate, LocalTime.of(0, 0)));
+			SimulationTimeConverter simulationTimeConverter = new SimulationTimeConverter(
+					LocalDateTime.of(localDate, LocalTime.of(0, 0)));
 			for (Double time : times) {
 				assertEquals(simulationTimeConverter.getLocalDateTime(time), c.getLocalDateTime(time));
 			}
@@ -911,7 +963,6 @@ public class AT_ActorContext {
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		
 		SimulationState simulationState = SimulationState.builder().setBaseDate(localDate).build();
 		TestSimulation.builder().setSimulationState(simulationState).addPlugin(testPlugin).build().execute();
 

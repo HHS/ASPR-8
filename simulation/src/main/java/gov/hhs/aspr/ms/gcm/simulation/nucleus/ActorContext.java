@@ -74,9 +74,6 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final ActorPlan plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN);
-		}
 		simulation.addActorPlan(plan);
 	}
 

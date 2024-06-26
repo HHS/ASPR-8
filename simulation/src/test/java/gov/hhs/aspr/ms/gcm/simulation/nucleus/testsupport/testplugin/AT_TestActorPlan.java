@@ -95,11 +95,10 @@ public class AT_TestActorPlan {
 		TestActorPlan plan2 = new TestActorPlan(4.5, (c) -> {
 		});
 		assertEquals(plan1.hashCode(), plan2.hashCode());
-
-		// via the copy constructor
-		plan1 = new TestActorPlan(4.5, (c) -> {
-		});
-		plan2 = new TestActorPlan(plan1);
+		
+		
+		plan1.execute(null);
+		plan2.execute(null);
 		assertEquals(plan1.hashCode(), plan2.hashCode());
 
 	}
