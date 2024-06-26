@@ -768,7 +768,7 @@ public class Simulation {
 			final Plan plan = planningQueue.poll();
 			// System.out.println(plan);
 
-			time = plan.time;
+			
 			if (plan.isActive) {
 				activePlanCount--;
 			}
@@ -777,6 +777,8 @@ public class Simulation {
 			if (plan.canceled) {
 				continue;
 			}
+			
+			time = plan.time;
 
 			switch (plan.planner) {
 				case ACTOR:
