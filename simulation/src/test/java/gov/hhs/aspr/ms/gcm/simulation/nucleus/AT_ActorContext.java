@@ -274,7 +274,7 @@ public class AT_ActorContext {
 		 */
 
 		MutableBoolean planExecuted = new MutableBoolean();
-		ActorPlan actorPlan = new ActorPlan(5, (c) -> {
+		ActorPlan actorPlan = new ConsumerActorPlan(5, (c) -> {
 			planExecuted.setValue(true);
 		});
 
@@ -315,7 +315,7 @@ public class AT_ActorContext {
 			Simulation.builder()//
 			.addPlugin(TestPlugin.getTestPlugin(
 					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-						c.addPlan(new ActorPlan(-10, (c3)->{}));
+						c.addPlan(new ConsumerActorPlan(-10, (c3)->{}));
 					})).build()))//
 			.build()//
 			.execute();//
@@ -329,7 +329,7 @@ public class AT_ActorContext {
 			.addPlugin(TestPlugin.getTestPlugin(
 					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 						c.subscribeToSimulationClose((c2)->{
-							c2.addPlan(new ActorPlan(0, (c3)->{}));	
+							c2.addPlan(new ConsumerActorPlan(0, (c3)->{}));	
 						});
 						
 					})).build()))//
@@ -985,7 +985,7 @@ public class AT_ActorContext {
 		double haltTime = 50;
 
 		for (int i = 1; i <= 100; i++) {
-			ActorPlan actorPlan = new ActorPlan(i, (c) -> {
+			ActorPlan actorPlan = new ConsumerActorPlan(i, (c) -> {
 			});
 			if (i > 50) {
 				expectedPlans.add(actorPlan);

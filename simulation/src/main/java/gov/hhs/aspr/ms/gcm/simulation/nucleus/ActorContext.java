@@ -51,7 +51,7 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		simulation.addActorPlan(new ActorPlan(planTime, consumer));
+		simulation.addActorPlan(new ConsumerActorPlan(planTime, consumer));
 	}
 
 	/**

@@ -22,7 +22,7 @@ public class TestActorPlan extends ActorPlan {
 	 *                           null
 	 */
 	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> consumer) {
-		super(scheduledTime, consumer);
+		super(scheduledTime);
 		if (consumer == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
@@ -72,7 +72,7 @@ public class TestActorPlan extends ActorPlan {
 	 * Constructs a test actor plan from another test actor plan.
 	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
-		super(testActorPlan.getTime(), testActorPlan.consumer);
+		super(testActorPlan.getTime());
 		executed = testActorPlan.executed;
 		consumer = testActorPlan.consumer;
 	}
@@ -87,7 +87,7 @@ public class TestActorPlan extends ActorPlan {
 	@Override
 	protected void execute(final ActorContext actorContext) {
 		try {
-			super.execute(actorContext);			
+			consumer.accept(actorContext);		
 		} finally {
 			executed = true;
 		}
