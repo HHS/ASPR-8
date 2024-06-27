@@ -39,7 +39,7 @@ public final class DataManagerContext {
 	 *                           
 	 */
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
+		simulation.addDataManagerPlan(dataManagerId, new ConsumerDataManagerPlan(planTime, consumer));
 	}
 
 	/**

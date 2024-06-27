@@ -324,7 +324,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
 			// schedule two passive plans
-			context.addPlan(new DataManagerPlan(5, (c) -> {
+			context.addPlan(new ConsumerDataManagerPlan(5, (c) -> {
 				planExecuted.setValue(true);
 			}));
 		}));
@@ -363,7 +363,7 @@ public class AT_DataManagerContext {
 					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-								c.addPlan(new DataManagerPlan(0, true, -2, (c2) -> {
+								c.addPlan(new ConsumerDataManagerPlan(0, true, -2, (c2) -> {
 								}));
 							})).build()))//
 					.build()//
@@ -377,7 +377,7 @@ public class AT_DataManagerContext {
 					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-								c.addPlan(new DataManagerPlan(-10, true, -1, (c2) -> {
+								c.addPlan(new ConsumerDataManagerPlan(-10, true, -1, (c2) -> {
 								}));
 							})).build()))//
 					.build()//
@@ -393,7 +393,7 @@ public class AT_DataManagerContext {
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 								c.subscribeToSimulationClose(c2 -> {
-									c2.addPlan(new DataManagerPlan(0, true, -1, (c3) -> {
+									c2.addPlan(new ConsumerDataManagerPlan(0, true, -1, (c3) -> {
 									}));
 								});
 							})).build()))//
@@ -1110,7 +1110,7 @@ public class AT_DataManagerContext {
 		double haltTime = 50;
 
 		for (int i = 1; i <= 100; i++) {
-			DataManagerPlan actorPlan = new DataManagerPlan(i, (c) -> {
+			DataManagerPlan actorPlan = new ConsumerDataManagerPlan(i, (c) -> {
 			});
 			if (i > 50) {
 				expectedPlans.add(actorPlan);

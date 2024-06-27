@@ -145,7 +145,7 @@ public class AT_ReportContext {
 
 		// precondition test : if the plan is added to the simulation after event processing is finished
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addPlan(new ReportPlan(0, (c1) -> {
+			c.addPlan(new ConsumerReportPlan(0, (c1) -> {
 				c1.subscribeToSimulationClose((c2->{					
 					c2.addPlan(c3->{},0);
 				}));
@@ -178,20 +178,20 @@ public class AT_ReportContext {
 		pluginDataBuilder.addTestReportPlan("actor", new TestReportPlan(4, (context) -> {
 
 			// schedule two passive plans
-			context.addPlan(new ReportPlan(5, (c) -> {
+			context.addPlan(new ConsumerReportPlan(5, (c) -> {
 				actualOuput.add("A");
 			}));
 
-			context.addPlan(new ReportPlan(6, (c) -> {
+			context.addPlan(new ConsumerReportPlan(6, (c) -> {
 				actualOuput.add("B");
 			}));
 
 			// schedule two more passive plans
-			context.addPlan(new ReportPlan(8, (c) -> {
+			context.addPlan(new ConsumerReportPlan(8, (c) -> {
 				actualOuput.add("C");
 			}));//
 
-			context.addPlan(new ReportPlan(9, (c) -> {
+			context.addPlan(new ConsumerReportPlan(9, (c) -> {
 				actualOuput.add("D");
 			}));
 		}));
@@ -223,23 +223,23 @@ public class AT_ReportContext {
 
 		// precondition test : if the plan is scheduled for the past
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addPlan(new ReportPlan(-1, (c1) -> {
+			c.addPlan(new ConsumerReportPlan(-1, (c1) -> {
 			}));
 		}));
 		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
 		// precondition test : if the arrival id is less than -1
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addPlan(new ReportPlan(0, -2, (c1) -> {
+			c.addPlan(new ConsumerReportPlan(0, -2, (c1) -> {
 			}));
 		}));
 		assertEquals(NucleusError.INVALID_PLAN_ARRIVAL_ID, contractException.getErrorType());
 
 		// precondition test : if the plan is added to the simulation after event processing is finished
 		contractException = assertThrows(ContractException.class, () -> testConsumer((c) -> {
-			c.addPlan(new ReportPlan(0, (c1) -> {
+			c.addPlan(new ConsumerReportPlan(0, (c1) -> {
 				c1.subscribeToSimulationClose((c2->{					
-					c2.addPlan(new ReportPlan(0,(c3->{})));
+					c2.addPlan(new ConsumerReportPlan(0,(c3->{})));
 				}));
 			}));
 		}));
@@ -738,7 +738,7 @@ public class AT_ReportContext {
 		double haltTime = 50;
 
 		for (int i = 1; i <= 100; i++) {
-			ReportPlan actorPlan = new ReportPlan(i, (c) -> {
+			ReportPlan actorPlan = new ConsumerReportPlan(i, (c) -> {
 			});
 			if (i > 50) {
 				expectedPlans.add(actorPlan);

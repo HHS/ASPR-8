@@ -10,6 +10,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.SchoolStatus;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ConsumerActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.datamanagers.GroupsDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support.GroupConstructionInfo;
@@ -41,7 +42,7 @@ public class SchoolManager {
 
 	private void planNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
-		ActorPlan plan = new ActorPlan(planTime,false,this::reviewSchools);				
+		ActorPlan plan = new ConsumerActorPlan(planTime,false,this::reviewSchools);				
 		actorContext.addPlan(plan);
 	}
 

@@ -43,7 +43,7 @@ public final class ReportContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		simulation.addReportPlan(new ReportPlan(planTime, consumer));
+		simulation.addReportPlan(new ConsumerReportPlan(planTime, consumer));
 	}
 
 	/**
