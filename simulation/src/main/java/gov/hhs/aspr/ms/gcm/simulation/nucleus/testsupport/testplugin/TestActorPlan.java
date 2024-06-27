@@ -12,6 +12,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public class TestActorPlan extends ActorPlan {
 	private boolean executed;
+	private Consumer<ActorContext> consumer;
 
 	/**
 	 * Constructs an actor action plan. If assignKey is false, then this actor
@@ -20,11 +21,12 @@ public class TestActorPlan extends ActorPlan {
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
 	 */
-	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> plan) {
-		super(scheduledTime, plan);
-		if (plan == null) {
+	public TestActorPlan(final double scheduledTime, Consumer<ActorContext> consumer) {
+		super(scheduledTime);
+		if (consumer == null) {
 			throw new ContractException(TestError.NULL_PLAN);
 		}
+		this.consumer = consumer;
 	}
 
 	/**
@@ -36,7 +38,7 @@ public class TestActorPlan extends ActorPlan {
 		int result = 1;
 		result = prime * result + (executed ? 1231 : 1237);
 		long temp;
-		temp = Double.doubleToLongBits(time);
+		temp = Double.doubleToLongBits(getTime());
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
@@ -60,18 +62,19 @@ public class TestActorPlan extends ActorPlan {
 			return false;
 		}
 
-		if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time)) {
+		if (Double.doubleToLongBits(getTime()) != Double.doubleToLongBits(other.getTime())) {
 			return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Constructs an test actor plan from another test actor plan.
+	 * Constructs a test actor plan from another test actor plan.
 	 */
 	public TestActorPlan(TestActorPlan testActorPlan) {
-		super(testActorPlan.time, testActorPlan.consumer);
+		super(testActorPlan.getTime());
 		executed = testActorPlan.executed;
+		consumer = testActorPlan.consumer;
 	}
 
 	/**
@@ -84,7 +87,7 @@ public class TestActorPlan extends ActorPlan {
 	@Override
 	protected void execute(final ActorContext actorContext) {
 		try {
-			consumer.accept(actorContext);
+			consumer.accept(actorContext);		
 		} finally {
 			executed = true;
 		}

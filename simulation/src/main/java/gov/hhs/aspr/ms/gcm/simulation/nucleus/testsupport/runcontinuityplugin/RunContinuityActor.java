@@ -10,6 +10,7 @@ import org.apache.commons.math3.util.Pair;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ConsumerActorPlan;
 
 public class RunContinuityActor implements Consumer<ActorContext> {
 	private final RunContinuityPluginData runContinuityPluginData;
@@ -29,7 +30,7 @@ public class RunContinuityActor implements Consumer<ActorContext> {
 			double time = pair.getFirst();
 			Consumer<ActorContext> consumer = pair.getSecond();
 
-			ActorPlan actorPlan = new ActorPlan(time, (c) -> {
+			ActorPlan actorPlan = new ConsumerActorPlan(time, (c) -> {
 				planMap.remove(i);
 				consumer.accept(actorContext);
 			});

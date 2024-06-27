@@ -1,27 +1,49 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
-import java.util.function.Consumer;
+public abstract class DataManagerPlan extends Plan {
+	// The data manager id is used by the simulation via package access
+	DataManagerId dataManagerId;
 
-public class DataManagerPlan extends Plan {
-    DataManagerId dataManagerId;
-    final Consumer<DataManagerContext> consumer;
+	
 
-    public DataManagerPlan(double time, boolean active, long arrivalId, Consumer<DataManagerContext> consumer) {
-        super(time, active, arrivalId, Planner.DATA_MANAGER);
-        this.consumer = consumer;
-    }
+	/**
+	 * Constructs the plan scheduled for the given time active status and arrivalId.
+	 * 
+	
+	 */
+	public DataManagerPlan(double time, boolean active, long arrivalId) {
+		super(time, active, arrivalId, Planner.DATA_MANAGER);
+		
+	}
 
-    public DataManagerPlan(double time, boolean active, Consumer<DataManagerContext> consumer) {
-        super(time, active, -1L, Planner.DATA_MANAGER);
-        this.consumer = consumer;
-    }
+	/**
+	 * Constructs the plan scheduled for the given time and active status.
+	 * The arrival id is set to -1L indicating that this is a new, non-deserialized
+	 * plan.
+	 
+	 * 
+	 */
+	public DataManagerPlan(double time, boolean active) {
+		super(time, active, -1L, Planner.DATA_MANAGER);
+		
+	}
 
-    public DataManagerPlan(double time, Consumer<DataManagerContext> consumer) {
-        super(time, true, -1L, Planner.DATA_MANAGER);
-        this.consumer = consumer;
-    }
-
-    void execute(DataManagerContext context) {
-        this.consumer.accept(context);
-    }
+	/**
+	 * Constructs the plan scheduled for the given time. The plan will
+	 * be active.The arrival id is set to -1L indicating that this is a new,
+	 * non-deserialized plan.
+	 * 
+	
+	 * 
+	 */
+	public DataManagerPlan(double time) {
+		super(time, true, -1L, Planner.DATA_MANAGER);
+		
+	}
+	
+	/**
+	 * Executes the data manager logic associated with the plan.
+	 */
+	protected abstract void execute(DataManagerContext context);
+	
 }

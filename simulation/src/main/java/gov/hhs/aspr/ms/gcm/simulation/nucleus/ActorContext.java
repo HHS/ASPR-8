@@ -51,7 +51,7 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ActorContext> consumer, final double planTime) {
-		simulation.addActorPlan(new ActorPlan(planTime, consumer));
+		simulation.addActorPlan(new ConsumerActorPlan(planTime, consumer));
 	}
 
 	/**
@@ -74,9 +74,6 @@ public final class ActorContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final ActorPlan plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN);
-		}
 		simulation.addActorPlan(plan);
 	}
 

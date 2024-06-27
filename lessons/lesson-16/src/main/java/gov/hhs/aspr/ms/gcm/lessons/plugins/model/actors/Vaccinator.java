@@ -10,6 +10,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.PersonProperty;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ConsumerActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.EventFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
@@ -46,7 +47,7 @@ public final class Vaccinator {
 			if (refusesVaccine) {
 				double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;
 
-				ActorPlan plan = new ActorPlan(planTime, (c) -> vaccinatePerson(personId));				
+				ActorPlan plan = new ConsumerActorPlan(planTime, (c) -> vaccinatePerson(personId));				
 				actorContext.addPlan(plan);
 				//record the plan for possible cancellation
 				actorPlans.put(personId, plan);
@@ -80,7 +81,7 @@ public final class Vaccinator {
 	/* start code_ref= person_properties_vaccinator_plan_vaccination|code_cap= Each unvaccinated person has a planned vaccination based on the VACCINE_ATTEMPT_INTERVAL global property. */
 	private void planVaccination(PersonId personId) {
 		double planTime = actorContext.getTime() + randomGenerator.nextDouble() * vaccineAttemptInterval;		
-		ActorPlan plan = new ActorPlan(planTime, (c) -> vaccinatePerson(personId));				
+		ActorPlan plan = new ConsumerActorPlan(planTime, (c) -> vaccinatePerson(personId));				
 		actorContext.addPlan(plan);
 		//record the plan for possible cancellation
 		actorPlans.put(personId, plan);

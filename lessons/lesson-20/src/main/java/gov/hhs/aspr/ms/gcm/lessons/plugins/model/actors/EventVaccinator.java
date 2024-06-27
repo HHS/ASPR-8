@@ -11,6 +11,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ConsumerActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.EventFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
@@ -215,7 +216,7 @@ public class EventVaccinator {
 	 * vaccinator selects from maintained sub-populations.
 	 */
 	private void planNextVaccination() {
-		futurePlan = new ActorPlan(interVaccinationTime + actorContext.getTime(), this::vaccinatePerson);
+		futurePlan = new ConsumerActorPlan(interVaccinationTime + actorContext.getTime(), this::vaccinatePerson);
 		actorContext.addPlan(futurePlan);
 	}
 

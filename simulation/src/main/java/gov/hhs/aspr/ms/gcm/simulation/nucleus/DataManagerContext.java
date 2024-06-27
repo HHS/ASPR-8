@@ -27,9 +27,7 @@ public final class DataManagerContext {
 	 * executed at the given time.
 	 * 
 	 * @throws ContractException
-	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
-	 *                           null</li>
+	 *                           <ul>                          
 	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
 	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
@@ -38,9 +36,10 @@ public final class DataManagerContext {
 	 *                           the plan is added to the simulation after event
 	 *                           processing is finished</li>
 	 *                           </ul>
+	 *                           
 	 */
 	public void addPlan(final Consumer<DataManagerContext> consumer, final double planTime) {
-		simulation.addDataManagerPlan(dataManagerId, new DataManagerPlan(planTime, consumer));
+		simulation.addDataManagerPlan(dataManagerId, new ConsumerDataManagerPlan(planTime, consumer));
 	}
 
 	/**
@@ -56,8 +55,8 @@ public final class DataManagerContext {
 	 *                           <ul>
 	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
 	 *                           null</li>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
-	 *                           plan consumer is null</li>
+	 *                           <li>{@link NucleusError#INVALID_PLAN_ARRIVAL_ID} if the
+	 *                           arrival id is less than -1</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -65,10 +64,7 @@ public final class DataManagerContext {
 	 *                           processing is finished</li>
 	 *                           </ul>
 	 */
-	public void addPlan(DataManagerPlan plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN);
-		}
+	public void addPlan(DataManagerPlan plan) {		
 		simulation.addDataManagerPlan(dataManagerId, plan);
 	}
 

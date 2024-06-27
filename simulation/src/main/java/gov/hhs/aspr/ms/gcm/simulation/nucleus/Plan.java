@@ -1,13 +1,20 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
+/**
+ * Base class for plans. It is purposely kept as a package access only class.
+ */
 abstract class Plan {
-	protected final double time;
-	protected final Planner planner;
-	protected final boolean isActive;
-
+	
+	//internal state of the plan is package access to make the sim slightly faster
+	final double time;
+	final Planner planner;
+	final boolean isActive;
 	boolean canceled = false;
 	long arrivalId = -1;
 
+	/**
+	 * Package access constructor
+	 */
 	Plan(double time, boolean active, long arrivalId, Planner planner) {
 		/*
 		 * Do we throw an execption here if the arrival id is < -1? Or do we detect this

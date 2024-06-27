@@ -232,18 +232,7 @@ public class AT_DataManagerContext {
 
 		// test preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-			double scheduledTime = context.getTime() + 1;
 
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(null, scheduledTime));
-			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class, () -> context.addPlan((c) -> {
-			}, 0));
-			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
-
-		}));
 
 		/*
 		 * Have the actor add a plan and show that that plan executes
@@ -273,6 +262,49 @@ public class AT_DataManagerContext {
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
 
+		// precondition test: if the plan is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.addPlan(null,0);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
+
+		// precondition test: if the plan is scheduled for a time in the past
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.addPlan((c2) -> {},-10);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+		// precondition test: if the plan is added to the simulation after event
+		// processing is finished
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.subscribeToSimulationClose(c2 -> {
+									c2.addPlan((c3) -> {},0);
+								});
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
+
+		
 	}
 
 	@Test
@@ -283,22 +315,6 @@ public class AT_DataManagerContext {
 
 		// test preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (context) -> {
-			double scheduledTime = context.getTime() + 1;
-
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new DataManagerPlan(scheduledTime, null)));
-			assertEquals(NucleusError.NULL_PLAN_CONSUMER, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class, () -> context.addPlan(null));
-			assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
-
-			contractException = assertThrows(ContractException.class,
-					() -> context.addPlan(new DataManagerPlan(-1, (c) -> {
-					})));
-			assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
-
-		}));
 
 		/*
 		 * Have the actor add a plan and show that that plan executes
@@ -308,7 +324,7 @@ public class AT_DataManagerContext {
 
 		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4, (context) -> {
 			// schedule two passive plans
-			context.addPlan(new DataManagerPlan(5, (c) -> {
+			context.addPlan(new ConsumerDataManagerPlan(5, (c) -> {
 				planExecuted.setValue(true);
 			}));
 		}));
@@ -327,6 +343,64 @@ public class AT_DataManagerContext {
 
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
+
+		// precondition test: if the plan is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.addPlan(null);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLAN, contractException.getErrorType());
+
+		// precondition test: if the arrival id is less than -1
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.addPlan(new ConsumerDataManagerPlan(0, true, -2, (c2) -> {
+								}));
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.INVALID_PLAN_ARRIVAL_ID, contractException.getErrorType());
+
+		// precondition test: if the plan is scheduled for a time in the past
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.addPlan(new ConsumerDataManagerPlan(-10, true, -1, (c2) -> {
+								}));
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
+
+		// precondition test: if the plan is added to the simulation after event
+		// processing is finished
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
+							.addTestDataManager("dm", () -> new TestDataManager1())
+							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+								c.subscribeToSimulationClose(c2 -> {
+									c2.addPlan(new ConsumerDataManagerPlan(0, true, -1, (c3) -> {
+									}));
+								});
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
 
 	}
 
@@ -1036,7 +1110,7 @@ public class AT_DataManagerContext {
 		double haltTime = 50;
 
 		for (int i = 1; i <= 100; i++) {
-			DataManagerPlan actorPlan = new DataManagerPlan(i, (c) -> {
+			DataManagerPlan actorPlan = new ConsumerDataManagerPlan(i, (c) -> {
 			});
 			if (i > 50) {
 				expectedPlans.add(actorPlan);
@@ -1088,7 +1162,7 @@ public class AT_DataManagerContext {
 		 * The TestPlugin already contains a data manager that will be added to the
 		 * simulation ahead of the ones above, so the numbering will start with 1.
 		 */
-		
+
 		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(0, (context) -> {
 			assertEquals(new DataManagerId(1), context.getDataManagerId());
 		}));
