@@ -71,7 +71,7 @@ public class DataManagerPlan extends Plan {
 		this.consumer = consumer;
 	}
 
-	void execute(DataManagerContext context) {
+	protected void execute(DataManagerContext context) {
 		this.consumer.accept(context);
 	}
 }
