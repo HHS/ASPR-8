@@ -1116,6 +1116,23 @@ public class Simulation {
 
 	}
 
+	protected void releaseObservationEventForDataManagerToActor(final Event event, final ActorId actorId) {
+		if (event == null) {
+			throw new ContractException(NucleusError.NULL_EVENT);
+		}
+
+		if (actorId == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_ID);
+		}
+
+		if (!dataManagerQueueActive) {
+			throw new ContractException(NucleusError.OBSERVATION_EVENT_IMPROPER_RELEASE);
+		}
+
+		// queue the event handling for actors
+		broadcastEventToFilterNodeAndActor(event, rootNode, actorId);
+	}
+
 	protected void releaseObservationEventForDataManager(final Event event) {
 
 		if (event == null) {
@@ -1472,6 +1489,43 @@ public class Simulation {
 	protected boolean subscribersExistForEvent(Class<? extends Event> eventClass) {
 		return (reportEventMap.containsKey(eventClass) || dataManagerEventMap.containsKey(eventClass)
 				|| rootNode.children.containsKey(eventClass) || rootNode.consumers.containsKey(eventClass));
+	}
+
+	/*
+	 * Recursively processes the event through the filter node to the given actor. Events should be
+	 * processed through the root filter node. Each node's consumers have each such
+	 * consumer scheduled onto the actor queue for delayed execution of the
+	 * consumer.
+	 */
+	private void broadcastEventToFilterNodeAndActor(final Event event, FilterNode filterNode, ActorId actorId) {
+		// determine the value of the function for the given event
+		Object value = filterNode.function.apply(event);
+
+		// use that value to place any consumers that are matched to that value
+		// on the actor queue
+		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
+		if (consumerMap != null) {
+			if (consumerMap.containsKey(actorId)) {
+				Consumer<Event> consumer = consumerMap.get(actorId);
+				final ActorContentRec actorContentRec = new ActorContentRec();
+				actorContentRec.event = event;
+				actorContentRec.actorId = actorId;
+				actorContentRec.eventConsumer = consumer;
+				actorQueue.add(actorContentRec);
+			}
+		}
+
+		// match the value to any child nodes and recursively call this method
+		// on that node
+		Map<IdentifiableFunction<?>, FilterNode> childMap = filterNode.children.get(value);
+		if (childMap != null) {
+			for (Object id : childMap.keySet()) {
+				FilterNode childNode = childMap.get(id);
+				if (childNode != null) {
+					broadcastEventToFilterNodeAndActor(event, childNode, actorId);
+				}
+			}
+		}
 	}
 
 	/*
