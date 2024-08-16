@@ -75,7 +75,7 @@ public final class VaccinationDataManager extends DataManager {
 			List<PersonId> familyMembers = familyDataManager.getFamilyMembers(familyId);
 			for (PersonId familyMemeberId : familyMembers) {
 				if (!isPersonVaccinated(familyMemeberId)) {
-					result.add(personId);
+					result.add(familyMemeberId);
 				}
 			}
 		}
