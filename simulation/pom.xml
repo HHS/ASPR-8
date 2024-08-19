@@ -52,11 +52,6 @@
 							<doclint>all,-missing</doclint>
 							<additionalDependencies>
 								<additionalDependency>
-									<groupId>gov.hhs.aspr.ms</groupId>
-									<artifactId>util</artifactId>
-									<version>${util.version}</version>
-								</additionalDependency>
-								<additionalDependency>
 									<groupId>org.junit.jupiter</groupId>
 									<artifactId>junit-jupiter-api</artifactId>
 									<version>${junit-jupiter-engine.version}</version>

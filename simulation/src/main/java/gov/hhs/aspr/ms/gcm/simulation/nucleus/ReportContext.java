@@ -33,7 +33,7 @@ public final class ReportContext {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN} if the plan is
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
 	 *                           null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
@@ -43,7 +43,7 @@ public final class ReportContext {
 	 *                           </ul>
 	 */
 	public void addPlan(final Consumer<ReportContext> consumer, final double planTime) {
-		simulation.addReportPlan(new ReportPlan(planTime, consumer));
+		simulation.addReportPlan(new ConsumerReportPlan(planTime, consumer));
 	}
 
 	/**
@@ -63,12 +63,11 @@ public final class ReportContext {
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
 	 *                           the plan is added to the simulation after event
 	 *                           processing is finished</li>
+	 *                           <li>{@link NucleusError#INVALID_PLAN_ARRIVAL_ID} if
+	 *                           the arrival id is less than -1</li>
 	 *                           </ul>
 	 */
 	public void addPlan(ReportPlan plan) {
-		if (plan == null) {
-			throw new ContractException(NucleusError.NULL_PLAN);
-		}
 		simulation.addReportPlan(plan);
 	}
 

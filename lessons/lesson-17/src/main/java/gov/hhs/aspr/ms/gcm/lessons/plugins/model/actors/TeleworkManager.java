@@ -11,6 +11,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GroupType;
 import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.PersonProperty;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ConsumerActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.datamanagers.GroupsDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support.GroupId;
@@ -31,7 +32,7 @@ public class TeleworkManager {
 
 	private void scheduleNextReview() {
 		double planTime = actorContext.getTime() + reviewInterval;
-		ActorPlan plan = new ActorPlan(planTime,false,this::reviewTeleworkStatus);
+		ActorPlan plan = new ConsumerActorPlan(planTime,false,this::reviewTeleworkStatus);
 		actorContext.addPlan(plan);		
 	}
 

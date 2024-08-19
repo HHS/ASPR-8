@@ -322,13 +322,12 @@ public class Simulation {
 	}
 
 	protected void addActorPlan(ActorPlan plan) {
-
 		if (planningQueueMode == PlanningQueueMode.CLOSED) {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		if (plan.consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 
 		if (plan.time < time) {
@@ -359,7 +358,8 @@ public class Simulation {
 				plan.arrivalId = initialArrivalId--;
 			}
 		}
-		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set
+		// the
 		// arrivalId to the current masterPlanningArrivalId and increment it.
 		else {
 			plan.arrivalId = masterPlanningArrivalId++;
@@ -380,8 +380,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		if (plan.consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 
 		if (plan.time < time) {
@@ -412,7 +412,8 @@ public class Simulation {
 				plan.arrivalId = initialArrivalId--;
 			}
 		}
-		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set
+		// the
 		// arrivalId to the current masterPlanningArrivalId and increment it.
 		else {
 			plan.arrivalId = masterPlanningArrivalId++;
@@ -429,8 +430,8 @@ public class Simulation {
 			throw new ContractException(NucleusError.PLANNING_QUEUE_CLOSED);
 		}
 
-		if (plan.consumer == null) {
-			throw new ContractException(NucleusError.NULL_PLAN_CONSUMER);
+		if (plan == null) {
+			throw new ContractException(NucleusError.NULL_PLAN);
 		}
 
 		if (plan.time < time) {
@@ -461,7 +462,8 @@ public class Simulation {
 				plan.arrivalId = initialArrivalId--;
 			}
 		}
-		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set the
+		// If we aren't in CLOSED or READY, we are in RUNNING, and therefore just set
+		// the
 		// arrivalId to the current masterPlanningArrivalId and increment it.
 		else {
 			plan.arrivalId = masterPlanningArrivalId++;
@@ -670,12 +672,10 @@ public class Simulation {
 		started = true;
 
 		time = data.simulationState.getStartTime();
-		
+
 		LocalDateTime dateTime = LocalDateTime.of(data.simulationState.getBaseDate(), LocalTime.of(0, 0));
-		
-		
+
 		simulationTimeConverter = new SimulationTimeConverter(dateTime);
-		
 
 		forcedHaltPresent = false;
 		if (data.simulationHaltTime != null) {
@@ -768,7 +768,6 @@ public class Simulation {
 			final Plan plan = planningQueue.poll();
 			// System.out.println(plan);
 
-			time = plan.time;
 			if (plan.isActive) {
 				activePlanCount--;
 			}
@@ -778,43 +777,44 @@ public class Simulation {
 				continue;
 			}
 
+			time = plan.time;
+
 			switch (plan.planner) {
-				case ACTOR:
-					ActorPlan actorPlan = (ActorPlan) plan;
-					if (actorPlan.consumer != null) {
-						ActorContentRec actorContentRec = new ActorContentRec();
-						actorContentRec.actorId = actorPlan.actorId;
-						actorContentRec.actorPlan = actorPlan::execute;
-						actorQueue.add(actorContentRec);
-						executeActorQueue();
-					}
-					break;
-				case DATA_MANAGER:
-					DataManagerPlan dmPlan = (DataManagerPlan) plan;
-					if (dmPlan.consumer != null) {
-						DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
-						dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
-						dataManagerContentRec.dmPlan = dmPlan::execute;
-						dataManagerQueue.add(dataManagerContentRec);
-						executeDataManagerQueue();
-						executeActorQueue();
-					}
-					break;
+			case ACTOR:
+				ActorPlan actorPlan = (ActorPlan) plan;
 
-				case REPORT:
-					ReportPlan reportPlan = (ReportPlan) plan;
-					if (reportPlan.consumer != null) {
-						ReportContentRec reportContentRec = new ReportContentRec();
-						reportContentRec.reportId = reportPlan.reportId;
-						reportContentRec.reportPlan = reportPlan::execute;
-						reportQueue.add(reportContentRec);
-						executeReportQueue();
-					}
+				ActorContentRec actorContentRec = new ActorContentRec();
+				actorContentRec.actorId = actorPlan.actorId;
+				actorContentRec.actorPlan = actorPlan::execute;
+				actorQueue.add(actorContentRec);
+				executeActorQueue();
 
-					break;
+				break;
+			case DATA_MANAGER:
+				DataManagerPlan dmPlan = (DataManagerPlan) plan;
 
-				default:
-					throw new RuntimeException("unhandled planner type " + plan.planner);
+				DataManagerContentRec dataManagerContentRec = new DataManagerContentRec();
+				dataManagerContentRec.dataManagerId = dmPlan.dataManagerId;
+				dataManagerContentRec.dmPlan = dmPlan::execute;
+				dataManagerQueue.add(dataManagerContentRec);
+				executeDataManagerQueue();
+				executeActorQueue();
+
+				break;
+
+			case REPORT:
+				ReportPlan reportPlan = (ReportPlan) plan;
+
+				ReportContentRec reportContentRec = new ReportContentRec();
+				reportContentRec.reportId = reportPlan.reportId;
+				reportContentRec.reportPlan = reportPlan::execute;
+				reportQueue.add(reportContentRec);
+				executeReportQueue();
+
+				break;
+
+			default:
+				throw new RuntimeException("unhandled planner type " + plan.planner);
 			}
 		}
 
@@ -1114,6 +1114,23 @@ public class Simulation {
 			}
 		}
 
+	}
+
+	protected void releaseObservationEventForDataManagerToActor(final Event event, final ActorId actorId) {
+		if (event == null) {
+			throw new ContractException(NucleusError.NULL_EVENT);
+		}
+
+		if (actorId == null) {
+			throw new ContractException(NucleusError.NULL_ACTOR_ID);
+		}
+
+		if (!dataManagerQueueActive) {
+			throw new ContractException(NucleusError.OBSERVATION_EVENT_IMPROPER_RELEASE);
+		}
+
+		// queue the event handling for actors
+		broadcastEventToFilterNodeAndActor(event, rootNode, actorId);
 	}
 
 	protected void releaseObservationEventForDataManager(final Event event) {
@@ -1475,6 +1492,43 @@ public class Simulation {
 	}
 
 	/*
+	 * Recursively processes the event through the filter node to the given actor. Events should be
+	 * processed through the root filter node. Each node's consumers have each such
+	 * consumer scheduled onto the actor queue for delayed execution of the
+	 * consumer.
+	 */
+	private void broadcastEventToFilterNodeAndActor(final Event event, FilterNode filterNode, ActorId actorId) {
+		// determine the value of the function for the given event
+		Object value = filterNode.function.apply(event);
+
+		// use that value to place any consumers that are matched to that value
+		// on the actor queue
+		Map<ActorId, Consumer<Event>> consumerMap = filterNode.consumers.get(value);
+		if (consumerMap != null) {
+			if (consumerMap.containsKey(actorId)) {
+				Consumer<Event> consumer = consumerMap.get(actorId);
+				final ActorContentRec actorContentRec = new ActorContentRec();
+				actorContentRec.event = event;
+				actorContentRec.actorId = actorId;
+				actorContentRec.eventConsumer = consumer;
+				actorQueue.add(actorContentRec);
+			}
+		}
+
+		// match the value to any child nodes and recursively call this method
+		// on that node
+		Map<IdentifiableFunction<?>, FilterNode> childMap = filterNode.children.get(value);
+		if (childMap != null) {
+			for (Object id : childMap.keySet()) {
+				FilterNode childNode = childMap.get(id);
+				if (childNode != null) {
+					broadcastEventToFilterNodeAndActor(event, childNode, actorId);
+				}
+			}
+		}
+	}
+
+	/*
 	 * Recursively processes the event through the filter node . Events should be
 	 * processed through the root filter node. Each node's consumers have each such
 	 * consumer scheduled onto the actor queue for delayed execution of the
@@ -1705,35 +1759,35 @@ public class Simulation {
 			if (!plan.canceled) {
 
 				switch (plan.planner) {
-					case ACTOR:
-						ActorPlan actorPlan = (ActorPlan) plan;
-						List<ActorPlan> actorPlans = actorPlanDump.get(actorPlan.actorId);
-						if (actorPlans == null) {
-							actorPlans = new ArrayList<>();
-							actorPlanDump.put(actorPlan.actorId, actorPlans);
-						}
-						actorPlans.add(actorPlan);
-						break;
-					case DATA_MANAGER:
-						DataManagerPlan dataManagerPlan = (DataManagerPlan) plan;
-						List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerPlan.dataManagerId);
-						if (dataManagerPlans == null) {
-							dataManagerPlans = new ArrayList<>();
-							dataManagerPlanDump.put(dataManagerPlan.dataManagerId, dataManagerPlans);
-						}
-						dataManagerPlans.add(dataManagerPlan);
-						break;
-					case REPORT:
-						ReportPlan reportPlan = (ReportPlan) plan;
-						List<ReportPlan> reportPlans = reportPlanDump.get(reportPlan.reportId);
-						if (reportPlans == null) {
-							reportPlans = new ArrayList<>();
-							reportPlanDump.put(reportPlan.reportId, reportPlans);
-						}
-						reportPlans.add(reportPlan);
-						break;
-					default:
-						throw new RuntimeException("unhandled planner type " + plan.planner);
+				case ACTOR:
+					ActorPlan actorPlan = (ActorPlan) plan;
+					List<ActorPlan> actorPlans = actorPlanDump.get(actorPlan.actorId);
+					if (actorPlans == null) {
+						actorPlans = new ArrayList<>();
+						actorPlanDump.put(actorPlan.actorId, actorPlans);
+					}
+					actorPlans.add(actorPlan);
+					break;
+				case DATA_MANAGER:
+					DataManagerPlan dataManagerPlan = (DataManagerPlan) plan;
+					List<DataManagerPlan> dataManagerPlans = dataManagerPlanDump.get(dataManagerPlan.dataManagerId);
+					if (dataManagerPlans == null) {
+						dataManagerPlans = new ArrayList<>();
+						dataManagerPlanDump.put(dataManagerPlan.dataManagerId, dataManagerPlans);
+					}
+					dataManagerPlans.add(dataManagerPlan);
+					break;
+				case REPORT:
+					ReportPlan reportPlan = (ReportPlan) plan;
+					List<ReportPlan> reportPlans = reportPlanDump.get(reportPlan.reportId);
+					if (reportPlans == null) {
+						reportPlans = new ArrayList<>();
+						reportPlanDump.put(reportPlan.reportId, reportPlans);
+					}
+					reportPlans.add(reportPlan);
+					break;
+				default:
+					throw new RuntimeException("unhandled planner type " + plan.planner);
 				}
 			}
 		}
@@ -1783,14 +1837,14 @@ public class Simulation {
 		}
 		return result;
 	}
-	
+
 	/*
 	 * Registers the given consumer to be executed at the end of the simulation.
 	 * Activity associated with the consumer should be limited to querying data
 	 * state and releasing output.
 	 * 
 	 * @throws ContractException {@link NucleusError#NULL_ACTOR_CONTEXT_CONSUMER} if
-	 *                           the consumer is null
+	 * the consumer is null
 	 */
 	protected double getSimulationTime(LocalDateTime localDateTime) {
 		return simulationTimeConverter.getSimulationTime(localDateTime);

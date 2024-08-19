@@ -28,21 +28,21 @@ public class AT_ActorContextPlanRecovery {
 		public void accept(ActorContext actorContext) {
 			switch (id) {
 			case 0:
-				actorContext.addPlan(new ActorPlan(2, true, 5L, c -> c.releaseOutput(1)));
-				actorContext.addPlan(new ActorPlan(7, true, 14L, c -> c.releaseOutput(4)));
-				actorContext.addPlan(new ActorPlan(14, true, 12L, c -> c.releaseOutput(9)));
-				actorContext.addPlan(new ActorPlan(2, true, -1L, c -> c.releaseOutput(2)));
-				actorContext.addPlan(new ActorPlan(7, true, -1L, c -> c.releaseOutput(6)));
-				actorContext.addPlan(new ActorPlan(14, true, -1L, c -> c.releaseOutput(10)));
+				actorContext.addPlan(new ConsumerActorPlan(2, true, 5L, c -> c.releaseOutput(1)));
+				actorContext.addPlan(new ConsumerActorPlan(7, true, 14L, c -> c.releaseOutput(4)));
+				actorContext.addPlan(new ConsumerActorPlan(14, true, 12L, c -> c.releaseOutput(9)));
+				actorContext.addPlan(new ConsumerActorPlan(2, true, -1L, c -> c.releaseOutput(2)));
+				actorContext.addPlan(new ConsumerActorPlan(7, true, -1L, c -> c.releaseOutput(6)));
+				actorContext.addPlan(new ConsumerActorPlan(14, true, -1L, c -> c.releaseOutput(10)));
 
 				break;
 			case 1:
-				actorContext.addPlan(new ActorPlan(2, true, 4L, c -> c.releaseOutput(0)));
-				actorContext.addPlan(new ActorPlan(7, true, 16L, c -> c.releaseOutput(5)));
-				actorContext.addPlan(new ActorPlan(14, true, 11L, c -> c.releaseOutput(8)));
-				actorContext.addPlan(new ActorPlan(2, true, -1L, c -> c.releaseOutput(3)));
-				actorContext.addPlan(new ActorPlan(7, true, -1L, c -> c.releaseOutput(7)));
-				actorContext.addPlan(new ActorPlan(14, true, -1L, c -> c.releaseOutput(11)));
+				actorContext.addPlan(new ConsumerActorPlan(2, true, 4L, c -> c.releaseOutput(0)));
+				actorContext.addPlan(new ConsumerActorPlan(7, true, 16L, c -> c.releaseOutput(5)));
+				actorContext.addPlan(new ConsumerActorPlan(14, true, 11L, c -> c.releaseOutput(8)));
+				actorContext.addPlan(new ConsumerActorPlan(2, true, -1L, c -> c.releaseOutput(3)));
+				actorContext.addPlan(new ConsumerActorPlan(7, true, -1L, c -> c.releaseOutput(7)));
+				actorContext.addPlan(new ConsumerActorPlan(14, true, -1L, c -> c.releaseOutput(11)));
 
 				break;
 			default:

@@ -61,6 +61,7 @@ jobs:
 
 
   update-gcm-taskit:
+    if: ${{ !endsWith(needs.release.outputs.gcm_version, '0') }}
     needs: release
     runs-on: ubuntu-latest
     permissions:
