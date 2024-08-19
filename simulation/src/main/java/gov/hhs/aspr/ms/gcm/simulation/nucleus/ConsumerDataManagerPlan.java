@@ -5,19 +5,18 @@ import java.util.function.Consumer;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class ConsumerDataManagerPlan extends DataManagerPlan {
-	
+
 	private final Consumer<DataManagerContext> consumer;
 
 	/**
 	 * Constructs the plan scheduled for the given time active status arrivalId and
 	 * consumer
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerDataManagerPlan(double time, boolean active, long arrivalId, Consumer<DataManagerContext> consumer) {
 		super(time, active, arrivalId);
@@ -33,12 +32,11 @@ public class ConsumerDataManagerPlan extends DataManagerPlan {
 	 * The arrival id is set to -1L indicating that this is a new, non-deserialized
 	 * plan.
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerDataManagerPlan(double time, boolean active, Consumer<DataManagerContext> consumer) {
 		super(time, active);
@@ -53,12 +51,11 @@ public class ConsumerDataManagerPlan extends DataManagerPlan {
 	 * be active.The arrival id is set to -1L indicating that this is a new,
 	 * non-deserialized plan.
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerDataManagerPlan(double time, Consumer<DataManagerContext> consumer) {
 		super(time);

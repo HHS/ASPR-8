@@ -12,12 +12,11 @@ public final class ConsumerActorPlan extends ActorPlan {
 	 * Constructs the plan scheduled for the given time active status arrivalId and
 	 * consumer
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerActorPlan(double time, boolean active, long arrivalId, Consumer<ActorContext> consumer) {
 		super(time, active, arrivalId);
@@ -32,12 +31,11 @@ public final class ConsumerActorPlan extends ActorPlan {
 	 * be active.The arrival id is set to -1L indicating that this is a new,
 	 * non-deserialized plan.
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerActorPlan(double time, Consumer<ActorContext> consumer) {
 		super(time);
@@ -52,12 +50,11 @@ public final class ConsumerActorPlan extends ActorPlan {
 	 * The arrival id is set to -1L indicating that this is a new, non-deserialized
 	 * plan.
 	 * 
-	 * @throw {@link ContractException}
-	 *        <ul>
-	 *        <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *        null</li>
-	 *        </ul>
-	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLAN_CONSUMER} if
+	 *                           the consumer is null</li>
+	 *                           </ul>
 	 */
 	public ConsumerActorPlan(double time, boolean active, Consumer<ActorContext> consumer) {
 		super(time, active);
