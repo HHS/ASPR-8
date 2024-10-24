@@ -62,4 +62,10 @@ public final class DiseaseStateReport extends PeriodicReport {
 		return reportHeader;
 	}
 
+	@Override
+	protected void prepare(ReportContext reportContext) {
+		// does nothing
+		
+	}
+
 }
