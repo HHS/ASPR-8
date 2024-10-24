@@ -115,4 +115,10 @@ public class StatelessVaccineReport extends PeriodicReport {
 		}
 		return result;
 	}
+
+	@Override
+	protected void prepare(ReportContext reportContext) {
+		// does nothing
+		
+	}
 }
