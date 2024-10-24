@@ -40,6 +40,12 @@ public class AT_PeriodicReport {
 		protected void flush(ReportContext reportContext) {
 		}
 
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			//does nothing
+			
+		}
+
 	}
 
 	/*
@@ -79,6 +85,12 @@ public class AT_PeriodicReport {
 			assertEquals(expectedTimeString, actualTimeString);
 			reportContext.releaseOutput(reportItem);
 
+		}
+
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			// does nothing
+			
 		}
 
 	}
@@ -126,6 +138,11 @@ public class AT_PeriodicReport {
 			reportContext.releaseOutput(reportItem);
 		}
 
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			// does nothing			
+		}
+
 	}
 
 	/*
@@ -161,6 +178,11 @@ public class AT_PeriodicReport {
 			assertEquals(0, reportItem.size());
 		}
 
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			// does nothing			
+		}
+
 	}
 
 	private static class InitTestReport extends PeriodicReport {
@@ -173,6 +195,11 @@ public class AT_PeriodicReport {
 		@Override
 		protected void flush(ReportContext reportContext) {
 			flushTimes.add(reportContext.getTime());
+		}
+
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			// does nothing			
 		}
 
 	}

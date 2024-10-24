@@ -139,8 +139,7 @@ public abstract class PeriodicReport {
 	 * Called by the init() to allow descendant report classes to initialize. The
 	 * init() will invoke a flush() command after the prepare()
 	 */
-	protected void prepare(ReportContext reportContext) {
-	}
+	protected abstract void prepare(ReportContext reportContext);
 
 	private void close(final ReportContext reportContext) {
 		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {
