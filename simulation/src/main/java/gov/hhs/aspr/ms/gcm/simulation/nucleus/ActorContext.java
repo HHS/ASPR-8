@@ -115,8 +115,34 @@ public final class ActorContext {
 		return simulation.actorExists(actorId);
 	}
 
+	/**
+	 * Returns the data manager instance matching the class reference.
+	 * 
+	 * 
+	 * @throws ContractException
+	 * 
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
+	 *                           if the class reference is null</li>
+	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS}
+	 *                           if there is more than one data manager instance
+	 *                           matching the class reference</li>
+	 *                           <li>{@linkplain NucleusError#UNKNOWN_DATA_MANAGER}
+	 *                           if there are no data manager instances matching the
+	 *                           class reference</li>
+	 *                           </ul>
+	 * 
+	 */
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 		return simulation.getDataManagerForActor(dataManagerClass);
+	}
+
+	/**
+	 * Returns true if and only if there is exactly one data manager instance
+	 * matching the given class reference. Null tolerant.
+	 */
+	public <T extends DataManager> boolean dataManagerExists(Class<T> dataManagerClass) {
+		return simulation.dataManagerExists(dataManagerClass);
 	}
 
 	public double getTime() {

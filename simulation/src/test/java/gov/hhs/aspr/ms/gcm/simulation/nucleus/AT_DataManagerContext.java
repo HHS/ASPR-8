@@ -151,9 +151,134 @@ public class AT_DataManagerContext {
 
 	}
 
+	private void executeGetDataManagerTest(String dmName, Consumer<DataManagerContext> consumer) {
+		PluginId pluginId0 = new SimplePluginId("local plugin 0");
+		PluginId pluginId5 = new SimplePluginId("local plugin 5");
+		// create the test plugin data builder
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// create a data manager for the actor to find
+
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
+		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
+
+		pluginDataBuilder.addTestDataManagerPlan(dmName, new TestDataManagerPlan(0, consumer));
+
+		pluginDataBuilder.addPluginDependency(pluginId0);
+
+		// build the action plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		Plugin localPlugin0 = Plugin.builder()//
+				.setPluginId(pluginId0)//
+				.setInitializer((c) -> c.addDataManager(new TestDataManager0()))//
+				.build();
+		Plugin localPlugin5 = Plugin.builder()//
+				.setPluginId(pluginId5)//
+				.setInitializer((c) -> c.addDataManager(new TestDataManager5()))//
+				.build();
+
+		TestSimulation.builder()//
+				.addPlugin(localPlugin0)//
+				.addPlugin(localPlugin5)//
+				.addPlugin(testPlugin).build()//
+				.execute();//
+	}
+
 	@Test
 	@UnitTestMethod(target = DataManagerContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
+		/*
+		 * postcondition test: we demonstrate for all of the test data managers in the
+		 * test plugin that they can retrieve the instances that are allowed by the
+		 * access rules. Note that TestDataManager0 and TestDataManager5 are defined by
+		 * local plugins and only TestDataManager0 is accessible by the remaining data
+		 * managers since the test plugin has a plugin dependency on the local plugin
+		 * containing the instance of TestDataManager0, but does not have a plugin
+		 * dependency on the plugin containing the instance of TestDataManager5.
+		 */
+		executeGetDataManagerTest("dm4A", (c) -> {
+			assertNotNull(c.getDataManager(TestDataManager0.class));
+			assertNotNull(c.getDataManager(TestDataManager1.class));
+			assertNotNull(c.getDataManager(TestDataManager2.class));
+			assertNotNull(c.getDataManager(TestDataManager3A.class));
+			assertNotNull(c.getDataManager(TestDataManager3B.class));
+		});
+
+		executeGetDataManagerTest("dm3B", (c) -> {
+			assertNotNull(c.getDataManager(TestDataManager0.class));
+			assertNotNull(c.getDataManager(TestDataManager1.class));
+			assertNotNull(c.getDataManager(TestDataManager2.class));
+			assertNotNull(c.getDataManager(TestDataManager3A.class));
+		});
+
+		executeGetDataManagerTest("dm3A", (c) -> {
+			assertNotNull(c.getDataManager(TestDataManager0.class));
+			assertNotNull(c.getDataManager(TestDataManager1.class));
+			assertNotNull(c.getDataManager(TestDataManager2.class));
+		});
+
+		executeGetDataManagerTest("dm2", (c) -> {
+			assertNotNull(c.getDataManager(TestDataManager0.class));
+			assertNotNull(c.getDataManager(TestDataManager1.class));
+		});
+
+		executeGetDataManagerTest("dm1", (c) -> {
+			assertNotNull(c.getDataManager(TestDataManager0.class));
+		});
+
+		// precondition test: if the class reference is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest("dm1", (c) -> {
+				c.getDataManager(null);
+			});
+		});
+		assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
+
+		// precondition test: if the class reference is null
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest("dm1", (c) -> {
+				c.getDataManager(TestDataManager3.class);
+			});
+		});
+		assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
+
+		// precondition test: if the class reference is unknown
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest("dm1", (c) -> {
+				c.getDataManager(TestDataManager4B.class);
+			});
+		});
+		assertEquals(NucleusError.UNKNOWN_DATA_MANAGER, contractException.getErrorType());
+
+		// precondition test: if the requestor does not have access due to order within
+		// the plugin
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest("dm1", (c) -> {
+				c.getDataManager(TestDataManager2.class);
+			});
+		});
+		assertEquals(NucleusError.DATA_MANAGER_ACCESS_VIOLATION, contractException.getErrorType());
+
+		// precondition test: if the requestor does not have access due to having no
+		// plugin dependency path
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest("dm1", (c) -> {
+				c.getDataManager(TestDataManager5.class);
+			});
+		});
+		assertEquals(NucleusError.DATA_MANAGER_ACCESS_VIOLATION, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = DataManagerContext.class, name = "dataManagerExists", args = { Class.class })
+	public void testDataManagerExists() {
 
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -161,63 +286,72 @@ public class AT_DataManagerContext {
 		// create a data manager for the actor to find
 
 		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm2", () -> new TestDataManager2());
 		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			TestDataManager1 testDataManager1 = c.getDataManager(TestDataManager1.class);
-			assertNotNull(testDataManager1);
+		// show the various ways bad class references return false
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(1, (c) -> {
+			// show that zero class matching returns false
+			assertFalse(c.dataManagerExists(TestDataManager4B.class));
 
-			TestDataManager3A testDataManager3A = c.getDataManager(TestDataManager3A.class);
-			assertNotNull(testDataManager3A);
+			// show that ambiguous class matching returns false
+			assertFalse(c.dataManagerExists(TestDataManager3.class));
 
-			TestDataManager3B testDataManager3B = c.getDataManager(TestDataManager3B.class);
-			assertNotNull(testDataManager3B);
+			// show that a null yields a false
+			assertFalse(c.dataManagerExists(null));
+		}));
 
-			TestDataManager4A testDataManager4A = c.getDataManager(TestDataManager4A.class);
-			assertNotNull(testDataManager4A);
+		// show ordering restrictions are enforced
+		pluginDataBuilder.addTestDataManagerPlan("dm1", new TestDataManagerPlan(1, (c) -> {
+			assertFalse(c.dataManagerExists(TestDataManager1.class));
+			assertFalse(c.dataManagerExists(TestDataManager2.class));
+			assertFalse(c.dataManagerExists(TestDataManager3A.class));
+			assertFalse(c.dataManagerExists(TestDataManager3B.class));
+			assertFalse(c.dataManagerExists(TestDataManager4A.class));
+		}));
 
+		// show ordering restrictions are enforced
+		pluginDataBuilder.addTestDataManagerPlan("dm2", new TestDataManagerPlan(1, (c) -> {
+			assertTrue(c.dataManagerExists(TestDataManager1.class));
+			assertFalse(c.dataManagerExists(TestDataManager2.class));
+			assertFalse(c.dataManagerExists(TestDataManager3A.class));
+			assertFalse(c.dataManagerExists(TestDataManager3B.class));
+			assertFalse(c.dataManagerExists(TestDataManager4A.class));
+		}));
+
+		// show ordering restrictions are enforced
+		pluginDataBuilder.addTestDataManagerPlan("dm3A", new TestDataManagerPlan(1, (c) -> {
+			assertTrue(c.dataManagerExists(TestDataManager1.class));
+			assertTrue(c.dataManagerExists(TestDataManager2.class));
+			assertFalse(c.dataManagerExists(TestDataManager3A.class));
+			assertFalse(c.dataManagerExists(TestDataManager3B.class));
+			assertFalse(c.dataManagerExists(TestDataManager4A.class));
+		}));
+
+		// show ordering restrictions are enforced
+		pluginDataBuilder.addTestDataManagerPlan("dm3B", new TestDataManagerPlan(1, (c) -> {
+			assertTrue(c.dataManagerExists(TestDataManager1.class));
+			assertTrue(c.dataManagerExists(TestDataManager2.class));
+			assertTrue(c.dataManagerExists(TestDataManager3A.class));
+			assertFalse(c.dataManagerExists(TestDataManager3B.class));
+			assertFalse(c.dataManagerExists(TestDataManager4A.class));
+		}));
+
+		// show ordering restrictions are enforced
+		pluginDataBuilder.addTestDataManagerPlan("dm4A", new TestDataManagerPlan(1, (c) -> {
+			assertTrue(c.dataManagerExists(TestDataManager1.class));
+			assertTrue(c.dataManagerExists(TestDataManager2.class));
+			assertTrue(c.dataManagerExists(TestDataManager3A.class));
+			assertTrue(c.dataManagerExists(TestDataManager3B.class));
+			assertFalse(c.dataManagerExists(TestDataManager4A.class));
 		}));
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// execute the engine
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-		// Precondition test 1
-
-		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
-		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
-
-		pluginDataBuilder.addTestDataManagerPlan("dm3A", new TestDataManagerPlan(4, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> c.getDataManager(TestDataManager3.class));
-			assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
-		}));
-
-		// build the action plugin
-		testPluginData = pluginDataBuilder.build();
-		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		// execute the engine
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-		// Precondition test 2
-
-		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
-
-		pluginDataBuilder.addTestDataManagerPlan("dm3B", new TestDataManagerPlan(4, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(null));
-			assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
-		}));
-
-		// build the action plugin
-		testPluginData = pluginDataBuilder.build();
-		testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		// execute the engine
 		TestSimulation.builder().addPlugin(testPlugin).build().execute();
@@ -232,7 +366,6 @@ public class AT_DataManagerContext {
 
 		// test preconditions
 		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager1());
-
 
 		/*
 		 * Have the actor add a plan and show that that plan executes
@@ -268,7 +401,7 @@ public class AT_DataManagerContext {
 					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-								c.addPlan(null,0);
+								c.addPlan(null, 0);
 							})).build()))//
 					.build()//
 					.execute();//
@@ -281,7 +414,8 @@ public class AT_DataManagerContext {
 					.addPlugin(TestPlugin.getTestPlugin(TestPluginData.builder()//
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
-								c.addPlan((c2) -> {},-10);
+								c.addPlan((c2) -> {
+								}, -10);
 							})).build()))//
 					.build()//
 					.execute();//
@@ -296,7 +430,8 @@ public class AT_DataManagerContext {
 							.addTestDataManager("dm", () -> new TestDataManager1())
 							.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 								c.subscribeToSimulationClose(c2 -> {
-									c2.addPlan((c3) -> {},0);
+									c2.addPlan((c3) -> {
+									}, 0);
 								});
 							})).build()))//
 					.build()//
@@ -304,7 +439,6 @@ public class AT_DataManagerContext {
 		});
 		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
 
-		
 	}
 
 	@Test
@@ -557,6 +691,10 @@ public class AT_DataManagerContext {
 
 	}
 
+	private static class TestDataManager0 extends DataManager {
+
+	}
+
 	private static class TestDataManager1 extends TestDataManager {
 	}
 
@@ -580,6 +718,14 @@ public class AT_DataManagerContext {
 	}
 
 	private static class TestDataManager4A extends TestDataManager4 {
+
+	}
+
+	private static class TestDataManager4B extends TestDataManager4 {
+
+	}
+
+	private static class TestDataManager5 extends DataManager {
 
 	}
 

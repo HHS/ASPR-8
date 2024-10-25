@@ -33,8 +33,8 @@ public final class ReportContext {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -144,6 +144,14 @@ public final class ReportContext {
 	 */
 	public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
 		return simulation.getDataManagerForActor(dataManagerClass);
+	}
+
+	/**
+	 * Returns true if and only if there is exactly one data manager instance
+	 * matching the given class reference. Null tolerant.
+	 */
+	public <T extends DataManager> boolean dataManagerExists(Class<T> dataManagerClass) {
+		return simulation.dataManagerExists(dataManagerClass);
 	}
 
 	public double getTime() {
