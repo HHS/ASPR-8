@@ -115,9 +115,9 @@ public class AT_GroupPopulationReport {
 		// place the initial data into the expected output consumer
 		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 
-		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
-		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
-		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
 		for (int hour = 1; hour < 24; hour++) {
 			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
@@ -168,7 +168,7 @@ public class AT_GroupPopulationReport {
 
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
-
+		
 		assertEquals(expectedReportItems, actualReportItems);
 
 	}
@@ -248,9 +248,9 @@ public class AT_GroupPopulationReport {
 
 		// place the initial data into the expected output consumer
 
-		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
-		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
-		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
+//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
 
 		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
 		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
