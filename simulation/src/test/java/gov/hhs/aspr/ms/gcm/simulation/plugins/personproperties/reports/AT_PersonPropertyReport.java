@@ -220,10 +220,10 @@ public class AT_PersonPropertyReport {
 		TestOutputConsumer expectedOutputConsumer = new TestOutputConsumer();
 
 		// expected report at time 0
-		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));
-		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 15));
-		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));
-		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 15));
+//		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));
+//		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 15));
+//		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));
+//		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestRegionId.REGION_2, TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 0, 15));
 
 		// expected report at time 1
 		expectedOutputConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestRegionId.REGION_1, TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false, 15));

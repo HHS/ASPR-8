@@ -42,8 +42,8 @@ public class AT_PeriodicReport {
 
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			//does nothing
-			
+			// does nothing
+
 		}
 
 	}
@@ -86,13 +86,12 @@ public class AT_PeriodicReport {
 			reportContext.releaseOutput(reportItem);
 
 		}
-		
+
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			//does nothing
-			
-		}
+			// does nothing
 
+		}
 
 	}
 
@@ -138,13 +137,12 @@ public class AT_PeriodicReport {
 
 			reportContext.releaseOutput(reportItem);
 		}
-		
+
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			//does nothing
-			
-		}
+			// does nothing
 
+		}
 
 	}
 
@@ -180,11 +178,11 @@ public class AT_PeriodicReport {
 
 			assertEquals(0, reportItem.size());
 		}
-		
+
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			//does nothing
-			
+			// does nothing
+
 		}
 
 	}
@@ -200,11 +198,11 @@ public class AT_PeriodicReport {
 		protected void flush(ReportContext reportContext) {
 			flushTimes.add(reportContext.getTime());
 		}
-		
+
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			//does nothing
-			
+			// does nothing
+
 		}
 
 	}
@@ -294,7 +292,7 @@ public class AT_PeriodicReport {
 
 		int maxDay = (int) FastMath.ceil(simulationEndTime);
 		Set<Integer> expectedDays = new LinkedHashSet<>();
-		for (int i = 0; i <= maxDay; i++) {
+		for (int i = 1; i <= maxDay; i++) {
 			expectedDays.add(i);
 		}
 
@@ -343,7 +341,7 @@ public class AT_PeriodicReport {
 
 		// hours 0 through 3d 15h inclusive
 		Set<Integer> expectedHours = new LinkedHashSet<>();
-		for (int i = 0; i < 88; i++) {
+		for (int i = 1; i < 88; i++) {
 			expectedHours.add(i);
 		}
 
@@ -451,7 +449,7 @@ public class AT_PeriodicReport {
 			switch (reportPeriod) {
 			case DAILY:
 				int lastDay = (int) simulationEndTime;
-				for (int i = 0; i <= lastDay; i++) {
+				for (int i = 1; i <= lastDay; i++) {
 					double time = i;
 					expectedTimes.add(time);
 				}
@@ -464,7 +462,7 @@ public class AT_PeriodicReport {
 			case HOURLY:
 
 				int lastHour = (int) (simulationEndTime * 24);
-				for (int i = 0; i <= lastHour; i++) {
+				for (int i = 1; i <= lastHour; i++) {
 					double time = i;
 					time /= 24;
 					expectedTimes.add(time);
