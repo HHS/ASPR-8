@@ -58,6 +58,10 @@ public class AT_ActorContext {
 
 	}
 
+	private static class TestDataManager4B extends TestDataManager4 {
+
+	}
+
 	private static class DataChangeEvent implements Event {
 		private final DatumType datumType;
 		private final int value;
@@ -219,13 +223,13 @@ public class AT_ActorContext {
 
 		// show that the last two passive plans did not execute
 		assertTrue(planExecuted.getValue());
-		 
+
 		// precondition test: if the consumer is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
 			Simulation.builder()//
 					.addPlugin(TestPlugin.getTestPlugin(
 							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-								c.addPlan(null,0);
+								c.addPlan(null, 0);
 							})).build()))//
 					.build()//
 					.execute();//
@@ -235,12 +239,13 @@ public class AT_ActorContext {
 		// precondition test: if the plan is scheduled for a time in the past
 		contractException = assertThrows(ContractException.class, () -> {
 			Simulation.builder()//
-			.addPlugin(TestPlugin.getTestPlugin(
-					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-						c.addPlan((c2)->{},-10);
-					})).build()))//
-			.build()//
-			.execute();//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.addPlan((c2) -> {
+								}, -10);
+							})).build()))//
+					.build()//
+					.execute();//
 		});
 		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
@@ -248,19 +253,19 @@ public class AT_ActorContext {
 		// processing is finished
 		contractException = assertThrows(ContractException.class, () -> {
 			Simulation.builder()//
-			.addPlugin(TestPlugin.getTestPlugin(
-					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-						c.subscribeToSimulationClose((c2)->{
-							c2.addPlan((c3)->{},0);	
-						});
-						
-					})).build()))//
-			.build()//
-			.execute();//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.subscribeToSimulationClose((c2) -> {
+									c2.addPlan((c3) -> {
+									}, 0);
+								});
+
+							})).build()))//
+					.build()//
+					.execute();//
 		});
 		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
 
-		
 	}
 
 	@Test
@@ -313,12 +318,13 @@ public class AT_ActorContext {
 		// precondition test: if the plan is scheduled for a time in the past
 		contractException = assertThrows(ContractException.class, () -> {
 			Simulation.builder()//
-			.addPlugin(TestPlugin.getTestPlugin(
-					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-						c.addPlan(new ConsumerActorPlan(-10, (c3)->{}));
-					})).build()))//
-			.build()//
-			.execute();//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.addPlan(new ConsumerActorPlan(-10, (c3) -> {
+								}));
+							})).build()))//
+					.build()//
+					.execute();//
 		});
 		assertEquals(NucleusError.PAST_PLANNING_TIME, contractException.getErrorType());
 
@@ -326,18 +332,18 @@ public class AT_ActorContext {
 		// processing is finished
 		contractException = assertThrows(ContractException.class, () -> {
 			Simulation.builder()//
-			.addPlugin(TestPlugin.getTestPlugin(
-					TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-						c.subscribeToSimulationClose((c2)->{
-							c2.addPlan(new ConsumerActorPlan(0, (c3)->{}));	
-						});
-						
-					})).build()))//
-			.build()//
-			.execute();//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.subscribeToSimulationClose((c2) -> {
+									c2.addPlan(new ConsumerActorPlan(0, (c3) -> {
+									}));
+								});
+
+							})).build()))//
+					.build()//
+					.execute();//
 		});
 		assertEquals(NucleusError.PLANNING_QUEUE_CLOSED, contractException.getErrorType());
-
 
 	}
 
@@ -386,10 +392,72 @@ public class AT_ActorContext {
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
 	}
+	
+	
+	
+	
+	private void executeGetDataManagerTest(Consumer<ActorContext> consumer) {
+		
+		// create the test plugin data builder
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// create a data manager for the actor to find
+
+		pluginDataBuilder.addTestDataManager("dm1", () -> new TestDataManager1());
+		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
+		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
+		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,  consumer));
+
+		// build the action plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
+	}
 
 	@Test
 	@UnitTestMethod(target = ActorContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
+
+		//postcondition test: 
+		executeGetDataManagerTest((c)->{
+			assertNotNull(c.getDataManager(TestDataManager1.class));			 
+			assertNotNull(c.getDataManager(TestDataManager3A.class));
+			assertNotNull(c.getDataManager(TestDataManager3B.class));
+			assertNotNull(c.getDataManager(TestDataManager4A.class));
+			assertNotNull(c.getDataManager(TestDataManager4.class));
+		});
+
+		// precondition test: if the class reference is null
+		ContractException contractException = assertThrows(ContractException.class, ()->{
+			executeGetDataManagerTest((c)->{
+				c.getDataManager(null);
+			});
+		});
+		assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
+		
+		// precondition test: if the class reference is null
+		contractException = assertThrows(ContractException.class, ()->{
+			executeGetDataManagerTest((c)->{
+				c.getDataManager(TestDataManager3.class);
+			});
+		});
+		assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
+		
+		// precondition test: if the class reference is unknown
+		contractException = assertThrows(ContractException.class, ()->{
+			executeGetDataManagerTest((c)->{
+				c.getDataManager(TestDataManager4B.class);
+			});
+		});
+		assertEquals(NucleusError.UNKNOWN_DATA_MANAGER, contractException.getErrorType());
+	}
+
+	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "dataManagerExists", args = { Class.class })
+	public void testDataManagerExists() {
 
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -402,10 +470,21 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			c.getDataManager(TestDataManager1.class);
-			c.getDataManager(TestDataManager3A.class);
-			c.getDataManager(TestDataManager3B.class);
-			c.getDataManager(TestDataManager4A.class);
+			// show that the explicit class references return true
+			assertTrue(c.dataManagerExists(TestDataManager1.class));
+			assertTrue(c.dataManagerExists(TestDataManager3A.class));
+			assertTrue(c.dataManagerExists(TestDataManager3B.class));
+			assertTrue(c.dataManagerExists(TestDataManager4A.class));
+
+			// show that zero class matching returns false
+			assertFalse(c.dataManagerExists(TestDataManager4B.class));
+
+			// show that ambiguous class matching returns false
+			assertFalse(c.dataManagerExists(TestDataManager3.class));
+
+			// show that a null yields a false
+			assertFalse(c.dataManagerExists(null));
+
 		}));
 
 		// build the action plugin
@@ -413,36 +492,6 @@ public class AT_ActorContext {
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-		// Precondition test 1
-		pluginDataBuilder.addTestDataManager("dm3A", () -> new TestDataManager3A());
-		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
-
-		// show that ambiguous class matching throws an exception
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class,
-					() -> c.getDataManager(TestDataManager3.class));
-			assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
-		}));
-
-		// build the action plugin
-		testPluginData = pluginDataBuilder.build();
-		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
-		// Precondition test 2
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			ContractException contractException = assertThrows(ContractException.class, () -> c.getDataManager(null));
-			assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
-		}));
-
-		// build the action plugin
-		testPluginData = pluginDataBuilder.build();
-		testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		TestSimulation.builder().addPlugin(testPlugin).build().execute();
-
 	}
 
 	@Test

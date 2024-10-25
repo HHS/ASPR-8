@@ -1275,6 +1275,40 @@ public class Simulation {
 		containsDeletedActors = true;
 	}
 
+	protected <T extends DataManager> boolean dataManagerExists(Class<T> dataManagerClass) {
+		boolean result = false;
+		if (dataManagerClass != null) {
+
+			DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+			/*
+			 * If the working map does not contain the data manager, try to find a single
+			 * match from the base map that was collected from the plugins.
+			 * 
+			 * If two or more matches are found, then throw an exception.
+			 * 
+			 * If exactly one match is found, update the working map.
+			 * 
+			 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+			 * slower performance if the data manager is sought repeatedly.
+			 */
+			if (dataManager == null) {
+				List<Class<?>> candidates = new ArrayList<>();
+				for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+					if (dataManagerClass.isAssignableFrom(c)) {
+						candidates.add(c);
+					}
+				}
+
+				if (candidates.size() == 1) {
+					dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+					workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+				}
+			}
+			result = dataManager != null;
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	protected <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
 
@@ -1314,6 +1348,58 @@ public class Simulation {
 			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER, " : " + dataManagerClass.getSimpleName());
 		}
 		return (T) dataManager;
+	}
+	
+	
+	protected <T extends DataManager> boolean dataManagerExistsForDataManager(DataManagerId dataManagerId,
+			Class<T> dataManagerClass) {
+
+		if (dataManagerClass == null) {
+			return false;
+		}
+
+		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+		/*
+		 * If the working map does not contain the data manager, try to find a single
+		 * match from the base map that was collected from the plugins.
+		 * 
+		 * If two or more matches are found, then throw an exception.
+		 * 
+		 * If exactly one match is found, update the working map.
+		 * 
+		 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+		 * slower performance if the data manager is sought repeatedly.
+		 */
+		if (dataManager == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+				if (dataManagerClass.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				return false;
+			}
+			if (candidates.size() == 1) {
+				dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+				workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+			}
+		}
+
+		if (dataManager == null) {
+			return false;
+		}
+
+		int requestorId = dataManagerId.getValue();
+		DataManagerId dataManagerId2 = dataManagerToDataManagerIdMap.get(dataManager);
+		int requesteeId = dataManagerId2.getValue();
+
+		boolean accessGranted = dataManagerAccessPermissions[requestorId][requesteeId];
+
+		if (!accessGranted) {
+			return false;
+		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1492,10 +1578,10 @@ public class Simulation {
 	}
 
 	/*
-	 * Recursively processes the event through the filter node to the given actor. Events should be
-	 * processed through the root filter node. Each node's consumers have each such
-	 * consumer scheduled onto the actor queue for delayed execution of the
-	 * consumer.
+	 * Recursively processes the event through the filter node to the given actor.
+	 * Events should be processed through the root filter node. Each node's
+	 * consumers have each such consumer scheduled onto the actor queue for delayed
+	 * execution of the consumer.
 	 */
 	private void broadcastEventToFilterNodeAndActor(final Event event, FilterNode filterNode, ActorId actorId) {
 		// determine the value of the function for the given event
