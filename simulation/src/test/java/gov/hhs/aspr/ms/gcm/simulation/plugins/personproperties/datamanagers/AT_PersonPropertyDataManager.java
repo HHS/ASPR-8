@@ -561,7 +561,8 @@ public final class AT_PersonPropertyDataManager {
 		});//
 		assertEquals(PropertyError.UNKNOWN_PROPERTY_ID, contractException.getErrorType());
 
-		// precondition test: if the person property does not have time tracking turned on in the associated property definition
+		// precondition test: if the person property does not have time tracking turned
+		// on in the associated property definition
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory = PersonPropertiesTestPluginFactory.factory(10, 2209705385008769618L, (c) -> {
 				PersonPropertiesDataManager personPropertiesDataManager = c
@@ -606,7 +607,7 @@ public final class AT_PersonPropertyDataManager {
 				personPropertiesDataManager.setPersonPropertyValue(personId,
 						TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, value);
 				expectedValues.put(personId, value);
-				
+
 				double dValue = randomGenerator.nextDouble();
 				personPropertiesDataManager.setPersonPropertyValue(personId,
 						TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK, dValue);
@@ -619,7 +620,7 @@ public final class AT_PersonPropertyDataManager {
 				Integer actualValue = personPropertiesDataManager.getPersonPropertyValue(personId,
 						TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK);
 				assertEquals(expectedValue, actualValue);
-				
+
 				Double expectedDValue = expectedValues2.get(personId);
 				Double actualDValue = personPropertiesDataManager.getPersonPropertyValue(personId,
 						TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
@@ -839,6 +840,258 @@ public final class AT_PersonPropertyDataManager {
 
 	}
 
+
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization_PropertyAssignmentTimeExceedsSimTime() {
+
+		/*
+		 * precondition test : if a property assignment time for a person exceeds the
+		 * simulation start time and thus is happening in the future
+		 */
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+
+			// add the people plugin with two people
+			PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+					.addPersonRange(new PersonRange(0, 1))//
+					.build();
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// add the regions plugin
+			RegionsPluginData regionsPluginData = RegionsPluginData.builder()//
+					.addRegion(TestRegionId.REGION_1).addPerson(new PersonId(0), TestRegionId.REGION_1)
+					.addPerson(new PersonId(1), TestRegionId.REGION_1).build();//
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+					.setRegionsPluginData(regionsPluginData)//
+					.getRegionsPlugin();//
+
+			/*
+			 * Define a property
+			 */
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+
+			PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder()//
+					.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, true)//
+					.setPersonPropertyTime(new PersonId(1), testPersonPropertyId, 1.0)//
+					.build();
+
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+					.setPersonPropertiesPluginData(personPropertiesPluginData)//
+					.getPersonPropertyPlugin();//
+
+			Simulation.builder()//
+
+					.addPlugin(personPropertyPlugin)//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.build()//
+					.execute();
+		});
+		assertEquals(PersonPropertyError.PROPERTY_ASSIGNMENT_TIME_EXCEEDS_SIM_TIME, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization_UnknowPropertyAssignment() {
+
+		// precondition test : if a property value was collected for an unknown person
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+
+			// add the people plugin with two people
+			PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+					.addPersonRange(new PersonRange(0, 1))//
+					.build();
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// add the regions plugin
+			RegionsPluginData regionsPluginData = RegionsPluginData.builder()//
+					.addRegion(TestRegionId.REGION_1).addPerson(new PersonId(0), TestRegionId.REGION_1)
+					.addPerson(new PersonId(1), TestRegionId.REGION_1).build();//
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+					.setRegionsPluginData(regionsPluginData)//
+					.getRegionsPlugin();//
+
+			/*
+			 * Define a property
+			 */
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+
+			PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder()//
+					.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, false)//
+					.setPersonPropertyValue(new PersonId(2), testPersonPropertyId, false)//
+					.build();
+
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+					.setPersonPropertiesPluginData(personPropertiesPluginData)//
+					.getPersonPropertyPlugin();//
+
+			Simulation.builder()//
+
+					.addPlugin(personPropertyPlugin)//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.build()//
+					.execute();
+		});
+		assertEquals(PersonPropertyError.UNKNOWN_PERSON_HAS_PROPERTY_VALUE_ASSIGNMENT,
+				contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization_UnknowPropertyAssignmentTime() {
+
+		// precondition test : if a person property value has been collected for an
+		// unknown person
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+
+			// add the people plugin with two people
+			PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+					.addPersonRange(new PersonRange(0, 1))//
+					.build();
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// add the regions plugin
+			RegionsPluginData regionsPluginData = RegionsPluginData.builder()//
+					.addRegion(TestRegionId.REGION_1).addPerson(new PersonId(0), TestRegionId.REGION_1)
+					.addPerson(new PersonId(1), TestRegionId.REGION_1).build();//
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+					.setRegionsPluginData(regionsPluginData)//
+					.getRegionsPlugin();//
+
+			/*
+			 * Define a property
+			 */
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+
+			PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder()//
+					.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, true)//
+					.setPersonPropertyTime(new PersonId(2), testPersonPropertyId, 0.0)//
+					.build();
+
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+					.setPersonPropertiesPluginData(personPropertiesPluginData)//
+					.getPersonPropertyPlugin();//
+
+			Simulation.builder()//
+
+					.addPlugin(personPropertyPlugin)//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.build()//
+					.execute();
+		});
+		assertEquals(PersonPropertyError.UNKNOWN_PERSON_HAS_PROPERTY_ASSIGNMENT_TIME, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization_PropertyDefaultTime() {
+
+		// precondition test : if the default time of a property exceeds that start time
+		// of the simulation
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+
+			// add an empty people plugin
+			PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
+					.build();
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// add the regions plugin
+			RegionsPluginData regionsPluginData = RegionsPluginData.builder()//
+					.build();//
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+					.setRegionsPluginData(regionsPluginData)//
+					.getRegionsPlugin();//
+
+			/*
+			 * Define a property with a default time in the future -- the sim starts at 0 if
+			 * no simulation state is set
+			 */
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+
+			PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder()//
+					.definePersonProperty(testPersonPropertyId, propertyDefinition, 100, false)//
+					.build();
+
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+					.setPersonPropertiesPluginData(personPropertiesPluginData)//
+					.getPersonPropertyPlugin();//
+
+			Simulation.builder()//
+
+					.addPlugin(personPropertyPlugin)//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.build()//
+					.execute();
+		});
+		assertEquals(PersonPropertyError.PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = PersonPropertiesDataManager.class, name = "init", args = { DataManagerContext.class })
+	public void testStateInitialization_InsufficientPropertyValues() {
+
+		// precondition test : if a person lacks an assigned value
+
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+
+			// add three people
+			PeoplePluginData peoplePluginData = PeoplePluginData.builder().addPersonRange(new PersonRange(0, 2))
+					.build();
+			Plugin peoplePlugin = PeoplePlugin.getPeoplePlugin(peoplePluginData);
+
+			// assign the people to regions
+			RegionsPluginData regionsPluginData = RegionsPluginData.builder()//
+					.addRegion(TestRegionId.REGION_1)//
+					.addRegion(TestRegionId.REGION_2)//
+					.addPerson(new PersonId(0), TestRegionId.REGION_1)//
+					.addPerson(new PersonId(1), TestRegionId.REGION_1)//
+					.addPerson(new PersonId(2), TestRegionId.REGION_2)//
+					.build();//
+			Plugin regionsPlugin = RegionsPlugin.builder()//
+					.setRegionsPluginData(regionsPluginData)//
+					.getRegionsPlugin();//
+
+			// define a property that lacks a default value -- do not set the value for any
+			// person
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK;
+			PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
+			assertTrue(propertyDefinition.getDefaultValue().isEmpty());
+
+			PersonPropertiesPluginData personPropertiesPluginData = PersonPropertiesPluginData.builder()//
+					.definePersonProperty(testPersonPropertyId, propertyDefinition, 0, false)//
+					.build();
+
+			Plugin personPropertyPlugin = PersonPropertiesPlugin.builder()//
+					.setPersonPropertiesPluginData(personPropertiesPluginData)//
+					.getPersonPropertyPlugin();//
+
+			Simulation.builder()//
+					.addPlugin(personPropertyPlugin)//
+					.addPlugin(peoplePlugin)//
+					.addPlugin(regionsPlugin)//
+					.build()//
+					.execute();
+		});
+		assertEquals(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, contractException.getErrorType());
+
+	}
+
 	/**
 	 * Demonstrates that the data manager's initial state reflects its plugin data
 	 */
@@ -919,6 +1172,7 @@ public final class AT_PersonPropertyDataManager {
 				.setPersonPropertiesPluginData(personPropertiesPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
+		// precondition tests are run as distinct tests
 	}
 
 	@Test
@@ -2165,8 +2419,9 @@ public final class AT_PersonPropertyDataManager {
 		pluginDatas.add(testStateContinuity(1));
 		pluginDatas.add(testStateContinuity(5));
 		pluginDatas.add(testStateContinuity(10));
-
+		
 		assertEquals(1, pluginDatas.size());
+		
 
 	}
 
@@ -2546,17 +2801,14 @@ public final class AT_PersonPropertyDataManager {
 					+ "PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Boolean, propertyValuesAreMutable=false, defaultValue=false], "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Integer, propertyValuesAreMutable=false, defaultValue=0], "
 					+ "PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK=PropertyDefinition [type=class java.lang.Double, propertyValuesAreMutable=true, defaultValue=null]}, "
-					+ "propertyDefinitionTimes={"
-					+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=0.0, "
+					+ "propertyDefinitionTimes={" + "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=0.0, "
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=10.0, "
 					+ "PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK=20.0, "
 					+ "PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK=30.0, "
-					+ "PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK=40.0, "
-					+ "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=50.0, "
+					+ "PERSON_PROPERTY_5_INTEGER_MUTABLE_TRACK=40.0, " + "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=50.0, "
 					+ "PERSON_PROPERTY_7_BOOLEAN_IMMUTABLE_NO_TRACK=60.0, "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=70.0, "
-					+ "PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK=80.0}, "
-					+ "propertyValues={"
+					+ "PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK=80.0}, " + "propertyValues={"
 					+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK=BooleanPropertyManager [boolContainer=BooleanContainer [defaultValue=false, bitSet=[5=false, 7=true, 9=false, 11=false, 13=true, 15=false, 17=false, 19=false, 21=false, 23=true]]], "
 					+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK=IntPropertyManager [intValueContainer=IntValueContainer [subTypeArray=IntArray [values=[5=-1784993732, 7=-109471333, 9=-641697795, 11=-853847212, 13=1855748319, 15=1827577953, 17=177514276, 19=-1799284826, 21=-626016377, 23=-1823346824], defaultValue=0]], intValueType=INT], "
 					+ "PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK=DoublePropertyManager [doubleValueContainer=DoubleValueContainer [values=[5=0.5824618866151392, 7=0.32445713185273983, 9=0.03265419470130482, 11=0.8071539615798824, 13=0.8762355391369716, 15=0.033260956343352355, 17=0.7391026590158609, 19=0.9140171970828741, 21=0.15690598584870608, 23=0.17768940550077428], defaultValue=0.0]], "
@@ -2572,8 +2824,6 @@ public final class AT_PersonPropertyDataManager {
 					+ "PERSON_PROPERTY_4_BOOLEAN_MUTABLE_TRACK=DoubleValueContainer [values=[5=36.989398748334274, 7=32.63875498464337, 9=39.665805066056954, 11=37.97975065250025, 13=34.12721167419171, 15=38.78454108049003, 17=38.1994261250516, 19=39.056507171734374, 21=36.24325158296854, 23=34.51135513069816], defaultValue=30.0], "
 					+ "PERSON_PROPERTY_6_DOUBLE_MUTABLE_TRACK=DoubleValueContainer [values=[5=52.56714915599213, 7=57.138725245642775, 9=56.84920656152565, 11=57.252923547109155, 13=54.44141841857151, 15=56.536139013953296, 17=58.95502858796634, 19=55.16555180553936, 21=51.29647283837218, 23=55.85289756382876], defaultValue=50.0], "
 					+ "PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK=DoubleValueContainer [values=[5=71.29830149062961, 7=71.9966285794095, 9=79.56528585286935, 11=78.67607305409997, 13=71.7323823816627, 15=71.42041658535238, 17=79.30789515021706, 19=73.03586146032546, 21=79.23203253002579, 23=70.76649742399243], defaultValue=70.0]}]";
-			
-			
 
 			assertEquals(expectedValue, actualValue);
 		}));

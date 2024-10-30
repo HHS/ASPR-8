@@ -492,7 +492,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 		validatePersonPropertyId(personPropertyId);
 		validatePersonPropertyAssignmentTimesTracked(personPropertyId);
 		DoubleValueContainer doubleValueContainer = propertyTimes.get(personPropertyId);
-		if(doubleValueContainer == null) {
+		if (doubleValueContainer == null) {
 			return propertyDefinitionTimes.get(personPropertyId);
 		}
 		return doubleValueContainer.getValue(personId.getValue());
@@ -770,6 +770,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 		 *
 		 * 4) person does not exist, property value is not present -- nothing to do
 		 */
+
+		/*
+		 * To preserve the ordering necessary for run continuity, we only process the
+		 * property ids contained in the plugin data's stored person property values. We
+		 * show that properties that do not have defaults are properly tested below.
+		 */
 		Map<PersonPropertyId, List<Object>> map = personPropertiesPluginData.getPropertyValues();
 		for (PersonPropertyId personPropertyId : map.keySet()) {
 			List<Object> list = map.get(personPropertyId);
@@ -806,6 +812,25 @@ public final class PersonPropertiesDataManager extends DataManager {
 			}
 		}
 
+		/*
+		 * If there are any people, we need to determine if there were any property
+		 * definitions that do not have default values and were excluded from the stored
+		 * person property values in the plugin data.
+		 */
+		if (peopleDataManager.getPopulationCount() > 0) {
+			Set<PersonPropertyId> potentiallyInsufficientPropertyIds = new LinkedHashSet<>();
+			potentiallyInsufficientPropertyIds.addAll(propertyDefinitions.keySet());
+			potentiallyInsufficientPropertyIds.removeAll(map.keySet());
+
+			for (PersonPropertyId personPropertyId : potentiallyInsufficientPropertyIds) {
+				PropertyDefinition propertyDefinition = propertyDefinitions.get(personPropertyId);
+				boolean defaultIsPresent = propertyDefinition.getDefaultValue().isPresent();
+				if (!defaultIsPresent) {
+					throw new ContractException(PropertyError.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, personPropertyId);
+				}
+			}
+
+		}
 	}
 
 	private void loadPropertyTimes() {
@@ -858,6 +883,32 @@ public final class PersonPropertiesDataManager extends DataManager {
 		}
 	}
 
+	/**
+	 * Inititalizes the data manager by loading its state from the plugin data.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain PersonPropertyError#PROPERTY_DEFAULT_TIME_EXCEEDS_SIM_TIME}
+	 *                           if the default time of a property exceeds that
+	 *                           start time of the simulation</li>
+	 *                           <li>{@linkplain PropertyError#INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT}
+	 *                           if a property value for a person is not present for
+	 *                           a property whose definition does not have a default
+	 *                           value</li>
+	 *                           <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_HAS_PROPERTY_VALUE_ASSIGNMENT}
+	 *                           if a property value was collected for an unknown
+	 *                           person -- i.e. not defined in the people plugin
+	 *                           data</li>
+	 *                           <li>{@linkplain PersonPropertyError#PROPERTY_ASSIGNMENT_TIME_EXCEEDS_SIM_TIME}
+	 *                           if a property assignment time for a person exceeds
+	 *                           the simulation start time and thus is happening in
+	 *                           the future</li>
+	 *                           <li>{@linkplain PersonPropertyError#UNKNOWN_PERSON_HAS_PROPERTY_ASSIGNMENT_TIME}
+	 *                           if a person property value has been collected for
+	 *                           an unknown person</li>
+	 * 
+	 *                           </ul>
+	 */
 	@Override
 	public void init(DataManagerContext dataManagerContext) {
 		super.init(dataManagerContext);
