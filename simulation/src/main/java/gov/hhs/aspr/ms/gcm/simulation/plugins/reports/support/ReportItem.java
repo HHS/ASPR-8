@@ -48,10 +48,6 @@ public final class ReportItem {
 		 */
 		private void validateData() {
 
-			if (data.reportHeader == null) {
-				throw new ContractException(ReportError.NULL_REPORT_HEADER);
-			}
-
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
@@ -59,7 +55,7 @@ public final class ReportItem {
 		}
 
 		/**
-		 * Builds the {@link ReportItem} from the colleced data.
+		 * Builds the {@link ReportItem} from the collected data.
 		 * 
 		 * @throws ContractException
 		 *                           <ul>
@@ -72,19 +68,6 @@ public final class ReportItem {
 		public ReportItem build() {
 			validateData();
 			return new ReportItem(new Data(data));
-		}
-
-		/**
-		 * Sets the associated {@link ReportHeader} for this {@link ReportItem}. The
-		 * report header and the report item should have the same order of added fiels
-		 * values.
-		 */
-		public Builder setReportHeader(ReportHeader reportHeader) {
-			if (reportHeader == null) {
-				throw new ContractException(ReportError.NULL_REPORT_HEADER);
-			}
-			data.reportHeader = reportHeader;
-			return this;
 		}
 
 		/**
@@ -103,7 +86,6 @@ public final class ReportItem {
 
 	private static class Data {
 		private ReportLabel reportLabel;
-		private ReportHeader reportHeader;
 		private final List<String> values = new ArrayList<>();
 
 		public Data() {
@@ -112,7 +94,6 @@ public final class ReportItem {
 
 		public Data(Data data) {
 			reportLabel = data.reportLabel;
-			reportHeader = data.reportHeader;
 			values.addAll(data.values);
 		}
 
@@ -120,7 +101,6 @@ public final class ReportItem {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((reportHeader == null) ? 0 : reportHeader.hashCode());
 			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
 			result = prime * result + ((values == null) ? 0 : values.hashCode());
 			return result;
@@ -135,13 +115,6 @@ public final class ReportItem {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (reportHeader == null) {
-				if (other.reportHeader != null) {
-					return false;
-				}
-			} else if (!reportHeader.equals(other.reportHeader)) {
-				return false;
-			}
 			if (reportLabel == null) {
 				if (other.reportLabel != null) {
 					return false;
@@ -171,13 +144,6 @@ public final class ReportItem {
 	 */
 	public ReportLabel getReportLabel() {
 		return data.reportLabel;
-	}
-
-	/**
-	 * Returns the report header for this report item
-	 */
-	public ReportHeader getReportHeader() {
-		return data.reportHeader;
 	}
 
 	/**
@@ -212,8 +178,6 @@ public final class ReportItem {
 		StringBuilder builder2 = new StringBuilder();
 		builder2.append("ReportItem [reportLabel=");
 		builder2.append(data.reportLabel);
-		builder2.append(", reportHeader=");
-		builder2.append(data.reportHeader);
 		builder2.append(", values=");
 		builder2.append(data.values);
 		builder2.append("]");
