@@ -1,6 +1,8 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -11,11 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ScenarioStatus;
-import net.jcip.annotations.GuardedBy;
+import gov.hhs.aspr.ms.util.resourcehelper.ResourceHelper;
 import net.jcip.annotations.ThreadSafe;
 
 /**
@@ -31,12 +32,10 @@ public final class LineWriter {
 
 	private final boolean useExperimentColumns;
 	private static final String lineSeparator = System.getProperty("line.separator");
-	private final Object headerLock = new Object();
-	private BufferedWriter writer;
-	private final String delimiter;
 
-	@GuardedBy(value = "headerLock")
-	private boolean headerWritten;
+	private BufferedWriter writer;
+	private OutputStreamWriter outputStreamWriter;
+	private final String delimiter;
 
 	/**
 	 * Creates this {@link LineWriter} The path to the file that may or may not
@@ -60,11 +59,7 @@ public final class LineWriter {
 	public LineWriter(final ExperimentContext experimentContext, final Path path,
 			final boolean displayExperimentColumnsInReports, String delimiter) {
 
-		if (Files.exists(path)) {
-			if (!Files.isRegularFile(path)) {
-				throw new RuntimeException("Non-regular file at: " + path);
-			}
-		}
+		ResourceHelper.validateFilePath(path);
 
 		this.delimiter = delimiter;
 		this.useExperimentColumns = displayExperimentColumnsInReports;
@@ -79,74 +74,103 @@ public final class LineWriter {
 		}
 	}
 
+	/**
+	 * Creates this {@link LineWriter} The path to the file that may or may not
+	 * exist and may contain some complete or partial content from a previous
+	 * execution of the experiment. If not empty, this file must have a header, be
+	 * tab delimited and have as its first column be the scenario id. Partial lines
+	 * at the end of the file due to an ungraceful halt to the previous execution
+	 * are tolerated. If the file does not exist, then its parent directory must
+	 * exist.
+	 * 
+	 * @throws RuntimeException
+	 *                          <ul>
+	 *                          <li>if an {@link IOException} is thrown during file
+	 *                          initialization</li>
+	 *                          <li>if the simulation run is continuing from a
+	 *                          progress log and the path is not a regular file
+	 *                          (path does not exist) during file
+	 *                          initialization</li>
+	 *                          </ul>
+	 */
+	public LineWriter(final ExperimentContext experimentContext, final ReportHeader reportHeader, final Path path,
+			final boolean displayExperimentColumnsInReports, String delimiter) {
+
+		ResourceHelper.validateFilePath(path);
+
+		this.delimiter = delimiter;
+		this.useExperimentColumns = displayExperimentColumnsInReports;
+
+		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
+		loadedWithPreviousData &= Files.exists(path);
+
+		if (loadedWithPreviousData) {
+			initializeWithPreviousContent(path, experimentContext);
+		} else {
+			initializeWithNoPreviousContent(path);
+		}
+
+		writeHeader(experimentContext, reportHeader);
+	}
+
 	/*
 	 * The path must correspond to an existing regular file.
 	 */
 	private void initializeWithPreviousContent(Path path, ExperimentContext experimentContext) {
 
+		ResourceHelper.createNewFile(path.getParent(), "temp.txt");
+		Path tempPath = path.getParent().resolve("temp.txt");
+		CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
 		try {
-
 			/*
 			 * Remove the old file and write to the file the header and any retained lines
 			 * from the previous execution.
 			 */
-			Path tempPath = path.getParent().resolve("temp.txt");
-			Files.deleteIfExists(tempPath);
-			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
-			OutputStream out = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
-			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-			Stream<String> lines = Files.lines(path);
-			boolean[] header = new boolean[] { true };
-			lines.forEach((line) -> {
-				if (!header[0]) {
-					String[] fields = line.split(delimiter);
-					/*
-					 * It is possible that the last line of a file was only partially written
-					 * because neither the writer's close or flush was called during an abrupt
-					 * shutdown. We expect that such cases will not correspond to successfully
-					 * completed simulation execution, but must ensure that the parsing of the
-					 * scenario and replication ids can still be performed
-					 */
-					if (fields.length > 1) {
-						int scenarioId = Integer.parseInt(fields[0]);
-						Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
-						if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
-							try {
-								writer.write(line);
-								writer.newLine();
-							} catch (IOException e) {
-								throw new RuntimeException(e);
-							}
-						}
-					}
-				} else {
-					try {
-						writer.write(line);
-						writer.newLine();
-						headerWritten = true;
-						header[0] = false;
-					} catch (IOException e) {
-						throw new RuntimeException(e);
+			OutputStream tempOut = Files.newOutputStream(tempPath, StandardOpenOption.CREATE);
+			OutputStreamWriter tempOutStream = new OutputStreamWriter(tempOut, encoder);
+			BufferedWriter tempWriter = new BufferedWriter(tempOutStream);
+			BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
+
+			// this is safe because the header for sure always gets written when this line
+			// writer gets created.
+			String headerLine = reader.readLine();
+
+			tempWriter.write(headerLine);
+			tempWriter.newLine();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] fields = line.split(delimiter, -1);
+				/*
+				 * It is possible that the last line of a file was only partially written
+				 * because neither the writer's close or flush was called during an abrupt
+				 * shutdown. We expect that such cases will not correspond to successfully
+				 * completed simulation execution, but must ensure that the parsing of the
+				 * scenario and replication ids can still be performed
+				 */
+				if (fields.length > 1) {
+					int scenarioId = Integer.parseInt(fields[0]);
+					Optional<ScenarioStatus> optional = experimentContext.getScenarioStatus(scenarioId);
+					if (optional.isPresent() && optional.get().equals(ScenarioStatus.PREVIOUSLY_SUCCEEDED)) {
+						tempWriter.write(line);
+						tempWriter.newLine();
 					}
 				}
-			});
-			lines.close();
-
-			writer.close();
+			}
+			reader.close();
+			tempWriter.close();
+			tempOutStream.close();
 
 			tempPath.toFile().renameTo(path.toFile());
 
-			encoder = StandardCharsets.UTF_8.newEncoder();
-			out = Files.newOutputStream(path, StandardOpenOption.APPEND);
-			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-
+			OutputStream outStream = Files.newOutputStream(path, StandardOpenOption.APPEND);
+			outputStreamWriter = new OutputStreamWriter(outStream, encoder);
+			writer = new BufferedWriter(outputStreamWriter);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private void initializeWithNoPreviousContent(Path path) {
-
 		try {
 			/*
 			 * Remove the old file and write to the file the header and any retained lines
@@ -154,9 +178,9 @@ public final class LineWriter {
 			 */
 			Files.deleteIfExists(path);
 			CharsetEncoder encoder = StandardCharsets.UTF_8.newEncoder();
-			OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE);
-			writer = new BufferedWriter(new OutputStreamWriter(out, encoder));
-
+			OutputStream outStream = Files.newOutputStream(path, StandardOpenOption.CREATE);
+			outputStreamWriter = new OutputStreamWriter(outStream, encoder);
+			writer = new BufferedWriter(outputStreamWriter);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -168,9 +192,35 @@ public final class LineWriter {
 	 * @throws RuntimeException if an {@link IOException} is thrown
 	 */
 	public void close() {
-
 		try {
 			writer.close();
+			outputStreamWriter.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void writeHeader(ExperimentContext experimentContext, ReportHeader reportHeader) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append("scenario");
+
+		if (useExperimentColumns) {
+			for (String item : experimentContext.getExperimentMetaData()) {
+				sb.append(delimiter);
+				sb.append(item);
+			}
+		}
+
+		final List<String> headerStrings = reportHeader.getHeaderStrings();
+		for (final String headerString : headerStrings) {
+			sb.append(delimiter);
+			sb.append(headerString);
+		}
+
+		sb.append(lineSeparator);
+		try {
+			writer.write(sb.toString());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -182,49 +232,24 @@ public final class LineWriter {
 	 * @throws RuntimeException if an {@link IOException} is thrown
 	 */
 	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append(scenarioId);
+		if (useExperimentColumns) {
+			List<String> metaData = experimentContext.getScenarioMetaData(scenarioId);
+			for (String item : metaData) {
+				sb.append(delimiter);
+				sb.append(item);
+			}
+		}
+
+		for (int i = 0; i < reportItem.size(); i++) {
+			sb.append(delimiter);
+			sb.append(reportItem.getValue(i));
+		}
+		sb.append(lineSeparator);
 
 		try {
-			synchronized (headerLock) {
-				if (!headerWritten) {
-					final StringBuilder sb = new StringBuilder();
-
-					sb.append("scenario");
-
-					if (useExperimentColumns) {
-						for (String item : experimentContext.getExperimentMetaData()) {
-							sb.append(delimiter);
-							sb.append(item);
-						}
-					}
-
-					final List<String> headerStrings = reportItem.getReportHeader().getHeaderStrings();
-					for (final String headerString : headerStrings) {
-						sb.append(delimiter);
-						sb.append(headerString);
-					}
-
-					sb.append(lineSeparator);
-					writer.write(sb.toString());
-					headerWritten = true;
-				}
-			}
-
-			final StringBuilder sb = new StringBuilder();
-
-			sb.append(scenarioId);
-			if (useExperimentColumns) {
-				List<String> metaData = experimentContext.getScenarioMetaData(scenarioId);
-				for (String item : metaData) {
-					sb.append(delimiter);
-					sb.append(item);
-				}
-			}
-
-			for (int i = 0; i < reportItem.size(); i++) {
-				sb.append(delimiter);
-				sb.append(reportItem.getValue(i));
-			}
-			sb.append(lineSeparator);
 			writer.write(sb.toString());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
