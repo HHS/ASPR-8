@@ -171,7 +171,7 @@ public final class ReportItem {
 	/**
 	 * A string listing the values as added to this ReportItem delimited by commas
 	 * in the form: ReportItem
-	 * [reportType=reportType,reportHeader=reportHeader,values=[value1, value2...]]
+	 * [reportLabel=reportLabel,values=[value1, value2...]]
 	 */
 	@Override
 	public String toString() {
