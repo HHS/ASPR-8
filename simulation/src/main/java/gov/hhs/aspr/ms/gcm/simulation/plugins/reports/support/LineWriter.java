@@ -74,6 +74,45 @@ public final class LineWriter {
 		}
 	}
 
+	/**
+	 * Creates this {@link LineWriter} The path to the file that may or may not
+	 * exist and may contain some complete or partial content from a previous
+	 * execution of the experiment. If not empty, this file must have a header, be
+	 * tab delimited and have as its first column be the scenario id. Partial lines
+	 * at the end of the file due to an ungraceful halt to the previous execution
+	 * are tolerated. If the file does not exist, then its parent directory must
+	 * exist.
+	 * 
+	 * @throws RuntimeException
+	 *                          <ul>
+	 *                          <li>if an {@link IOException} is thrown during file
+	 *                          initialization</li>
+	 *                          <li>if the simulation run is continuing from a
+	 *                          progress log and the path is not a regular file
+	 *                          (path does not exist) during file
+	 *                          initialization</li>
+	 *                          </ul>
+	 */
+	public LineWriter(final ExperimentContext experimentContext, final ReportHeader reportHeader, final Path path,
+			final boolean displayExperimentColumnsInReports, String delimiter) {
+
+		ResourceHelper.validateFilePath(path);
+
+		this.delimiter = delimiter;
+		this.useExperimentColumns = displayExperimentColumnsInReports;
+
+		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
+		loadedWithPreviousData &= Files.exists(path);
+
+		if (loadedWithPreviousData) {
+			initializeWithPreviousContent(path, experimentContext);
+		} else {
+			initializeWithNoPreviousContent(path);
+		}
+
+		writeHeader(experimentContext, reportHeader);
+	}
+
 	/*
 	 * The path must correspond to an existing regular file.
 	 */

@@ -72,7 +72,6 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 				}
 				pathMap.put(path, reportLabel);
 			}
-
 		}
 
 		/**
