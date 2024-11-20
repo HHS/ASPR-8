@@ -150,6 +150,8 @@ public final class GlobalPropertyReport {
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
+		// release header
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -168,11 +170,10 @@ public final class GlobalPropertyReport {
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId,
 			final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(reportHeader);
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(reportContext.getTime());
-		reportItemBuilder.addValue(globalPropertyId.toString());
-		reportItemBuilder.addValue(globalPropertyValue);
+		reportItemBuilder.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime())//
+				.addValue(globalPropertyId.toString())//
+				.addValue(globalPropertyValue);
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 

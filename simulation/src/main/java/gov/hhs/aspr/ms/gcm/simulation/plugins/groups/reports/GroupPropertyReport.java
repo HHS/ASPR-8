@@ -88,7 +88,6 @@ public final class GroupPropertyReport extends PeriodicReport {
 					if (counter.count > 0) {
 						final int personCount = counter.count;
 						ReportItem.Builder reportItemBuilder = ReportItem.builder();
-						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
@@ -255,6 +254,9 @@ public final class GroupPropertyReport extends PeriodicReport {
 				}
 			}
 		}
+
+		// release header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

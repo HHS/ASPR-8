@@ -62,6 +62,9 @@ public final class ResourcePropertyReport {
 				writeProperty(reportContext, resourceId, resourcePropertyId, resourcePropertyValue);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -81,7 +84,6 @@ public final class ResourcePropertyReport {
 	private void writeProperty(ReportContext reportContext, final ResourceId resourceId,
 			final ResourcePropertyId resourcePropertyId, Object resourcePropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());

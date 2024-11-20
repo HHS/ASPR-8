@@ -79,7 +79,6 @@ public final class MaterialsProducerResourceReport {
 	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId,
 			final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(resourceId.toString());
@@ -121,6 +120,9 @@ public final class MaterialsProducerResourceReport {
 						materialsProducerResourceLevel);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

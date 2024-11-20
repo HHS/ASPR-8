@@ -177,6 +177,9 @@ public final class RegionPropertyReport {
 				writeProperty(reportContext, regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -197,7 +200,6 @@ public final class RegionPropertyReport {
 			final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());

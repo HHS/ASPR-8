@@ -107,7 +107,6 @@ public final class PersonResourceReport extends PeriodicReport {
 			for (final ResourceId resourceId : resourceMap.keySet()) {
 				MutableInteger mutableInteger = resourceMap.get(resourceId);
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(getReportHeader());
 				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);
 				reportItemBuilder.addValue(regionId.toString());
@@ -286,6 +285,8 @@ public final class PersonResourceReport extends PeriodicReport {
 			}
 		}
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

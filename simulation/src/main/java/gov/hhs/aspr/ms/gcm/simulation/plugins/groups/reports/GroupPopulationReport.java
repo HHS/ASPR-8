@@ -76,15 +76,14 @@ public final class GroupPopulationReport extends PeriodicReport {
 				Counter counter = groupSizeMap.get(personCount);
 
 				final int groupCount = counter.count;
-				reportItemBuilder.setReportHeader(getReportHeader());
 				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);
-				reportItemBuilder.addValue(groupTypeId.toString());
-				reportItemBuilder.addValue(personCount);
-				reportItemBuilder.addValue(groupCount);
+				reportItemBuilder//
+						.addValue(groupTypeId.toString())//
+						.addValue(personCount)//
+						.addValue(groupCount);
 				ReportItem reportItem = reportItemBuilder.build();
 				reportContext.releaseOutput(reportItem);
-
 			}
 		}
 
@@ -98,6 +97,9 @@ public final class GroupPopulationReport extends PeriodicReport {
 		if (reportContext.stateRecordingIsScheduled()) {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
+
+		// release header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

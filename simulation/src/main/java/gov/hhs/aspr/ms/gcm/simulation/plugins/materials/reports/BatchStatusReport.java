@@ -79,7 +79,6 @@ public final class BatchStatusReport {
 		// report the batch - make sure batch exists
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(batchRecord.time);
 		reportItemBuilder.addValue(batchRecord.batchId);
@@ -285,6 +284,9 @@ public final class BatchStatusReport {
 				}
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

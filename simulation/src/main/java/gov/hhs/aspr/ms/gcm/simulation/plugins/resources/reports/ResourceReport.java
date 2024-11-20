@@ -128,7 +128,6 @@ public final class ResourceReport extends PeriodicReport {
 					final Counter counter = activityMap.get(activity);
 					if (counter.actionCount > 0) {
 						ReportItem.Builder reportItemBuilder = ReportItem.builder();
-						reportItemBuilder.setReportHeader(getReportHeader());
 						reportItemBuilder.setReportLabel(getReportLabel());
 						fillTimeFields(reportItemBuilder);
 
@@ -378,6 +377,9 @@ public final class ResourceReport extends PeriodicReport {
 				increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, regionResourceLevel);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

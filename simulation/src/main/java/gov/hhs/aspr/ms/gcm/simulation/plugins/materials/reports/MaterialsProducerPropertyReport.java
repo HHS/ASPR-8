@@ -68,6 +68,9 @@ public final class MaterialsProducerPropertyReport {
 						materialsProducerPropertyValue);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -92,7 +95,6 @@ public final class MaterialsProducerPropertyReport {
 	private void writeProperty(ReportContext reportContext, final MaterialsProducerId materialsProducerId,
 			final MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(materialsProducerId.toString());

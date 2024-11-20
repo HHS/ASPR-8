@@ -114,7 +114,6 @@ public final class StageReport {
 
 	private void writeReportItem(ReportContext reportContext, final StageRecord stageRecord) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(reportContext.getTime());
 		reportItemBuilder.addValue(stageRecord.stageId);
@@ -151,6 +150,9 @@ public final class StageReport {
 				writeReportItem(reportContext, stageRecord);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
