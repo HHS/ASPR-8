@@ -125,7 +125,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	private final Map<Object, LineWriter> lineWriterMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
-	private ExperimentLineWriter experimentLineWriter;
+	private LineWriter experimentLineWriter;
 
 	private final Map<ReportLabel, Path> reportMap;
 
@@ -159,38 +159,41 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 				lineWriter.flush();
 			}
 			if (experimentLineWriter != null) {
-				experimentLineWriter.write(experimentContext, scenarioId);
+				experimentLineWriter.writeScenarioMetaData(experimentContext, scenarioId);
 				experimentLineWriter.flush();
 			}
 		}
 	}
 
-	private void handleReportOutput(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
+	private void handleReportItem(ExperimentContext experimentContext, Integer scenarioId, ReportItem reportItem) {
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportLabel());
 		if (lineWriter != null) {
-			lineWriter.write(experimentContext, scenarioId, reportItem);
+			lineWriter.writeReportItem(experimentContext, scenarioId, reportItem);
 		}
 	}
 
-	private void handleReportCreation(ExperimentContext experimentContext, Integer scenarioId, ReportHeader reportHeader) {
+	private void handleReportHeader(ExperimentContext experimentContext, Integer scenarioId,
+			ReportHeader reportHeader) {
 		final ReportLabel reportLabel = reportHeader.getReportLabel();
 
 		if (reportMap.get(reportLabel) != null) {
 			synchronized (lineWriterMap) {
 				LineWriter lineWriterUnsafe = lineWriterMap.get(reportLabel);
 				if (lineWriterUnsafe == null) {
-					lineWriterUnsafe = new LineWriter(experimentContext, reportMap.get(reportLabel), displayExperimentColumnsInReports, delimiter);
+					lineWriterUnsafe = new LineWriter(experimentContext, reportMap.get(reportLabel),
+							displayExperimentColumnsInReports, delimiter);
 					lineWriterMap.put(reportLabel, lineWriterUnsafe);
 				}
 			}
 			final LineWriter lineWriter = lineWriterMap.get(reportLabel);
-			lineWriter.writeHeader(experimentContext, reportHeader);
+			lineWriter.writeReportHeader(experimentContext, reportHeader);
 		}
 	}
 
 	private void openExperiment(ExperimentContext experimentContext) {
 		if (experimentReportPath != null) {
-			this.experimentLineWriter = new ExperimentLineWriter(experimentContext, experimentReportPath, delimiter);
+			this.experimentLineWriter = new LineWriter(experimentContext, experimentReportPath, true, delimiter);
+			this.experimentLineWriter.writeExperimentReportHeader(experimentContext);
 		}
 	}
 
@@ -223,8 +226,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		experimentContext.subscribeToExperimentOpen(this::openExperiment);
 		experimentContext.subscribeToExperimentClose(this::closeExperiment);
 		experimentContext.subscribeToSimulationClose(this::closeSimulation);
-		experimentContext.subscribeToOutput(ReportItem.class, this::handleReportOutput);
-		experimentContext.subscribeToOutput(ReportHeader.class, this::handleReportCreation);
+		experimentContext.subscribeToOutput(ReportItem.class, this::handleReportItem);
+		experimentContext.subscribeToOutput(ReportHeader.class, this::handleReportHeader);
 	}
 
 }

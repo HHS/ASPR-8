@@ -74,45 +74,6 @@ public final class LineWriter {
 		}
 	}
 
-	/**
-	 * Creates this {@link LineWriter} The path to the file that may or may not
-	 * exist and may contain some complete or partial content from a previous
-	 * execution of the experiment. If not empty, this file must have a header, be
-	 * tab delimited and have as its first column be the scenario id. Partial lines
-	 * at the end of the file due to an ungraceful halt to the previous execution
-	 * are tolerated. If the file does not exist, then its parent directory must
-	 * exist.
-	 * 
-	 * @throws RuntimeException
-	 *                          <ul>
-	 *                          <li>if an {@link IOException} is thrown during file
-	 *                          initialization</li>
-	 *                          <li>if the simulation run is continuing from a
-	 *                          progress log and the path is not a regular file
-	 *                          (path does not exist) during file
-	 *                          initialization</li>
-	 *                          </ul>
-	 */
-	public LineWriter(final ExperimentContext experimentContext, final ReportHeader reportHeader, final Path path,
-			final boolean displayExperimentColumnsInReports, String delimiter) {
-
-		ResourceHelper.validateFilePath(path);
-
-		this.delimiter = delimiter;
-		this.useExperimentColumns = displayExperimentColumnsInReports;
-
-		boolean loadedWithPreviousData = !experimentContext.getScenarios(ScenarioStatus.PREVIOUSLY_SUCCEEDED).isEmpty();
-		loadedWithPreviousData &= Files.exists(path);
-
-		if (loadedWithPreviousData) {
-			initializeWithPreviousContent(path, experimentContext);
-		} else {
-			initializeWithNoPreviousContent(path);
-		}
-
-		writeHeader(experimentContext, reportHeader);
-	}
-
 	/*
 	 * The path must correspond to an existing regular file.
 	 */
@@ -200,17 +161,36 @@ public final class LineWriter {
 		}
 	}
 
-	public void writeHeader(ExperimentContext experimentContext, ReportHeader reportHeader) {
-		final StringBuilder sb = new StringBuilder();
-
-		sb.append("scenario");
-
+	private void getExperimentMetaData(ExperimentContext experimentContext, StringBuilder sb) {
 		if (useExperimentColumns) {
 			for (String item : experimentContext.getExperimentMetaData()) {
 				sb.append(delimiter);
 				sb.append(item);
 			}
 		}
+	}
+
+	protected void writeExperimentReportHeader(ExperimentContext experimentContext) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append("scenario");
+
+		getExperimentMetaData(experimentContext, sb);
+
+		sb.append(lineSeparator);
+		try {
+			writer.write(sb.toString());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void writeReportHeader(ExperimentContext experimentContext, ReportHeader reportHeader) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append("scenario");
+
+		getExperimentMetaData(experimentContext, sb);
 
 		final List<String> headerStrings = reportHeader.getHeaderStrings();
 		for (final String headerString : headerStrings) {
@@ -226,15 +206,7 @@ public final class LineWriter {
 		}
 	}
 
-	/**
-	 * Writes the report item to file recorded under the given scenario.
-	 * 
-	 * @throws RuntimeException if an {@link IOException} is thrown
-	 */
-	public void write(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
-		final StringBuilder sb = new StringBuilder();
-
-		sb.append(scenarioId);
+	private void getScenarioMetaData(ExperimentContext experimentContext, int scenarioId, StringBuilder sb) {
 		if (useExperimentColumns) {
 			List<String> metaData = experimentContext.getScenarioMetaData(scenarioId);
 			for (String item : metaData) {
@@ -242,6 +214,34 @@ public final class LineWriter {
 				sb.append(item);
 			}
 		}
+	}
+
+	protected void writeScenarioMetaData(ExperimentContext experimentContext, int scenarioId) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append(scenarioId);
+		getScenarioMetaData(experimentContext, scenarioId, sb);
+
+		sb.append(lineSeparator);
+
+		try {
+			writer.write(sb.toString());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	
+	/**
+	 * Writes the report item to file recorded under the given scenario.
+	 * 
+	 * @throws RuntimeException if an {@link IOException} is thrown
+	 */
+	protected void writeReportItem(ExperimentContext experimentContext, int scenarioId, ReportItem reportItem) {
+		final StringBuilder sb = new StringBuilder();
+
+		sb.append(scenarioId);
+		getScenarioMetaData(experimentContext, scenarioId, sb);
 
 		for (int i = 0; i < reportItem.size(); i++) {
 			sb.append(delimiter);
