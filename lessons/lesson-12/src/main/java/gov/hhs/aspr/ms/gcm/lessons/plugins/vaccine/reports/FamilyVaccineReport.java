@@ -24,7 +24,7 @@ public class FamilyVaccineReport {
 
 	/* start code_ref=reports_plugin_family_vaccine_report_enums|code_cap=The family vaccine report defines two enums for the vaccination status of families and individuals. */
 	private static enum FamilyVaccineStatus {
-		NONE("unvacinated_families"), //
+		NONE("unvaccinated_families"), //
 		PARTIAL("partially_vaccinated_families"), //
 		FULL("fully_vaccinated_families");//
 
@@ -200,11 +200,12 @@ public class FamilyVaccineReport {
 
 		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output|code_cap=The initial state of the report is released as a single report item.*/
 		releaseReportItem();
+		reportContext.releaseOutput(reportHeader);
 		/* end */
 	}
 
 	/*
-	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_family_status|code_cap=Events that effect the status of a family are processed centrally.
+	 * start code_ref=reports_plugin_family_vaccine_report_refreshing_family_status|code_cap=Events that effect the status of a family are processed centrally.
 	 */
 	private void refreshFamilyStatus(final FamilyId familyId) {
 
@@ -240,7 +241,7 @@ public class FamilyVaccineReport {
 	/* end */
 
 	/*
-	 * start code_ref=reports_plugin_family_vaccine_report_refeshing_individual_status|code_cap=Events that effect the status of an individual are processed centrally.
+	 * start code_ref=reports_plugin_family_vaccine_report_refreshing_individual_status|code_cap=Events that effect the status of an individual are processed centrally.
 	 */
 	private void refreshIndividualStatus(final PersonId personId) {
 		IndividualVaccineStatus newStatus;
@@ -269,8 +270,7 @@ public class FamilyVaccineReport {
 	 * start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item|code_cap=Each time a family or individual have a relevant change a report item is released.
 	 */
 	private void releaseReportItem() {
-		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel)
-				.setReportHeader(reportHeader);
+		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel);
 		builder.addValue(reportContext.getTime());
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);

@@ -41,6 +41,7 @@ public class PersonStatusReport {
 
 		reportHeader = reportHeaderBuilder.build();
 
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void reportState(ReportContext reportContext) {
@@ -70,7 +71,7 @@ public class PersonStatusReport {
 			AgeGroup ageGroup = multiKey.getKey(0);
 			DiseaseState diseaseState = multiKey.getKey(1);
 			int vaccinationCount = multiKey.getKey(2);
-			ReportItem reportItem = ReportItem.builder().setReportHeader(reportHeader).setReportLabel(reportLabel)
+			ReportItem reportItem = ReportItem.builder().setReportLabel(reportLabel)
 					
 					.addValue(ageGroup)//
 					.addValue(diseaseState)//

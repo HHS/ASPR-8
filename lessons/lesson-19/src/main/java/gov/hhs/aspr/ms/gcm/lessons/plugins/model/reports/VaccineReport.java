@@ -21,7 +21,6 @@ public final class VaccineReport extends PeriodicReport {
 	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportLabel(getReportLabel());
-		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 
 		final PersonPropertiesDataManager personPropertiesDataManager = reportContext
@@ -50,8 +49,7 @@ public final class VaccineReport extends PeriodicReport {
 
 	@Override
 	protected void prepare(ReportContext reportContext) {
-		// does nothing
-		
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 }
