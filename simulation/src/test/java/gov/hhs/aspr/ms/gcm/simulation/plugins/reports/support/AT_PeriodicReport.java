@@ -43,9 +43,7 @@ public class AT_PeriodicReport {
 		@Override
 		protected void prepare(ReportContext reportContext) {
 			// does nothing
-
 		}
-
 	}
 
 	/*
@@ -66,15 +64,12 @@ public class AT_PeriodicReport {
 		@Override
 		protected void flush(ReportContext reportContext) {
 			testCounter.increment();
-			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			this.addTimeFieldHeaders(reportHeaderBuilder);
-			ReportHeader reportHeader = reportHeaderBuilder.build();
+
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
-					.build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).build();
 
 			int dayValue = (int) FastMath.ceil(reportContext.getTime());
 
@@ -84,15 +79,16 @@ public class AT_PeriodicReport {
 
 			assertEquals(expectedTimeString, actualTimeString);
 			reportContext.releaseOutput(reportItem);
-
 		}
 
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			// does nothing
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			this.addTimeFieldHeaders(reportHeaderBuilder);
+			ReportHeader reportHeader = reportHeaderBuilder.build();
 
+			reportContext.releaseOutput(reportHeader);
 		}
-
 	}
 
 	/*
@@ -114,15 +110,11 @@ public class AT_PeriodicReport {
 		@Override
 		protected void flush(ReportContext reportContext) {
 			testCounter.increment();
-			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			this.addTimeFieldHeaders(reportHeaderBuilder);
-			ReportHeader reportHeader = reportHeaderBuilder.build();
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
-					.build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).build();
 			double time = reportContext.getTime();
 
 			int hour = (int) FastMath.ceil(time * 24);
@@ -140,10 +132,12 @@ public class AT_PeriodicReport {
 
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			// does nothing
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			this.addTimeFieldHeaders(reportHeaderBuilder);
+			ReportHeader reportHeader = reportHeaderBuilder.build();
 
+			reportContext.releaseOutput(reportHeader);
 		}
-
 	}
 
 	/*
@@ -167,24 +161,22 @@ public class AT_PeriodicReport {
 			flushTime.setValue(reportContext.getTime());
 			flushCount.increment();
 
-			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			ReportHeader reportHeader = reportHeaderBuilder.build();
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			fillTimeFields(reportItemBuilder);
 
-			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).setReportHeader(reportHeader)
-					.build();
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).build();
 
 			assertEquals(0, reportItem.size());
 		}
 
 		@Override
 		protected void prepare(ReportContext reportContext) {
-			// does nothing
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			addTimeFieldHeaders(reportHeaderBuilder);
+			ReportHeader reportHeader = reportHeaderBuilder.build();
 
+			reportContext.releaseOutput(reportHeader);
 		}
-
 	}
 
 	private static class InitTestReport extends PeriodicReport {
@@ -202,9 +194,7 @@ public class AT_PeriodicReport {
 		@Override
 		protected void prepare(ReportContext reportContext) {
 			// does nothing
-
 		}
-
 	}
 
 	@Test

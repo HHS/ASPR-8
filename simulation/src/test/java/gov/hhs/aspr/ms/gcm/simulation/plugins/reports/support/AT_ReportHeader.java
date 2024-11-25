@@ -70,6 +70,33 @@ public class AT_ReportHeader {
 	}
 
 	@Test
+	@UnitTestMethod(target = ReportHeader.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
+
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(reportLabel).build();
+
+		assertEquals(reportLabel, reportHeader.getReportLabel());
+
+		// precondition tests
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ReportItem.builder().setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ReportItem.class, name = "getReportLabel", args = {})
+	public void testGetReportLabel() {
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(reportLabel).build();
+
+		assertEquals(reportLabel, reportHeader.getReportLabel());
+	}
+
+	@Test
 	@UnitTestMethod(target = ReportHeader.Builder.class, name = "build", args = {})
 	public void testBuild() {
 		ReportHeader reportHeader = ReportHeader.builder().build();
@@ -80,6 +107,11 @@ public class AT_ReportHeader {
 
 		reportHeader = ReportHeader.builder().add("alpha").add("beta").build();
 		assertNotNull(reportHeader);
+
+		// precondition tests
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ReportItem.builder().setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test

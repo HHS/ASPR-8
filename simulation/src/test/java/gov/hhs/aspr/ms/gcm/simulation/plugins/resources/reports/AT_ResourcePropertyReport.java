@@ -216,6 +216,9 @@ public class AT_ResourcePropertyReport {
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		
 		assertEquals(expectedReportItems, actualReportItems);
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test
@@ -329,7 +332,6 @@ public class AT_ResourcePropertyReport {
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
-		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}

@@ -143,8 +143,11 @@ public final class AT_MaterialsProducerPropertyReport {
 				.build()//
 				.execute();
 		
-		Map<ReportItem, Integer> acutualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
-		assertEquals(expectedReportItems, acutualReportItems);
+		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
+		assertEquals(expectedReportItems, actualReportItems);
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test
@@ -235,7 +238,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL).setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL);
 		for (Object value : values) {
 			builder.addValue(value);
 		}

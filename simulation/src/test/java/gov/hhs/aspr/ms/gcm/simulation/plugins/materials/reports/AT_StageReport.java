@@ -56,7 +56,6 @@ public final class AT_StageReport {
 
 		return ReportItem.builder()//
 				.setReportLabel(REPORT_LABEL)//
-				.setReportHeader(REPORT_HEADER)//
 				.addValue(agentContext.getTime())//
 				.addValue(stageId)//
 				.addValue(materialsProducerId)//
@@ -206,6 +205,9 @@ public final class AT_StageReport {
 
 		
 		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test

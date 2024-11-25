@@ -169,7 +169,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportLabel());
 		if (lineWriter != null) {
 			lineWriter.writeReportItem(experimentContext, scenarioId, reportItem);
+			return;
 		}
+
+		throw new ContractException(ReportError.NO_REPORT_HEADER);
 	}
 
 	private void handleReportHeader(ExperimentContext experimentContext, Integer scenarioId,

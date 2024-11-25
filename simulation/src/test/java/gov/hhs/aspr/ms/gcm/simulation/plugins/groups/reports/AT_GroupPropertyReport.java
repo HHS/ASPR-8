@@ -391,9 +391,9 @@ public class AT_GroupPropertyReport {
 																	.execute();
 			// show that the report items have the chosen property ids
 			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
+			ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
 
 			for (ReportItem reportItem : outputItems.keySet()) {
-				ReportHeader reportHeader = reportItem.getReportHeader();
 				switch (reportPeriod) {
 				case DAILY:
 					assertEquals(REPORT_DAILY_HEADER, reportHeader);
@@ -784,18 +784,6 @@ public class AT_GroupPropertyReport {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
 
-		switch (reportPeriod) {
-		case DAILY:
-			builder.setReportHeader(REPORT_DAILY_HEADER);
-			break;
-		case HOURLY:
-			builder.setReportHeader(REPORT_HOURLY_HEADER);
-			break;
-		case END_OF_SIMULATION:// fall through
-		default:
-			throw new RuntimeException("unhandled case " + reportPeriod);
-		}
-
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -842,24 +830,21 @@ public class AT_GroupPropertyReport {
 																	.execute();
 
 			// show that the report items have the chosen property ids
-			Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
+			ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
 
-			for (ReportItem reportItem : outputItems.keySet()) {
-				ReportHeader reportHeader = reportItem.getReportHeader();
 				switch (reportPeriod) {
-				case DAILY:
-					assertEquals(REPORT_DAILY_HEADER, reportHeader);
-					break;
-				case END_OF_SIMULATION:
-					assertEquals(REPORT_END_OF_SIMULATION_HEADER, reportHeader);
-					break;
-				case HOURLY:
-					assertEquals(REPORT_HOURLY_HEADER, reportHeader);
-					break;
-				default:
-					throw new RuntimeException("unhandled case " + reportPeriod);
+					case DAILY:
+						assertEquals(REPORT_DAILY_HEADER, reportHeader);
+						break;
+					case END_OF_SIMULATION:
+						assertEquals(REPORT_END_OF_SIMULATION_HEADER, reportHeader);
+						break;
+					case HOURLY:
+						assertEquals(REPORT_HOURLY_HEADER, reportHeader);
+						break;
+					default:
+						throw new RuntimeException("unhandled case " + reportPeriod);
 				}
-			}
 		}
 	}
 
