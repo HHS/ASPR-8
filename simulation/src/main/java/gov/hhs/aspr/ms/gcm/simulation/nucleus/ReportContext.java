@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -193,6 +194,13 @@ public final class ReportContext {
 	 */
 	public List<ReportPlan> retrievePlans() {
 		return simulation.retrievePlansForReport();
+	}
+	
+	/**
+	 * Returns the current known forced halt time.
+	 */
+	public Optional<Double> getSimulationHaltTime() {
+		return simulation.getSimulationHaltTime();
 	}
 
 }
