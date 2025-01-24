@@ -45,7 +45,7 @@ public final class RegionTransferReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-
+					.setReportLabel(getReportLabel())//
 					.add("source_region")//
 					.add("destination_region")//
 					.add("transfers")//

@@ -103,6 +103,7 @@ public class AT_RegionTransferReport {
 				peopleDataManager.addPerson(personConstructionData);
 			}
 
+			testOutputConsumer.accept(REPORT_HEADER);
 			testOutputConsumer.accept(getReportItem(1, regionA, regionA, 25));
 			testOutputConsumer.accept(getReportItem(1, regionB, regionB, 25));
 			testOutputConsumer.accept(getReportItem(1, regionC, regionC, 25));
@@ -307,5 +308,5 @@ public class AT_RegionTransferReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region transfer report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("source_region").add("destination_region").add("transfers").build();
 }

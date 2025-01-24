@@ -28,6 +28,7 @@ public final class ResourcePropertyReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			reportHeader = ReportHeader.builder()//
+					.setReportLabel(reportLabel)//
 					.add("time")//
 					.add("resource")//
 					.add("property")//

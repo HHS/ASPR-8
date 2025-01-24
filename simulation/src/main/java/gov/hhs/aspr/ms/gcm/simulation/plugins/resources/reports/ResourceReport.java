@@ -106,7 +106,9 @@ public final class ResourceReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			reportHeader = addTimeFieldHeaders(reportHeaderBuilder).add("region")//
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
+					.add("region")//
 					.add("resource")//
 					.add("activity")//
 					.add("actions")//

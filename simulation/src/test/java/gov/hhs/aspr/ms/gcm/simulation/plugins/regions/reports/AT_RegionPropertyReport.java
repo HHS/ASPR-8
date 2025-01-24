@@ -383,7 +383,7 @@ public class AT_RegionPropertyReport {
 
 		RegionPropertyReportPluginData regionPropertyReportPluginData = //
 				RegionPropertyReportPluginData	.builder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
+												.setReportLabel(REPORT_LABEL)//
 												.build();
 
 		Factory factory = RegionsTestPluginFactory//
@@ -640,5 +640,5 @@ public class AT_RegionPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("region").add("property").add("value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("time").add("region").add("property").add("value").build();
 }

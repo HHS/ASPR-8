@@ -340,6 +340,6 @@ public class AT_ResourcePropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("resource property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("resource").add("property")
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("time").add("resource").add("property")
 			.add("value").build();
 }
