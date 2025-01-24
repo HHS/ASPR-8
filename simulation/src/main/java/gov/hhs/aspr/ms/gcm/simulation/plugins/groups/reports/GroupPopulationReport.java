@@ -37,6 +37,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
 					.add("group_type")//
 					.add("person_count")//
 					.add("group_count")//
@@ -76,9 +77,9 @@ public final class GroupPopulationReport extends PeriodicReport {
 				Counter counter = groupSizeMap.get(personCount);
 
 				final int groupCount = counter.count;
-				reportItemBuilder.setReportLabel(getReportLabel());
 				fillTimeFields(reportItemBuilder);
 				reportItemBuilder//
+						.setReportLabel(getReportLabel())//
 						.addValue(groupTypeId.toString())//
 						.addValue(personCount)//
 						.addValue(groupCount);

@@ -87,8 +87,6 @@ public final class ReportHeader {
 
 		}
 
-		private List<String> headerStrings = new ArrayList<>();
-
 		/**
 		 * Add a string to the list of strings in the header in the order added.
 		 * 
@@ -99,7 +97,7 @@ public final class ReportHeader {
 			if (headerString == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER_STRING);
 			}
-			this.headerStrings.add(headerString);
+			data.headerStrings.add(headerString);
 			return this;
 		}
 

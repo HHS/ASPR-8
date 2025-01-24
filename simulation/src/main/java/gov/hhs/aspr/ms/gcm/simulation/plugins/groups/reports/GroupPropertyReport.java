@@ -58,6 +58,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
 					.add("group_type")//
 					.add("property")//
 					.add("value")//
@@ -88,13 +89,14 @@ public final class GroupPropertyReport extends PeriodicReport {
 					if (counter.count > 0) {
 						final int personCount = counter.count;
 						ReportItem.Builder reportItemBuilder = ReportItem.builder();
-						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
-						reportItemBuilder.addValue(groupTypeId.toString());
-						reportItemBuilder.addValue(groupPropertyId.toString());
-						reportItemBuilder.addValue(groupPropertyValue);
-						reportItemBuilder.addValue(personCount);
+						reportItemBuilder//
+								.setReportLabel(getReportLabel())//
+								.addValue(groupTypeId.toString())//
+								.addValue(groupPropertyId.toString())//
+								.addValue(groupPropertyValue)//
+								.addValue(personCount);
 
 						reportContext.releaseOutput(reportItemBuilder.build());
 					}

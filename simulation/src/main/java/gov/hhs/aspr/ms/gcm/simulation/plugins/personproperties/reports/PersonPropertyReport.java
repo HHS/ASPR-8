@@ -66,6 +66,7 @@ public final class PersonPropertyReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
 					.add("region")//
 					.add("property")//
 					.add("value")//
@@ -101,10 +102,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 						reportItemBuilder.setReportLabel(getReportLabel());
 
 						fillTimeFields(reportItemBuilder);
-						reportItemBuilder.addValue(regionId.toString());
-						reportItemBuilder.addValue(personPropertyId.toString());
-						reportItemBuilder.addValue(personPropertyValue);
-						reportItemBuilder.addValue(personCount);
+						reportItemBuilder//
+								.addValue(regionId.toString())//
+								.addValue(personPropertyId.toString())//
+								.addValue(personPropertyValue)//
+								.addValue(personCount);
 
 						reportContext.releaseOutput(reportItemBuilder.build());
 					}

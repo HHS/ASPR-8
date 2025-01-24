@@ -33,20 +33,9 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
  * MaterialsProducer -- the materials producer of the owner of the batch Offered
  * -- the offered state of the batch Material -- the material of the batch
  * Amount -- the amount of material in the batch Material.PropertyId -- multiple
- * columns for the batch properties selected for the report
- * 
- * 
- * .add("time")// .add("batch")// .add("materials_producer")// .add("stage")//
- * .add("material")// .add("amount");//
- * 
- * 
- * 
- * }
- * 
- * 
- * 
- * 
- * 
+ * columns for the batch properties selected for the report .add("time")//
+ * .add("batch")// .add("materials_producer")// .add("stage")//
+ * .add("material")// .add("amount");// }
  */
 public final class BatchStatusReport {
 
@@ -78,11 +67,11 @@ public final class BatchStatusReport {
 
 		// report the batch - make sure batch exists
 
-		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(batchRecord.time);
-		reportItemBuilder.addValue(batchRecord.batchId);
-		reportItemBuilder.addValue(batchRecord.materialsProducerId);
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder()//
+				.setReportLabel(reportLabel)//
+				.addValue(batchRecord.time)//
+				.addValue(batchRecord.batchId)//
+				.addValue(batchRecord.materialsProducerId);
 
 		if (batchRecord.stageId != null) {
 			reportItemBuilder.addValue(batchRecord.stageId);
@@ -117,6 +106,7 @@ public final class BatchStatusReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder builder = ReportHeader.builder()//
+					.setReportLabel(reportLabel)//
 					.add("time")//
 					.add("batch")//
 					.add("materials_producer")//

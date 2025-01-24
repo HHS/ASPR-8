@@ -67,7 +67,10 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			addTimeFieldHeaders(reportHeaderBuilder).add("region");
+			addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
+					.add("region");
+
 			for (final PersonPropertyId personPropertyId : propertyIds) {
 				reportHeaderBuilder.add(personPropertyId.toString().toLowerCase());
 			}

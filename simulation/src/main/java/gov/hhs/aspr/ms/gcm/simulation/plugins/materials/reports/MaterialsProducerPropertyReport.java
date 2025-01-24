@@ -30,6 +30,7 @@ public final class MaterialsProducerPropertyReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			reportHeader = ReportHeader.builder()//
+					.setReportLabel(reportLabel)//
 					.add("time")//
 					.add("materials_producer")//
 					.add("property")//
@@ -95,11 +96,12 @@ public final class MaterialsProducerPropertyReport {
 	private void writeProperty(ReportContext reportContext, final MaterialsProducerId materialsProducerId,
 			final MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(reportContext.getTime());
-		reportItemBuilder.addValue(materialsProducerId.toString());
-		reportItemBuilder.addValue(materialsProducerPropertyId.toString());
-		reportItemBuilder.addValue(materialsProducerPropertyValue);
+		reportItemBuilder//
+				.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime())//
+				.addValue(materialsProducerId.toString())//
+				.addValue(materialsProducerPropertyId.toString())//
+				.addValue(materialsProducerPropertyValue);
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
