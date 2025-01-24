@@ -123,8 +123,8 @@ public class AT_AttributesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributesPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = AttributesPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		AttributesPluginData.Builder builder = AttributesPluginData.builder();
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			builder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
@@ -132,7 +132,7 @@ public class AT_AttributesPluginData {
 		AttributesPluginData attributesPluginData = builder.build();
 		
 		//show that the returned clone builder will build an identical instance if no mutations are made
-		AttributesPluginData.Builder cloneBuilder = attributesPluginData.getCloneBuilder();
+		AttributesPluginData.Builder cloneBuilder = attributesPluginData.toBuilder();
 		assertNotNull(cloneBuilder);				
 		assertEquals(attributesPluginData,cloneBuilder.build());
 		
@@ -140,12 +140,12 @@ public class AT_AttributesPluginData {
 		//show that the clone builder builds a distinct instance if any mutation is made
 		
 		//defineAttribute
-		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder = attributesPluginData.toBuilder();
 		cloneBuilder.defineAttribute(TestAttributeId.getUnknownAttributeId(), TestAttributeId.DOUBLE_0.getAttributeDefinition());
 		assertNotEquals(attributesPluginData,cloneBuilder.build());
 		
 		//setPersonAttributeValue
-		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder = attributesPluginData.toBuilder();
 		cloneBuilder.setPersonAttributeValue(new PersonId(123),TestAttributeId.BOOLEAN_0, false);
 		assertNotEquals(attributesPluginData,cloneBuilder.build());
 	}

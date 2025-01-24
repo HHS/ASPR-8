@@ -212,7 +212,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 	}
 	
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(new Data(data));
 	}
 

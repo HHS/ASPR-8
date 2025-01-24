@@ -117,7 +117,7 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 	}
 	
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(new Data(data));
 	}
 

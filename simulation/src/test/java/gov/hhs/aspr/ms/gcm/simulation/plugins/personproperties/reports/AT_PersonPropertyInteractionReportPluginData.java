@@ -132,8 +132,8 @@ public class AT_PersonPropertyInteractionReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyInteractionReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PersonPropertyInteractionReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6316245099247321601L);
 		for (int i = 0; i < 10; i++) {
@@ -161,7 +161,7 @@ public class AT_PersonPropertyInteractionReportPluginData {
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
 			PersonPropertyInteractionReportPluginData.Builder cloneBuilder = personPropertyInteractionReportPluginData
-					.getCloneBuilder();
+					.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
@@ -169,22 +169,22 @@ public class AT_PersonPropertyInteractionReportPluginData {
 			// made
 
 			// addPersonPropertyId
-			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyInteractionReportPluginData.toBuilder();
 			cloneBuilder.addPersonPropertyId(TestPersonPropertyId.getUnknownPersonPropertyId());
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
 			// removePersonPropertyId
-			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyInteractionReportPluginData.toBuilder();
 			cloneBuilder.removePersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK);
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
 			// setReportLabel
-			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyInteractionReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());
 
 			// setReportPeriod
-			cloneBuilder = personPropertyInteractionReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyInteractionReportPluginData.toBuilder();
 			ReportPeriod nextReportPeriod = personPropertyInteractionReportPluginData.getReportPeriod().next();
 			cloneBuilder.setReportPeriod(nextReportPeriod);
 			assertNotEquals(personPropertyInteractionReportPluginData, cloneBuilder.build());

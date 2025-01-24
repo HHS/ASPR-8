@@ -95,8 +95,8 @@ public final class PolicyPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+	public PluginDataBuilder toBuilder() {
+		return new Builder(data);
 	}
 
 	@Override

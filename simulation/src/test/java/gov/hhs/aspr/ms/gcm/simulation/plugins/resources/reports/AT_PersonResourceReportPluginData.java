@@ -424,8 +424,8 @@ public class AT_PersonResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PersonResourceReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -457,7 +457,7 @@ public class AT_PersonResourceReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			PersonResourceReportPluginData.Builder cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			PersonResourceReportPluginData.Builder cloneBuilder = personResourceReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(personResourceReportPluginData, cloneBuilder.build());
 
@@ -465,27 +465,27 @@ public class AT_PersonResourceReportPluginData {
 			// made
 
 			// excludeResource
-			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder = personResourceReportPluginData.toBuilder();
 			cloneBuilder.excludeResource(TestResourceId.RESOURCE_1);
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
 			// includeResource
-			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder = personResourceReportPluginData.toBuilder();
 			cloneBuilder.includeResource(TestResourceId.RESOURCE_2);
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
 			// setDefaultInclusion
-			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder = personResourceReportPluginData.toBuilder();
 			cloneBuilder.setDefaultInclusion(!personResourceReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
 			// setReportLabel
-			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder = personResourceReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 			
 			// setReportPeriod
-			cloneBuilder = personResourceReportPluginData.getCloneBuilder();
+			cloneBuilder = personResourceReportPluginData.toBuilder();
 			cloneBuilder.setReportPeriod(personResourceReportPluginData.getReportPeriod().next());
 			assertNotEquals(personResourceReportPluginData, cloneBuilder.build());
 
@@ -561,7 +561,7 @@ public class AT_PersonResourceReportPluginData {
 
 			// change the default inclusion
 			personResourceReportPluginData2 = //
-					personResourceReportPluginData1.getCloneBuilder()//
+					personResourceReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
@@ -571,7 +571,7 @@ public class AT_PersonResourceReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			personResourceReportPluginData2 = //
-					personResourceReportPluginData1.getCloneBuilder()//
+					personResourceReportPluginData1.toBuilder()//
 							.setReportPeriod(reportPeriod)//
 							.build();
 			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
@@ -579,7 +579,7 @@ public class AT_PersonResourceReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			personResourceReportPluginData2 = //
-					personResourceReportPluginData1.getCloneBuilder()//
+					personResourceReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
@@ -588,7 +588,7 @@ public class AT_PersonResourceReportPluginData {
 			if (!personResourceReportPluginData1.getIncludedResourceIds().isEmpty()) {
 				ResourceId resourceId = personResourceReportPluginData1.getIncludedResourceIds().iterator().next();
 				personResourceReportPluginData2 = //
-						personResourceReportPluginData1.getCloneBuilder()//
+						personResourceReportPluginData1.toBuilder()//
 								.excludeResource(resourceId)//
 								.build();
 				assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);
@@ -597,7 +597,7 @@ public class AT_PersonResourceReportPluginData {
 			if (!personResourceReportPluginData1.getExcludedResourceIds().isEmpty()) {
 				ResourceId resourceId = personResourceReportPluginData1.getExcludedResourceIds().iterator().next();
 				personResourceReportPluginData2 = //
-						personResourceReportPluginData1.getCloneBuilder()//
+						personResourceReportPluginData1.toBuilder()//
 								.includeResource(resourceId)//
 								.build();
 				assertNotEquals(personResourceReportPluginData2, personResourceReportPluginData1);

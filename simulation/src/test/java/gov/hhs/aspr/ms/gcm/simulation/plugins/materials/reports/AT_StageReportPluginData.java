@@ -82,8 +82,8 @@ public class AT_StageReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = StageReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = StageReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -99,7 +99,7 @@ public class AT_StageReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			StageReportPluginData.Builder cloneBuilder = stageReportPluginData.getCloneBuilder();
+			StageReportPluginData.Builder cloneBuilder = stageReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(stageReportPluginData, cloneBuilder.build());
 
@@ -107,7 +107,7 @@ public class AT_StageReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = stageReportPluginData.getCloneBuilder();
+			cloneBuilder = stageReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(stageReportPluginData, cloneBuilder.build());
 
@@ -163,7 +163,7 @@ public class AT_StageReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			stageReportPluginData2 = //
-					stageReportPluginData1.getCloneBuilder()//
+					stageReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(stageReportPluginData2, stageReportPluginData1);

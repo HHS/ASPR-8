@@ -311,7 +311,7 @@ public class TestPluginData implements PluginData {
 	 * data managers contained in this TestPluginData.
 	 */
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(new Data(data));
 	}
 

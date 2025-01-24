@@ -68,8 +68,8 @@ public class AT_PeriodicReportPluginData {
 		}
 
 		@Override
-		public Builder getCloneBuilder() {
-			return new Builder(new Data(data));
+		public Builder toBuilder() {
+			return new Builder(data);
 		}
 
 		@Override

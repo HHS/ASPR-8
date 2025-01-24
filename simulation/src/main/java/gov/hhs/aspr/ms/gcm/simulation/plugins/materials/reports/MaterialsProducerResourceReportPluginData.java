@@ -162,7 +162,7 @@ public final class MaterialsProducerResourceReportPluginData implements PluginDa
 	}
 	
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(data);
 	}
 
