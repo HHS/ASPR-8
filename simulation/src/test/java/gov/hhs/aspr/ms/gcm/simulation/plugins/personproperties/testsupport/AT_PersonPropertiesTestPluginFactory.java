@@ -140,7 +140,7 @@ public class AT_PersonPropertiesTestPluginFactory {
         ContractException contractException = assertThrows(ContractException.class,
                 () -> PersonPropertiesTestPluginFactory.factory(0, 0, t -> {
                 }).setPersonPropertiesPluginData(null));
-        assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA, contractException.getErrorType());
+        assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGIN_DATA, contractException.getErrorType());
     }
 
     @Test

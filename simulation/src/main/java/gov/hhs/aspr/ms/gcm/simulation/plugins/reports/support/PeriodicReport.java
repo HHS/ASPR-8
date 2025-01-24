@@ -127,10 +127,10 @@ public abstract class PeriodicReport {
 
 		prepare(reportContext);
 
-			if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-				incrementReportingTimeFields();
-				reportContext.addPlan(this::executePlan, getNextPlanTime());
-			}
+		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
+			incrementReportingTimeFields();
+			reportContext.addPlan(this::executePlan, getNextPlanTime());
+		}
 	}
 
 	/**

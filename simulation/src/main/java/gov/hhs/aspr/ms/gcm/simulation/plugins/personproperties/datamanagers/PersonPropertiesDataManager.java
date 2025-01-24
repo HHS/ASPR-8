@@ -105,12 +105,12 @@ public final class PersonPropertiesDataManager extends DataManager {
 	/**
 	 * Constructs the person property data manager from the given plugin data
 	 *
-	 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+	 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGIN_DATA}
 	 *                           if the plugin data is null
 	 */
 	public PersonPropertiesDataManager(PersonPropertiesPluginData personPropertiesPluginData) {
 		if (personPropertiesPluginData == null) {
-			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA);
+			throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGIN_DATA);
 		}
 		this.personPropertiesPluginData = personPropertiesPluginData;
 	}
@@ -664,6 +664,17 @@ public final class PersonPropertiesDataManager extends DataManager {
 		if (!pairs.isEmpty()) {
 			propertyManager = getIndexedPropertyManager(propertyDefinition);
 			propertyValues.put(personPropertyId, propertyManager);
+
+			for (Pair<PersonId, Object> pair : pairs) {
+				PersonId personId = pair.getFirst();
+				int pId = personId.getValue();
+				/*
+				 * we do not have to validate the value since it is guaranteed to be consistent
+				 * with the property definition by contract.
+				 */
+				Object value = pair.getSecond();
+				propertyManager.setPropertyValue(pId, value);
+			}
 		}
 
 		DoubleValueContainer doubleValueContainer = null;
@@ -673,17 +684,6 @@ public final class PersonPropertiesDataManager extends DataManager {
 			doubleValueContainer = new DoubleValueContainer(dataManagerContext.getTime(),
 					peopleDataManager::getPersonIndexIterator);
 			propertyTimes.put(personPropertyId, doubleValueContainer);
-		}
-
-		for (Pair<PersonId, Object> pair : pairs) {
-			PersonId personId = pair.getFirst();
-			int pId = personId.getValue();
-			/*
-			 * we do not have to validate the value since it is guaranteed to be consistent
-			 * with the property definition by contract.
-			 */
-			Object value = pair.getSecond();
-			propertyManager.setPropertyValue(pId, value);
 		}
 
 		if (dataManagerContext.subscribersExist(PersonPropertyDefinitionEvent.class)) {
@@ -884,7 +884,7 @@ public final class PersonPropertiesDataManager extends DataManager {
 	}
 
 	/**
-	 * Inititalizes the data manager by loading its state from the plugin data.
+	 * Initializes the data manager by loading its state from the plugin data.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>

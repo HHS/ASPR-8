@@ -16,6 +16,8 @@ public enum ReportError implements ContractError {
 	NULL_REPORT_PATH("Null report path"), 
 	NULL_REPORT_PERIOD("Null report period"), 
 	PATH_COLLISION("Report path shared between multiple reports"),
+	HEADER_COLLISION("Report header shared between multiple reports"),
+	NO_REPORT_HEADER("Tried to write a report item to a report that did not establish a report header. Make sure the report call reportContext.releaseOutput() with the reports header"),
 	;
 
 	@Override

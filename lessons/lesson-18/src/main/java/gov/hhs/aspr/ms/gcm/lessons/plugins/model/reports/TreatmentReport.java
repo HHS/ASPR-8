@@ -17,8 +17,6 @@ import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 /**
  * A report that groups people at the end of the simulation by their shared
  * person property values.
- * 
- *
  */
 public final class TreatmentReport {
 	private final ReportLabel reportLabel;
@@ -29,6 +27,22 @@ public final class TreatmentReport {
 
 	public void init(ReportContext reportContext) {
 		reportContext.subscribeToSimulationClose(this::report);
+
+		/*
+		 * Build the header of the report using the headers that correspond to the
+		 * ordered key values in the multikeys.
+		 */
+		ReportHeader reportHeader = ReportHeader.builder()//
+				.add("immune")//
+				.add("infected")//
+				.add("treated_with_antiviral")//
+				.add("hospitalized")//
+				.add("dead_in_hospital")//
+				.add("dead_in_home")//
+				.add("people")//
+				.build();
+
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void report(ReportContext reportContext) {
@@ -65,20 +79,6 @@ public final class TreatmentReport {
 		}
 
 		/*
-		 * Build the header of the report using the headers that correspond to the
-		 * ordered key values in the multikeys.
-		 */
-		ReportHeader reportHeader = ReportHeader.builder()//
-				.add("immune")//
-				.add("infected")//
-				.add("treated_with_antiviral")//
-				.add("hospitalized")//
-				.add("dead_in_hospital")//
-				.add("dead_in_home")//
-				.add("people")//
-				.build();
-
-		/*
 		 * Form a report item for each multikey, taking the ordered property values from
 		 * the multikey and using them as inputs to the report item
 		 */
@@ -92,7 +92,6 @@ public final class TreatmentReport {
 			boolean deadInHospital = multiKey.getKey(4);
 			boolean deadInHome = multiKey.getKey(5);
 
-			reportItemBuilder.setReportHeader(reportHeader);
 			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.addValue(immune);
 			reportItemBuilder.addValue(infected);

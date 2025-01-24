@@ -102,6 +102,7 @@ public final class VaccineProductionReport extends PeriodicReport {
 
 		reportContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
 
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private double periodAntigenProduction;
@@ -156,7 +157,6 @@ public final class VaccineProductionReport extends PeriodicReport {
 	protected void flush(final ReportContext reportContext) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportLabel(getReportLabel());
-		reportItemBuilder.setReportHeader(reportHeader);
 		fillTimeFields(reportItemBuilder);
 
 		reportItemBuilder.addValue(getMaterialInventory(MaterialsProducer.ANTIGEN_PRODUCER, Material.VIRUS));

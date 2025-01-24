@@ -426,7 +426,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			cleanedKey = new Key(key);
 			cleanedKey.calculateHashCode();
 			keyMap.put(cleanedKey, cleanedKey);
-			
+
 			final BasePeopleContainer basePeopleContainer = new BasePeopleContainer(peopleDataManager,
 					supportRunContinuity);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
@@ -465,7 +465,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 	}
 
-	private void aquireWeightsLock() {
+	private void acquireWeightsLock() {
 		if (weightsAreLocked) {
 			throw new ContractException(NucleusError.ACCESS_VIOLATION,
 					"cannot access weighted sampling during the execution of a previous weighted sampling");
@@ -475,7 +475,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private boolean eventHandlingLocked;
 
-	private void aquireEventHandlingLock() {
+	private void acquireEventHandlingLock() {
 		if (eventHandlingLocked) {
 			throw new ContractException(NucleusError.ACCESS_VIOLATION,
 					"cannot access event handling during the execution of an event");
@@ -807,13 +807,13 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final boolean filterSensitivityFound = personId != null;
 
 		// determine the sensitivity of the labelers
-		final List<LabelerSensitivity<? extends Event>> eventlabelerSensitivities = eventClassToLabelerSensitivityMap
+		final List<LabelerSensitivity<? extends Event>> eventLabelerSensitivities = eventClassToLabelerSensitivityMap
 				.get(event.getClass());
 
 		int labelerSensitivityCount = 0;
-		if (eventlabelerSensitivities != null) {
+		if (eventLabelerSensitivities != null) {
 
-			for (final LabelerSensitivity<? extends Event> labelerSensitivity : eventlabelerSensitivities) {
+			for (final LabelerSensitivity<? extends Event> labelerSensitivity : eventLabelerSensitivities) {
 				final Optional<PersonId> optional = labelerSensitivity.getPersonId(event);
 				if (optional.isPresent()) {
 					labelerSensitivities[labelerSensitivityCount++] = labelerSensitivity;
@@ -833,7 +833,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 
-		aquireEventHandlingLock();
+		acquireEventHandlingLock();
 
 		/*
 		 * At this point we must have found the person. We must determine the key
@@ -882,26 +882,29 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 					StringBuilder sb = new StringBuilder();
 					sb.append("[");
 					boolean firstElement = true;
-					for (int i = 0; i < keySize; i++) {
-						Object calculatedValue = currentKeyForPerson.keys[i];
-						Object actualValue = actualKey.keys[i];
-						if (!calculatedValue.equals(actualValue)) {
-							if (firstElement) {
-								firstElement = false;
-							} else {
-								sb.append(",");
+					if (actualKey != null) {
+						for (int i = 0; i < keySize; i++) {
+							Object calculatedValue = currentKeyForPerson.keys[i];
+							Object actualValue = actualKey.keys[i];
+							if (!calculatedValue.equals(actualValue)) {
+								if (firstElement) {
+									firstElement = false;
+								} else {
+									sb.append(",");
+								}
+								Object labelerId = labelManagers[i].labeler.getId();
+								sb.append("(");
+								sb.append("labelerId=");
+								sb.append(labelerId);
+								sb.append(" calculated value ='");
+								sb.append(calculatedValue);
+								sb.append("' actual value ='");
+								sb.append(actualValue);
+								sb.append("')");
 							}
-							Object labelerId = labelManagers[i].labeler.getId();
-							sb.append("(");
-							sb.append("labelerId=");
-							sb.append(labelerId);
-							sb.append(" calculated value ='");
-							sb.append(calculatedValue);
-							sb.append("' actual value ='");
-							sb.append(actualValue);
-							sb.append("')");
 						}
 					}
+
 					sb.append("]");
 					throw new ContractException(PartitionError.PAST_LABEL_FAILURE, sb.toString());
 				}
@@ -923,7 +926,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		if (personShouldBeInPartition) {
-			if (personIsCurrentlyInPartition) {
+			if (currentKeyForPerson != null) {
 				/*
 				 * does their key need to be updated? if so, calculate the new key and move the
 				 * person, updating labeler managers as well
@@ -969,7 +972,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				addPerson(personId);
 			}
 		} else {
-			if (personIsCurrentlyInPartition) {
+			if (currentKeyForPerson != null) {
 				// personShouldBeInPartition == false
 				// personIsCurrentlyInPartition == true
 
@@ -1094,7 +1097,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		final Key keyForExcludedPersonId = getKeyForPerson(excludedPersonId);
 		KeyIterator keyIterator;
 
-		aquireWeightsLock();
+		acquireWeightsLock();
 
 		try {
 			keyIterator = getKeyIterator(labelSet);
@@ -1107,9 +1110,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			int weightsLength = 0;
 			while (keyIterator.hasNext()) {
 				final Key fullKey = keyIterator.next();
-				final LabelSet fullLableSet = labelSetInfoMap.get(fullKey);
+				final LabelSet fullLabelSet = labelSetInfoMap.get(fullKey);
 				final PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				double weight = labelSetWeightingFunction.getWeight(partitionsContext, fullLableSet);
+				double weight = labelSetWeightingFunction.getWeight(partitionsContext, fullLabelSet);
 				if (fullKey != keyForExcludedPersonId) {
 					weight *= peopleContainer.size();
 				} else {

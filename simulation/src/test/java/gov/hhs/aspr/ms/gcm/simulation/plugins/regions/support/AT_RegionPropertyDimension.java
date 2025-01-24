@@ -71,7 +71,7 @@ public class AT_RegionPropertyDimension {
 				}).build());
 		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
 
-		// if the regionId was not assigned
+		// // if the regionId was not assigned
 		contractException = assertThrows(ContractException.class, () -> RegionPropertyDimension.builder()
 				.setRegionPropertyId(TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE).build());
 		assertEquals(RegionError.NULL_REGION_ID, contractException.getErrorType());

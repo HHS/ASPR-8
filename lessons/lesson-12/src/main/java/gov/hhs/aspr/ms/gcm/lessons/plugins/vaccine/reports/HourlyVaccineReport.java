@@ -50,7 +50,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	private Map<PersonId, IndividualVaccineStatus> individualToStatusMap = new LinkedHashMap<>();
 
 	private static enum FamilyVaccineStatus {
-		NONE("unvacinated_families"), PARTIAL("partially_vaccinated_families"), FULL("fully_vaccinated_families");
+		NONE("unvaccinated_families"), PARTIAL("partially_vaccinated_families"), FULL("fully_vaccinated_families");
 
 		private final String description;
 
@@ -166,6 +166,8 @@ public class HourlyVaccineReport extends PeriodicReport {
 				refreshIndividualStatus(personId);
 			}
 		}
+
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {
@@ -209,8 +211,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 	/* start code_ref=reports_plugin_hourly_vaccine_flush|code_cap=Once an hour the report releases a report item that summarizes the family and individual vaccine status. */
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder builder = ReportItem.builder()//
-				.setReportLabel(getReportLabel())//
-				.setReportHeader(reportHeader);
+				.setReportLabel(getReportLabel());
 		fillTimeFields(builder);
 		for (FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);

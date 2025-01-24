@@ -115,10 +115,6 @@ public class AT_GroupPopulationReport {
 		// place the initial data into the expected output consumer
 		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 
-//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
-//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
-//		expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
-
 		for (int hour = 1; hour < 24; hour++) {
 			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
 			expectedConsumer.accept(getReportItem(ReportPeriod.HOURLY, 0, hour, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
@@ -171,6 +167,8 @@ public class AT_GroupPopulationReport {
 		
 		assertEquals(expectedReportItems, actualReportItems);
 
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HOURLY_HEADER, reportHeader);
 	}
 
 	/*
@@ -247,11 +245,6 @@ public class AT_GroupPopulationReport {
 		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
 
 		// place the initial data into the expected output consumer
-
-//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_1, 3, 1));
-//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
-//		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 0, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
-
 		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_1, 3, 2));
 		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_2, 3, 1));
 		expectedConsumer.accept(getReportItem(ReportPeriod.DAILY, 1, TestGroupTypeId.GROUP_TYPE_3, 0, 1));
@@ -289,6 +282,8 @@ public class AT_GroupPopulationReport {
 
 		assertEquals(expectedReportItems, actualReportItems);
 
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_DAILY_HEADER, reportHeader);
 	}
 
 	@Test
@@ -367,6 +362,9 @@ public class AT_GroupPopulationReport {
 		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_EOS_HEADER, reportHeader);
 	}
 
 	private GroupsPluginData getGroupsPluginData() {
@@ -469,21 +467,6 @@ public class AT_GroupPopulationReport {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
 
-		switch (reportPeriod) {
-		case DAILY:
-			builder.setReportHeader(REPORT_DAILY_HEADER);
-			break;
-		case END_OF_SIMULATION:
-			builder.setReportHeader(REPORT_EOS_HEADER);
-			break;
-		case HOURLY:
-			builder.setReportHeader(REPORT_HOURLY_HEADER);
-			break;
-		default:
-			throw new RuntimeException("unhandled case " + reportPeriod);
-
-		}
-
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -492,7 +475,7 @@ public class AT_GroupPopulationReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group population property report");
 
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("group_type").add("person_count").add("group_count").build();
 }
