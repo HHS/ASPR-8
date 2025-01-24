@@ -475,7 +475,7 @@ public class AT_GroupPopulationReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group population property report");
 
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
-	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("group_type").add("person_count").add("group_count").build();
+	private static final ReportHeader REPORT_EOS_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("group_type").add("person_count").add("group_count").build();
 }

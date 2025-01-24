@@ -372,7 +372,7 @@ public class AT_GroupPropertyReport {
 			 * create the report with the report period
 			 */
 			GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
-			builder.setReportLabel(new SimpleReportLabel("report label"));
+			builder.setReportLabel(REPORT_LABEL);
 			builder.setReportPeriod(reportPeriod);
 			GroupPropertyReportPluginData groupPropertyReportPluginData = builder.build();
 
@@ -811,7 +811,7 @@ public class AT_GroupPropertyReport {
 			 * create the report with the report period
 			 */
 			GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
-			builder.setReportLabel(new SimpleReportLabel("report label"));
+			builder.setReportLabel(REPORT_LABEL);
 			builder.setReportPeriod(reportPeriod);
 			GroupPropertyReportPluginData groupPropertyReportPluginData = builder.build();
 
@@ -941,8 +941,8 @@ public class AT_GroupPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("group property report");
 
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("group_type").add("property").add("value").add("group_count").build();
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("group_type").add("property").add("value").add("group_count").build();
-	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().add("group_type").add("property").add("value").add("group_count").build();
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("group_type").add("property").add("value").add("group_count").build();
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("group_type").add("property").add("value").add("group_count").build();
+	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("group_type").add("property").add("value").add("group_count").build();
 
 }

@@ -370,7 +370,7 @@ public class AT_GlobalPropertyReport {
 
 		GlobalPropertyReportPluginData globalPropertyReportPluginData = //
 				GlobalPropertyReportPluginData	.builder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
+												.setReportLabel(REPORT_LABEL)//
 												.build();
 
 		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
@@ -628,5 +628,5 @@ public class AT_GlobalPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("global property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("property").add("value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("time").add("property").add("value").build();
 }

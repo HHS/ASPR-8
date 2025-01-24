@@ -394,7 +394,7 @@ public class AT_PersonPropertyReport {
 			// not throw an exception
 		}));
 
-		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		ReportLabel reportLabel = REPORT_LABEL;
 
 		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
 		builder.setReportLabel(reportLabel);
@@ -460,7 +460,7 @@ public class AT_PersonPropertyReport {
 			// not throw an exception
 		}));
 
-		ReportLabel reportLabel = new SimpleReportLabel(1000);
+		ReportLabel reportLabel = REPORT_LABEL;
 		ReportPeriod hourlyReportPeriod = ReportPeriod.HOURLY;
 
 		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
@@ -1158,10 +1158,10 @@ public class AT_PersonPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report label");
 
-	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().add("day").add("hour").add("region")
+	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("region")
 			.add("property").add("value").add("person_count").build();
-	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().add("day").add("region")
+	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("region")
 			.add("property").add("value").add("person_count").build();
-	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().add("region")
+	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("region")
 			.add("property").add("value").add("person_count").build();
 }

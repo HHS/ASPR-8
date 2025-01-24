@@ -237,10 +237,10 @@ public final class AT_BatchStatusReport {
 					materialsDataManager.addMaterialId(NewMaterialId.NEW_MATERIAL_ID);
 					for (int i = 0; i < 3; i++) {
 						BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo.builder()//
-								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)
-								.setAmount(15L)
-								.setMaterialsProducerId(testMaterialsProducerId)								
-								.build();						
+								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)//
+								.setAmount(15L)//
+								.setMaterialsProducerId(testMaterialsProducerId)//
+								.build();
 						BatchId batchId = materialsDataManager.addBatch(batchConstructionInfo);
 						expectedReportItems.put(getReportItemFromBatch(c, batchId), 1);
 					}
@@ -261,18 +261,16 @@ public final class AT_BatchStatusReport {
 							.setMaterialId(NewMaterialId.NEW_MATERIAL_ID).setPropertyDefinition(propertyDefinition)
 							.setPropertyId(NewBatchPropertyId.NEW_BATCH_PROPERTY_ID).build();
 					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
-					
-					
-					for(BatchId batchId : materialsDataManager.getInventoryBatches(testMaterialsProducerId)) {
-						if(materialsDataManager.getBatchMaterial(batchId).equals(NewMaterialId.NEW_MATERIAL_ID)) {
+
+					for (BatchId batchId : materialsDataManager.getInventoryBatches(testMaterialsProducerId)) {
+						if (materialsDataManager.getBatchMaterial(batchId).equals(NewMaterialId.NEW_MATERIAL_ID)) {
 							expectedReportItems.put(getReportItemFromBatch(c, batchId), 1);
 						}
 					}
-					
+
 				}
 			}));
 
-			
 		}
 
 		TestPluginData testPluginData = pluginBuilder.build();
@@ -427,7 +425,7 @@ public final class AT_BatchStatusReport {
 					}
 				}
 			}));
-			
+
 			/*
 			 * define a new Material -- covers MaterialIdAdditionEvent -- This will not have
 			 * an immediate impact. When we add a few batches for the material type.
@@ -438,11 +436,11 @@ public final class AT_BatchStatusReport {
 					materialsDataManager.addMaterialId(NewMaterialId.NEW_MATERIAL_ID);
 					for (int i = 0; i < 3; i++) {
 						BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo.builder()//
-								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)
-								.setAmount(15L)
-								.setMaterialsProducerId(testMaterialsProducerId)								
-								.build();						
-						materialsDataManager.addBatch(batchConstructionInfo);						
+								.setMaterialId(NewMaterialId.NEW_MATERIAL_ID)//
+								.setAmount(15L)//
+								.setMaterialsProducerId(testMaterialsProducerId)//
+								.build();
+						materialsDataManager.addBatch(batchConstructionInfo);
 					}
 				}
 			}));
@@ -463,7 +461,6 @@ public final class AT_BatchStatusReport {
 					materialsDataManager.defineBatchProperty(batchPropertyDefinitionInitialization);
 				}
 			}));
-			
 
 		}
 
@@ -517,6 +514,7 @@ public final class AT_BatchStatusReport {
 	private static ReportHeader getReportHeader() {
 
 		ReportHeader.Builder builder = ReportHeader.builder()//
+				.setReportLabel(REPORT_LABEL)//
 				.add("time")//
 				.add("batch")//
 				.add("materials_producer")//

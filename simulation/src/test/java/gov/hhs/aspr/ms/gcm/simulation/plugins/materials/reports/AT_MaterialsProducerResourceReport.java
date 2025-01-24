@@ -299,6 +299,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 	private static ReportHeader getReportHeader() {
 		return ReportHeader.builder()//
+				.setReportLabel(REPORT_LABEL)//
 				.add("time")//
 				.add("resource")//
 				.add("materials_producer")//

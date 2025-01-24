@@ -55,18 +55,23 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = { MaterialsProducerPropertyReportPluginData.class })
+	@UnitTestConstructor(target = MaterialsProducerPropertyReport.class, args = {
+			MaterialsProducerPropertyReportPluginData.class })
 	public void testConstructor() {
-		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+		MaterialsProducerPropertyReport report = new MaterialsProducerPropertyReport(
+				MaterialsProducerPropertyReportPluginData.builder()//
+						.setReportLabel(REPORT_LABEL)//
+						.build());
 		assertNotNull(report);
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {ReportContext.class }, tags = { UnitTag.INCOMPLETE })
+	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {
+			ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
-		
+
 		/*
-		 * The test fails -- only the day value is wrong. 
+		 * The test fails -- only the day value is wrong.
 		 */
 
 		Map<ReportItem, Integer> expectedReportItems = new LinkedHashMap<>();
@@ -136,13 +141,14 @@ public final class AT_MaterialsProducerPropertyReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
-		factory.setMaterialsProducerPropertyReportPluginData(MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
-		
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		factory.setMaterialsProducerPropertyReportPluginData(
+				MaterialsProducerPropertyReportPluginData.builder().setReportLabel(REPORT_LABEL).build());
+
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.build()//
 				.execute();
-		
+
 		Map<ReportItem, Integer> actualReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		assertEquals(expectedReportItems, actualReportItems);
 
@@ -151,7 +157,7 @@ public final class AT_MaterialsProducerPropertyReport {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = {ReportContext.class })
+	@UnitTestMethod(target = MaterialsProducerPropertyReport.class, name = "init", args = { ReportContext.class })
 	public void testInit_State() {
 		// Test with producing simulation state
 
@@ -204,28 +210,28 @@ public final class AT_MaterialsProducerPropertyReport {
 		TestPluginData testPluginData = pluginBuilder.build();
 
 		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData = MaterialsProducerPropertyReportPluginData
-				.builder()
-				.setReportLabel(REPORT_LABEL)
-				.build();
+				.builder().setReportLabel(REPORT_LABEL).build();
 
 		Factory factory = MaterialsTestPluginFactory.factory(0, 0, 0, 8759226038479000135L, testPluginData);
 		factory.setMaterialsProducerPropertyReportPluginData(materialsProducerPropertyReportPluginData);
 
-		TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(true)//
 				.setSimulationHaltTime(50)//
 				.build()//
 				.execute();
 
-		Map<MaterialsProducerPropertyReportPluginData, Integer> outputItems = testOutputConsumer.getOutputItemMap(MaterialsProducerPropertyReportPluginData.class);
+		Map<MaterialsProducerPropertyReportPluginData, Integer> outputItems = testOutputConsumer
+				.getOutputItemMap(MaterialsProducerPropertyReportPluginData.class);
 		assertEquals(1, outputItems.size());
-		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData2 = outputItems.keySet().iterator().next();
+		MaterialsProducerPropertyReportPluginData materialsProducerPropertyReportPluginData2 = outputItems.keySet()
+				.iterator().next();
 		assertEquals(materialsProducerPropertyReportPluginData, materialsProducerPropertyReportPluginData2);
 
 		// Test without producing simulation state
 
-		testOutputConsumer = TestSimulation	.builder()//
+		testOutputConsumer = TestSimulation.builder()//
 				.addPlugins(factory.getPlugins())//
 				.setProduceSimulationStateOnHalt(false)//
 				.setSimulationHaltTime(50)//
@@ -235,7 +241,6 @@ public final class AT_MaterialsProducerPropertyReport {
 		outputItems = testOutputConsumer.getOutputItemMap(MaterialsProducerPropertyReportPluginData.class);
 		assertEquals(0, outputItems.size());
 	}
-
 
 	private static ReportItem getReportItem(Object... values) {
 		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL);
@@ -251,6 +256,7 @@ public final class AT_MaterialsProducerPropertyReport {
 
 	private static ReportHeader getReportHeader() {
 		ReportHeader.Builder builder = ReportHeader.builder()//
+				.setReportLabel(REPORT_LABEL)//
 				.add("time")//
 				.add("materials_producer")//
 				.add("property")//

@@ -51,13 +51,7 @@ public final class AT_ReportItem {
 	public void testBuild() {
 
 		// precondition tests
-
 		ContractException contractException = assertThrows(ContractException.class, () -> {
-			ReportItem.builder().setReportLabel(new SimpleReportLabel("report")).build();
-		});
-		assertEquals(ReportError.NULL_REPORT_HEADER, contractException.getErrorType());
-
-		contractException = assertThrows(ContractException.class, () -> {
 			ReportItem.builder().build();
 		});
 		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
@@ -134,7 +128,7 @@ public final class AT_ReportItem {
 
 		ReportItem reportItem = ReportItem.builder().setReportLabel(reportLabel).addValue("A").addValue("B").build();
 
-		String expectedValue = "ReportItem [reportLabel=SimpleReportLabel [value=report], reportHeader=ReportHeader [headerStrings=[]], values=[A, B]]";
+		String expectedValue = "ReportItem [reportLabel=SimpleReportLabel [value=report], values=[A, B]]";
 		String actualValue = reportItem.toString();
 		assertEquals(expectedValue, actualValue);
 	}
