@@ -29,6 +29,7 @@ public class AT_DimensionData {
 
             private Data(Data data) {
                 levelNames.addAll(data.levelNames);
+                locked = data.locked;
             }
 
             @Override
@@ -135,6 +136,10 @@ public class AT_DimensionData {
         @Override
         public String toString() {
             return "TestDimensionData [data=" + data + "]";
+        }
+
+        public Builder toBuilder() {
+            return new Builder(data);
         }
     }
 
