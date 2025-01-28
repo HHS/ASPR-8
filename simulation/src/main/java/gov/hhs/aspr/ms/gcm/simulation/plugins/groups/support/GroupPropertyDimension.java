@@ -25,6 +25,7 @@ public class GroupPropertyDimension implements Dimension {
         private GroupId groupId;
         private GroupPropertyId groupPropertyId;
         private List<Object> values = new ArrayList<>();
+        private boolean locked;
 
         private Data() {
         }
@@ -33,6 +34,7 @@ public class GroupPropertyDimension implements Dimension {
             groupPropertyId = data.groupPropertyId;
             groupId = data.groupId;
             values.addAll(data.values);
+            locked = data.locked;
         }
 
         @Override
@@ -88,8 +90,11 @@ public class GroupPropertyDimension implements Dimension {
          *                           </ul>
          */
         public GroupPropertyDimension build() {
-            validate();
-            return new GroupPropertyDimension(new Data(data));
+            if (!data.locked) {
+                validate();
+            }
+            ensureImmutability();
+            return new GroupPropertyDimension(data);
         }
 
         private void validate() {
@@ -109,6 +114,7 @@ public class GroupPropertyDimension implements Dimension {
          *                           groupId is null
          */
         public Builder setGroupId(GroupId groupId) {
+            ensureDataMutability();
             validateGroupId(groupId);
             data.groupId = groupId;
             return this;
@@ -121,6 +127,7 @@ public class GroupPropertyDimension implements Dimension {
          *                           property id is null
          */
         public Builder setGroupPropertyId(GroupPropertyId groupPropertyId) {
+            ensureDataMutability();
             validateGroupPropertyId(groupPropertyId);
             data.groupPropertyId = groupPropertyId;
             return this;
@@ -133,10 +140,24 @@ public class GroupPropertyDimension implements Dimension {
          *                           the value is null
          */
         public Builder addValue(Object value) {
+            ensureDataMutability();
             validateValue(value);
             data.values.add(value);
             return this;
         }
+
+        private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
     }
 
     @Override
@@ -220,4 +241,7 @@ public class GroupPropertyDimension implements Dimension {
         return Objects.equals(data, other.data);
     }
 
+    public Builder toBuilder() {
+		return new Builder(data);
+	}
 }

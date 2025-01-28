@@ -26,12 +26,15 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 	 */
 	private static class Data extends PeriodicReportPluginData.Data {
 
+		private boolean locked;
+
 		private Data() {
 			super();
 		}
 
 		private Data(Data data) {
 			super(data);
+			locked = data.locked;
 		}
 
 		@Override
@@ -66,6 +69,10 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		 *                           </ul>
 		 */
 		public RegionTransferReportPluginData build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new RegionTransferReportPluginData(data);
 		}
 
@@ -76,6 +83,7 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			super.setReportLabel(reportLabel);
 			return this;
 		}
@@ -87,8 +95,31 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			ensureDataMutability();
 			super.setReportPeriod(reportPeriod);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
+			}
+			if (data.reportPeriod == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+			}
 		}
 	}
 
@@ -117,7 +148,7 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 	
 	@Override
 	public Builder toBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	@Override

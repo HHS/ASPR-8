@@ -26,15 +26,17 @@ public class StageConversionInfo {
 		private MaterialId materialId;
 		private double amount;
 		private Map<BatchPropertyId, Object> propertyValues = new LinkedHashMap<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			stageId = data.stageId;
 			materialId = data.materialId;
 			amount = data.amount;
 			propertyValues.putAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -42,16 +44,17 @@ public class StageConversionInfo {
 	 * Returns a builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * A builder class for BatchConstructionInfo
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -75,8 +78,11 @@ public class StageConversionInfo {
 		 *                           </ul>
 		 */
 		public StageConversionInfo build() {
-			validate();
-			return new StageConversionInfo(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new StageConversionInfo(data);
 		}
 
 		/**
@@ -91,6 +97,7 @@ public class StageConversionInfo {
 		 *                           </ul>
 		 */
 		public Builder setAmount(double amount) {
+			ensureDataMutability();
 			if (!Double.isFinite(amount)) {
 				throw new ContractException(MaterialsError.NON_FINITE_MATERIAL_AMOUNT);
 			}
@@ -109,6 +116,7 @@ public class StageConversionInfo {
 		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
+			ensureDataMutability();
 			if (materialId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
@@ -126,6 +134,7 @@ public class StageConversionInfo {
 		 *                           </ul>
 		 */
 		public Builder setStageId(StageId stageId) {
+			ensureDataMutability();
 			if (stageId == null) {
 				throw new ContractException(MaterialsError.NULL_STAGE_ID);
 			}
@@ -145,6 +154,7 @@ public class StageConversionInfo {
 		 *                           </ul>
 		 */
 		public Builder setPropertyValue(BatchPropertyId batchPropertyId, Object propertyValue) {
+			ensureDataMutability();
 			if (batchPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -153,6 +163,19 @@ public class StageConversionInfo {
 			}
 			data.propertyValues.put(batchPropertyId, propertyValue);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -182,6 +205,10 @@ public class StageConversionInfo {
 	 */
 	public Map<BatchPropertyId, Object> getPropertyValues() {
 		return Collections.unmodifiableMap(data.propertyValues);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

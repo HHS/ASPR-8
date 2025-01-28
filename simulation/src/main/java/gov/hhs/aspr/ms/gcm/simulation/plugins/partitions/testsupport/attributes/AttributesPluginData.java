@@ -27,10 +27,10 @@ public class AttributesPluginData implements PluginData {
 		private List<Object> emptyValueList = Collections.unmodifiableList(new ArrayList<>());
 		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			locked = data.locked;
 			attributeDefinitions.putAll(data.attributeDefinitions);
 			for (AttributeId attributeId : data.personAttributeValues.keySet()) {
@@ -93,7 +93,7 @@ public class AttributesPluginData implements PluginData {
 	}
 
 	public static class Builder implements PluginDataBuilder {
-		private Data data = new Data();
+		private Data data;
 
 		private Builder(Data data) {
 			this.data = data;
@@ -177,7 +177,7 @@ public class AttributesPluginData implements PluginData {
 				validateData();
 			}
 			ensureImmutability();
-			return new AttributesPluginData(new Data(data));
+			return new AttributesPluginData(data);
 		}
 
 		/**

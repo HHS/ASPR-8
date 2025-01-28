@@ -48,7 +48,7 @@ public final class ResourcesPluginData implements PluginData {
 
 		private boolean locked;
 
-		public Data() {
+		private Data() {
 			resourceDefaultTimes = new LinkedHashMap<>();
 			resourceTimeTrackingPolicies = new LinkedHashMap<>();
 			resourcePropertyDefinitions = new LinkedHashMap<>();
@@ -58,7 +58,7 @@ public final class ResourcesPluginData implements PluginData {
 			regionResourceLevels = new LinkedHashMap<>();
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			resourceDefaultTimes = new LinkedHashMap<>(data.resourceDefaultTimes);
 			resourceTimeTrackingPolicies = new LinkedHashMap<>(data.resourceTimeTrackingPolicies);
 			resourcePropertyDefinitions = new LinkedHashMap<>();

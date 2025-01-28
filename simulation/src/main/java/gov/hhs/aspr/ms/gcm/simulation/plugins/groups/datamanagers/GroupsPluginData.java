@@ -180,7 +180,7 @@ public final class GroupsPluginData implements PluginData {
         private final List<List<GroupId>> personToGroupsMemberships;
         private final List<List<PersonId>> groupToPeopleMemberships;
 
-        public Data() {
+        private Data() {
             groupPropertyDefinitions = new LinkedHashMap<>();
             groupTypeIds = new LinkedHashSet<>();
             personToGroupsMemberships = new ArrayList<>();
@@ -191,7 +191,7 @@ public final class GroupsPluginData implements PluginData {
             emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());
         }
 
-        public Data(Data data) {
+        private Data(Data data) {
             emptyPersonList = Collections.unmodifiableList(new ArrayList<>());
             emptyGroupList = Collections.unmodifiableList(new ArrayList<>());
             emptyGroupPropertyValues = Collections.unmodifiableList(new ArrayList<>());

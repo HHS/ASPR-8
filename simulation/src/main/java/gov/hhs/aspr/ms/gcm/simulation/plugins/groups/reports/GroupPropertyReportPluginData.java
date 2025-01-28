@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.reports;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,6 +38,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		private Map<GroupTypeId, Set<GroupPropertyId>> includedProperties = new LinkedHashMap<>();
 		private Map<GroupTypeId, Set<GroupPropertyId>> excludedProperties = new LinkedHashMap<>();
 		private boolean defaultInclusionPolicy = true;
+		private boolean locked;
 
 		private Data() {
 			super();
@@ -55,6 +57,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 				excludedProperties.put(groupTypeId, newSet);
 			}
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
+			locked = data.locked;
 		}
 
 		@Override
@@ -137,6 +140,10 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 *                           </ul>
 		 */
 		public GroupPropertyReportPluginData build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new GroupPropertyReportPluginData(data);
 		}
 
@@ -146,6 +153,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 * excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
+			ensureDataMutability();
 			data.defaultInclusionPolicy = include;
 			return this;
 		}
@@ -162,6 +170,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 *                           </ul>
 		 */
 		public Builder includeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+			ensureDataMutability();
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
@@ -193,6 +202,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 *                           </ul>
 		 */
 		public Builder excludeGroupProperty(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+			ensureDataMutability();
 			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -220,6 +230,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 */
 		@Override
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			super.setReportLabel(reportLabel);
 			return this;
 		}
@@ -232,8 +243,31 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		 */
 		@Override
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			ensureDataMutability();
 			super.setReportPeriod(reportPeriod);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
+			}
+			if (data.reportPeriod == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+			}
 		}
 
 	}
@@ -247,7 +281,7 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 
 	@Override
 	public Builder toBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	/**

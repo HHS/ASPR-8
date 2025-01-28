@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_PeriodicReportPluginData {
 
@@ -19,12 +20,15 @@ public class AT_PeriodicReportPluginData {
 
 		private static class Data extends PeriodicReportPluginData.Data {
 
+			private boolean locked;
+
 			private Data() {
 				super();
 			}
 
 			private Data(Data data) {
 				super(data);
+				locked = data.locked;
 			}
 
 			@Override
@@ -47,20 +51,49 @@ public class AT_PeriodicReportPluginData {
 
 			@Override
 			public LocalPeriodicReportPluginData build() {
+				if (!data.locked) {
+					validateData();
+				}
+				ensureImmutability();
 				return new LocalPeriodicReportPluginData(data);
 			}
 
 			@Override
 			public Builder setReportLabel(ReportLabel reportLabel) {
+				ensureDataMutability();
 				super.setReportLabel(reportLabel);
 				return this;
 			}
 
 			@Override
 			public Builder setReportPeriod(ReportPeriod reportPeriod) {
+				ensureDataMutability();
 				super.setReportPeriod(reportPeriod);
 				return this;
 			}
+
+			private void ensureDataMutability() {
+				if (data.locked) {
+					data = new Data(data);
+					data.locked = false;
+				}
+			}
+
+			private void ensureImmutability() {
+				if (!data.locked) {
+					data.locked = true;
+				}
+			}
+
+			private void validateData() {
+				if (data.reportLabel == null) {
+					throw new ContractException(ReportError.NULL_REPORT_LABEL);
+				}
+				if (data.reportPeriod == null) {
+					throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+				}
+			}
+
 		}
 
 		public static Builder builder() {

@@ -6,8 +6,10 @@ import java.util.Set;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.PersonPropertyId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.PeriodicReportPluginData;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportPeriod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
@@ -22,14 +24,16 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 
 	private static class Data extends PeriodicReportPluginData.Data {
 		private final Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 			super();
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			super(data);
 			personPropertyIds.addAll(data.personPropertyIds);
+			locked = data.locked;
 		}
 
 		@Override
@@ -80,10 +84,15 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 
 		@Override
 		public PersonPropertyInteractionReportPluginData build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new PersonPropertyInteractionReportPluginData(data);
 		}
 
 		public Builder addPersonPropertyId(PersonPropertyId personPropertyId) {
+			ensureDataMutability();
 			if (personPropertyId != null) {
 				data.personPropertyIds.add(personPropertyId);
 			}
@@ -91,18 +100,43 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 		}
 
 		public Builder removePersonPropertyId(PersonPropertyId personPropertyId) {
+			ensureDataMutability();
 			data.personPropertyIds.remove(personPropertyId);
 			return this;
 		}
 
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			super.setReportLabel(reportLabel);
 			return this;
 		}
 
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			ensureDataMutability();
 			super.setReportPeriod(reportPeriod);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
+			}
+			if (data.reportPeriod == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+			}
 		}
 	}
 
@@ -128,7 +162,7 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 
 	@Override
 	public Builder toBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	public Set<PersonPropertyId> getPersonPropertyIds() {

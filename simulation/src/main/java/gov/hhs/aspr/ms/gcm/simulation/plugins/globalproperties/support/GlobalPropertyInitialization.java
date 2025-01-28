@@ -17,6 +17,7 @@ public class GlobalPropertyInitialization {
 		private GlobalPropertyId globalPropertyId;
 		private PropertyDefinition propertyDefinition;
 		private Object value;
+		private boolean locked;
 
 		public Data() {
 		}
@@ -25,6 +26,7 @@ public class GlobalPropertyInitialization {
 			globalPropertyId = data.globalPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			value = data.value;
+			locked = data.locked;
 		}
 
 	}
@@ -33,13 +35,14 @@ public class GlobalPropertyInitialization {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -78,8 +81,11 @@ public class GlobalPropertyInitialization {
 		 *                           </ul>
 		 */
 		public GlobalPropertyInitialization build() {
-			validate();
-			return new GlobalPropertyInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new GlobalPropertyInitialization(data);
 		}
 
 		/**
@@ -89,6 +95,7 @@ public class GlobalPropertyInitialization {
 		 *                           property id is null
 		 */
 		public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
+			ensureDataMutability();
 			if (globalPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -103,6 +110,7 @@ public class GlobalPropertyInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -118,11 +126,25 @@ public class GlobalPropertyInitialization {
 		 *                           the value is null
 		 */
 		public Builder setValue(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 			data.value = value;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -151,5 +173,9 @@ public class GlobalPropertyInitialization {
 	 */
 	public Optional<Object> getValue() {
 		return Optional.ofNullable(data.value);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }

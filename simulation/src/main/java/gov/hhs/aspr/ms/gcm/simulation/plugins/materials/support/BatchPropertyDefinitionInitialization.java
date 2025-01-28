@@ -23,16 +23,17 @@ public final class BatchPropertyDefinitionInitialization {
 		BatchPropertyId batchPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<BatchId, Object>> propertyValues = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialId = data.materialId;
 			batchPropertyId = data.batchPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
-
+			locked = data.locked;
 		}
 	}
 
@@ -46,17 +47,18 @@ public final class BatchPropertyDefinitionInitialization {
 	 * Returns a new builder
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for a BatchPropertyDefinitionInitialization
 	 */
 	public final static class Builder {
-		private Builder() {
-		}
+		private Data data;
 
-		private Data data = new Data();
+		private Builder(Data data) {
+			this.data = data;
+		}
 
 		private void validate() {
 			if (data.propertyDefinition == null) {
@@ -99,8 +101,11 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public BatchPropertyDefinitionInitialization build() {
-			validate();
-			return new BatchPropertyDefinitionInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new BatchPropertyDefinitionInitialization(data);
 		}
 
 		/**
@@ -110,6 +115,7 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           property id is null
 		 */
 		public Builder setPropertyId(BatchPropertyId batchPropertyId) {
+			ensureDataMutability();
 			if (batchPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -124,6 +130,7 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
+			ensureDataMutability();
 			if (materialId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
@@ -138,6 +145,7 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -157,6 +165,7 @@ public final class BatchPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public Builder addPropertyValue(BatchId batchId, Object value) {
+			ensureDataMutability();
 			if (batchId == null) {
 				throw new ContractException(MaterialsError.NULL_BATCH_ID);
 			}
@@ -169,6 +178,18 @@ public final class BatchPropertyDefinitionInitialization {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
 	}
 
 	/**
@@ -200,6 +221,10 @@ public final class BatchPropertyDefinitionInitialization {
 	 */
 	public List<Pair<BatchId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

@@ -20,13 +20,15 @@ public final class GroupConstructionInfo {
 	private static class Data {
 		private GroupTypeId groupTypeId;
 		private Map<GroupPropertyId, Object> propertyValues = new LinkedHashMap<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			groupTypeId = data.groupTypeId;
 			propertyValues.putAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -53,16 +55,16 @@ public final class GroupConstructionInfo {
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	@NotThreadSafe
 	public static class Builder {
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private Data data = new Data();
 
 		private void validate() {
 			if (data.groupTypeId == null) {
@@ -77,8 +79,11 @@ public final class GroupConstructionInfo {
 		 *                           group type id was collected
 		 */
 		public GroupConstructionInfo build() {
-			validate();
-			return new GroupConstructionInfo(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new GroupConstructionInfo(data);
 		}
 
 		/**
@@ -87,6 +92,7 @@ public final class GroupConstructionInfo {
 		 * @throws ContractException if the group type id is null
 		 */
 		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
+			ensureDataMutability();
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
@@ -106,6 +112,7 @@ public final class GroupConstructionInfo {
 		 *                           </ul>
 		 */
 		public Builder setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
+			ensureDataMutability();
 			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -116,6 +123,23 @@ public final class GroupConstructionInfo {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

@@ -22,14 +22,16 @@ public final class RegionPropertyDefinitionInitialization {
 		RegionPropertyId regionPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<RegionId, Object>> propertyValues = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			regionPropertyId = data.regionPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -43,18 +45,18 @@ public final class RegionPropertyDefinitionInitialization {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for a PropertyDefinitionInitialization
 	 */
 	public final static class Builder {
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private Data data = new Data();
 
 		private void validate() {
 			if (data.propertyDefinition == null) {
@@ -91,8 +93,11 @@ public final class RegionPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public RegionPropertyDefinitionInitialization build() {
-			validate();
-			return new RegionPropertyDefinitionInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new RegionPropertyDefinitionInitialization(data);
 		}
 
 		/**
@@ -102,6 +107,7 @@ public final class RegionPropertyDefinitionInitialization {
 		 *                           property id is null
 		 */
 		public Builder setRegionPropertyId(RegionPropertyId regionPropertyId) {
+			ensureDataMutability();
 			if (regionPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -116,6 +122,7 @@ public final class RegionPropertyDefinitionInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -135,6 +142,7 @@ public final class RegionPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public Builder addPropertyValue(RegionId regionId, Object value) {
+			ensureDataMutability();
 			if (regionId == null) {
 				throw new ContractException(RegionError.NULL_REGION_ID);
 			}
@@ -144,6 +152,19 @@ public final class RegionPropertyDefinitionInitialization {
 
 			data.propertyValues.add(new Pair<>(regionId, value));
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 
 	}
@@ -170,6 +191,10 @@ public final class RegionPropertyDefinitionInitialization {
 	 */
 	public List<Pair<RegionId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

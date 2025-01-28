@@ -22,14 +22,16 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		MaterialsProducerPropertyId materialsProducerPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<MaterialsProducerId, Object>> propertyValues = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialsProducerPropertyId = data.materialsProducerPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -43,18 +45,18 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for a MaterialsProducerPropertyDefinitionInitialization
 	 */
 	public final static class Builder {
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private Data data = new Data();
 
 		private void validate() {
 			if (data.propertyDefinition == null) {
@@ -92,8 +94,11 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public MaterialsProducerPropertyDefinitionInitialization build() {
-			validate();
-			return new MaterialsProducerPropertyDefinitionInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new MaterialsProducerPropertyDefinitionInitialization(data);
 		}
 
 		/**
@@ -103,6 +108,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 *                           materials producer propertyId id is null
 		 */
 		public Builder setMaterialsProducerPropertyId(MaterialsProducerPropertyId materialsProducerPropertyId) {
+			ensureDataMutability();
 			if (materialsProducerPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -117,6 +123,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -136,6 +143,7 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public Builder addPropertyValue(MaterialsProducerId materialsProducerId, Object value) {
+			ensureDataMutability();
 			if (materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 			}
@@ -145,6 +153,19 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 
 			data.propertyValues.add(new Pair<>(materialsProducerId, value));
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 
 	}
@@ -171,6 +192,10 @@ public final class MaterialsProducerPropertyDefinitionInitialization {
 	 */
 	public List<Pair<MaterialsProducerId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

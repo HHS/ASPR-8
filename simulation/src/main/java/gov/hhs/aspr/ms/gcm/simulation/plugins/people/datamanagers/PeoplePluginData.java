@@ -34,10 +34,10 @@ public final class PeoplePluginData implements PluginData {
 		private double assignmentTime;
 		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			locked = data.locked;
 			this.personCount = data.personCount;
 			this.personRanges.addAll(data.personRanges);

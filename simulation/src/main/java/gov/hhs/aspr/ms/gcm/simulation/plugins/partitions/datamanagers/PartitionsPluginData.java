@@ -27,7 +27,8 @@ public final class PartitionsPluginData implements PluginData {
 		 * supplied to this builder.
 		 */
 		public PartitionsPluginData build() {
-			return new PartitionsPluginData(new Data(data));
+			ensureImmutability();
+			return new PartitionsPluginData(data);
 		}
 
 		/**
@@ -36,21 +37,38 @@ public final class PartitionsPluginData implements PluginData {
 		 * guarantee run continuity.
 		 */
 		public Builder setRunContinuitySupport(final boolean supportRunContinuity) {
-
+			ensureDataMutability();
 			data.supportRunContinuity = supportRunContinuity;
 			return this;
 		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
 	}
 
 	private static class Data {
 
 		private boolean supportRunContinuity;
 
+		private boolean locked;
+
 		private Data() {
 		}
 
 		private Data(Data data) {
 			supportRunContinuity = data.supportRunContinuity;
+			locked = data.locked;
 		}
 
 		@Override
@@ -127,7 +145,7 @@ public final class PartitionsPluginData implements PluginData {
 	
 	@Override
 	public Builder toBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	@Override

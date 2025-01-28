@@ -16,12 +16,14 @@ public final class PersonConstructionData {
 
 	private static class Data {
 		private List<Object> values = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			values.addAll(data.values);
+			locked = data.locked;
 		}
 
 	}
@@ -33,17 +35,17 @@ public final class PersonConstructionData {
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for {@link PersonConstructionData}
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -51,7 +53,11 @@ public final class PersonConstructionData {
 		 * builder.
 		 */
 		public PersonConstructionData build() {
-			return new PersonConstructionData(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new PersonConstructionData(data);
 		}
 
 		/**
@@ -61,6 +67,7 @@ public final class PersonConstructionData {
 		 *                           value is null
 		 */
 		public Builder add(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(PersonError.NULL_AUXILIARY_DATA);
 			}
@@ -68,6 +75,26 @@ public final class PersonConstructionData {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			for (Object object : data.values) {
+				if (object == null) {
+					throw new ContractException(PersonError.NULL_AUXILIARY_DATA);
+				}
+			}
+		}
 	}
 
 	/**
@@ -101,6 +128,10 @@ public final class PersonConstructionData {
 		}
 		return result;
 
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

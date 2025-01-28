@@ -66,10 +66,10 @@ public class RegionsPluginData implements PluginData {
 
 		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			regionPropertyDefinitions.putAll(data.regionPropertyDefinitions);
 			regionIds.addAll(data.regionIds);
 			trackRegionArrivalTimes = data.trackRegionArrivalTimes;
