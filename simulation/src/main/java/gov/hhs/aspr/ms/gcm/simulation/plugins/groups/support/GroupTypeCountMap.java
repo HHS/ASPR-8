@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
@@ -21,19 +22,24 @@ public final class GroupTypeCountMap {
 
 	private static class Data {
 		private Map<GroupTypeId, Integer> map = new LinkedHashMap<>();
+		private Set<GroupTypeId> groupTypeIds;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			map.putAll(data.map);
+			groupTypeIds = Collections.unmodifiableSet(data.map.keySet());
+			locked = data.locked;
 		}
 
 	}
 
+	private final Data data;
+
 	private GroupTypeCountMap(Data data) {
-		map.putAll(data.map);
-		groupTypeIds = Collections.unmodifiableSet(map.keySet());
+		this.data = data;
 	}
 
 	/**
@@ -42,8 +48,8 @@ public final class GroupTypeCountMap {
 	@Override
 	public int hashCode() {
 		int result = 1;
-		for (GroupTypeId groupTypeId : map.keySet()) {
-			Integer value = map.get(groupTypeId);
+		for (GroupTypeId groupTypeId : data.map.keySet()) {
+			Integer value = data.map.get(groupTypeId);
 			if (value.intValue() != 0) {
 				result += value.hashCode();
 			}
@@ -56,7 +62,7 @@ public final class GroupTypeCountMap {
 	 * this {@link GroupTypeCountMap}
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
-		return groupTypeIds;
+		return data.groupTypeIds;
 	}
 
 	/**
@@ -72,8 +78,8 @@ public final class GroupTypeCountMap {
 		if (getClass() != obj.getClass())
 			return false;
 		GroupTypeCountMap other = (GroupTypeCountMap) obj;
-		for (GroupTypeId groupTypeId : map.keySet()) {
-			int value = map.get(groupTypeId);
+		for (GroupTypeId groupTypeId : data.map.keySet()) {
+			int value = data.map.get(groupTypeId);
 			if (value > 0) {
 				int groupCount = other.getGroupCount(groupTypeId);
 				if (value != groupCount) {
@@ -81,8 +87,8 @@ public final class GroupTypeCountMap {
 				}
 			}
 		}
-		for (GroupTypeId groupTypeId : other.map.keySet()) {
-			int value = other.map.get(groupTypeId);
+		for (GroupTypeId groupTypeId : other.data.map.keySet()) {
+			int value = other.data.map.get(groupTypeId);
 			if (value > 0) {
 				int groupCount = getGroupCount(groupTypeId);
 				if (value != groupCount) {
@@ -93,11 +99,9 @@ public final class GroupTypeCountMap {
 		return true;
 	}
 
-	private final Map<GroupTypeId, Integer> map = new LinkedHashMap<>();
-	private final Set<GroupTypeId> groupTypeIds;
 
 	public int getGroupCount(GroupTypeId groupTypeId) {
-		Integer result = map.get(groupTypeId);
+		Integer result = data.map.get(groupTypeId);
 		if (result == null) {
 			result = 0;
 		}
@@ -108,7 +112,7 @@ public final class GroupTypeCountMap {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
@@ -116,13 +120,19 @@ public final class GroupTypeCountMap {
 	 */
 	@NotThreadSafe
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		public GroupTypeCountMap build() {
-			return new GroupTypeCountMap(new Data(data));
+			if (!data.locked) {
+				data.groupTypeIds = Collections.unmodifiableSet(data.map.keySet());
+				validateData();
+			}
+			ensureImmutability();
+			return new GroupTypeCountMap(data);
 		}
 
 		/**
@@ -137,6 +147,7 @@ public final class GroupTypeCountMap {
 		 *                           </ul>
 		 */
 		public Builder setCount(GroupTypeId groupTypeId, int count) {
+			ensureDataMutability();
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
@@ -145,6 +156,22 @@ public final class GroupTypeCountMap {
 			}
 			data.map.put(groupTypeId, count);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 	}
 
@@ -158,8 +185,8 @@ public final class GroupTypeCountMap {
 		StringBuilder sb = new StringBuilder();
 		sb.append("GroupTypeCountMap [");
 		boolean first = true;
-		for (GroupTypeId groupTypeId : map.keySet()) {
-			Integer count = map.get(groupTypeId);
+		for (GroupTypeId groupTypeId : data.map.keySet()) {
+			Integer count = data.map.get(groupTypeId);
 			if (count > 0) {
 				if (first) {
 					first = false;
@@ -168,11 +195,15 @@ public final class GroupTypeCountMap {
 				}
 				sb.append(groupTypeId);
 				sb.append("=");
-				sb.append(map.get(groupTypeId));
+				sb.append(data.map.get(groupTypeId));
 			}
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

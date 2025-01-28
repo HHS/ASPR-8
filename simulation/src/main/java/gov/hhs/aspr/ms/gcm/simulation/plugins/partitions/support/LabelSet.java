@@ -32,7 +32,7 @@ public final class LabelSet {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((labels == null) ? 0 : labels.hashCode());
+		result = prime * result + ((data.labels == null) ? 0 : data.labels.hashCode());
 		return result;
 	}
 
@@ -45,10 +45,10 @@ public final class LabelSet {
 		if (getClass() != obj.getClass())
 			return false;
 		LabelSet other = (LabelSet) obj;
-		if (labels == null) {
-			if (other.labels != null)
+		if (data.labels == null) {
+			if (other.data.labels != null)
 				return false;
-		} else if (!labels.equals(other.labels))
+		} else if (!data.labels.equals(other.data.labels))
 			return false;
 		return true;
 	}
@@ -57,19 +57,23 @@ public final class LabelSet {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public static class Builder {
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
-		private Data data = new Data();
-
 		public LabelSet build() {
-			return new LabelSet(new Data(data));
+			if (!data.locked) {
+				data.dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(data.labels.keySet()));
+				validateData();
+			}
+			ensureImmutability();
+			return new LabelSet(data);
 		}
 
 		/**
@@ -85,6 +89,7 @@ public final class LabelSet {
 		 *                           </ul>
 		 */
 		public Builder setLabel(Object id, Object label) {
+			ensureDataMutability();
 			if (id == null) {
 				throw new ContractException(PartitionError.NULL_PARTITION_LABEL_DIMENSION);
 			}
@@ -95,25 +100,45 @@ public final class LabelSet {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+		}
+
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("LabelSet [labels=");
-		builder.append(labels);
+		builder.append(data.labels);
 		builder.append("]");
 		return builder.toString();
 	}
 
 	private static class Data {
 		private Map<Object, Object> labels = new LinkedHashMap<>();
+		private Set<Object> dimensions;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			labels.putAll(data.labels);
+			dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(data.labels.keySet()));
+			locked = data.locked;
 		}
 	}
 
@@ -121,28 +146,31 @@ public final class LabelSet {
 	 * Returns the dimension label for this {@link LabelSet}
 	 */
 	public Optional<Object> getLabel(Object dimension) {
-		return Optional.ofNullable(this.labels.get(dimension));
+		return Optional.ofNullable(this.data.labels.get(dimension));
 	}
 
 	/**
 	 * Returns an unmodifiable list of dimensions
 	 */
 	public Set<Object> getDimensions() {
-		return dimensions;
+		return data.dimensions;
 	}
 
 	/**
 	 * Returns true if and only if this {@link LabelSet} has no label values
 	 */
 	public boolean isEmpty() {
-		return labels.isEmpty();
+		return data.labels.isEmpty();
 	}
 
 	private LabelSet(Data data) {
-		this.labels = data.labels;
-		this.dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(labels.keySet()));
+		this.data = data;
 	}
 
-	private final Map<Object, Object> labels;
-	private final Set<Object> dimensions;
+	private final Data data;
+
+	public Builder toBuilder() {
+		return new Builder(data);
+	}
+	
 }

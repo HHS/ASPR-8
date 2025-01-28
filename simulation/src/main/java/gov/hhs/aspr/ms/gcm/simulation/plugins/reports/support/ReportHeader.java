@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
@@ -14,17 +15,30 @@ import net.jcip.annotations.NotThreadSafe;
 @Immutable
 public final class ReportHeader {
 
-	private final List<String> headerStrings;
+	private final Data data;
 
-	private ReportHeader(List<String> headerStrings) {
-		this.headerStrings = new ArrayList<>(headerStrings);
+	private ReportHeader(Data data) {
+		this.data = data;
 	}
 
 	/**
 	 * Returns a builder for ReportHeader
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
+	}
+
+	private static class Data {
+		private List<String> headerStrings = new ArrayList<>();
+		private boolean locked;
+
+		private Data() {
+		}
+
+		private Data(Data data) {
+			headerStrings.addAll(data.headerStrings);
+			locked = data.locked;
+		}
 	}
 
 	/**
@@ -32,12 +46,11 @@ public final class ReportHeader {
 	 */
 	@NotThreadSafe
 	public final static class Builder {
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private List<String> headerStrings = new ArrayList<>();
 
 		/**
 		 * Add a string to the list of strings in the header in the order added.
@@ -46,10 +59,11 @@ public final class ReportHeader {
 		 *                           if the header string is null
 		 */
 		public Builder add(String headerString) {
+			ensureDataMutability();
 			if (headerString == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER_STRING);
 			}
-			this.headerStrings.add(headerString);
+			data.headerStrings.add(headerString);
 			return this;
 		}
 
@@ -58,7 +72,27 @@ public final class ReportHeader {
 		 * of the builder.
 		 */
 		public ReportHeader build() {
-			return new ReportHeader(headerStrings);
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new ReportHeader(data);
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 	}
 
@@ -66,7 +100,7 @@ public final class ReportHeader {
 	 * Returns the list of header strings in the order of addition.
 	 */
 	public List<String> getHeaderStrings() {
-		return new ArrayList<>(headerStrings);
+		return new ArrayList<>(data.headerStrings);
 	}
 
 	/**
@@ -77,7 +111,7 @@ public final class ReportHeader {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("ReportHeader [headerStrings=");
-		builder.append(headerStrings);
+		builder.append(data.headerStrings);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -89,7 +123,7 @@ public final class ReportHeader {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((headerStrings == null) ? 0 : headerStrings.hashCode());
+		result = prime * result + ((data.headerStrings == null) ? 0 : data.headerStrings.hashCode());
 		return result;
 	}
 
@@ -105,14 +139,18 @@ public final class ReportHeader {
 			return false;
 		}
 		ReportHeader other = (ReportHeader) obj;
-		if (headerStrings == null) {
-			if (other.headerStrings != null) {
+		if (data.headerStrings == null) {
+			if (other.data.headerStrings != null) {
 				return false;
 			}
-		} else if (!headerStrings.equals(other.headerStrings)) {
+		} else if (!data.headerStrings.equals(other.data.headerStrings)) {
 			return false;
 		}
 		return true;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }
