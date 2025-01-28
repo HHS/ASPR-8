@@ -18,13 +18,15 @@ public class RegionAdditionEvent implements Event {
 	private static class Data {
 		private RegionId regionId;
 		private List<Object> values = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			regionId = data.regionId;
 			values.addAll(data.values);
+			locked = data.locked;
 		}
 	}
 
@@ -42,7 +44,7 @@ public class RegionAdditionEvent implements Event {
 	 */
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
 		private Builder(Data data) {
 			this.data = data;
@@ -61,8 +63,11 @@ public class RegionAdditionEvent implements Event {
 		 *                           region id was not set
 		 */
 		public RegionAdditionEvent build() {
-			validate();
-			return new RegionAdditionEvent(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new RegionAdditionEvent(data);
 		}
 
 		/**
@@ -72,6 +77,7 @@ public class RegionAdditionEvent implements Event {
 		 *                           region id is null
 		 */
 		public Builder setRegionId(RegionId regionId) {
+			ensureDataMutability();
 			if (regionId == null) {
 				throw new ContractException(RegionError.NULL_REGION_ID);
 			}
@@ -86,11 +92,25 @@ public class RegionAdditionEvent implements Event {
 		 *                           value is null
 		 */
 		public Builder addValue(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(RegionError.NULL_AUXILIARY_DATA);
 			}
 			data.values.add(value);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -118,6 +138,10 @@ public class RegionAdditionEvent implements Event {
 			}
 		}
 		return result;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }
