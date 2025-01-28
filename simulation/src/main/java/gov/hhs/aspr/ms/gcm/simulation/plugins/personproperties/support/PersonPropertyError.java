@@ -11,7 +11,7 @@ public enum PersonPropertyError implements ContractError {
 
 	NON_FINITE_TIME("Non-finite time value"),//
 	NULL_PERSON_PROPERTY_INTERACTION_REPORT_PLUGIN_DATA("Null person property interaction report plugin data"), //
-	NULL_PERSON_PROPERTY_PLUGN_DATA("Null person property plugin data"), //
+	NULL_PERSON_PROPERTY_PLUGIN_DATA("Null person property plugin data"), //
 	NULL_PERSON_PROPERTY_REPORT_PLUGIN_DATA("Null person property report plugin data"),//
 	NULL_TIME("Null time"), //
 	PROPERTY_ASSIGNMENT_TIME_EXCEEDS_SIM_TIME("Property assignment time exceeds current simulation time"),//

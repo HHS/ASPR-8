@@ -66,6 +66,7 @@ public final class StageReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			reportHeader = ReportHeader.builder()//
+					.setReportLabel(reportLabel)//
 					.add("time")//
 					.add("stage")//
 					.add("materials_producer")//
@@ -114,13 +115,13 @@ public final class StageReport {
 
 	private void writeReportItem(ReportContext reportContext, final StageRecord stageRecord) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(reportContext.getTime());
-		reportItemBuilder.addValue(stageRecord.stageId);
-		reportItemBuilder.addValue(stageRecord.materialsProducerId.toString());
-		reportItemBuilder.addValue(stageRecord.lastAction.displayName);
-		reportItemBuilder.addValue(stageRecord.isOffered);
+		reportItemBuilder//
+				.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime())//
+				.addValue(stageRecord.stageId)//
+				.addValue(stageRecord.materialsProducerId.toString())//
+				.addValue(stageRecord.lastAction.displayName)//
+				.addValue(stageRecord.isOffered);
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
@@ -151,6 +152,9 @@ public final class StageReport {
 				writeReportItem(reportContext, stageRecord);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

@@ -1944,5 +1944,12 @@ public class Simulation {
 	protected LocalDateTime getLocalDateTime(double simulationTime) {
 		return simulationTimeConverter.getLocalDateTime(simulationTime);
 	}
+	
+	protected Optional<Double> getSimulationHaltTime(){		
+		if(forcedHaltPresent) {
+			return Optional.of(simulationHaltTime);
+		}
+		return Optional.ofNullable(null);
+	}
 
 }

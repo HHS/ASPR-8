@@ -39,6 +39,7 @@ public final class PopulationTraceReport {
 			generateReportItem(Action.ADDITION, personId);
 		}
 
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void handlePersonImminentRemovalEvent(ReportContext reportContext,
@@ -53,7 +54,6 @@ public final class PopulationTraceReport {
 	private void generateReportItem(Action action, PersonId personId) {
 		ReportItem reportItem = ReportItem.builder()//
 				.setReportLabel(reportLabel)//
-				.setReportHeader(reportHeader)//
 				.addValue(reportContext.getTime())//
 				.addValue(personId)//
 				.addValue(action)//

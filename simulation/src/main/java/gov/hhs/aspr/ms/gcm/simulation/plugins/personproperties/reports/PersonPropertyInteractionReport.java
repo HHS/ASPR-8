@@ -67,7 +67,10 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
-			addTimeFieldHeaders(reportHeaderBuilder).add("region");
+			addTimeFieldHeaders(reportHeaderBuilder)//
+					.setReportLabel(getReportLabel())//
+					.add("region");
+
 			for (final PersonPropertyId personPropertyId : propertyIds) {
 				reportHeaderBuilder.add(personPropertyId.toString().toLowerCase());
 			}
@@ -253,6 +256,9 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			final Object regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, personId);
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -286,7 +292,6 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 						propertyIdsAndValues.put(propertyIds.get(i).toString(), personPropertyValues[i]);
 					}
 					final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-					reportItemBuilder.setReportHeader(getReportHeader());
 					reportItemBuilder.setReportLabel(getReportLabel());
 
 					fillTimeFields(reportItemBuilder);

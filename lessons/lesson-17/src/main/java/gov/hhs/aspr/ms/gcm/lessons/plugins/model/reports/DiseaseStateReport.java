@@ -40,7 +40,6 @@ public final class DiseaseStateReport extends PeriodicReport {
 	protected void flush(ReportContext reportContext) {
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportLabel(getReportLabel());
-		reportItemBuilder.setReportHeader(getReportHeader());
 		fillTimeFields(reportItemBuilder);
 
 		PersonPropertiesDataManager personPropertiesDataManager = reportContext
@@ -58,8 +57,7 @@ public final class DiseaseStateReport extends PeriodicReport {
 
 	@Override
 	protected void prepare(ReportContext reportContext) {
-		//does nothing
-		
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 }

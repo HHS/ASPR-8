@@ -663,7 +663,7 @@ public final class AT_PersonPropertyDataManager {
 	public void testConstructor() {
 		ContractException contractException = assertThrows(ContractException.class,
 				() -> new PersonPropertiesDataManager(null));
-		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA, contractException.getErrorType());
+		assertEquals(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGIN_DATA, contractException.getErrorType());
 	}
 
 	@Test

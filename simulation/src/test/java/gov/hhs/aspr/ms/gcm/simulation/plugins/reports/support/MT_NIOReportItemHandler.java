@@ -82,7 +82,8 @@ public final class MT_NIOReportItemHandler {
 		sb.append("Test Cases: " + "\n");
 		sb.append("\t" + "Test 1:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
-		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set."
+				+ "\n");
 		sb.append("\t" + "Test 2:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
 		sb.append("\t" + "\t" + "no experiment columns will be used." + "\n");
@@ -93,15 +94,18 @@ public final class MT_NIOReportItemHandler {
 		sb.append("\t" + "\t" + "A progress log will be written, the progress log will be read, and " + "\n");
 		sb.append("\t" + "\t" + "the experiment columns will be used" + "\n");
 		sb.append("\t" + "Test 5:" + "\n");
-		sb.append("\t" + "\t" + "No progress log will be written, an attempt at reading a non-existent progress log " + "\n");
+		sb.append("\t" + "\t" + "No progress log will be written, an attempt at reading a non-existent progress log "
+				+ "\n");
 		sb.append("\t" + "\t" + "will be made, and the experiment columns will be used" + "\n");
 		sb.append("\t" + "Test 6:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
-		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set."
+				+ "\n");
 		sb.append("\t" + "\t" + "The process for this test will be executed twice." + "\n");
 		sb.append("\t" + "Test 7:" + "\n");
 		sb.append("\t" + "\t" + "No progress log will be written, no progress log will be read, and " + "\n");
-		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set." + "\n");
+		sb.append("\t" + "\t" + "the experiment columns will be used. For this test, a custom delimiter is also set."
+				+ "\n");
 		sb.append("\t" + "\t" + "An experiment report will be written." + "\n");
 		System.out.println(sb);
 	}
@@ -335,9 +339,10 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
+
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -347,50 +352,50 @@ public final class MT_NIOReportItemHandler {
 		}));
 
 		Dimension dimension1 = FunctionalDimension.builder()//
-										.addMetaDatum("xxx")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("a");
-											return result;
-										}).addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("b");
-											return result;
-										}).build();
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				}).build();
 
 		Dimension dimension2 = FunctionalDimension.builder()//
-										.addMetaDatum("xyz").addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("x");
-											return result;
-										}).addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("y");
-											return result;
-										}).addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("z");
-											return result;
-										}).build();
+				.addMetaDatum("xyz").addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				}).build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.setDelimiter(",").build();
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.setDelimiter(",").build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
-		Experiment	.builder()//
-					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addExperimentContextConsumer(experimentStatusConsole)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.build()//
+				.execute();
 
 	}
 
@@ -415,9 +420,10 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
+
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -427,57 +433,57 @@ public final class MT_NIOReportItemHandler {
 		}));
 
 		FunctionalDimension dimension1 = FunctionalDimension.builder()//
-										.addMetaDatum("xxx")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("a");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("b");
-											return result;
-										})//
-										.build();
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				})//
+				.build();
 
 		Dimension dimension2 = FunctionalDimension.builder()//
-										.addMetaDatum("xyz")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("x");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("y");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("z");
-											return result;
-										})//
-										.build();//
+				.addMetaDatum("xyz")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				})//
+				.build();//
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.setDisplayExperimentColumnsInReports(false)//
-									.build();
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.setDisplayExperimentColumnsInReports(false)//
+						.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
-		Experiment	.builder()//
-					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addExperimentContextConsumer(experimentStatusConsole)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.build()//
+				.execute();
 	}
 
 	/*
@@ -500,9 +506,10 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
+
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -512,62 +519,62 @@ public final class MT_NIOReportItemHandler {
 		}));
 
 		Dimension dimension1 = FunctionalDimension.builder()//
-										.addMetaDatum("xxx")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("a");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("b");
-											return result;
-										})//
-										.build();
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				})//
+				.build();
 
 		Dimension dimension2 = FunctionalDimension.builder()//
-										.addMetaDatum("xyz")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("x");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("y");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("z");
-											return result;
-										})//
-										.build();
+				.addMetaDatum("xyz")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				})//
+				.build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.build();
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
-		
-		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
-		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-		.setContinueFromProgressLog(false)//
-		.build();
 
-		Experiment	.builder()//
-					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+				.setContinueFromProgressLog(false)//
+				.build();
+
+		Experiment.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 	}
 
 	/*
@@ -618,9 +625,10 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
+
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -630,58 +638,58 @@ public final class MT_NIOReportItemHandler {
 		}));
 
 		Dimension dimension1 = FunctionalDimension.builder()//
-										.addMetaDatum("xxx")//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("a");
-											return result;
-										})//
-										.addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("b");
-											return result;
-										})//
-										.build();//
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				})//
+				.build();//
 
 		Dimension dimension2 = FunctionalDimension.builder()//
-										.addMetaDatum("xyz").addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("x");
-											return result;
-										}).addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("y");
-											return result;
-										}).addLevel((c) -> {
-											List<String> result = new ArrayList<>();
-											result.add("z");
-											return result;
-										}).build();
+				.addMetaDatum("xyz").addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				}).build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.build();
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
-		
-		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
-		.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
-		.setContinueFromProgressLog(true)//
-		.build();
 
-		Experiment	.builder()//
-					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();
+		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
+				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
+				.setContinueFromProgressLog(true)//
+				.build();
+
+		Experiment.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 
 	}
 
@@ -708,9 +716,10 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
+
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -720,62 +729,58 @@ public final class MT_NIOReportItemHandler {
 		}));
 
 		Dimension dimension1 = FunctionalDimension.builder()//
-		.addMetaDatum("xxx")//
-		.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("a");
-			return result;
-		})//
-		.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("b");
-			return result;
-		})//
-		.build();
+				.addMetaDatum("xxx")//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("a");
+					return result;
+				})//
+				.addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("b");
+					return result;
+				})//
+				.build();
 
 		Dimension dimension2 = FunctionalDimension.builder()//
-		.addMetaDatum("xyz")
-		.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("x");
-			return result;
-		})
-		.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("y");
-			return result;
-		})
-		.addLevel((c) -> {
-			List<String> result = new ArrayList<>();
-			result.add("z");
-			return result;
-		})
-		 .build();
+				.addMetaDatum("xyz").addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("x");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("y");
+					return result;
+				}).addLevel((c) -> {
+					List<String> result = new ArrayList<>();
+					result.add("z");
+					return result;
+				}).build();
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
-									.addReport(reportLabel, subPath.resolve("report1.txt"))//
-									.build();
+						.addReport(reportLabel, subPath.resolve("report1.txt"))//
+						.build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
-		
+
 		ExperimentParameterData experimentParameterData = ExperimentParameterData.builder()//
 				.setExperimentProgressLog(subPath.resolve("progresslog.txt"))//
 				.setContinueFromProgressLog(true)//
 				.build();
 
-		Experiment	.builder()//
-					.addPlugin(testPlugin)//
-					.addDimension(dimension1)//
-					.addDimension(dimension2)//
-					.addExperimentContextConsumer(nioReportItemHandler)//
-					.addExperimentContextConsumer(experimentStatusConsole)//
-					.setExperimentParameterData(experimentParameterData)//
-					.build()//
-					.execute();
+		Experiment.builder()//
+				.addPlugin(testPlugin)//
+				.addDimension(dimension1)//
+				.addDimension(dimension2)//
+				.addExperimentContextConsumer(nioReportItemHandler)//
+				.addExperimentContextConsumer(experimentStatusConsole)//
+				.setExperimentParameterData(experimentParameterData)//
+				.build()//
+				.execute();
 
 	}
 
@@ -804,9 +809,9 @@ public final class MT_NIOReportItemHandler {
 
 		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
+			c.releaseOutput(reportHeader);
 			for (int i = 0; i < 10; i++) {
 				ReportItem.Builder reportItemBuilder = ReportItem.builder();
-				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportLabel(reportLabel);
 				reportItemBuilder.addValue(i);
 				reportItemBuilder.addValue("value " + i);
@@ -845,15 +850,14 @@ public final class MT_NIOReportItemHandler {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 						.addReport(reportLabel, subPath.resolve("report1.csv"))//
-						.addExperimentReport(subPath.resolve("experiment_report.csv"))
-						.setDelimiter(",").build();
+						.addExperimentReport(subPath.resolve("experiment_report.csv")).setDelimiter(",").build();
 
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
 		ExperimentStatusConsole experimentStatusConsole = ExperimentStatusConsole.builder().build();
 
-		Experiment	.builder()//
+		Experiment.builder()//
 				.addPlugin(testPlugin)//
 				.addDimension(dimension1)//
 				.addDimension(dimension2)//
@@ -869,7 +873,9 @@ public final class MT_NIOReportItemHandler {
 
 		switch (testNum) {
 		case 1:
-			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report with experiment columns." + "\n");
+			sb.append(
+					"This test is meant to prove that when we run a simulation, we can generate a basic report with experiment columns."
+							+ "\n");
 			sb.append("Expected Observations: " + "\n");
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
@@ -885,7 +891,9 @@ public final class MT_NIOReportItemHandler {
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 2:
-			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns." + "\n");
+			sb.append(
+					"This test is meant to prove that when we run a simulation, we can generate a basic report without experiment columns."
+							+ "\n");
 			sb.append("Expected Observations: " + "\n");
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
@@ -899,7 +907,9 @@ public final class MT_NIOReportItemHandler {
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 3:
-			sb.append("This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log." + "\n");
+			sb.append(
+					"This test is meant to prove that when we run a simulation, we can generate a basic report as well as a progress log."
+							+ "\n");
 			sb.append("Expected observations: " + "\n");
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
@@ -920,7 +930,9 @@ public final class MT_NIOReportItemHandler {
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 4:
-			sb.append("This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log." + "\n");
+			sb.append(
+					"This test is meant to prove that when a simulation run is interrupted, we can complete the simulation using the progress log."
+							+ "\n");
 			sb.append("Expected observations: " + "\n");
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 2" + "\n");
 			sb.append("\t" + "values. You should observe PREVIOUSLY_SUCCEEDED and SUCCEEDED values" + "\n");
@@ -942,20 +954,28 @@ public final class MT_NIOReportItemHandler {
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 5:
-			sb.append("This test is meant to prove that when attempting to complete a simulation using a non existing progress log, " + "\n");
+			sb.append(
+					"This test is meant to prove that when attempting to complete a simulation using a non existing progress log, "
+							+ "\n");
 			sb.append("that the proper contract exception is thrown." + "\n");
 			sb.append("Expected observations: " + "\n");
-			sb.append("\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
-			sb.append("\t" + "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist," + "\n");
+			sb.append(
+					"\t" + "After running test 5, you should receive an exception with the following message: " + "\n");
+			sb.append("\t"
+					+ "Exception in thread \"main\" util.errors.ContractException: The scenario progress file does not exist,"
+					+ "\n");
 			sb.append("\t" + "but is required when continuation from progress file is chosen" + "\n");
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 6:
-			sb.append("This test is meant to prove that when we can run a simulation multiple times without encountering an exception." + "\n");
+			sb.append(
+					"This test is meant to prove that when we can run a simulation multiple times without encountering an exception."
+							+ "\n");
 			sb.append("Expected Observations: " + "\n");
 			sb.append("\t" + "After the first 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
-			sb.append("\t" + "The 6 scenarios should run a second time and the same SUCCEEDED value should appear." + "\n");
+			sb.append("\t" + "The 6 scenarios should run a second time and the same SUCCEEDED value should appear."
+					+ "\n");
 			sb.append("\t" + "A folder named 'test6' should appear in the specified directory." + "\n");
 			sb.append("\t" + "A file named 'report1.txt' should be in the 'test6' folder." + "\n");
 			sb.append("\t" + "The file's data should be comma separated." + "\n");
@@ -968,7 +988,8 @@ public final class MT_NIOReportItemHandler {
 			sb.append("------------------------------ CONSOLE OUTPUT ------------------------------" + "\n");
 			break;
 		case 7:
-			sb.append("This test is meant to prove that when we run a simulation, we can generate an experiment report " + "\n");
+			sb.append("This test is meant to prove that when we run a simulation, we can generate an experiment report "
+					+ "\n");
 			sb.append(" alongside our basic reports." + "\n");
 			sb.append("Expected Observations: " + "\n");
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");

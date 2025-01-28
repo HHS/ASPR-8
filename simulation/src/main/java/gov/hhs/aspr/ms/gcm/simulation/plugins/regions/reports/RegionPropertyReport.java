@@ -31,12 +31,7 @@ public final class RegionPropertyReport {
 	private final ReportLabel reportLabel;
 	private final boolean includeNewPropertyIds;
 
-	private final ReportHeader reportHeader = ReportHeader.builder()//
-			.add("time")//
-			.add("region")//
-			.add("property")//
-			.add("value")//
-			.build();//
+	private final ReportHeader reportHeader;
 
 	private boolean isCurrentProperty(RegionPropertyId regionPropertyId) {
 		return currentProperties.contains(regionPropertyId);
@@ -113,6 +108,14 @@ public final class RegionPropertyReport {
 		includedPropertyIds.addAll(regionPropertyReportPluginData.getIncludedProperties());
 		excludedPropertyIds.addAll(regionPropertyReportPluginData.getExcludedProperties());
 		includeNewPropertyIds = regionPropertyReportPluginData.getDefaultInclusionPolicy();
+
+		reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
+				.add("time")//
+				.add("region")//
+				.add("property")//
+				.add("value")//
+				.build();//
 	}
 
 	private void handleRegionPropertyUpdateEvent(ReportContext reportContext,
@@ -177,6 +180,9 @@ public final class RegionPropertyReport {
 				writeProperty(reportContext, regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -197,7 +203,6 @@ public final class RegionPropertyReport {
 			final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportLabel(reportLabel);
 
 		reportItemBuilder.addValue(reportContext.getTime());

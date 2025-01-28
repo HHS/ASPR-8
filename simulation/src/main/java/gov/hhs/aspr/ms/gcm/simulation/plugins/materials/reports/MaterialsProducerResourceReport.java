@@ -51,6 +51,7 @@ public final class MaterialsProducerResourceReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			reportHeader = ReportHeader.builder()//
+					.setReportLabel(reportLabel)//
 					.add("time")//
 					.add("resource")//
 					.add("materials_producer")//
@@ -79,13 +80,13 @@ public final class MaterialsProducerResourceReport {
 	private void writeReportItem(ReportContext reportContext, final ResourceId resourceId,
 			final MaterialsProducerId materialsProducerId, final Action action, final long amount) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(getReportHeader());
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(reportContext.getTime());
-		reportItemBuilder.addValue(resourceId.toString());
-		reportItemBuilder.addValue(materialsProducerId.toString());
-		reportItemBuilder.addValue(action.displayName);
-		reportItemBuilder.addValue(amount);
+		reportItemBuilder//
+				.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime())//
+				.addValue(resourceId.toString())//
+				.addValue(materialsProducerId.toString())//
+				.addValue(action.displayName)//
+				.addValue(amount);
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 
@@ -121,6 +122,9 @@ public final class MaterialsProducerResourceReport {
 						materialsProducerResourceLevel);
 			}
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

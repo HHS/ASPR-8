@@ -18,12 +18,12 @@ import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class VaccineReport extends PeriodicReport {
 
-	private final int maxVaccinedCount;
+	private final int maxVaccinatedCount;
 
 	public VaccineReport(ReportLabel reportLabel, ReportPeriod reportPeriod, int maxVaccineCount) {
 		super(reportLabel, reportPeriod);
 
-		this.maxVaccinedCount = FastMath.max(0, maxVaccineCount);
+		this.maxVaccinatedCount = FastMath.max(0, maxVaccineCount);
 
 		ReportHeader.Builder builder = ReportHeader.builder();
 		addTimeFieldHeaders(builder);
@@ -42,6 +42,8 @@ public final class VaccineReport extends PeriodicReport {
 	protected void prepare(ReportContext reportContext) {
 		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
 		peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
+
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private ReportHeader reportHeader;
@@ -49,23 +51,22 @@ public final class VaccineReport extends PeriodicReport {
 	@Override
 	protected void flush(ReportContext reportContext) {
 		Map<Integer, MutableInteger> peopleByVaccineCount = new LinkedHashMap<>();
-		for (int i = 0; i <= maxVaccinedCount; i++) {
+		for (int i = 0; i <= maxVaccinatedCount; i++) {
 			peopleByVaccineCount.put(i, new MutableInteger());
 		}
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			int vaccinationCount = vaccinationDataManager.getPersonVaccinationCount(personId);
 			MutableInteger mutableInteger = peopleByVaccineCount.get(vaccinationCount);
 			if (mutableInteger == null) {
-				mutableInteger = peopleByVaccineCount.get(maxVaccinedCount);
+				mutableInteger = peopleByVaccineCount.get(maxVaccinatedCount);
 			}
 			mutableInteger.increment();
 		}
 		ReportItem.Builder builder = ReportItem.builder()//
-				.setReportLabel(getReportLabel())//
-				.setReportHeader(reportHeader);
+				.setReportLabel(getReportLabel());
 		fillTimeFields(builder);
 
-		for (int i = 0; i <= maxVaccinedCount; i++) {
+		for (int i = 0; i <= maxVaccinatedCount; i++) {
 			builder.addValue(peopleByVaccineCount.get(i).getValue());
 		}
 

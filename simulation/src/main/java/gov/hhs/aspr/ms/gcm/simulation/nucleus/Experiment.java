@@ -462,17 +462,15 @@ public final class Experiment {
 			final Simulation simulation = simBuilder.build();
 
 			// run the simulation
-			boolean success = false;
 			Exception failureCause = null;
 
 			try {
 				simulation.execute();
-				success = true;
 			} catch (final Exception e) {
 				failureCause = e;
 			}
 
-			if (success) {
+			if (failureCause == null) {
 				experimentStateManager.closeScenarioAsSuccess(scenarioId);
 			} else {
 				experimentStateManager.closeScenarioAsFailure(scenarioId, failureCause);
@@ -494,7 +492,7 @@ public final class Experiment {
 		 * data data builder instances associated with that plugin.
 		 * 
 		 * We need to avoid using the plugin as a key. Plugins contain plugin datas,
-		 * which may contain a huge amount of dataa and thus have expensive hash code
+		 * which may contain a huge amount of data and thus have expensive hash code
 		 * costs.
 		 */
 		Map<PluginId, List<PluginDataBuilder>> dataBuilderMap = new LinkedHashMap<>();

@@ -27,12 +27,6 @@ public final class DeathReport {
 
 	public void init(ReportContext reportContext) {
 		reportContext.subscribeToSimulationClose(this::report);
-	}
-
-	private void report(ReportContext reportContext) {
-		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext
-				.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
 				.add("region")//
@@ -44,6 +38,16 @@ public final class DeathReport {
 				.add("per_capita_deaths_in_home")//
 				.add("per_capita_deaths_in_hospital")//
 				.build();
+
+		reportContext.releaseOutput(reportHeader);
+	}
+
+	private void report(ReportContext reportContext) {
+		RegionsDataManager regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
+
+		
 
 		for (RegionId regionId : regionsDataManager.getRegionIds()) {
 			List<PersonId> peopleInRegion = regionsDataManager.getPeopleInRegion(regionId);
@@ -74,7 +78,6 @@ public final class DeathReport {
 
 			}
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
-			reportItemBuilder.setReportHeader(reportHeader);
 			reportItemBuilder.setReportLabel(reportLabel);
 			reportItemBuilder.addValue(regionId);
 			reportItemBuilder.addValue(peopleInRegion.size());

@@ -21,6 +21,8 @@ public final class VaccineReport {
 
 	public void init(ReportContext reportContext) {
 		reportContext.subscribeToSimulationClose(this::report);
+
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private ReportHeader reportHeader = ReportHeader.builder()//
@@ -61,8 +63,7 @@ public final class VaccineReport {
 		}
 
 		ReportItem.Builder builder = ReportItem.builder()//
-				.setReportLabel(reportLabel)//
-				.setReportHeader(reportHeader);
+				.setReportLabel(reportLabel);
 
 		builder.addValue(vaccinated_immune);
 		builder.addValue(vaccinated_susceptible);

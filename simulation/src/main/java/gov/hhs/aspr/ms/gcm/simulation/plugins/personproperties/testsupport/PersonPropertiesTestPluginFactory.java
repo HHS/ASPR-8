@@ -136,12 +136,12 @@ public class PersonPropertiesTestPluginFactory {
          * Sets the {@link PersonPropertiesPluginData} in this Factory. This explicit
          * instance of pluginData will be used to create a PersonPropertiesPlugin
          * 
-         * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+         * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGIN_DATA}
          *                           if the passed in pluginData is null
          */
         public Factory setPersonPropertiesPluginData(PersonPropertiesPluginData personPropertiesPluginData) {
             if (personPropertiesPluginData == null) {
-                throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA);
+                throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGIN_DATA);
             }
             this.data.personPropertiesPluginData = personPropertiesPluginData;
             return this;
