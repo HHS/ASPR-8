@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -61,7 +63,7 @@ public final class Partition {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	@NotThreadSafe
@@ -70,9 +72,10 @@ public final class Partition {
 	 */
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -80,13 +83,18 @@ public final class Partition {
 		 * builder and resets the state of the builder to empty.
 		 */
 		public Partition build() {
-			return new Partition(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new Partition(data);
 		}
 
 		/**
 		 * Adds a labeler. Replaces any existing labeler with the same id.
 		 */
 		public Builder addLabeler(Labeler labeler) {
+			ensureDataMutability();
 			data.labelers.put(labeler.getId(), labeler);
 			return this;
 		}
@@ -96,6 +104,7 @@ public final class Partition {
 		 * default filter that accepts all people is used instead.
 		 */
 		public Builder setFilter(Filter filter) {
+			ensureDataMutability();
 			data.filter = filter;
 			return this;
 		}
@@ -105,10 +114,27 @@ public final class Partition {
 		 * to true.
 		 */
 		public Builder setRetainPersonKeys(boolean retainPersonKeys) {
+			ensureDataMutability();
 			data.retainPersonKeys = retainPersonKeys;
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+
+		}
 	}
 
 	private final Data data;
@@ -140,13 +166,16 @@ public final class Partition {
 
 		private Filter filter;
 
-		public Data() {
+		private boolean locked;
+
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			retainPersonKeys = data.retainPersonKeys;
 			labelers.putAll(data.labelers);
 			filter = data.filter;
+			locked = data.locked;
 		}
 
 		@Override
@@ -253,6 +282,10 @@ public final class Partition {
 		builder2.append(data);
 		builder2.append("]");
 		return builder2.toString();
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

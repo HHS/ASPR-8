@@ -13,7 +13,7 @@ import net.jcip.annotations.ThreadSafe;
 public final class PropertyDefinition {
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	private static class Data {
@@ -24,13 +24,16 @@ public final class PropertyDefinition {
 
 		private Object defaultValue = null;
 
-		public Data() {
+		private boolean locked;
+
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			type = data.type;
 			propertyValuesAreMutable = data.propertyValuesAreMutable;
 			defaultValue = data.defaultValue;
+			locked = data.locked;
 		}
 
 		@Override
@@ -75,9 +78,10 @@ public final class PropertyDefinition {
 	 */
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -106,14 +110,18 @@ public final class PropertyDefinition {
 		 *                           </ul>
 		 */
 		public PropertyDefinition build() {
-			validate();
-			return new PropertyDefinition(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new PropertyDefinition(data);
 		}
 
 		/**
 		 * Sets the class type. Value must be set by client.
 		 */
 		public Builder setType(final Class<?> type) {
+			ensureDataMutability();
 			data.type = type;
 			return this;
 		}
@@ -123,6 +131,7 @@ public final class PropertyDefinition {
 		 * true.
 		 */
 		public Builder setPropertyValueMutability(boolean propertyValuesAreMutable) {
+			ensureDataMutability();
 			data.propertyValuesAreMutable = propertyValuesAreMutable;
 			return this;
 		}
@@ -132,8 +141,22 @@ public final class PropertyDefinition {
 		 * set(non-null) by client.
 		 */
 		public Builder setDefaultValue(Object defaultValue) {
+			ensureDataMutability();
 			data.defaultValue = defaultValue;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 
 	}
@@ -222,6 +245,10 @@ public final class PropertyDefinition {
 			return false;
 		}
 		return true;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }
