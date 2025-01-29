@@ -24,15 +24,17 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public final class ExperimentParameterData {
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
 		 * Marks the scenario to be explicitly run. All other scenarios will be ignored.
 		 */
 		public Builder addExplicitScenarioId(Integer scenarioId) {
+			ensureDataMutability();
 			data.explicitScenarioIds.add(scenarioId);
 			return this;
 		}
@@ -42,7 +44,11 @@ public final class ExperimentParameterData {
 		 * handlers.
 		 */
 		public ExperimentParameterData build() {
-			return new ExperimentParameterData(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new ExperimentParameterData(data);
 		}
 
 		/**
@@ -50,6 +56,7 @@ public final class ExperimentParameterData {
 		 * run resumption. Default value is null.
 		 */
 		public Builder setExperimentProgressLog(final Path path) {
+			ensureDataMutability();
 			data.experimentProgressLogPath = path;
 			return this;
 		}
@@ -59,6 +66,7 @@ public final class ExperimentParameterData {
 		 * progress log. Defaults to false;
 		 */
 		public Builder setContinueFromProgressLog(boolean continueFromProgressLog) {
+			ensureDataMutability();
 			data.continueFromProgressLog = continueFromProgressLog;
 			return this;
 		}
@@ -73,6 +81,7 @@ public final class ExperimentParameterData {
 		 *                           the thread count is negative
 		 */
 		public Builder setThreadCount(final int threadCount) {
+			ensureDataMutability();
 			if (threadCount < 0) {
 				throw new ContractException(NucleusError.NEGATIVE_THREAD_COUNT);
 			}
@@ -85,6 +94,7 @@ public final class ExperimentParameterData {
 		 * output to the experiment Defaults to false.
 		 */
 		public Builder setRecordState(boolean recordState) {
+			ensureDataMutability();
 			data.stateRecordingIsScheduled = recordState;
 			return this;
 		}
@@ -97,6 +107,7 @@ public final class ExperimentParameterData {
 		 * simulation will result in an exception.
 		 */
 		public Builder setSimulationHaltTime(Double simulationHaltTime) {
+			ensureDataMutability();
 			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
@@ -109,10 +120,26 @@ public final class ExperimentParameterData {
 		 * continues with the remaining simulation instances. Defaulted to true.
 		 */
 		public Builder setHaltOnException(final boolean haltOnException) {
+			ensureDataMutability();
 			data.haltOnException = haltOnException;
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+		}
 	}
 
 	/*
@@ -127,11 +154,12 @@ public final class ExperimentParameterData {
 		private Path experimentProgressLogPath;
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			threadCount = data.threadCount;
 			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
 			simulationHaltTime = data.simulationHaltTime;
@@ -139,6 +167,7 @@ public final class ExperimentParameterData {
 			experimentProgressLogPath = data.experimentProgressLogPath;
 			continueFromProgressLog = data.continueFromProgressLog;
 			explicitScenarioIds.addAll(data.explicitScenarioIds);
+			locked = data.locked;
 		}
 
 		@Override
@@ -202,7 +231,7 @@ public final class ExperimentParameterData {
 	 * Returns a builder for Experiment
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	private final Data data;
@@ -305,6 +334,10 @@ public final class ExperimentParameterData {
 		}
 		ExperimentParameterData other = (ExperimentParameterData) obj;
 		return Objects.equals(data, other.data);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

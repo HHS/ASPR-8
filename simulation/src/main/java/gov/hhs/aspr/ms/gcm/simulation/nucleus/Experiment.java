@@ -78,15 +78,17 @@ public final class Experiment {
 	}
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
 		 * Adds a non-empty dimension to the experiment
 		 */
 		public Builder addDimension(final Dimension dimension) {
+			ensureDataMutability();
 			if (dimension.levelCount() > 0) {
 				data.dimensions.add(dimension);
 			}
@@ -101,6 +103,7 @@ public final class Experiment {
 		 *                           the output item handler is null
 		 */
 		public Builder addExperimentContextConsumer(final Consumer<ExperimentContext> experimentContextConsumer) {
+			ensureDataMutability();
 			if (experimentContextConsumer == null) {
 				throw new ContractException(NucleusError.NULL_OUTPUT_HANDLER);
 			}
@@ -112,6 +115,7 @@ public final class Experiment {
 		 * Adds a plugin to the experiment.
 		 */
 		public Builder addPlugin(final Plugin plugin) {
+			ensureDataMutability();
 			data.plugins.add(plugin);
 			return this;
 		}
@@ -121,7 +125,11 @@ public final class Experiment {
 		 * handlers.
 		 */
 		public Experiment build() {
-			return new Experiment(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new Experiment(data);
 		}
 
 		/**
@@ -129,6 +137,7 @@ public final class Experiment {
 		 * ExperimentParameterData.
 		 */
 		public Builder setExperimentParameterData(ExperimentParameterData experimentParameterData) {
+			ensureDataMutability();
 			data.experimentParameterData = experimentParameterData;
 			return this;
 		}
@@ -141,6 +150,7 @@ public final class Experiment {
 		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
+			ensureDataMutability();
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
@@ -148,6 +158,21 @@ public final class Experiment {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+		}
 	}
 
 	/*
@@ -162,15 +187,18 @@ public final class Experiment {
 
 		private ExperimentParameterData experimentParameterData = ExperimentParameterData.builder().build();
 
-		public Data() {
+		private boolean locked;
+
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			dimensions.addAll(data.dimensions);
 			plugins.addAll(data.plugins);
 			experimentContextConsumers.addAll(data.experimentContextConsumers);
 			experimentParameterData = data.experimentParameterData;
 			simulationState = data.simulationState;
+			locked = data.locked;
 		}
 	}
 
@@ -257,7 +285,7 @@ public final class Experiment {
 	 * Returns a builder for Experiment
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	private final Data data;
@@ -566,5 +594,9 @@ public final class Experiment {
 
 		return result;
 
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }
