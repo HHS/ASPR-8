@@ -3,7 +3,6 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 import java.util.ArrayList;
 import java.util.List;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
@@ -78,7 +77,6 @@ public final class ReportHeader {
 		return new Builder(new Data());
 	}
 
-
 	/**
 	 * Builder class for ReportHeader
 	 */
@@ -97,10 +95,10 @@ public final class ReportHeader {
 		 *                           if the header string is null
 		 */
 		public Builder add(String headerString) {
-			ensureDataMutability();
 			if (headerString == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER_STRING);
 			}
+			ensureDataMutability();
 			data.headerStrings.add(headerString);
 			return this;
 		}
@@ -113,6 +111,8 @@ public final class ReportHeader {
 			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
+
+			ensureDataMutability();
 			data.reportLabel = reportLabel;
 			return this;
 		}
@@ -121,11 +121,9 @@ public final class ReportHeader {
 		 * Null checks for the various fields.
 		 */
 		private void validateData() {
-
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-
 		}
 
 		/**
@@ -171,7 +169,8 @@ public final class ReportHeader {
 
 	/**
 	 * String representation that preserves the order of the added strings presented
-	 * as: ReportHeader [reportLabel=reportLabel, headerStrings=[string1, string2...]
+	 * as: ReportHeader [reportLabel=reportLabel, headerStrings=[string1,
+	 * string2...]
 	 */
 	@Override
 	public String toString() {
