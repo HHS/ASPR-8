@@ -12,13 +12,15 @@ public final class FunctionalDimension implements Dimension {
 	private static class Data {
 		List<String> metaData = new ArrayList<>();
 		List<Function<DimensionContext, List<String>>> levels = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			metaData.addAll(data.metaData);
 			levels.addAll(data.levels);
+			locked = data.locked;
 		}
 	}
 
@@ -26,7 +28,7 @@ public final class FunctionalDimension implements Dimension {
 	 * Returns a builder class for Dimension
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
@@ -34,16 +36,21 @@ public final class FunctionalDimension implements Dimension {
 	 */
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
 		 * Returns a Dimension from the collected data
 		 */
 		public FunctionalDimension build() {
-			return new FunctionalDimension(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new FunctionalDimension(data);
 		}
 
 		/**
@@ -54,6 +61,7 @@ public final class FunctionalDimension implements Dimension {
 		 * the dimension and must contain the same number of elements.
 		 */
 		public Builder addLevel(Function<DimensionContext, List<String>> memberGenerator) {
+			ensureDataMutability();
 			data.levels.add(memberGenerator);
 			return this;
 		}
@@ -64,8 +72,25 @@ public final class FunctionalDimension implements Dimension {
 		 * this dimension.
 		 */
 		public Builder addMetaDatum(String idValue) {
+			ensureDataMutability();
 			data.metaData.add(idValue);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 	}
 
@@ -88,6 +113,10 @@ public final class FunctionalDimension implements Dimension {
 	@Override
 	public List<String> executeLevel(DimensionContext dimensionContext, int level) {
 		return data.levels.get(level).apply(dimensionContext);
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

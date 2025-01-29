@@ -23,15 +23,17 @@ public final class Plugin {
 		private Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 		private List<PluginData> pluginDatas = new ArrayList<>();
 		private Consumer<PluginContext> initializer;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			pluginId = data.pluginId;
 			pluginDependencies.addAll(data.pluginDependencies);
 			pluginDatas.addAll(data.pluginDatas);
 			initializer = data.initializer;
+			locked = data.locked;
 		}
 
 		@Override
@@ -74,14 +76,15 @@ public final class Plugin {
 	 * Returns an new instance of the Builder
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * A builder class for Plugin
 	 */
 	public static class Builder {
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -90,7 +93,7 @@ public final class Plugin {
 			}
 		}
 
-		private Data data = new Data();
+		private Data data;
 
 		/**
 		 * Returns the plugin formed by the inputs collected by this builder.
@@ -99,11 +102,15 @@ public final class Plugin {
 		 *                           plugin id was not set or set to null
 		 */
 		public Plugin build() {
-			validate();
-			return new Plugin(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new Plugin(data);
 		}
 
 		public Builder setPluginId(PluginId pluginId) {
+			ensureDataMutability();
 			if (pluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
@@ -125,6 +132,7 @@ public final class Plugin {
 		 *                           id is null
 		 */
 		public Builder addPluginDependency(PluginId pluginId) {
+			ensureDataMutability();
 			if (pluginId == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_ID);
 			}
@@ -142,6 +150,7 @@ public final class Plugin {
 		 *                           plugin data is null
 		 */
 		public Builder addPluginData(PluginData pluginData) {
+			ensureDataMutability();
 			if (pluginData == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 			}
@@ -159,6 +168,7 @@ public final class Plugin {
 		 *                           if the initializer is null
 		 */
 		public Builder setInitializer(Consumer<PluginContext> initializer) {
+			ensureDataMutability();
 			if (initializer == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_INITIALIZER);
 			}
@@ -166,6 +176,18 @@ public final class Plugin {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
 	}
 
 	private final Data data;
@@ -241,5 +263,9 @@ public final class Plugin {
 			return false;
 		}
 		return true;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }
