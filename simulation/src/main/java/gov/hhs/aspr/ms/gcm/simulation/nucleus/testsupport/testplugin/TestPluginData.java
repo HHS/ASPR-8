@@ -62,6 +62,7 @@ public class TestPluginData implements PluginData {
 			}
 
 			this.pluginDependencies.addAll(data.pluginDependencies);
+			locked = data.locked;
 
 		}
 
@@ -134,6 +135,7 @@ public class TestPluginData implements PluginData {
 
 		private final Set<PluginId> pluginDependencies = new LinkedHashSet<>();
 
+		private boolean locked;
 	}
 
 	private TestPluginData(Data data) {
@@ -157,8 +159,11 @@ public class TestPluginData implements PluginData {
 
 		@Override
 		public TestPluginData build() {
-			validate();
-			return new TestPluginData(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new TestPluginData(data);
 		}
 
 		private void validate() {
@@ -182,6 +187,7 @@ public class TestPluginData implements PluginData {
 		 *                           </ul>
 		 */
 		public Builder addTestActorPlan(final Object alias, TestActorPlan testActorPlan) {
+			ensureDataMutability();
 			if (alias == null) {
 				throw new ContractException(TestError.NULL_ALIAS);
 			}
@@ -215,6 +221,7 @@ public class TestPluginData implements PluginData {
 		 *                           </ul>
 		 */
 		public Builder addTestReportPlan(final Object alias, TestReportPlan testReportPlan) {
+			ensureDataMutability();
 			if (alias == null) {
 				throw new ContractException(TestError.NULL_ALIAS);
 			}
@@ -249,6 +256,7 @@ public class TestPluginData implements PluginData {
 		 *                           </ul>
 		 */
 		public Builder addTestDataManager(Object alias, Supplier<TestDataManager> supplier) {
+			ensureDataMutability();
 			if (alias == null) {
 				throw new ContractException(TestError.NULL_ALIAS);
 			}
@@ -271,7 +279,7 @@ public class TestPluginData implements PluginData {
 		 *                           </ul>
 		 */
 		public Builder addTestDataManagerPlan(final Object alias, TestDataManagerPlan testDataManagerPlan) {
-
+			ensureDataMutability();
 			if (alias == null) {
 				throw new ContractException(TestError.NULL_ALIAS);
 			}
@@ -298,11 +306,25 @@ public class TestPluginData implements PluginData {
 		 *                           id is null
 		 */
 		public Builder addPluginDependency(final PluginId pluginId) {
+			ensureDataMutability();
 			if (pluginId == null) {
 				throw new ContractException(TestError.NULL_PLUGIN_ID);
 			}
 			data.pluginDependencies.add(pluginId);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -312,7 +334,7 @@ public class TestPluginData implements PluginData {
 	 */
 	@Override
 	public Builder toBuilder() {
-		return new Builder(new Data(data));
+		return new Builder(data);
 	}
 
 	private final Data data;
