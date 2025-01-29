@@ -23,36 +23,20 @@ public final class ResourcesPlugin {
 		private PersonResourceReportPluginData personResourceReportPluginData;
 		private ResourcePropertyReportPluginData resourcePropertyReportPluginData;
 		private ResourceReportPluginData resourceReportPluginData;
-		private boolean locked;
-
-		private Data() {
-		}
-
-		private Data(Data data) {
-			resourcesPluginData = data.resourcesPluginData;
-			personResourceReportPluginData = data.personResourceReportPluginData;
-			resourcePropertyReportPluginData = data.resourcePropertyReportPluginData;
-			resourceReportPluginData = data.resourceReportPluginData;
-			locked = data.locked;
-		}
 	}
 
-	private final Data data;
-
-	private ResourcesPlugin(final Data data) {
-		this.data = data;
+	private ResourcesPlugin() {
 	}
 
 	public static Builder builder() {
-		return new Builder(new Data());
+		return new Builder();
 	}
 
 	public static class Builder {
-		private Builder(Data data) {
-			this.data = data;
+		private Builder() {
 		}
 
-		private Data data;
+		private Data data = new Data();
 
 		private void validate() {
 			if (data.resourcesPluginData == null) {
@@ -67,11 +51,7 @@ public final class ResourcesPlugin {
 		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getResourcesPlugin() {
-			if (!data.locked) {
-				validate();
-			}
-			ensureImmutability();
-
+			validate();
 			Plugin.Builder builder = Plugin.builder();//
 			builder.setPluginId(ResourcesPluginId.PLUGIN_ID);//
 
@@ -121,47 +101,25 @@ public final class ResourcesPlugin {
 		}
 
 		public Builder setResourcesPluginData(ResourcesPluginData resourcesPluginData) {
-			ensureDataMutability();
 			data.resourcesPluginData = resourcesPluginData;
 			return this;
 		}
 
 		public Builder setPersonResourceReportPluginData(
 				PersonResourceReportPluginData personResourceReportPluginData) {
-			ensureDataMutability();
 			data.personResourceReportPluginData = personResourceReportPluginData;
 			return this;
 		}
 
 		public Builder setResourcePropertyReportPluginData(
 				ResourcePropertyReportPluginData resourcePropertyReportPluginData) {
-			ensureDataMutability();
 			data.resourcePropertyReportPluginData = resourcePropertyReportPluginData;
 			return this;
 		}
 
 		public Builder setResourceReportPluginData(ResourceReportPluginData resourceReportPluginData) {
-			ensureDataMutability();
 			data.resourceReportPluginData = resourceReportPluginData;
 			return this;
 		}
-
-		private void ensureDataMutability() {
-			if (data.locked) {
-				data = new Data(data);
-				data.locked = false;
-			}
-		}
-
-		private void ensureImmutability() {
-			if (!data.locked) {
-				data.locked = true;
-			}
-		}
 	}
-
-	public Builder toBuilder() {
-		return new Builder(data);
-	}
-
 }
