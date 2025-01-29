@@ -48,16 +48,17 @@ public class Simulation {
 
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
 		 * Sets the output consumer for the simulation. Tolerates null.
 		 */
 		public Builder setOutputConsumer(Consumer<Object> outputConsumer) {
+			ensureDataMutability();
 			data.outputConsumer = outputConsumer;
 			return this;
 		}
@@ -67,6 +68,7 @@ public class Simulation {
 		 * output to the experiment Defaults to false.
 		 */
 		public Builder setRecordState(boolean recordState) {
+			ensureDataMutability();
 			data.stateRecordingIsScheduled = recordState;
 			return this;
 		}
@@ -79,6 +81,7 @@ public class Simulation {
 		 * result in an exception.
 		 */
 		public Builder setSimulationHaltTime(Double simulationHaltTime) {
+			ensureDataMutability();
 			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
@@ -94,6 +97,7 @@ public class Simulation {
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
+			ensureDataMutability();
 			data.simulationState = simulationState;
 			return this;
 		}
@@ -108,6 +112,7 @@ public class Simulation {
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
 			}
+			ensureDataMutability();
 			data.plugins.add(plugin);
 			return this;
 		}
@@ -140,8 +145,24 @@ public class Simulation {
 		 *                           </ul>
 		 */
 		public Simulation build() {
-			validate();
-			return new Simulation(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new Simulation(data);
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -151,16 +172,18 @@ public class Simulation {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationState simulationState = SimulationState.builder().build();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			simulationHaltTime = data.simulationHaltTime;
 			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
 			plugins.addAll(data.plugins);
 			outputConsumer = data.outputConsumer;
 			simulationState = data.simulationState;
+			locked = data.locked;
 		}
 	}
 
@@ -168,7 +191,11 @@ public class Simulation {
 	 * Returns a reusable EngineBuilder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 	private final Comparator<Plan> futureComparable = new Comparator<Plan>() {
