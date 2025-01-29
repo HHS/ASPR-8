@@ -70,7 +70,7 @@
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
         <!-- dependency versions -->
-        <taskit.version>5.0.1-SNAPSHOT</taskit.version>
+        <taskit.version>5.1.0-SNAPSHOT</taskit.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
         <junit-jupiter-engine.version>5.11.2</junit-jupiter-engine.version>
     </properties>
