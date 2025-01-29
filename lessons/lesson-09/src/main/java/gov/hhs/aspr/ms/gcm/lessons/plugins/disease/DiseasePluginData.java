@@ -15,6 +15,8 @@ public final class DiseasePluginData implements PluginData {
 
 		private double symptomaticDays;
 
+		private boolean locked;
+
 		private Data() {
 		}
 
@@ -22,6 +24,7 @@ public final class DiseasePluginData implements PluginData {
 			r0 = data.r0;
 			asymptomaticDays = data.asymptomaticDays;
 			symptomaticDays = data.symptomaticDays;
+			locked = data.locked;
 		}
 
 		@Override
@@ -70,22 +73,45 @@ public final class DiseasePluginData implements PluginData {
 
 		@Override
 		public DiseasePluginData build() {
-			return new DiseasePluginData(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new DiseasePluginData(data);
 		}
 
 		public Builder setAsymptomaticDays(final double asymptomaticDays) {
+			ensureDataMutability();
 			data.asymptomaticDays = asymptomaticDays;
 			return this;
 		}
 
 		public Builder setR0(final double r0) {
+			ensureDataMutability();
 			data.r0 = r0;
 			return this;
 		}
 
 		public Builder setSymptomaticDays(final double symptomaticDays) {
+			ensureDataMutability();
 			data.symptomaticDays = symptomaticDays;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 
 	}

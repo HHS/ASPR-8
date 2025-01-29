@@ -11,6 +11,7 @@ public final class PolicyPluginData implements PluginData {
 
 		private double schoolClosingInfectionRate;
 		private boolean distributeVaccineLocally;
+		private boolean locked;
 
 		private Data() {
 		}
@@ -18,6 +19,7 @@ public final class PolicyPluginData implements PluginData {
 		private Data(final Data data) {
 			schoolClosingInfectionRate = data.schoolClosingInfectionRate;
 			distributeVaccineLocally = data.distributeVaccineLocally;
+			locked = data.locked;
 		}
 
 		@Override
@@ -61,17 +63,39 @@ public final class PolicyPluginData implements PluginData {
 
 		@Override
 		public PolicyPluginData build() {
-			return new PolicyPluginData(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new PolicyPluginData(data);
 		}
 
 		public Builder setSchoolClosingInfectionRate(double schoolClosingInfectionRate) {
+			ensureDataMutability();
 			data.schoolClosingInfectionRate = schoolClosingInfectionRate;
 			return this;
 		}
 
 		public Builder setDistributeVaccineLocally(boolean distributeVaccineLocally) {
+			ensureDataMutability();
 			data.distributeVaccineLocally = distributeVaccineLocally;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 
 	}

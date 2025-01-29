@@ -6,41 +6,65 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support.MaterialId;
 public final class MaterialManufactureSpecification {
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(final Data data) {
+			this.data = data;
 		}
 
 		public MaterialManufactureSpecification build() {
-			return new MaterialManufactureSpecification(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new MaterialManufactureSpecification(data);
 		}
 
 		public Builder setBatchId(final BatchId batchId) {
+			ensureDataMutability();
 			data.batchId = batchId;
 			return this;
 		}
 
 		public Builder setDeliveryAmount(final double deliveryAmount) {
+			ensureDataMutability();
 			data.deliveryAmount = deliveryAmount;
 			return this;
 		}
 
 		public Builder setDeliveryDelay(final double deliveryDelay) {
+			ensureDataMutability();
 			data.deliveryDelay = deliveryDelay;
 			return this;
 		}
 
 		public Builder setMaterialId(final MaterialId materialId) {
+			ensureDataMutability();
 			data.materialId = materialId;
 			return this;
 		}
 
 		public Builder setStageAmount(final double stageAmount) {
+			ensureDataMutability();
 			data.stageAmount = stageAmount;
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+		}
 	}
 
 	private static class Data {
@@ -51,22 +75,24 @@ public final class MaterialManufactureSpecification {
 		private double deliveryDelay;
 		private double stageAmount;
 		private BatchId batchId;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialId = data.materialId;
 			onOrder = data.onOrder;
 			deliveryAmount = data.deliveryAmount;
 			deliveryDelay = data.deliveryDelay;
 			stageAmount = data.stageAmount;
 			batchId = data.batchId;
+			locked = data.locked;
 		}
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	private final Data data;
@@ -101,6 +127,10 @@ public final class MaterialManufactureSpecification {
 
 	public void toggleOnOrder() {
 		data.onOrder = !data.onOrder;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }
