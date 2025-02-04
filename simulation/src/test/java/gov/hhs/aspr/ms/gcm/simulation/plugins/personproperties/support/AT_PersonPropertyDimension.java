@@ -1,15 +1,11 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -18,93 +14,29 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.testsupport.TestPersonPropertyId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyError;
+import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
-import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_PersonPropertyDimension {
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.Builder.class, name = "addValue", args = { Object.class })
-	public void testAddValue() {
+	@UnitTestConstructor(target = PersonPropertyDimension.class, args = { PersonPropertyDimensionData.class })
+	public void testConstructor() {
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3468803942988565031L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8376720485839224759L);
 
-		for (int i = 0; i < 50; i++) {
-			List<Object> expectedValues = new ArrayList<>();
+		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
 
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
-			int n = randomGenerator.nextInt(10);
-			for (int j = 0; j < n; j++) {
-				double value = randomGenerator.nextDouble();
-				expectedValues.add(value);
-				builder.addValue(value);
-			}
-			PersonPropertyDimension personPropertyDimension = builder.build();
+		PersonPropertyDimensionData personPropertyDimensionData = PersonPropertyDimensionData.builder()//
+				.setPersonPropertyId(testPersonPropertyId)//
+				.setTrackTimes(randomGenerator.nextBoolean())//
+				.addValue("Level_0", testPersonPropertyId.getRandomPropertyValue(randomGenerator))//
+				.build();
 
-			List<Object> actualValues = personPropertyDimension.getValues();
-			assertEquals(expectedValues, actualValues);
-		}
+		PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
 
-		// precondition test : if the value is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PersonPropertyDimension.builder().addValue(null));
-		assertEquals(PropertyError.NULL_PROPERTY_VALUE, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.Builder.class, name = "build", args = {})
-	public void testBuild() {
-		PersonPropertyDimension personPropertyDimension = //
-				PersonPropertyDimension.builder()//
-						.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK).build();
 		assertNotNull(personPropertyDimension);
-
-		// precondition test : if the global property id is not assigned
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PersonPropertyDimension.builder().build());
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.Builder.class, name = "setTrackTimes", args = { boolean.class })
-	public void testSetTrackTimes() {
-		for (int i = 0; i < 10; i++) {
-			boolean trackTimes = i % 2 == 0;
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK)
-					.setTrackTimes(trackTimes);
-
-			PersonPropertyDimension personPropertyDimension = builder.build();
-			assertEquals(trackTimes, personPropertyDimension.getTrackTimes());
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.Builder.class, name = "setPersonPropertyId", args = {
-			PersonPropertyId.class })
-	public void testSetPersonPropertyId() {
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(testPersonPropertyId);
-
-			PersonPropertyDimension personPropertyDimension = builder.build();
-			assertEquals(testPersonPropertyId, personPropertyDimension.getPersonPropertyId());
-		}
-
-		// precondition test : if the value is null
-		ContractException contractException = assertThrows(ContractException.class,
-				() -> PersonPropertyDimension.builder().setPersonPropertyId(null));
-		assertEquals(PropertyError.NULL_PROPERTY_ID, contractException.getErrorType());
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "builder", args = {})
-	public void testBuilder() {
-		assertNotNull(PersonPropertyDimension.builder());
 	}
 
 	@Test
@@ -127,18 +59,20 @@ public class AT_PersonPropertyDimension {
 				expectedValues.add(targetPropertyId.getRandomPropertyValue(randomGenerator));
 			}
 
-			// create a PersonPropertyDimension with the level values
-			PersonPropertyDimension.Builder dimBuilder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(targetPropertyId);
+			// create a PersonPropertyDimensionData with the level values
+			PersonPropertyDimensionData.Builder dimDataBuilder = PersonPropertyDimensionData.builder()//
+					.setPersonPropertyId(targetPropertyId)//
+					.setTrackTimes(randomGenerator.nextBoolean());
 
-			for (Object value : expectedValues) {
-				dimBuilder.addValue(value);
+			for (int k = 0; k < expectedValues.size(); k++) {
+				dimDataBuilder.addValue("Level_" + k, expectedValues.get(k));
 			}
 
-			PersonPropertyDimension personPropertyDimension = dimBuilder.build();
+			PersonPropertyDimensionData personPropertyDimensionData = dimDataBuilder.build();
+			PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
 
 			// show that for each level the dimension properly assigns the value
-			// to a global property data builder
+			// to a person property data builder
 			for (int level = 0; level < levelCount; level++) {
 				/*
 				 * Create a PersonPropertiesPluginData, filling it with the test property
@@ -150,7 +84,7 @@ public class AT_PersonPropertyDimension {
 					pluginDataBuilder.definePersonProperty(propertyId, propertyDefinition, 0, false);
 				}
 
-				// Create a dimension context that contain the plugin data
+				// Create a dimension context that contains the plugin data
 				// builder
 				DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
 
@@ -182,6 +116,28 @@ public class AT_PersonPropertyDimension {
 	}
 
 	@Test
+	@UnitTestMethod(target = PersonPropertyDimension.class, name = "getDimensionData", args = {})
+	public void testGetDimensionData() {
+
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8913942504408118065L);
+
+		for (int i = 0; i < 30; i++) {
+
+			TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+
+			PersonPropertyDimensionData personPropertyDimensionData = PersonPropertyDimensionData.builder()//
+					.setPersonPropertyId(testPersonPropertyId)//
+					.setTrackTimes(randomGenerator.nextBoolean())//
+					.addValue("Level_" + i, testPersonPropertyId.getRandomPropertyValue(randomGenerator))//
+					.build();
+
+			PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
+
+			assertEquals(personPropertyDimensionData, personPropertyDimension.getDimensionData());
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = PersonPropertyDimension.class, name = "getExperimentMetaData", args = {})
 	public void testGetExperimentMetaData() {
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
@@ -189,61 +145,12 @@ public class AT_PersonPropertyDimension {
 			List<String> expectedExperimentMetaData = new ArrayList<>();
 			expectedExperimentMetaData.add(testPersonPropertyId.toString());
 
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(testPersonPropertyId);
+			PersonPropertyDimensionData personPropertyDimensionData = PersonPropertyDimensionData.builder()//
+					.setPersonPropertyId(testPersonPropertyId)//
+					.build();
 
-			PersonPropertyDimension personPropertyDimension = builder.build();
+			PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
 			assertEquals(expectedExperimentMetaData, personPropertyDimension.getExperimentMetaData());
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "getTrackTimes", args = {})
-	public void testGetTrackTimes() {
-		for (int i = 0; i < 10; i++) {
-			boolean trackTimes = i % 2 == 0;
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK)
-					.setTrackTimes(trackTimes);
-
-			PersonPropertyDimension personPropertyDimension = builder.build();
-			assertEquals(trackTimes, personPropertyDimension.getTrackTimes());
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "getPersonPropertyId", args = {})
-	public void testGetPersonPropertyId() {
-		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(testPersonPropertyId);
-
-			PersonPropertyDimension personPropertyDimension = builder.build();
-			assertEquals(testPersonPropertyId, personPropertyDimension.getPersonPropertyId());
-		}
-	}
-
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "getValues", args = {})
-	public void testGetValues() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4581428044056639458L);
-
-		for (int i = 0; i < 50; i++) {
-			List<Object> expectedValues = new ArrayList<>();
-
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
-					.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
-			int n = randomGenerator.nextInt(10);
-			for (int j = 0; j < n; j++) {
-				double value = randomGenerator.nextDouble();
-				expectedValues.add(value);
-				builder.addValue(value);
-			}
-			PersonPropertyDimension personPropertyDimension = builder.build();
-
-			List<Object> actualValues = personPropertyDimension.getValues();
-			assertEquals(expectedValues, actualValues);
 		}
 	}
 
@@ -254,104 +161,44 @@ public class AT_PersonPropertyDimension {
 
 		for (int i = 0; i < 50; i++) {
 
-			PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder()//
+			PersonPropertyDimensionData.Builder builder = PersonPropertyDimensionData.builder()//
 					.setPersonPropertyId(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK);
+
 			int n = randomGenerator.nextInt(10);
 			for (int j = 0; j < n; j++) {
 				double value = randomGenerator.nextDouble();
-				builder.addValue(value);
+				builder.addValue("Level_" + j, value);
 			}
-			PersonPropertyDimension personPropertyDimension = builder.build();
+
+			PersonPropertyDimensionData personPropertyDimensionData = builder.build();
+			PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
 
 			assertEquals(n, personPropertyDimension.levelCount());
 		}
 	}
 
-	/*
-	 * Generates a random PersonPropertyDimension with 2790 possible outcomes
-	 */
-	private PersonPropertyDimension getRandomPersonPropertyDimension(long seed) {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		PersonPropertyDimension.Builder builder = PersonPropertyDimension.builder();
-		builder.setPersonPropertyId(TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator));
-		builder.setTrackTimes(randomGenerator.nextBoolean());
-		int count = randomGenerator.nextInt(3) + 1;
-		for (int i = 0; i < count; i++) {
-			builder.addValue(randomGenerator.nextInt(5));
-		}
-		return builder.build();
-	}
-
 	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "equals", args = { Object.class })
-	public void testEquals() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5592194423075711575L);
+	@UnitTestMethod(target = PersonPropertyDimension.class, name = "toString", args = {})
+	public void testToString() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8913942504408118065L);
+		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
 
-		// is never equal to null;
-		for (int i = 0; i < 30; i++) {
-			PersonPropertyDimension dimension = getRandomPersonPropertyDimension(randomGenerator.nextLong());
-			assertFalse(dimension.equals(null));
+		PersonPropertyDimensionData.Builder builder = PersonPropertyDimensionData.builder()//
+				.setPersonPropertyId(testPersonPropertyId)//
+				.setTrackTimes(randomGenerator.nextBoolean());
+
+		for (int i = 0; i < 10; i++) {
+			builder.addValue("Level_" + i, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
 		}
 
-		// reflexive
-		for (int i = 0; i < 30; i++) {
-			PersonPropertyDimension dimension = getRandomPersonPropertyDimension(randomGenerator.nextLong());
-			assertTrue(dimension.equals(dimension));
-		}
+		PersonPropertyDimensionData personPropertyDimensionData = builder.build();
+		PersonPropertyDimension personPropertyDimension = new PersonPropertyDimension(personPropertyDimensionData);
 
-		// symmetric, transitive, consistent
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			PersonPropertyDimension dimension1 = getRandomPersonPropertyDimension(seed);
-			PersonPropertyDimension dimension2 = getRandomPersonPropertyDimension(seed);
-			for (int j = 0; j < 5; j++) {
-				assertTrue(dimension1.equals(dimension2));
-				assertTrue(dimension2.equals(dimension1));
-			}
-		}
+		String actualValue = personPropertyDimension.toString();
 
-		// different inputs yield non-equal objects. There are 2790 possible generated
-		// values, so the collision probability is very low
-		Set<PersonPropertyDimension> personPropertyDimensions = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
+		String expectedValue = "PersonPropertyDimension [personPropertyDimensionData="
+				+ personPropertyDimensionData + "]";
 
-			PersonPropertyDimension dimension = getRandomPersonPropertyDimension(randomGenerator.nextLong());
-			personPropertyDimensions.add(dimension);
-
-		}
-
-		assertTrue(personPropertyDimensions.size() > 90);
-
+		assertEquals(expectedValue, actualValue);
 	}
-
-//	PersonPropertyDimension	public int plugins.personproperties.support.PersonPropertyDimension.hashCode()
-	@Test
-	@UnitTestMethod(target = PersonPropertyDimension.class, name = "hashCode", args = {})
-	public void testHashCode() {
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6008834354417928206L);
-
-		// equal objects have equal hash codes
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			PersonPropertyDimension dimension1 = getRandomPersonPropertyDimension(seed);
-			PersonPropertyDimension dimension2 = getRandomPersonPropertyDimension(seed);
-			assertEquals(dimension1, dimension2);
-			assertEquals(dimension1.hashCode(), dimension2.hashCode());
-		}
-
-		// hash codes are reasonably distributed. There are 2790 possible generated
-		// values, so the collision probability is very low
-		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 100; i++) {
-
-			PersonPropertyDimension dimension = getRandomPersonPropertyDimension(randomGenerator.nextLong());
-			hashCodes.add(dimension.hashCode());
-
-		}
-
-		assertTrue(hashCodes.size() > 90);
-	}
-
 }
