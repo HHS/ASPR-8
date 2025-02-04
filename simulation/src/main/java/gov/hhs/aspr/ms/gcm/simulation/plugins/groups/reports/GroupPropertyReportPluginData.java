@@ -1,6 +1,5 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.reports;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;

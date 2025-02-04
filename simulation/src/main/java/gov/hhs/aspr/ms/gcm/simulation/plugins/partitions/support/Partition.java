@@ -7,8 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
-import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 

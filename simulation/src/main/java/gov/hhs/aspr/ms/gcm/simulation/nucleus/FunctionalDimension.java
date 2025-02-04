@@ -114,7 +114,11 @@ public final class FunctionalDimension implements Dimension {
 	public List<String> executeLevel(DimensionContext dimensionContext, int level) {
 		return data.levels.get(level).apply(dimensionContext);
 	}
-
+	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	public Builder toBuilder() {
 		return new Builder(data);
 	}

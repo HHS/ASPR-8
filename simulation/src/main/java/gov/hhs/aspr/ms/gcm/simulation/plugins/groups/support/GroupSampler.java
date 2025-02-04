@@ -2,10 +2,8 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
 import java.util.Optional;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support.RandomNumberGeneratorId;
-import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public final class GroupSampler {
 

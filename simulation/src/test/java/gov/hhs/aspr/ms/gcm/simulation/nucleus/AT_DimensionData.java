@@ -137,10 +137,7 @@ public class AT_DimensionData {
         public String toString() {
             return "TestDimensionData [data=" + data + "]";
         }
-
-        public Builder toBuilder() {
-            return new Builder(data);
-        }
+       
     }
 
     @Test

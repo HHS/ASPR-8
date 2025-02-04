@@ -9,14 +9,14 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public final class IdentifiableFunctionMap<T> {
-	private static class Data<T> {
-		private Map<Object, IdentifiableFunction<T>> functionMap = new LinkedHashMap<>();
+	private static class Data<N> {
+		private Map<Object, IdentifiableFunction<N>> functionMap = new LinkedHashMap<>();
 		private boolean locked;
 
 		private Data() {
 		}
 
-		private Data(Data<T> data) {
+		private Data(Data<N> data) {
 			functionMap.putAll(data.functionMap);
 			locked = data.locked;
 		}
@@ -26,7 +26,7 @@ public final class IdentifiableFunctionMap<T> {
 	 * Returns a builder instance that will build an IdentifiableFunctionMap of the
 	 * given type
 	 */
-	public static <T> Builder<T> builder(Class<T> type) {
+	public static <K> Builder<K> builder(Class<K> type) {
 		if (type == null) {
 			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
 		}
@@ -117,6 +117,10 @@ public final class IdentifiableFunctionMap<T> {
 		this.data = data;
 	}
 
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	public Builder<T> toBuilder() {
 		return new Builder<>(data);
 	}

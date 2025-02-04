@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support;
 
 import java.util.Arrays;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
 

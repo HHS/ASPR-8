@@ -368,10 +368,17 @@ public final class ExperimentStateManager {
 		 *                           </ul>
 		 */
 		public ExperimentStateManager build() {
+			if (!data.locked) {
+				validateData();
+			}
 			ensureImmutability();
 			ExperimentStateManager result = new ExperimentStateManager(data);
 			result.init();
 			return result;
+		}
+		
+		private void validateData() {
+			
 		}
 
 		/**
@@ -834,6 +841,10 @@ public final class ExperimentStateManager {
 		return new OutputItemConsumerManager(experimentContext, scenarioId, outputConsumerMap)::handleOutput;
 	}
 
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	public Builder toBuilder() {
 		return new Builder(data);
 	}

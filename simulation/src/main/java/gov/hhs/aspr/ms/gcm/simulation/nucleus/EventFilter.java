@@ -16,18 +16,18 @@ import net.jcip.annotations.Immutable;
 @Immutable
 public final class EventFilter<T extends Event> {
 
-	private static class Data<T extends Event> {
+	private static class Data<N extends Event> {
 
-		private Class<T> eventClass;
+		private Class<N> eventClass;
 
-		private List<Pair<IdentifiableFunction<T>, Object>> functionValuePairs = new ArrayList<>();
+		private List<Pair<IdentifiableFunction<N>, Object>> functionValuePairs = new ArrayList<>();
 
 		private boolean locked;
 
 		private Data() {
 		}
 
-		private Data(Data<T> data) {
+		private Data(Data<N> data) {
 			eventClass = data.eventClass;
 			functionValuePairs.addAll(data.functionValuePairs);
 			locked = data.locked;
@@ -50,15 +50,15 @@ public final class EventFilter<T extends Event> {
 	/**
 	 * Builder class for EventFilter
 	 */
-	public static class Builder<T extends Event> {
+	public static class Builder<K extends Event> {
 
-		private Data<T> data;
+		private Data<K> data;
 
-		private Builder(Data<T> data) {
+		private Builder(Data<K> data) {
 			this.data = data;
 		}
 
-		private Builder(Class<T> classReference) {
+		private Builder(Class<K> classReference) {
 			this.data = new Data<>();
 			this.data.eventClass = classReference;
 		}
@@ -66,7 +66,7 @@ public final class EventFilter<T extends Event> {
 		/**
 		 * Constructs a new EventLabel from the collected data.
 		 */
-		public EventFilter<T> build() {
+		public EventFilter<K> build() {
 			if (!data.locked) {
 				validateData();
 			}
@@ -85,7 +85,7 @@ public final class EventFilter<T extends Event> {
 		 *                           if the target value is null</li>
 		 *                           </ul>
 		 */
-		public Builder<T> addFunctionValuePair(IdentifiableFunction<T> identifiableFunction, Object targetValue) {
+		public Builder<K> addFunctionValuePair(IdentifiableFunction<K> identifiableFunction, Object targetValue) {
 			if (identifiableFunction == null) {
 				throw new ContractException(NucleusError.NULL_IDENTIFIABLE_FUNCTION);
 			}
@@ -101,7 +101,7 @@ public final class EventFilter<T extends Event> {
 
 		private void ensureDataMutability() {
 			if (data.locked) {
-				data = new Data<T>(data);
+				data = new Data<K>(data);
 				data.locked = false;
 			}
 		}
@@ -136,6 +136,10 @@ public final class EventFilter<T extends Event> {
 		return Collections.unmodifiableList(data.functionValuePairs);
 	}
 
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	public Builder<T> toBuilder() {
 		return new Builder<>(data);
 	}

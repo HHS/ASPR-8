@@ -23,7 +23,18 @@ import net.jcip.annotations.ThreadSafe;
 public class TestPluginData implements PluginData {
 
 	private static class Data {
+		private final Map<Object, List<TestReportPlan>> testReportPlanMap = new LinkedHashMap<>();
 
+		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
+
+		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
+
+		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
+
+		private final Set<PluginId> pluginDependencies = new LinkedHashSet<>();
+
+		private boolean locked;
+		
 		private Data() {
 		}
 
@@ -61,7 +72,7 @@ public class TestPluginData implements PluginData {
 				}
 			}
 
-			this.pluginDependencies.addAll(data.pluginDependencies);
+			pluginDependencies.addAll(data.pluginDependencies);
 			locked = data.locked;
 
 		}
@@ -125,17 +136,7 @@ public class TestPluginData implements PluginData {
 			return true;
 		}
 
-		private final Map<Object, List<TestReportPlan>> testReportPlanMap = new LinkedHashMap<>();
 
-		private final Map<Object, List<TestActorPlan>> testActorPlanMap = new LinkedHashMap<>();
-
-		private Map<Object, Supplier<TestDataManager>> testDataManagerSuppliers = new LinkedHashMap<>();
-
-		private final Map<Object, List<TestDataManagerPlan>> testDataManagerPlanMap = new LinkedHashMap<>();
-
-		private final Set<PluginId> pluginDependencies = new LinkedHashSet<>();
-
-		private boolean locked;
 	}
 
 	private TestPluginData(Data data) {
@@ -327,10 +328,10 @@ public class TestPluginData implements PluginData {
 			}
 		}
 	}
-
+	
 	/**
-	 * Returns a Builder that is initialized to contain the plans and suppliers of
-	 * data managers contained in this TestPluginData.
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
 	 */
 	@Override
 	public Builder toBuilder() {

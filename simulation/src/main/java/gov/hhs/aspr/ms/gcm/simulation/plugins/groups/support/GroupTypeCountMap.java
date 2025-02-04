@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;

@@ -68,7 +68,10 @@ public final class ReportItem {
 		 *                           </ul>
 		 */
 		public ReportItem build() {
-			validateData();
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new ReportItem(new Data(data));
 		}
 
