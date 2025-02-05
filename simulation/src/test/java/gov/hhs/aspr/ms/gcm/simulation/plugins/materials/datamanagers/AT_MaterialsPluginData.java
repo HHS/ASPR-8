@@ -2333,8 +2333,8 @@ public class AT_MaterialsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = MaterialsPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1064212917574117854L);
 
 		MaterialsPluginData.Builder builder = MaterialsPluginData.builder();
@@ -2426,7 +2426,7 @@ public class AT_MaterialsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		MaterialsPluginData.Builder cloneBuilder = materialsPluginData.getCloneBuilder();
+		MaterialsPluginData.Builder cloneBuilder = materialsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(materialsPluginData, cloneBuilder.build());
 
@@ -2434,7 +2434,7 @@ public class AT_MaterialsPluginData {
 		// made
 
 		// addBatch and addBatchToMaterialsProducerInventory
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.addBatch(new BatchId(1000), TestMaterialId.MATERIAL_2, 123.3);
 		cloneBuilder.addBatchToMaterialsProducerInventory(new BatchId(1000),
 				TestMaterialsProducerId.MATERIALS_PRODUCER_1);
@@ -2442,7 +2442,7 @@ public class AT_MaterialsPluginData {
 		assertFalse(materialsPluginData.getBatchIds().contains(new BatchId(1000)));
 
 		// addBatchToStage
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.addBatch(new BatchId(1000), TestMaterialId.MATERIAL_2, 123.3);
 		StageId stageId = materialsPluginData.getStageIds().iterator().next();
 		cloneBuilder.addBatchToStage(stageId, new BatchId(1000));
@@ -2450,12 +2450,12 @@ public class AT_MaterialsPluginData {
 		assertFalse(materialsPluginData.getBatchIds().contains(new BatchId(1000)));
 
 		// addMaterial
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.addMaterial(TestMaterialId.getUnknownMaterialId());
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// addMaterialsProducerId
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.getUnknownMaterialsProducerId();
 		cloneBuilder.addMaterialsProducerId(materialsProducerId);
 		for (TestMaterialsProducerPropertyId testMaterialsProducerPropertyId : TestMaterialsProducerPropertyId
@@ -2470,14 +2470,14 @@ public class AT_MaterialsPluginData {
 		assertFalse(materialsPluginData.getMaterialsProducerIds().contains(materialsProducerId));
 
 		// addStage and addStageToMaterialProducer
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.addStage(new StageId(1000), false);
 		cloneBuilder.addStageToMaterialProducer(new StageId(1000), TestMaterialsProducerId.MATERIALS_PRODUCER_1);
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 		assertFalse(materialsPluginData.getStageIds().contains(new StageId(1000)));
 
 		// defineBatchProperty
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(12)
 				.setPropertyValueMutability(true).build();
 		BatchPropertyId batchPropertyId = TestBatchPropertyId.getUnknownBatchPropertyId();
@@ -2486,13 +2486,13 @@ public class AT_MaterialsPluginData {
 		assertFalse(materialsPluginData.getBatchPropertyIds(TestMaterialId.MATERIAL_1).contains(batchPropertyId));
 
 		// defineMaterialsProducerProperty
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.defineMaterialsProducerProperty(
 				TestMaterialsProducerPropertyId.getUnknownMaterialsProducerPropertyId(), propertyDefinition);
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// setBatchPropertyValue
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		TestMaterialId batchMaterial = materialsPluginData.getBatchMaterial(new BatchId(0));
 		TestBatchPropertyId selectedTestBatchPropertyId = null;
 		for (TestBatchPropertyId testBatchPropertyId : TestBatchPropertyId.values()) {
@@ -2506,7 +2506,7 @@ public class AT_MaterialsPluginData {
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// setMaterialsProducerPropertyValue
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		TestMaterialsProducerPropertyId testMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK;
 		propertyValue = testMaterialsProducerPropertyId.getRandomPropertyValue(randomGenerator);
 		cloneBuilder.setMaterialsProducerPropertyValue(TestMaterialsProducerId.MATERIALS_PRODUCER_1,
@@ -2514,18 +2514,18 @@ public class AT_MaterialsPluginData {
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// setMaterialsProducerPropertyValue
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.setMaterialsProducerResourceLevel(TestMaterialsProducerId.MATERIALS_PRODUCER_1,
 				TestResourceId.RESOURCE_2, 56L);
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// setNextBatchRecordId
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.setNextBatchRecordId(100000);
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 
 		// setNextStageRecordId
-		cloneBuilder = materialsPluginData.getCloneBuilder();
+		cloneBuilder = materialsPluginData.toBuilder();
 		cloneBuilder.setNextStageRecordId(100000);
 		assertNotEquals(materialsPluginData, cloneBuilder.build());
 

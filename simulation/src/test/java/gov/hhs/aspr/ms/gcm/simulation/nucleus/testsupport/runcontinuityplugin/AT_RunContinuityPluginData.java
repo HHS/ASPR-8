@@ -54,8 +54,8 @@ public class AT_RunContinuityPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RunContinuityPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = RunContinuityPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5885906221170851986L);
 
 		for (int i = 0; i < 10; i++) {
@@ -70,7 +70,7 @@ public class AT_RunContinuityPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			RunContinuityPluginData.Builder cloneBuilder = runContinuityPluginData.getCloneBuilder();
+			RunContinuityPluginData.Builder cloneBuilder = runContinuityPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(runContinuityPluginData, cloneBuilder.build());
 
@@ -78,7 +78,7 @@ public class AT_RunContinuityPluginData {
 			// made
 
 			// addContextConsumer
-			cloneBuilder = runContinuityPluginData.getCloneBuilder();
+			cloneBuilder = runContinuityPluginData.toBuilder();
 			cloneBuilder.addContextConsumer(2.5, (c) -> {
 			});
 			assertNotEquals(runContinuityPluginData, cloneBuilder.build());

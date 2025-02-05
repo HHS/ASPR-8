@@ -198,8 +198,8 @@ public class AT_TestPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = TestPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = TestPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		TestPluginData.Builder builder = TestPluginData.builder();//
 		// add actors
@@ -230,7 +230,7 @@ public class AT_TestPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		TestPluginData.Builder cloneBuilder = testPluginData.getCloneBuilder();
+		TestPluginData.Builder cloneBuilder = testPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(testPluginData, cloneBuilder.build());
 
@@ -238,20 +238,20 @@ public class AT_TestPluginData {
 		// made
 
 		// addPluginDependency
-		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder = testPluginData.toBuilder();
 		PluginId pluginId = new PluginId() {
 		};
 		cloneBuilder.addPluginDependency(pluginId);
 		assertNotEquals(testPluginData, cloneBuilder.build());
 
 		// addTestActorPlan
-		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder = testPluginData.toBuilder();
 		cloneBuilder.addTestActorPlan("actor", new TestActorPlan(0.0, (c) -> {
 		}));
 		assertNotEquals(testPluginData, cloneBuilder.build());
 
 		// addTestDataManager
-		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder = testPluginData.toBuilder();
 		cloneBuilder.addTestDataManager("dm", () -> null);
 		assertNotEquals(testPluginData, cloneBuilder.build());
 
@@ -260,13 +260,13 @@ public class AT_TestPluginData {
 		 * the original and thus we can add the dm plan
 		 */
 		TestPluginData testPluginData2 = cloneBuilder.build();
-		cloneBuilder = testPluginData2.getCloneBuilder();
+		cloneBuilder = testPluginData2.toBuilder();
 		cloneBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(4.5, (c) -> {
 		}));
 		assertNotEquals(testPluginData, cloneBuilder.build());
 
 		// addTestReportPlan
-		cloneBuilder = testPluginData.getCloneBuilder();
+		cloneBuilder = testPluginData.toBuilder();
 		cloneBuilder.addTestReportPlan("report", new TestReportPlan(4.5, (c) -> {
 		}));
 		assertNotEquals(testPluginData, cloneBuilder.build());

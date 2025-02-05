@@ -51,7 +51,6 @@ public final class ResourcesPlugin {
 		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getResourcesPlugin() {
-
 			validate();
 			Plugin.Builder builder = Plugin.builder();//
 			builder.setPluginId(ResourcesPluginId.PLUGIN_ID);//
@@ -123,5 +122,4 @@ public final class ResourcesPlugin {
 			return this;
 		}
 	}
-
 }

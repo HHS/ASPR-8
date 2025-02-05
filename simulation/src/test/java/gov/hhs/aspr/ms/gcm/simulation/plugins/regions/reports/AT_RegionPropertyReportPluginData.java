@@ -350,8 +350,8 @@ public class AT_RegionPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = RegionPropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
 		for (int i = 0; i < 10; i++) {
@@ -382,7 +382,7 @@ public class AT_RegionPropertyReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			RegionPropertyReportPluginData.Builder cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			RegionPropertyReportPluginData.Builder cloneBuilder = regionPropertyReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(regionPropertyReportPluginData, cloneBuilder.build());
 
@@ -390,22 +390,22 @@ public class AT_RegionPropertyReportPluginData {
 			// made
 
 			// excludeRegionProperty
-			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = regionPropertyReportPluginData.toBuilder();
 			cloneBuilder.excludeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_1_BOOLEAN_MUTABLE);
 			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
 
 			// includeRegionProperty
-			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = regionPropertyReportPluginData.toBuilder();
 			cloneBuilder.includeRegionProperty(TestRegionPropertyId.REGION_PROPERTY_2_INTEGER_MUTABLE);
 			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
 
 			// setDefaultInclusion
-			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = regionPropertyReportPluginData.toBuilder();
 			cloneBuilder.setDefaultInclusion(!regionPropertyReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
 
 			// setReportLabel
-			cloneBuilder = regionPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = regionPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(regionPropertyReportPluginData, cloneBuilder.build());
 		}
@@ -475,7 +475,7 @@ public class AT_RegionPropertyReportPluginData {
 
 			// change the default inclusion
 			regionPropertyReportPluginData2 = //
-					regionPropertyReportPluginData1.getCloneBuilder()//
+					regionPropertyReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
@@ -483,7 +483,7 @@ public class AT_RegionPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			regionPropertyReportPluginData2 = //
-					regionPropertyReportPluginData1.getCloneBuilder()//
+					regionPropertyReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
@@ -493,7 +493,7 @@ public class AT_RegionPropertyReportPluginData {
 				RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getIncludedProperties().iterator()
 						.next();
 				regionPropertyReportPluginData2 = //
-						regionPropertyReportPluginData1.getCloneBuilder()//
+						regionPropertyReportPluginData1.toBuilder()//
 								.excludeRegionProperty(regionPropertyId)//
 								.build();
 				assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
@@ -503,7 +503,7 @@ public class AT_RegionPropertyReportPluginData {
 				RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getExcludedProperties().iterator()
 						.next();
 				regionPropertyReportPluginData2 = //
-						regionPropertyReportPluginData1.getCloneBuilder()//
+						regionPropertyReportPluginData1.toBuilder()//
 								.includeRegionProperty(regionPropertyId)//
 								.build();
 				assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);

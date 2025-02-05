@@ -34,6 +34,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		private Set<ResourceId> includedResourceIds = new LinkedHashSet<>();
 		private Set<ResourceId> excludedResourceIds = new LinkedHashSet<>();
 		private boolean defaultInclusionPolicy = true;
+		private boolean locked;
 
 		private Data() {
 			super();
@@ -44,6 +45,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 			includedResourceIds.addAll(data.includedResourceIds);
 			excludedResourceIds.addAll(data.excludedResourceIds);
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
+			locked = data.locked;
 		}
 
 		@Override
@@ -125,6 +127,10 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 *                           </ul>
 		 */
 		public ResourceReportPluginData build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new ResourceReportPluginData(data);
 		}
 
@@ -134,6 +140,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 * or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
+			ensureDataMutability();
 			data.defaultInclusionPolicy = include;
 			return this;
 		}
@@ -145,6 +152,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 *                           resource id is null
 		 */
 		public Builder includeResource(ResourceId resourceId) {
+			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -160,6 +168,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 *                           resource id is null
 		 */
 		public Builder excludeResource(ResourceId resourceId) {
+			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -175,6 +184,7 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			super.setReportLabel(reportLabel);
 			return this;
 		}
@@ -186,8 +196,31 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			ensureDataMutability();
 			super.setReportPeriod(reportPeriod);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
+			}
+			if (data.reportPeriod == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+			}
 		}
 	}
 
@@ -215,8 +248,8 @@ public final class ResourceReportPluginData extends PeriodicReportPluginData {
 	}
 
 	@Override
-	public Builder getCloneBuilder() {
-		return new Builder(new Data(data));
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 	public Set<ResourceId> getIncludedResourceIds() {

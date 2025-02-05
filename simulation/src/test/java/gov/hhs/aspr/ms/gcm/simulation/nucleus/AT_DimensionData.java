@@ -29,6 +29,7 @@ public class AT_DimensionData {
 
             private Data(Data data) {
                 levelNames.addAll(data.levelNames);
+                locked = data.locked;
             }
 
             @Override
@@ -136,6 +137,17 @@ public class AT_DimensionData {
         public String toString() {
             return "TestDimensionData [data=" + data + "]";
         }
+        
+        /**
+    	 * Returns a new builder instance that is pre-filled with the current state of
+    	 * this instance.
+    	 */
+        
+    	@SuppressWarnings("unused")
+		public Builder toBuilder() {
+    		return new Builder(data);
+    	}
+       
     }
 
     @Test
