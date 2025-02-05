@@ -8,15 +8,17 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 
 @Immutable
-public final class IdentifiableFunctionMap<N> {
-	private static class Data<T> {
-		private Map<Object, IdentifiableFunction<T>> functionMap = new LinkedHashMap<>();
+public final class IdentifiableFunctionMap<T> {
+	private static class Data<N> {
+		private Map<Object, IdentifiableFunction<N>> functionMap = new LinkedHashMap<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data<T> data) {
+		private Data(Data<N> data) {
 			functionMap.putAll(data.functionMap);
+			locked = data.locked;
 		}
 	}
 
@@ -24,21 +26,26 @@ public final class IdentifiableFunctionMap<N> {
 	 * Returns a builder instance that will build an IdentifiableFunctionMap of the
 	 * given type
 	 */
-	public static <T> Builder<T> builder(Class<T> type) {
+	public static <K> Builder<K> builder(Class<K> type) {
 		if (type == null) {
 			throw new ContractException(NucleusError.NULL_CLASS_REFERENCE);
 		}
-		return new Builder<>();
+		return new Builder<>(new Data<>());
 	}
 
 	public static class Builder<T> {
-		private Data<T> data = new Data<>();
+		private Data<T> data;
 
-		private Builder() {
+		private Builder(Data<T> data) {
+			this.data = data;
 		}
 
 		public IdentifiableFunctionMap<T> build() {
-			return new IdentifiableFunctionMap<>(new Data<>(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new IdentifiableFunctionMap<>(data);
 		}
 
 		/**
@@ -60,11 +67,26 @@ public final class IdentifiableFunctionMap<N> {
 			if (function == null) {
 				throw new ContractException(NucleusError.NULL_FUNCTION);
 			}
-
+			ensureDataMutability();
 			data.functionMap.put(id, new IdentifiableFunction<>(id, function));
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data<T>(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+		}
 	}
 
 	/**
@@ -78,21 +100,29 @@ public final class IdentifiableFunctionMap<N> {
 	 *                           if the function id is not in this map</li>
 	 *                           </ul>
 	 */
-	public IdentifiableFunction<N> get(Object id) {
+	public IdentifiableFunction<T> get(Object id) {
 		if (id == null) {
 			throw new ContractException(NucleusError.NULL_FUNCTION_ID);
 		}
-		IdentifiableFunction<N> result = data.functionMap.get(id);
+		IdentifiableFunction<T> result = data.functionMap.get(id);
 		if (result == null) {
 			throw new ContractException(NucleusError.UNKNOWN_FUNCTION_ID);
 		}
 		return result;
 	}
 
-	private final Data<N> data;
+	private final Data<T> data;
 
-	private IdentifiableFunctionMap(Data<N> data) {
+	private IdentifiableFunctionMap(Data<T> data) {
 		this.data = data;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder<T> toBuilder() {
+		return new Builder<>(data);
 	}
 
 }

@@ -653,19 +653,19 @@ public class AT_RegionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionsPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = RegionsPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		/*
 		 * The tracking of person arrival times and the existence of non-defalut region
-		 * property definition is sensitive. In order to fully test the cloneBuilder
+		 * property definition is sensitive. In order to fully test the toBuilder
 		 * mechanisms we must create four distinct tests that allow each mutation on the
 		 * clone to be tested properly.
 		 */
 
-		testGetCloneBuilder_subTest1();
-		testGetCloneBuilder_subTest2();
-		testGetCloneBuilder_subTest3();
-		testGetCloneBuilder_subTest4();
+		testToBuilder_subTest1();
+		testToBuilder_subTest2();
+		testToBuilder_subTest3();
+		testToBuilder_subTest4();
 	}
 
 	private RegionsPluginData getRegionsPluginData(boolean containsPeople, boolean useArrivalTracking,
@@ -719,7 +719,7 @@ public class AT_RegionsPluginData {
 		return regionPluginDataBuilder.build();
 	}
 
-	private void testGetCloneBuilder_subTest1() {
+	private void testToBuilder_subTest1() {
 		
 		boolean containsPeople = true;
 		boolean useArrivalTracking = true;
@@ -731,7 +731,7 @@ public class AT_RegionsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(regionsPluginData, cloneBuilder.build());
 
@@ -739,12 +739,12 @@ public class AT_RegionsPluginData {
 		// made
 
 		// addPerson(PersonId, RegionId,Double)
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		cloneBuilder.addPerson(new PersonId(1000), TestRegionId.REGION_1, 123.7);
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 
 		// defineRegionProperty
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
 				.setDefaultValue(4)//
 				.setType(Integer.class)//
@@ -754,14 +754,14 @@ public class AT_RegionsPluginData {
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 
 		// setRegionPropertyValue
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		cloneBuilder.setRegionPropertyValue(TestRegionId.REGION_1,
 				TestRegionPropertyId.REGION_PROPERTY_3_DOUBLE_MUTABLE, 34.6);
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 
 	}
 
-	private void testGetCloneBuilder_subTest2() {
+	private void testToBuilder_subTest2() {
 		boolean containsPeople = true;
 		boolean useArrivalTracking = false;
 		boolean useEmptyDefaultProperties = true;
@@ -771,7 +771,7 @@ public class AT_RegionsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(regionsPluginData, cloneBuilder.build());
 
@@ -779,13 +779,13 @@ public class AT_RegionsPluginData {
 		// made
 
 		// addPerson(PersonId, RegionId)
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		cloneBuilder.addPerson(new PersonId(1000), TestRegionId.REGION_1);
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 
 	}
 
-	private void testGetCloneBuilder_subTest3() {
+	private void testToBuilder_subTest3() {
 		boolean containsPeople = true;
 		boolean useArrivalTracking = true;
 		boolean useEmptyDefaultProperties = false;
@@ -795,7 +795,7 @@ public class AT_RegionsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(regionsPluginData, cloneBuilder.build());
 
@@ -803,12 +803,12 @@ public class AT_RegionsPluginData {
 		// made
 
 		// addRegion
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		cloneBuilder.addRegion(TestRegionId.getUnknownRegionId());
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 	}
 
-	private void testGetCloneBuilder_subTest4() {
+	private void testToBuilder_subTest4() {
 		boolean containsPeople = false;
 		boolean useArrivalTracking = true;
 		boolean useEmptyDefaultProperties = true;
@@ -818,7 +818,7 @@ public class AT_RegionsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		RegionsPluginData.Builder cloneBuilder = regionsPluginData.getCloneBuilder();
+		RegionsPluginData.Builder cloneBuilder = regionsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(regionsPluginData, cloneBuilder.build());
 
@@ -826,7 +826,7 @@ public class AT_RegionsPluginData {
 		// made
 
 		// setPersonRegionArrivalTracking
-		cloneBuilder = regionsPluginData.getCloneBuilder();
+		cloneBuilder = regionsPluginData.toBuilder();
 		cloneBuilder.setPersonRegionArrivalTracking(!regionsPluginData.getPersonRegionArrivalTrackingPolicy());
 		assertNotEquals(regionsPluginData, cloneBuilder.build());
 

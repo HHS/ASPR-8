@@ -23,15 +23,17 @@ public final class GroupPropertyDefinitionInitialization {
 		GroupPropertyId groupPropertyId;
 		PropertyDefinition propertyDefinition;
 		List<Pair<GroupId, Object>> propertyValues = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			groupTypeId = data.groupTypeId;
 			groupPropertyId = data.groupPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -45,17 +47,18 @@ public final class GroupPropertyDefinitionInitialization {
 	 * Returns a new builder
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for a GroupPropertyDefinitionInitialization
 	 */
 	public final static class Builder {
-		private Builder() {
-		}
+		private Data data;
 
-		private Data data = new Data();
+		private Builder(Data data) {
+			this.data = data;
+		}
 
 		private void validate() {
 			if (data.propertyDefinition == null) {
@@ -98,8 +101,11 @@ public final class GroupPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public GroupPropertyDefinitionInitialization build() {
-			validate();
-			return new GroupPropertyDefinitionInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new GroupPropertyDefinitionInitialization(data);
 		}
 
 		/**
@@ -109,6 +115,7 @@ public final class GroupPropertyDefinitionInitialization {
 		 *                           property id is null
 		 */
 		public Builder setPropertyId(GroupPropertyId groupPropertyId) {
+			ensureDataMutability();
 			if (groupPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -123,6 +130,7 @@ public final class GroupPropertyDefinitionInitialization {
 		 *                           group type id is null
 		 */
 		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
+			ensureDataMutability();
 			if (groupTypeId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_TYPE_ID);
 			}
@@ -137,6 +145,7 @@ public final class GroupPropertyDefinitionInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -156,6 +165,7 @@ public final class GroupPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public Builder addPropertyValue(GroupId groupId, Object value) {
+			ensureDataMutability();
 			if (groupId == null) {
 				throw new ContractException(GroupError.NULL_GROUP_ID);
 			}
@@ -168,6 +178,18 @@ public final class GroupPropertyDefinitionInitialization {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
 	}
 
 	/**
@@ -199,6 +221,14 @@ public final class GroupPropertyDefinitionInitialization {
 	 */
 	public List<Pair<GroupId, Object>> getPropertyValues() {
 		return Collections.unmodifiableList(data.propertyValues);
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

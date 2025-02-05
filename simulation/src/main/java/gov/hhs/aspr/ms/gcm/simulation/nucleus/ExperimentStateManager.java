@@ -306,17 +306,19 @@ public final class ExperimentStateManager {
 		private List<Consumer<ExperimentContext>> contextConsumers = new ArrayList<>();
 		private boolean continueFromProgressLog;
 		private Set<Integer> explicitScenarioIds = new LinkedHashSet<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			scenarioCount = data.scenarioCount;
 			progressLogFile = data.progressLogFile;
 			experimentMetaData.addAll(data.experimentMetaData);
 			contextConsumers.addAll(data.contextConsumers);
 			continueFromProgressLog = data.continueFromProgressLog;
 			explicitScenarioIds.addAll(data.explicitScenarioIds);
+			locked = data.locked;
 		}
 	}
 
@@ -324,17 +326,17 @@ public final class ExperimentStateManager {
 	 * Returns a new Builder instance for the ExperimentStateManager
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for ExperimentStateManager
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -366,15 +368,24 @@ public final class ExperimentStateManager {
 		 *                           </ul>
 		 */
 		public ExperimentStateManager build() {
-			ExperimentStateManager result = new ExperimentStateManager(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			ExperimentStateManager result = new ExperimentStateManager(data);
 			result.init();
 			return result;
+		}
+		
+		private void validateData() {
+			
 		}
 
 		/**
 		 * Sets the scenario count as calculated from the dimensions.
 		 */
 		public Builder setScenarioCount(Integer scenarioCount) {
+			ensureDataMutability();
 			data.scenarioCount = scenarioCount;
 			return this;
 		}
@@ -383,6 +394,7 @@ public final class ExperimentStateManager {
 		 * Sets the file that is used to report scenario progress.
 		 */
 		public Builder setScenarioProgressLogFile(Path progressLogFile) {
+			ensureDataMutability();
 			data.progressLogFile = progressLogFile;
 			return this;
 		}
@@ -391,6 +403,7 @@ public final class ExperimentStateManager {
 		 * Marks the scenario to be explicitly run. All other scenarios will be ignored.
 		 */
 		public Builder addExplicitScenarioId(Integer scenarioId) {
+			ensureDataMutability();
 			data.explicitScenarioIds.add(scenarioId);
 			return this;
 		}
@@ -411,6 +424,7 @@ public final class ExperimentStateManager {
 		 *                           </ul>
 		 */
 		public Builder setExperimentMetaData(List<String> experimentMetaData) {
+			ensureDataMutability();
 			if (experimentMetaData == null) {
 				throw new ContractException(NucleusError.NULL_META_DATA);
 			}
@@ -431,6 +445,7 @@ public final class ExperimentStateManager {
 		 *                           if the context consumer is null
 		 */
 		public Builder addExperimentContextConsumer(Consumer<ExperimentContext> contextConsumer) {
+			ensureDataMutability();
 			if (contextConsumer == null) {
 				throw new ContractException(NucleusError.NULL_EXPERIMENT_CONTEXT_CONSUMER);
 			}
@@ -442,8 +457,22 @@ public final class ExperimentStateManager {
 		 * Sets the option to continue the current experiment from the progress.
 		 */
 		public Builder setContinueFromProgressLog(boolean continueFromProgressLog) {
+			ensureDataMutability();
 			data.continueFromProgressLog = continueFromProgressLog;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -810,6 +839,14 @@ public final class ExperimentStateManager {
 		}
 
 		return new OutputItemConsumerManager(experimentContext, scenarioId, outputConsumerMap)::handleOutput;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

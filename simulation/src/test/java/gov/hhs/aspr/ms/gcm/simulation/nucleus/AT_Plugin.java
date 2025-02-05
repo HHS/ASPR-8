@@ -23,7 +23,7 @@ public class AT_Plugin {
 	private static final class XPluginData implements PluginData {
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			throw new UnsupportedOperationException();
 		}
 
@@ -37,7 +37,7 @@ public class AT_Plugin {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			throw new UnsupportedOperationException();
 		}
 
