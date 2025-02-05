@@ -404,7 +404,7 @@ public class AT_GlobalPropertyDimensionData {
 
     @Test
     @UnitTestMethod(target = GlobalPropertyDimensionData.class, name = "toBuilder", args = {})
-    public void testGetCloneBuilder() {
+    public void testToBuilder() {
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1528599899244176790L);
 

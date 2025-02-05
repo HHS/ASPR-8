@@ -32,7 +32,7 @@ public class AT_GlobalPropertyDimension {
         GlobalPropertyDimensionData globalPropertyDimensionData = GlobalPropertyDimensionData.builder()//
                 .setGlobalPropertyId(testGlobalPropertyId)//
                 .setAssignmentTime(randomGenerator.nextDouble())//
-                .addValue("Level_0", TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator))
+                .addValue("Level_0", testGlobalPropertyId.getRandomPropertyValue(randomGenerator))
                 .build();
 
         GlobalPropertyDimension globalPropertyDimension = new GlobalPropertyDimension(globalPropertyDimensionData);
@@ -132,7 +132,7 @@ public class AT_GlobalPropertyDimension {
             GlobalPropertyDimensionData globalPropertyDimensionData = GlobalPropertyDimensionData.builder()//
                     .setGlobalPropertyId(randomGlobalPropertyId)//
                     .setAssignmentTime(randomGenerator.nextDouble())
-                    .addValue("Level_" + i, TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator))
+                    .addValue("Level_" + i, randomGlobalPropertyId.getRandomPropertyValue(randomGenerator))
                     .build();
 
             GlobalPropertyDimension globalPropertyDimension = new GlobalPropertyDimension(globalPropertyDimensionData);
@@ -193,7 +193,7 @@ public class AT_GlobalPropertyDimension {
                 .setAssignmentTime(randomGenerator.nextDouble());
 
         for (int i = 0; i < 10; i++) {
-            builder.addValue("Level_" + i, TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator));
+            builder.addValue("Level_" + i, randomGlobalPropertyId.getRandomPropertyValue(randomGenerator));
         }
 
         GlobalPropertyDimensionData globalPropertyDimensionData = builder.build();
