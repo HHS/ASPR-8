@@ -17,14 +17,15 @@ public final class ReportHeader {
 	private static class Data {
 		private ReportLabel reportLabel;
 		private final List<String> headerStrings = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
-
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			reportLabel = data.reportLabel;
 			headerStrings.addAll(data.headerStrings);
+			locked = data.locked;
 		}
 
 		@Override
@@ -73,7 +74,7 @@ public final class ReportHeader {
 	 * Returns a builder for ReportHeader
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
@@ -81,10 +82,10 @@ public final class ReportHeader {
 	 */
 	@NotThreadSafe
 	public final static class Builder {
+		private Data data;
 
-		private Data data = new Data();
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -97,6 +98,7 @@ public final class ReportHeader {
 			if (headerString == null) {
 				throw new ContractException(ReportError.NULL_REPORT_HEADER_STRING);
 			}
+			ensureDataMutability();
 			data.headerStrings.add(headerString);
 			return this;
 		}
@@ -109,6 +111,8 @@ public final class ReportHeader {
 			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
+
+			ensureDataMutability();
 			data.reportLabel = reportLabel;
 			return this;
 		}
@@ -117,11 +121,9 @@ public final class ReportHeader {
 		 * Null checks for the various fields.
 		 */
 		private void validateData() {
-
 			if (data.reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
-
 		}
 
 		/**
@@ -129,9 +131,26 @@ public final class ReportHeader {
 		 * of the builder.
 		 */
 		public ReportHeader build() {
-			validateData();
-			return new ReportHeader(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new ReportHeader(data);
 		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
 	}
 
 	/**
@@ -150,7 +169,8 @@ public final class ReportHeader {
 
 	/**
 	 * String representation that preserves the order of the added strings presented
-	 * as: ReportHeader [reportLabel=reportLabel, headerStrings=[string1, string2...]
+	 * as: ReportHeader [reportLabel=reportLabel, headerStrings=[string1,
+	 * string2...]
 	 */
 	@Override
 	public String toString() {
@@ -194,6 +214,14 @@ public final class ReportHeader {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

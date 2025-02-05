@@ -23,14 +23,17 @@ public final class PartitionSampler {
 
 		private LabelSetWeightingFunction labelSetWeightingFunction;
 
-		public Data() {
+		private boolean locked;
+
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			excludedPersonId = data.excludedPersonId;
 			randomNumberGeneratorId = data.randomNumberGeneratorId;
 			labelSet = data.labelSet;
 			labelSetWeightingFunction = data.labelSetWeightingFunction;
+			locked = data.locked;
 		}
 	}
 
@@ -38,16 +41,17 @@ public final class PartitionSampler {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Standard builder class for partition samplers. All inputs are optional.
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -55,13 +59,18 @@ public final class PartitionSampler {
 		 * this builder and resets the state of the builder to empty.
 		 */
 		public PartitionSampler build() {
-			return new PartitionSampler(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new PartitionSampler(data);
 		}
 
 		/**
 		 * Sets the {@link PersonId} to be excluded as a sample result.
 		 */
 		public Builder setExcludedPerson(PersonId excludedPersonId) {
+			ensureDataMutability();
 			data.excludedPersonId = excludedPersonId;
 			return this;
 		}
@@ -72,6 +81,7 @@ public final class PartitionSampler {
 		 * default random number generator for the simulation is used.
 		 */
 		public Builder setRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
+			ensureDataMutability();
 			data.randomNumberGeneratorId = randomNumberGeneratorId;
 			return this;
 		}
@@ -82,6 +92,7 @@ public final class PartitionSampler {
 		 * in the sampling.
 		 */
 		public Builder setLabelSet(LabelSet labelSet) {
+			ensureDataMutability();
 			data.labelSet = labelSet;
 			return this;
 		}
@@ -92,8 +103,26 @@ public final class PartitionSampler {
 		 * {@link Partition} are weighted uniformly.
 		 */
 		public Builder setLabelSetWeightingFunction(LabelSetWeightingFunction labelSetWeightingFunction) {
+			ensureDataMutability();
 			data.labelSetWeightingFunction = labelSetWeightingFunction;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+
 		}
 
 	}
@@ -135,6 +164,14 @@ public final class PartitionSampler {
 
 	private PartitionSampler(Data data) {
 		this.data = data;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

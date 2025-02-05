@@ -1013,7 +1013,7 @@ public final class MaterialsPluginData implements PluginData {
 
 		private boolean locked;
 
-		public Data() {
+		private Data() {
 			materialsProducerIds = new LinkedHashSet<>();
 
 			materialIds = new LinkedHashSet<>();
@@ -1047,7 +1047,7 @@ public final class MaterialsPluginData implements PluginData {
 			emptyBatchPropertyValues = Collections.unmodifiableMap(new LinkedHashMap<>());
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 
 			materialsProducerIds = new LinkedHashSet<>(data.materialsProducerIds);
 
@@ -1772,7 +1772,7 @@ public final class MaterialsPluginData implements PluginData {
 	}
 
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(data);
 	}
 

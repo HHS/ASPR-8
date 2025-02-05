@@ -33,6 +33,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		private Set<PersonPropertyId> includedProperties = new LinkedHashSet<>();
 		private Set<PersonPropertyId> excludedProperties = new LinkedHashSet<>();
 		private boolean defaultInclusionPolicy = true;
+		private boolean locked;
 
 		private Data() {
 			super();
@@ -43,6 +44,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 			includedProperties.addAll(data.includedProperties);
 			excludedProperties.addAll(data.excludedProperties);
 			defaultInclusionPolicy = data.defaultInclusionPolicy;
+			locked = data.locked;
 		}
 
 		@Override
@@ -122,6 +124,10 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 *                           </ul>
 		 */
 		public PersonPropertyReportPluginData build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new PersonPropertyReportPluginData(data);
 		}
 
@@ -131,6 +137,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 * or excluded. Defaulted to true.
 		 */
 		public Builder setDefaultInclusion(boolean include) {
+			ensureDataMutability();
 			data.defaultInclusionPolicy = include;
 			return this;
 		}
@@ -142,6 +149,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 *                           person property id is null
 		 */
 		public Builder includePersonProperty(PersonPropertyId personPropertyId) {
+			ensureDataMutability();
 			if (personPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -157,6 +165,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 *                           person property id is null
 		 */
 		public Builder excludePersonProperty(PersonPropertyId personPropertyId) {
+			ensureDataMutability();
 			if (personPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -172,6 +181,7 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 *                           report label is null
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			super.setReportLabel(reportLabel);
 			return this;
 		}
@@ -183,8 +193,31 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		 *                           report period is null
 		 */
 		public Builder setReportPeriod(ReportPeriod reportPeriod) {
+			ensureDataMutability();
 			super.setReportPeriod(reportPeriod);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+			if (data.reportLabel == null) {
+				throw new ContractException(ReportError.NULL_REPORT_LABEL);
+			}
+			if (data.reportPeriod == null) {
+				throw new ContractException(ReportError.NULL_REPORT_PERIOD);
+			}
 		}
 	}
 
@@ -212,8 +245,8 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 	}
 	
 	@Override
-	public Builder getCloneBuilder() {
-		return new Builder(new Data(data));
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 	public Set<PersonPropertyId> getIncludedProperties() {

@@ -424,8 +424,8 @@ public class AT_ResourceReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourceReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = ResourceReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -457,7 +457,7 @@ public class AT_ResourceReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			ResourceReportPluginData.Builder cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			ResourceReportPluginData.Builder cloneBuilder = resourceReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(resourceReportPluginData, cloneBuilder.build());
 
@@ -465,27 +465,27 @@ public class AT_ResourceReportPluginData {
 			// made
 
 			// excludeResource
-			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder = resourceReportPluginData.toBuilder();
 			cloneBuilder.excludeResource(TestResourceId.RESOURCE_1);
 			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 			
 			// includeResource
-			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder = resourceReportPluginData.toBuilder();
 			cloneBuilder.includeResource(TestResourceId.RESOURCE_2);
 			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 
 			// setDefaultInclusion
-			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder = resourceReportPluginData.toBuilder();
 			cloneBuilder.setDefaultInclusion(!resourceReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 
 			// setReportLabel
-			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder = resourceReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 
 			// setReportPeriod
-			cloneBuilder = resourceReportPluginData.getCloneBuilder();
+			cloneBuilder = resourceReportPluginData.toBuilder();
 			cloneBuilder.setReportPeriod(resourceReportPluginData.getReportPeriod().next());
 			assertNotEquals(resourceReportPluginData, cloneBuilder.build());
 
@@ -561,7 +561,7 @@ public class AT_ResourceReportPluginData {
 
 			// change the default inclusion
 			resourceReportPluginData2 = //
-					resourceReportPluginData1.getCloneBuilder()//
+					resourceReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
@@ -571,7 +571,7 @@ public class AT_ResourceReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			resourceReportPluginData2 = //
-					resourceReportPluginData1.getCloneBuilder()//
+					resourceReportPluginData1.toBuilder()//
 							.setReportPeriod(reportPeriod)//
 							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
@@ -579,7 +579,7 @@ public class AT_ResourceReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			resourceReportPluginData2 = //
-					resourceReportPluginData1.getCloneBuilder()//
+					resourceReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
@@ -588,7 +588,7 @@ public class AT_ResourceReportPluginData {
 			if (!resourceReportPluginData1.getIncludedResourceIds().isEmpty()) {
 				ResourceId resourceId = resourceReportPluginData1.getIncludedResourceIds().iterator().next();
 				resourceReportPluginData2 = //
-						resourceReportPluginData1.getCloneBuilder()//
+						resourceReportPluginData1.toBuilder()//
 								.excludeResource(resourceId)//
 								.build();
 				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
@@ -597,7 +597,7 @@ public class AT_ResourceReportPluginData {
 			if (!resourceReportPluginData1.getExcludedResourceIds().isEmpty()) {
 				ResourceId resourceId = resourceReportPluginData1.getExcludedResourceIds().iterator().next();
 				resourceReportPluginData2 = //
-						resourceReportPluginData1.getCloneBuilder()//
+						resourceReportPluginData1.toBuilder()//
 								.includeResource(resourceId)//
 								.build();
 				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);

@@ -32,8 +32,8 @@ import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 public class AT_StochasticsPluginData {
 
 	@Test
-	@UnitTestMethod(target = StochasticsPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = StochasticsPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		WellState wellState = WellState.builder().setSeed(4970625656919510170L).build();
 
@@ -45,7 +45,7 @@ public class AT_StochasticsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		StochasticsPluginData.Builder cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		StochasticsPluginData.Builder cloneBuilder = stochasticsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(stochasticsPluginData, cloneBuilder.build());
 
@@ -53,13 +53,13 @@ public class AT_StochasticsPluginData {
 		// made
 
 		// addRNG
-		cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		cloneBuilder = stochasticsPluginData.toBuilder();
 		wellState = WellState.builder().setSeed(6937151566492160140L).build();
 		cloneBuilder.addRNG(TestRandomGeneratorId.CUPID, wellState);
 		assertNotEquals(stochasticsPluginData, cloneBuilder.build());
 
 		// setMainRNGState
-		cloneBuilder = stochasticsPluginData.getCloneBuilder();
+		cloneBuilder = stochasticsPluginData.toBuilder();
 		wellState = WellState.builder().setSeed(1286993379829775736L).build();
 		cloneBuilder.setMainRNGState(wellState);
 		assertNotEquals(stochasticsPluginData, cloneBuilder.build());
