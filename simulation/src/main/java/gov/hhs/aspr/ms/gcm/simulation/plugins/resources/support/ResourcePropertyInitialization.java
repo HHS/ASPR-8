@@ -16,15 +16,17 @@ public class ResourcePropertyInitialization {
 		private ResourcePropertyId resourcePropertyId;
 		private PropertyDefinition propertyDefinition;
 		private Object value;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			resourceId = data.resourceId;
 			resourcePropertyId = data.resourcePropertyId;
 			propertyDefinition = data.propertyDefinition;
 			value = data.value;
+			locked = data.locked;
 		}
 
 	}
@@ -33,13 +35,14 @@ public class ResourcePropertyInitialization {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -80,8 +83,11 @@ public class ResourcePropertyInitialization {
 		 *                           </ul>
 		 */
 		public ResourcePropertyInitialization build() {
-			validate();
-			return new ResourcePropertyInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new ResourcePropertyInitialization(data);
 		}
 
 		/**
@@ -91,6 +97,7 @@ public class ResourcePropertyInitialization {
 		 *                           resource id is null
 		 */
 		public Builder setResourceId(ResourceId resourceId) {
+			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -105,6 +112,7 @@ public class ResourcePropertyInitialization {
 		 *                           property id is null
 		 */
 		public Builder setResourcePropertyId(ResourcePropertyId resourcePropertyId) {
+			ensureDataMutability();
 			if (resourcePropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -119,6 +127,7 @@ public class ResourcePropertyInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -134,11 +143,25 @@ public class ResourcePropertyInitialization {
 		 *                           the value is null
 		 */
 		public Builder setValue(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
 			}
 			data.value = value;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -174,5 +197,13 @@ public class ResourcePropertyInitialization {
 	 */
 	public Optional<Object> getValue() {
 		return Optional.ofNullable(data.value);
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }

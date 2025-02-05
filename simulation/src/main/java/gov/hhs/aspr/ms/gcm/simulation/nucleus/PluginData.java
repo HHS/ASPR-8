@@ -25,10 +25,10 @@ public interface PluginData {
 	/**
 	 * Returns a PluginDataBuilder that can build the plugin data. The returned
 	 * builder should be initialized with this plugin data object's internal state
-	 * such that invocation of pluginData.getCloneBuilder().build() will generate a
+	 * such that invocation of pluginData.toBuilder().build() will generate a
 	 * copy of the current plugin.
 	 */
-	public PluginDataBuilder getCloneBuilder();
+	public PluginDataBuilder toBuilder();
 
 	@Override
 	public int hashCode();

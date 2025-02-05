@@ -207,43 +207,72 @@ public class PluginDependencyInfoGenerator {
 		private Path sourcePath;
 
 		private Path testPath;
+
+		private boolean locked;
 		
 		public Data() {}
 		public Data(Data data) {
 			sourcePath = data.sourcePath;
 			testPath = data.testPath;
+			locked = data.locked;
 		}
 	}
 
 	public final static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public final static class Builder {
-		private Builder() {
-		}
+		private Data data;
 
-		private Data data = new Data();
+		private Builder(Data data) {
+			this.data = data;
+		}
 
 		public PluginDependencyInfoGenerator build() {
-			validate();
-			return new PluginDependencyInfoGenerator(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new PluginDependencyInfoGenerator(data);
 		}
 
-		private void validate() {
+		private void validateData() {
 
 		}
 
 		public Builder setSourcePath(Path sourcePath) {
+			ensureDataMutability();
 			data.sourcePath = sourcePath;
 			return this;
 		}
 
 		public Builder setTestPath(Path testPath) {
+			ensureDataMutability();
 			data.testPath = testPath;
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+	}
+	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 	private PluginDependencyInfoGenerator(Data data) {

@@ -28,7 +28,7 @@ public final class StochasticsPluginData implements PluginData {
 	}
 
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(data);
 	}
 
@@ -36,10 +36,10 @@ public final class StochasticsPluginData implements PluginData {
 	 * State container class for collecting random number generator ids.
 	 */
 	private static class Data {
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			this.wellState = data.wellState;
 			randomNumberGeneratorIds.putAll(data.randomNumberGeneratorIds);
 			locked = data.locked;

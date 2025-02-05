@@ -54,7 +54,7 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 				throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 			}
 			pluginDataMap.put(t.getClass(), t);
-			PluginDataBuilder builder = t.getCloneBuilder();
+			PluginDataBuilder builder = t.toBuilder();
 
 			pluginDataBuilderMap.put(builder.getClass(), builder);
 			return builder;

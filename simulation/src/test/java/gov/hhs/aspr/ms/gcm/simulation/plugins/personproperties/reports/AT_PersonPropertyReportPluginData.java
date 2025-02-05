@@ -424,8 +424,8 @@ public class AT_PersonPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PersonPropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
 		for (int i = 0; i < 10; i++) {
@@ -458,7 +458,7 @@ public class AT_PersonPropertyReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			PersonPropertyReportPluginData.Builder cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			PersonPropertyReportPluginData.Builder cloneBuilder = personPropertyReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(personPropertyReportPluginData, cloneBuilder.build());
 
@@ -466,27 +466,27 @@ public class AT_PersonPropertyReportPluginData {
 			// made
 
 			// excludePersonProperty
-			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyReportPluginData.toBuilder();
 			cloneBuilder.excludePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_8_INTEGER_IMMUTABLE_NO_TRACK);
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 
 			// includePersonProperty
-			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyReportPluginData.toBuilder();
 			cloneBuilder.includePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_9_DOUBLE_MUTABLE_NO_TRACK);
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 
 			// setDefaultInclusion
-			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyReportPluginData.toBuilder();
 			cloneBuilder.setDefaultInclusion(!personPropertyReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 
 			// setReportLabel
-			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 
 			// setReportPeriod
-			cloneBuilder = personPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = personPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportPeriod(personPropertyReportPluginData.getReportPeriod().next());
 			assertNotEquals(personPropertyReportPluginData, cloneBuilder.build());
 		}
@@ -562,7 +562,7 @@ public class AT_PersonPropertyReportPluginData {
 
 			// change the default inclusion
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.getCloneBuilder()//
+					personPropertyReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
@@ -572,7 +572,7 @@ public class AT_PersonPropertyReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.getCloneBuilder()//
+					personPropertyReportPluginData1.toBuilder()//
 							.setReportPeriod(reportPeriod)//
 							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
@@ -580,7 +580,7 @@ public class AT_PersonPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.getCloneBuilder()//
+					personPropertyReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
@@ -590,7 +590,7 @@ public class AT_PersonPropertyReportPluginData {
 				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getIncludedProperties().iterator()
 						.next();
 				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1.getCloneBuilder()//
+						personPropertyReportPluginData1.toBuilder()//
 								.excludePersonProperty(personPropertyId)//
 								.build();
 				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
@@ -600,7 +600,7 @@ public class AT_PersonPropertyReportPluginData {
 				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getExcludedProperties().iterator()
 						.next();
 				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1.getCloneBuilder()//
+						personPropertyReportPluginData1.toBuilder()//
 								.includePersonProperty(personPropertyId)//
 								.build();
 				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);

@@ -13,12 +13,15 @@ public final class FamilyPluginData implements PluginData {
 
 		private int maxFamilySize;
 
+		private boolean locked;
+
 		private Data() {
 		}
 
 		private Data(final Data data) {
 			familyCount = data.familyCount;
 			maxFamilySize = data.maxFamilySize;
+			locked = data.locked;
 		}
 
 		@Override
@@ -58,7 +61,11 @@ public final class FamilyPluginData implements PluginData {
 
 		@Override
 		public FamilyPluginData build() {
-			return new FamilyPluginData(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new FamilyPluginData(data);
 		}
 
 		/**
@@ -68,6 +75,7 @@ public final class FamilyPluginData implements PluginData {
 		 *                                  <li>if the family count is negative</li>
 		 */
 		public Builder setFamilyCount(final int familyCount) {
+			ensureDataMutability();
 			if (familyCount < 0) {
 				throw new IllegalArgumentException("negative family count");
 			}
@@ -82,11 +90,28 @@ public final class FamilyPluginData implements PluginData {
 		 *                                  <li>if the max family size is negative</li>
 		 */
 		public Builder setMaxFamilySize(final int maxFamilySize) {
+			ensureDataMutability();
 			if (maxFamilySize < 0) {
 				throw new IllegalArgumentException("negative max family count");
 			}
 			data.maxFamilySize = maxFamilySize;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 
 	}
@@ -110,8 +135,8 @@ public final class FamilyPluginData implements PluginData {
 	}
 
 	@Override
-	public PluginDataBuilder getCloneBuilder() {
-		return new Builder(new Data(data));
+	public PluginDataBuilder toBuilder() {
+		return new Builder(data);
 	}
 
 	@Override

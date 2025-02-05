@@ -23,29 +23,31 @@ public class TestSimulation {
 		private List<Plugin> plugins = new ArrayList<>();
 		private TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		private SimulationState simulationState = SimulationState.builder().build();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			simulationHaltTime = data.simulationHaltTime;
 			produceSimulationStateOnHalt = data.produceSimulationStateOnHalt;
 			plugins.addAll(data.plugins);
 			testOutputConsumer = data.testOutputConsumer;
 			simulationState = data.simulationState;
+			locked = data.locked;
 		}
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
@@ -54,6 +56,7 @@ public class TestSimulation {
 		 * simulation. Defaults to false.
 		 */
 		public Builder setProduceSimulationStateOnHalt(boolean produceSimulationStateOnHalt) {
+			ensureDataMutability();
 			data.produceSimulationStateOnHalt = produceSimulationStateOnHalt;
 			return this;
 		}
@@ -62,6 +65,7 @@ public class TestSimulation {
 		 * Set the simulation halt time.
 		 */
 		public Builder setSimulationHaltTime(double simulationHaltTime) {
+			ensureDataMutability();
 			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
@@ -74,6 +78,7 @@ public class TestSimulation {
 		 *                           simulation time is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
+			ensureDataMutability();
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
@@ -88,6 +93,7 @@ public class TestSimulation {
 		 *                           collection is null
 		 */
 		public Builder addPlugin(Plugin plugin) {
+			ensureDataMutability();
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
 			}
@@ -102,6 +108,7 @@ public class TestSimulation {
 		 *                           null
 		 */
 		public Builder addPlugins(Collection<Plugin> plugins) {
+			ensureDataMutability();
 			if (plugins == null) {
 				throw new ContractException(NucleusError.NULL_PLUGINS);
 			}
@@ -119,7 +126,27 @@ public class TestSimulation {
 		 * consumer collected by this builder.
 		 */
 		public TestSimulation build() {
-			return new TestSimulation(new Data(data));
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+			return new TestSimulation(data);
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
 		}
 	}
 
@@ -168,5 +195,13 @@ public class TestSimulation {
 			throw new ContractException(TestError.TEST_EXECUTION_FAILURE);
 		}
 		return data.testOutputConsumer;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }

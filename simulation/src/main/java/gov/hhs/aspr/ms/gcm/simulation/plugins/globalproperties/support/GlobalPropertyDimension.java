@@ -19,6 +19,7 @@ public final class GlobalPropertyDimension implements Dimension {
         private GlobalPropertyId globalPropertyId;
         private List<Object> values = new ArrayList<>();
         private double assignmentTime;
+        private boolean locked;
 
         private Data() {
         }
@@ -27,6 +28,7 @@ public final class GlobalPropertyDimension implements Dimension {
             globalPropertyId = data.globalPropertyId;
             values.addAll(data.values);
             assignmentTime = data.assignmentTime;
+            locked = data.locked;
         }
 
         @Override
@@ -77,8 +79,11 @@ public final class GlobalPropertyDimension implements Dimension {
          *                           global property id was not assigned
          */
         public GlobalPropertyDimension build() {
-            validate();
-            return new GlobalPropertyDimension(new Data(data));
+            if (!data.locked) {
+                validate();
+            }
+            ensureImmutability();
+            return new GlobalPropertyDimension(data);
         }
 
         private void validate() {
@@ -94,6 +99,7 @@ public final class GlobalPropertyDimension implements Dimension {
          *                           global property id is null
          */
         public Builder setGlobalPropertyId(GlobalPropertyId globalPropertyId) {
+            ensureDataMutability();
             validateGlobalPropertyId(globalPropertyId);
             data.globalPropertyId = globalPropertyId;
             return this;
@@ -106,6 +112,7 @@ public final class GlobalPropertyDimension implements Dimension {
          *                           the value is null
          */
         public Builder addValue(Object value) {
+            ensureDataMutability();
             validateValue(value);
             data.values.add(value);
             return this;
@@ -115,10 +122,23 @@ public final class GlobalPropertyDimension implements Dimension {
          * Sets the assignment time. Defaults to zero.
          */
         public Builder setAssignmentTime(double assignmentTime) {
+            ensureDataMutability();
             data.assignmentTime = assignmentTime;
             return this;
         }
 
+        private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
     }
 
     private final Data data;
@@ -202,5 +222,13 @@ public final class GlobalPropertyDimension implements Dimension {
         GlobalPropertyDimension other = (GlobalPropertyDimension) obj;
         return Objects.equals(data, other.data);
     }
+
+    /**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+    public Builder toBuilder() {
+		return new Builder(data);
+	}
 
 }

@@ -47,7 +47,7 @@ public class AT_SimulationStateCollector {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
 			result.setAlpha(alpha);
 			return result;
@@ -140,7 +140,7 @@ public class AT_SimulationStateCollector {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			BetaPluginDataBuilder result = new BetaPluginDataBuilder();
 			result.setBeta(beta);
 			return result;
