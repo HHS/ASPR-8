@@ -36,40 +36,49 @@ public final class AttributeDefinition {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((type == null) ? 0 : type.hashCode());
 			result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-			result = prime * result + (locked ? 1231 : 1237);
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (!(obj instanceof Data)) {
 				return false;
-			if (getClass() != obj.getClass())
-				return false;
+			}
 			Data other = (Data) obj;
-			if (type == null) {
-				if (other.type != null)
-					return false;
-			} else if (!type.equals(other.type))
-				return false;
 			if (defaultValue == null) {
-				if (other.defaultValue != null)
+				if (other.defaultValue != null) {
 					return false;
-			} else if (!defaultValue.equals(other.defaultValue))
+				}
+			} else if (!defaultValue.equals(other.defaultValue)) {
 				return false;
-			if (locked != other.locked)
+			}
+			if (type == null) {
+				if (other.type != null) {
+					return false;
+				}
+			} else if (!type.equals(other.type)) {
 				return false;
+			}
 			return true;
 		}
 
 		@Override
 		public String toString() {
-			return "Data [type=" + type + ", defaultValue=" + defaultValue + ", locked=" + locked + "]";
+			StringBuilder builder = new StringBuilder();
+			builder.append("Data [type=");
+			builder.append(type);
+			builder.append(", defaultValue=");
+			builder.append(defaultValue);
+			builder.append("]");
+			return builder.toString();
 		}
+
+		
 	}
 
 	/**
