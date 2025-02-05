@@ -19,15 +19,16 @@ public final class ReportItem {
 	 * Returns a new Builder instance.
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	@NotThreadSafe
 	public final static class Builder {
-		private Builder() {
+		private Data data;
+		
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private Data data = new Data();
 
 		/**
 		 * Adds an entry's string value to the report item. Order should follow the
@@ -36,6 +37,7 @@ public final class ReportItem {
 		 * @throws ContractException if the entry is null
 		 */
 		public Builder addValue(final Object entry) {
+			ensureDataMutability();
 			if (entry == null) {
 				throw new ContractException(ReportError.NULL_REPORT_ITEM_ENTRY);
 			}
@@ -66,7 +68,10 @@ public final class ReportItem {
 		 *                           </ul>
 		 */
 		public ReportItem build() {
-			validateData();
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
 			return new ReportItem(new Data(data));
 		}
 
@@ -75,6 +80,7 @@ public final class ReportItem {
 		 * the class type of the report that authors the report item.
 		 */
 		public Builder setReportLabel(ReportLabel reportLabel) {
+			ensureDataMutability();
 			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
@@ -82,19 +88,33 @@ public final class ReportItem {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
 	}
 
 	private static class Data {
 		private ReportLabel reportLabel;
 		private final List<String> values = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
-
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			reportLabel = data.reportLabel;
 			values.addAll(data.values);
+			locked = data.locked;
 		}
 
 		@Override
@@ -220,6 +240,10 @@ public final class ReportItem {
 			return false;
 		}
 		return true;
+	}
+
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

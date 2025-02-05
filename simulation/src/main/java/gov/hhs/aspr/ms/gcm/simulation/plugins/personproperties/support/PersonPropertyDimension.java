@@ -21,6 +21,7 @@ public class PersonPropertyDimension implements Dimension {
         private PersonPropertyId personPropertyId;
         private boolean trackTimes = false;
         private List<Object> values = new ArrayList<>();
+        private boolean locked;
 
         private Data() {
         }
@@ -29,6 +30,7 @@ public class PersonPropertyDimension implements Dimension {
             personPropertyId = data.personPropertyId;
             trackTimes = data.trackTimes;
             values.addAll(data.values);
+            locked = data.locked;
         }
 
         @Override
@@ -58,17 +60,18 @@ public class PersonPropertyDimension implements Dimension {
      * Returns a new builder for PersonPropertyDimension
      */
     public static Builder builder() {
-        return new Builder();
+        return new Builder(new Data());
     }
 
     /**
      * Builder class for PersonPropertyDimension
      */
     public static class Builder {
-        private Builder() {
-        }
+		private Builder(Data data) {
+			this.data = data;
+		}
 
-        private Data data = new Data();
+        private Data data;
 
         /**
          * Returns the PersonPropertyDimension from the collected data.
@@ -77,8 +80,11 @@ public class PersonPropertyDimension implements Dimension {
          *                           person property id was not assigned
          */
         public PersonPropertyDimension build() {
-            validate();
-            return new PersonPropertyDimension(new Data(data));
+            if (!data.locked) {
+                validate();
+            }
+            ensureImmutability();
+            return new PersonPropertyDimension(data);
         }
 
         private void validate() {
@@ -91,6 +97,7 @@ public class PersonPropertyDimension implements Dimension {
          * Sets the time tracking policy for this dimension. defaults to false
          */
         public Builder setTrackTimes(boolean trackTimes) {
+            ensureDataMutability();
             data.trackTimes = trackTimes;
             return this;
         }
@@ -102,6 +109,7 @@ public class PersonPropertyDimension implements Dimension {
          *                           id is null
          */
         public Builder setPersonPropertyId(PersonPropertyId personPropertyId) {
+            ensureDataMutability();
             validatePersonPropertyId(personPropertyId);
             data.personPropertyId = personPropertyId;
             return this;
@@ -114,10 +122,24 @@ public class PersonPropertyDimension implements Dimension {
          *                           the value is null
          */
         public Builder addValue(Object value) {
+            ensureDataMutability();
             validateValue(value);
             data.values.add(value);
             return this;
         }
+
+        private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
     }
 
     private final Data data;
@@ -213,5 +235,13 @@ public class PersonPropertyDimension implements Dimension {
         PersonPropertyDimension other = (PersonPropertyDimension) obj;
         return Objects.equals(data, other.data);
     }
+
+    /**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+    public Builder toBuilder() {
+		return new Builder(data);
+	}
 
 }

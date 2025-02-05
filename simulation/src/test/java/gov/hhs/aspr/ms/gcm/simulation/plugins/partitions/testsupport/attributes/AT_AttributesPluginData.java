@@ -123,8 +123,8 @@ public class AT_AttributesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = AttributesPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = AttributesPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		AttributesPluginData.Builder builder = AttributesPluginData.builder();
 		for (TestAttributeId testAttributeId : TestAttributeId.values()) {
 			builder.defineAttribute(testAttributeId, testAttributeId.getAttributeDefinition());
@@ -132,7 +132,7 @@ public class AT_AttributesPluginData {
 		AttributesPluginData attributesPluginData = builder.build();
 		
 		//show that the returned clone builder will build an identical instance if no mutations are made
-		AttributesPluginData.Builder cloneBuilder = attributesPluginData.getCloneBuilder();
+		AttributesPluginData.Builder cloneBuilder = attributesPluginData.toBuilder();
 		assertNotNull(cloneBuilder);				
 		assertEquals(attributesPluginData,cloneBuilder.build());
 		
@@ -140,12 +140,12 @@ public class AT_AttributesPluginData {
 		//show that the clone builder builds a distinct instance if any mutation is made
 		
 		//defineAttribute
-		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder = attributesPluginData.toBuilder();
 		cloneBuilder.defineAttribute(TestAttributeId.getUnknownAttributeId(), TestAttributeId.DOUBLE_0.getAttributeDefinition());
 		assertNotEquals(attributesPluginData,cloneBuilder.build());
 		
 		//setPersonAttributeValue
-		cloneBuilder = attributesPluginData.getCloneBuilder();
+		cloneBuilder = attributesPluginData.toBuilder();
 		cloneBuilder.setPersonAttributeValue(new PersonId(123),TestAttributeId.BOOLEAN_0, false);
 		assertNotEquals(attributesPluginData,cloneBuilder.build());
 	}
@@ -445,12 +445,12 @@ public class AT_AttributesPluginData {
 
 		// expected value validated by inspection
 		String expectedValue = "AttributesPluginData [data=Data [attributeDefinitions={"
-				+ "INT_0=AttributeDefinition [type=class java.lang.Integer, defaultValue=0], INT_1=AttributeDefinition "
-				+ "[type=class java.lang.Integer, defaultValue=1], DOUBLE_0=AttributeDefinition "
-				+ "[type=class java.lang.Double, defaultValue=0.0], DOUBLE_1=AttributeDefinition "
-				+ "[type=class java.lang.Double, defaultValue=1.0], BOOLEAN_0=AttributeDefinition "
-				+ "[type=class java.lang.Boolean, defaultValue=false], BOOLEAN_1=AttributeDefinition "
-				+ "[type=class java.lang.Boolean, defaultValue=true]}, " + "personAttributeValues={"
+				+ "INT_0=AttributeDefinition [data=Data [type=class java.lang.Integer, defaultValue=0]], INT_1=AttributeDefinition "
+				+ "[data=Data [type=class java.lang.Integer, defaultValue=1]], DOUBLE_0=AttributeDefinition "
+				+ "[data=Data [type=class java.lang.Double, defaultValue=0.0]], DOUBLE_1=AttributeDefinition "
+				+ "[data=Data [type=class java.lang.Double, defaultValue=1.0]], BOOLEAN_0=AttributeDefinition "
+				+ "[data=Data [type=class java.lang.Boolean, defaultValue=false]], BOOLEAN_1=AttributeDefinition "
+				+ "[data=Data [type=class java.lang.Boolean, defaultValue=true]]}, " + "personAttributeValues={"
 				+ "INT_0=[null, 329463590, null, -1510862987, null, -1603186760], "
 				+ "INT_1=[null, -1442300487, null, -2051859947, null, 1530603228], "
 				+ "DOUBLE_0=[null, 0.17274128088453056, null, 0.2724502050653399, null, 0.8295695456845824], "

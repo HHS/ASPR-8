@@ -18,15 +18,17 @@ public class MaterialsProducerConstructionData {
 		private List<Object> values = new ArrayList<>();
 		private Map<MaterialsProducerPropertyId, Object> propertyValues = new LinkedHashMap<>();
 		private Map<ResourceId, Long> resourceLevels = new LinkedHashMap<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialsProducerId = data.materialsProducerId;
 			values.addAll(data.values);
 			propertyValues.putAll(data.propertyValues);
 			resourceLevels.putAll(data.resourceLevels);
+			locked = data.locked;
 		}
 	}
 
@@ -34,16 +36,17 @@ public class MaterialsProducerConstructionData {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Static builder class for {@link MaterialsProducerConstructionData}
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -59,8 +62,11 @@ public class MaterialsProducerConstructionData {
 		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerConstructionData build() {
-			validate();
-			return new MaterialsProducerConstructionData(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new MaterialsProducerConstructionData(data);
 		}
 
 		/**
@@ -70,6 +76,7 @@ public class MaterialsProducerConstructionData {
 		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
+			ensureDataMutability();
 			if (materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 			}
@@ -85,6 +92,7 @@ public class MaterialsProducerConstructionData {
 		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(MaterialsError.NULL_AUXILIARY_DATA);
 			}
@@ -108,6 +116,7 @@ public class MaterialsProducerConstructionData {
 		 */
 		public Builder setMaterialsProducerPropertyValue(MaterialsProducerPropertyId materialsProducerPropertyId,
 				Object value) {
+			ensureDataMutability();
 			if (materialsProducerPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -135,7 +144,7 @@ public class MaterialsProducerConstructionData {
 		 *                           </ul>
 		 */
 		public Builder setResourceLevel(ResourceId resourceId, long level) {
-
+			ensureDataMutability();
 			if (resourceId == null) {
 				throw new ContractException(ResourceError.NULL_RESOURCE_ID);
 			}
@@ -149,6 +158,18 @@ public class MaterialsProducerConstructionData {
 			return this;
 		}
 
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
 	}
 
 	private final Data data;
@@ -191,5 +212,13 @@ public class MaterialsProducerConstructionData {
 	 */
 	public Map<ResourceId, Long> getResourceLevels() {
 		return Collections.unmodifiableMap(data.resourceLevels);
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 }
