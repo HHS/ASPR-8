@@ -212,7 +212,11 @@ public final class PersonPropertyDefinitionInitialization {
 	public boolean trackTimes() {
 		return data.trackTimes;
 	}
-
+	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	public Builder toBuilder() {
 		return new Builder(data);
 	}

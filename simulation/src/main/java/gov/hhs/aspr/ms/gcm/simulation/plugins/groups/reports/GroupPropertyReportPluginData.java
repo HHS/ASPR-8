@@ -278,6 +278,10 @@ public final class GroupPropertyReportPluginData extends PeriodicReportPluginDat
 		return new Builder(new Data());
 	}
 
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	@Override
 	public Builder toBuilder() {
 		return new Builder(data);

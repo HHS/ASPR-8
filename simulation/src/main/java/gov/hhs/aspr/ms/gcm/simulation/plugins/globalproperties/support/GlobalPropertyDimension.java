@@ -223,6 +223,10 @@ public final class GlobalPropertyDimension implements Dimension {
         return Objects.equals(data, other.data);
     }
 
+    /**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
     public Builder toBuilder() {
 		return new Builder(data);
 	}

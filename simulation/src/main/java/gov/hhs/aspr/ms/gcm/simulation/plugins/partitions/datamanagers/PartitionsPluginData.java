@@ -21,12 +21,17 @@ public final class PartitionsPluginData implements PluginData {
 		private Builder(Data data) {
 			this.data = data;
 		}
-
+		private void validate() {
+			
+		}
 		/**
 		 * Returns the {@link PartitionsPluginData} from the collected information
 		 * supplied to this builder.
 		 */
 		public PartitionsPluginData build() {
+			if (!data.locked) {
+				validate();
+			}
 			ensureImmutability();
 			return new PartitionsPluginData(data);
 		}
@@ -143,6 +148,10 @@ public final class PartitionsPluginData implements PluginData {
 		return StandardVersioning.checkVersionSupported(version);
 	}
 	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	@Override
 	public Builder toBuilder() {
 		return new Builder(data);

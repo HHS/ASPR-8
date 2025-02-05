@@ -147,6 +147,10 @@ public final class GroupPopulationReportPluginData extends PeriodicReportPluginD
 		return StandardVersioning.checkVersionSupported(version);
 	}
 	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	@Override
 	public Builder toBuilder() {
 		return new Builder(data);
