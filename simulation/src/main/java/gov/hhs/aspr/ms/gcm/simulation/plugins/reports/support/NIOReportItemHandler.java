@@ -17,7 +17,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
@@ -25,10 +25,11 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	 */
 	public static class Builder {
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
-		private Data data = new Data();
+		private Data data;
 
 		/**
 		 * Add a report by class reference to the NIOReportItemHandler
@@ -48,6 +49,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 			if (reportLabel == null) {
 				throw new ContractException(ReportError.NULL_REPORT_LABEL);
 			}
+			ensureDataMutability();
 			data.reportMap.put(reportLabel, path);
 			return this;
 		}
@@ -56,6 +58,7 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 			if (path == null) {
 				throw new ContractException(ReportError.NULL_REPORT_PATH);
 			}
+			ensureDataMutability();
 			data.experimentReportPath = path;
 			return this;
 		}
@@ -82,14 +85,18 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 *                           reports are assigned the same path
 		 */
 		public NIOReportItemHandler build() {
-			validate();
-			return new NIOReportItemHandler(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new NIOReportItemHandler(data);
 		}
 
 		/**
 		 * Sets the display of experiment columns in all reports. Default value is true.
 		 */
 		public Builder setDisplayExperimentColumnsInReports(final boolean displayExperimentColumnsInReports) {
+			ensureDataMutability();
 			data.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
 			return this;
 		}
@@ -98,8 +105,22 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		 * Sets the delimiter for an experiment.
 		 */
 		public Builder setDelimiter(String delimiter) {
+			ensureDataMutability();
 			data.delimiter = delimiter;
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -108,15 +129,17 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		private Path experimentReportPath;
 		private final Map<ReportLabel, Path> reportMap = new LinkedHashMap<>();
 		private boolean displayExperimentColumnsInReports = DEFAULT_DISPLAY_EXPERIMENT_COLUMNS;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			delimiter = data.delimiter;
 			reportMap.putAll(data.reportMap);
 			experimentReportPath = data.experimentReportPath;
 			displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
+			locked = data.locked;
 		}
 
 	}
@@ -127,19 +150,10 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	private LineWriter experimentLineWriter;
 
-	private final Map<ReportLabel, Path> reportMap;
-
-	private final String delimiter;
-
-	private final boolean displayExperimentColumnsInReports;
-
-	private final Path experimentReportPath;
+	private final Data data;
 
 	private NIOReportItemHandler(final Data data) {
-		delimiter = data.delimiter;
-		reportMap = data.reportMap;
-		experimentReportPath = data.experimentReportPath;
-		displayExperimentColumnsInReports = data.displayExperimentColumnsInReports;
+		this.data = data;
 	}
 
 	private void closeExperiment(ExperimentContext experimentContext) {
@@ -179,12 +193,12 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 			ReportHeader reportHeader) {
 		final ReportLabel reportLabel = reportHeader.getReportLabel();
 
-		if (reportMap.get(reportLabel) != null) {
+		if (data.reportMap.get(reportLabel) != null) {
 			synchronized (lineWriterMap) {
 				LineWriter lineWriterUnsafe = lineWriterMap.get(reportLabel);
 				if (lineWriterUnsafe == null) {
-					lineWriterUnsafe = new LineWriter(experimentContext, reportMap.get(reportLabel),
-							displayExperimentColumnsInReports, delimiter);
+					lineWriterUnsafe = new LineWriter(experimentContext, data.reportMap.get(reportLabel),
+							data.displayExperimentColumnsInReports, data.delimiter);
 					lineWriterMap.put(reportLabel, lineWriterUnsafe);
 				}
 			}
@@ -194,8 +208,8 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	}
 
 	private void openExperiment(ExperimentContext experimentContext) {
-		if (experimentReportPath != null) {
-			this.experimentLineWriter = new LineWriter(experimentContext, experimentReportPath, true, delimiter);
+		if (data.experimentReportPath != null) {
+			this.experimentLineWriter = new LineWriter(experimentContext, data.experimentReportPath, true, data.delimiter);
 			this.experimentLineWriter.writeExperimentReportHeader(experimentContext);
 		}
 	}
@@ -233,4 +247,11 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 		experimentContext.subscribeToOutput(ReportHeader.class, this::handleReportHeader);
 	}
 
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
+	}
 }

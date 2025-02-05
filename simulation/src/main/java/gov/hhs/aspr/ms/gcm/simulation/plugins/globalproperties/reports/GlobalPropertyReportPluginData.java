@@ -241,7 +241,7 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 	}
 
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(data);
 	}
 

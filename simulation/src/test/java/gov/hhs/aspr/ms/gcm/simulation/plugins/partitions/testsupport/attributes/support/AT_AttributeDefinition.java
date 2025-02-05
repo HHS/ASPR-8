@@ -116,7 +116,7 @@ public final class AT_AttributeDefinition {
 	@UnitTestMethod(target = AttributeDefinition.class,name = "toString", args = {})
 	public void testToString() {
 		AttributeDefinition attributeDefinition = AttributeDefinition.builder().setDefaultValue(12).setType(Integer.class).build();
-		String expectedValue = "AttributeDefinition [type=class java.lang.Integer, defaultValue=12]";
+		String expectedValue = "AttributeDefinition [data=Data [type=class java.lang.Integer, defaultValue=12]]";
 		assertEquals(expectedValue, attributeDefinition.toString());
 	}
 

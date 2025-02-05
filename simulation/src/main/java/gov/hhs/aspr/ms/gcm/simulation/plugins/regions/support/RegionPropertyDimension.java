@@ -21,6 +21,7 @@ public class RegionPropertyDimension implements Dimension {
         private RegionId regionId;
         private RegionPropertyId regionPropertyId;
         private List<Object> values = new ArrayList<>();
+        private boolean locked;
 
         private Data() {
         }
@@ -29,6 +30,7 @@ public class RegionPropertyDimension implements Dimension {
             regionPropertyId = data.regionPropertyId;
             regionId = data.regionId;
             values.addAll(data.values);
+            locked = data.locked;
         }
 
         @Override
@@ -58,7 +60,7 @@ public class RegionPropertyDimension implements Dimension {
      * Returns a new builder for RegionPropertyDimension
      */
     public static Builder builder() {
-        return new Builder();
+        return new Builder(new Data());
     }
 
     /**
@@ -66,10 +68,11 @@ public class RegionPropertyDimension implements Dimension {
      */
     public static class Builder {
 
-        private Builder() {
-        }
+		private Builder(Data data) {
+			this.data = data;
+		}
 
-        private Data data = new Data();
+        private Data data;
 
         /**
          * Returns the RegionPropertyDimension from the collected data.
@@ -83,7 +86,10 @@ public class RegionPropertyDimension implements Dimension {
          *                           </ul>
          */
         public RegionPropertyDimension build() {
-            validate();
+            if (!data.locked) {
+                validate();
+            }
+            ensureImmutability();
             return new RegionPropertyDimension(data);
         }
 
@@ -107,6 +113,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           </ul>
          */
         public Builder setRegionId(RegionId RegionId) {
+            ensureDataMutability();
             validateRegionId(RegionId);
             data.regionId = RegionId;
             return this;
@@ -122,6 +129,7 @@ public class RegionPropertyDimension implements Dimension {
          *                           </ul>
          */
         public Builder setRegionPropertyId(RegionPropertyId RegionPropertyId) {
+            ensureDataMutability();
             validateRegionPropertyId(RegionPropertyId);
             data.regionPropertyId = RegionPropertyId;
             return this;
@@ -137,10 +145,24 @@ public class RegionPropertyDimension implements Dimension {
          *                           </ul>
          */
         public Builder addValue(Object value) {
+            ensureDataMutability();
             validateValue(value);
             data.values.add(value);
             return this;
         }
+
+        private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
     }
 
     @Override
@@ -224,5 +246,13 @@ public class RegionPropertyDimension implements Dimension {
         RegionPropertyDimension other = (RegionPropertyDimension) obj;
         return Objects.equals(data, other.data);
     }
+
+    /**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+    public Builder toBuilder() {
+		return new Builder(data);
+	}
 
 }

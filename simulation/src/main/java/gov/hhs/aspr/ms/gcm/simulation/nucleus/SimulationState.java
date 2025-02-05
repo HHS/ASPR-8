@@ -16,13 +16,15 @@ public class SimulationState {
     private static class Data {
         private double startTime = 0;
         private LocalDate baseDate = LocalDate.now();
+        private boolean locked;
 
-        public Data() {
+        private Data() {
         }
 
-        public Data(Data data) {
+        private Data(Data data) {
             startTime = data.startTime;
             baseDate = data.baseDate;
+            locked = data.locked;
         }
 
         @Override
@@ -79,7 +81,7 @@ public class SimulationState {
             this.data = data;
         }
 
-        private void validate() {
+        private void validateData() {
 
         }
 
@@ -87,14 +89,18 @@ public class SimulationState {
          * Builds the SimulationState from the collected data
          */
         public SimulationState build() {
-            validate();
-            return new SimulationState(new Data(data));
+            if (!data.locked) {
+                validateData();
+            }
+            ensureImmutability();
+            return new SimulationState(data);
         }
 
         /**
          * Sets the time (floating point days) of simulation start. Defaults to zero.
          */
         public Builder setStartTime(double startTime) {
+            ensureDataMutability();
             data.startTime = startTime;
             return this;
         }
@@ -107,6 +113,7 @@ public class SimulationState {
          *                           base date is null
          */
         public Builder setBaseDate(LocalDate localDate) {
+            ensureDataMutability();
             if (localDate == null) {
                 throw new ContractException(NucleusError.NULL_BASE_DATE);
             }
@@ -114,6 +121,18 @@ public class SimulationState {
             return this;
         }
 
+        private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
     }
 
     /**
@@ -172,5 +191,13 @@ public class SimulationState {
         }
         return true;
     }
+
+    /**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+    public Builder toBuilder() {
+		return new Builder(data);
+	}
 
 }

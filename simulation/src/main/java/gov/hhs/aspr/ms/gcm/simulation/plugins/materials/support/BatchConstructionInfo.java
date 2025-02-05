@@ -26,15 +26,17 @@ public class BatchConstructionInfo {
 		private MaterialId materialId;
 		private double amount;
 		private Map<BatchPropertyId, Object> propertyValues = new LinkedHashMap<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialsProducerId = data.materialsProducerId;
 			materialId = data.materialId;
 			amount = data.amount;
 			propertyValues.putAll(data.propertyValues);
+			locked = data.locked;
 		}
 	}
 
@@ -42,16 +44,17 @@ public class BatchConstructionInfo {
 	 * Returns a builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * A builder class for BatchConstructionInfo
 	 */
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -75,8 +78,11 @@ public class BatchConstructionInfo {
 		 *                           </ul>
 		 */
 		public BatchConstructionInfo build() {
-			validate();
-			return new BatchConstructionInfo(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new BatchConstructionInfo(data);
 		}
 
 		/**
@@ -91,6 +97,7 @@ public class BatchConstructionInfo {
 		 *                           </ul>
 		 */
 		public Builder setAmount(double amount) {
+			ensureDataMutability();
 			if (amount < 0) {
 				throw new ContractException(MaterialsError.NEGATIVE_MATERIAL_AMOUNT);
 			}
@@ -108,6 +115,7 @@ public class BatchConstructionInfo {
 		 *                           material id is null
 		 */
 		public Builder setMaterialId(MaterialId materialId) {
+			ensureDataMutability();
 			if (materialId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIAL_ID);
 			}
@@ -125,6 +133,7 @@ public class BatchConstructionInfo {
 		 *                           </ul>
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
+			ensureDataMutability();
 			if (materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 			}
@@ -144,6 +153,7 @@ public class BatchConstructionInfo {
 		 *                           </ul>
 		 */
 		public Builder setPropertyValue(BatchPropertyId batchPropertyId, Object propertyValue) {
+			ensureDataMutability();
 			if (batchPropertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -152,6 +162,19 @@ public class BatchConstructionInfo {
 			}
 			data.propertyValues.put(batchPropertyId, propertyValue);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -181,6 +204,14 @@ public class BatchConstructionInfo {
 	 */
 	public Map<BatchPropertyId, Object> getPropertyValues() {
 		return Collections.unmodifiableMap(data.propertyValues);
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

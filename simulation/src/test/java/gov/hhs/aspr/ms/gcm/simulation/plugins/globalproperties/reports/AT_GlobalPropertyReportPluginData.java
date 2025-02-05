@@ -350,8 +350,8 @@ public class AT_GlobalPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
 
@@ -373,7 +373,7 @@ public class AT_GlobalPropertyReportPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		GlobalPropertyReportPluginData.Builder cloneBuilder = globalPropertyReportPluginData.getCloneBuilder();
+		GlobalPropertyReportPluginData.Builder cloneBuilder = globalPropertyReportPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
@@ -381,22 +381,22 @@ public class AT_GlobalPropertyReportPluginData {
 		// made
 
 		// includeGlobalProperty
-		cloneBuilder = globalPropertyReportPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertyReportPluginData.toBuilder();
 		cloneBuilder.includeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE);
 		assertNotEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
 		// excludeGlobalProperty
-		cloneBuilder = globalPropertyReportPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertyReportPluginData.toBuilder();
 		cloneBuilder.excludeGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_1_BOOLEAN_MUTABLE);
 		assertNotEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
 		// setDefaultInclusion
-		cloneBuilder = globalPropertyReportPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertyReportPluginData.toBuilder();
 		cloneBuilder.setDefaultInclusion(false);
 		assertNotEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
 		// setDefaultInclusion
-		cloneBuilder = globalPropertyReportPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertyReportPluginData.toBuilder();
 		cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 		assertNotEquals(globalPropertyReportPluginData, cloneBuilder.build());
 
@@ -468,7 +468,7 @@ public class AT_GlobalPropertyReportPluginData {
 
 			// change the default inclusion
 			globalPropertyReportPluginData2 = //
-					globalPropertyReportPluginData1.getCloneBuilder()//
+					globalPropertyReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
@@ -476,7 +476,7 @@ public class AT_GlobalPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			globalPropertyReportPluginData2 = //
-					globalPropertyReportPluginData1.getCloneBuilder()//
+					globalPropertyReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
@@ -486,7 +486,7 @@ public class AT_GlobalPropertyReportPluginData {
 				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getIncludedProperties().iterator()
 						.next();
 				globalPropertyReportPluginData2 = //
-						globalPropertyReportPluginData1.getCloneBuilder()//
+						globalPropertyReportPluginData1.toBuilder()//
 								.excludeGlobalProperty(globalPropertyId)//
 								.build();
 				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
@@ -496,7 +496,7 @@ public class AT_GlobalPropertyReportPluginData {
 				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getExcludedProperties().iterator()
 						.next();
 				globalPropertyReportPluginData2 = //
-						globalPropertyReportPluginData1.getCloneBuilder()//
+						globalPropertyReportPluginData1.toBuilder()//
 								.includeGlobalProperty(globalPropertyId)//
 								.build();
 				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
