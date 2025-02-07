@@ -334,6 +334,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -418,6 +419,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -506,6 +508,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -627,6 +630,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -724,6 +728,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -823,6 +828,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -1021,7 +1027,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test7' should appear in the specified directory." + "\n");
-			sb.append("\t" + "A file named 'report1.csv' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "A file named 'report1.csv' should be in the 'test7' folder." + "\n");
 			sb.append("\t" + "The file's data should be comma separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");
