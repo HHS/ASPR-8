@@ -16,6 +16,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinePlugin;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.NIOReportItemHandler;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPlugin;
@@ -29,7 +30,7 @@ public final class Example_12 {
 
 	/* start code_ref=reports_plugin_family_dimension|code_cap=The family dimension set the maximum family size to four values.*/
 	private static Dimension getFamilySizeDimension() {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Integer> maxFamilySizes = new ArrayList<>();
 
@@ -38,8 +39,9 @@ public final class Example_12 {
 		maxFamilySizes.add(7);
 		maxFamilySizes.add(10);
 
-		for (Integer maxFamilySize : maxFamilySizes) {
-			builder.addLevel((context) -> {
+		for (int i = 0; i < maxFamilySizes.size(); i++) {
+			Integer maxFamilySize = maxFamilySizes.get(i);
+			builder.addValue("Level_" + i, (context) -> {
 				FamilyPluginData.Builder pluginDataBuilder = context
 						.getPluginDataBuilder(FamilyPluginData.Builder.class);
 				pluginDataBuilder.setMaxFamilySize(maxFamilySize);
@@ -53,7 +55,8 @@ public final class Example_12 {
 
 		builder.addMetaDatum("max_family_size");//
 
-		return builder.build();
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 
 	}
 	/* end */

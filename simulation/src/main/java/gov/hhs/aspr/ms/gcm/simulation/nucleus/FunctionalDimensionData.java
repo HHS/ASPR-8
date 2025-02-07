@@ -16,7 +16,6 @@ public final class FunctionalDimensionData extends DimensionData {
      * A builder class for FunctionalDimensionData
      */
     public static class Builder {
-
         private Data data;
 
         private Builder(Data data) {
@@ -30,7 +29,6 @@ public final class FunctionalDimensionData extends DimensionData {
          *                           <ul>
          *                           <li>{@linkplain NucleusError#DUPLICATE_DIMENSION_LEVEL_NAME}
          *                           if there are duplicate dimension level names</li>
-         *                           <li>todo:add other exceptions if applicable</li>
          *                           </ul>
          */
         public FunctionalDimensionData build() {
@@ -127,8 +125,6 @@ public final class FunctionalDimensionData extends DimensionData {
         }
 
         private void validateData() {
-            // todo: any null checks we want to do here?
-
             Map<String, MutableInteger> levelNamesMap = new LinkedHashMap<>();
 
             for (String levelName : data.levelNames) {

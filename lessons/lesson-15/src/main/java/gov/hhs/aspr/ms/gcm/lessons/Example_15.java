@@ -18,6 +18,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.vaccine.VaccinePlugin;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.PeoplePlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeoplePluginData;
@@ -140,7 +141,7 @@ public final class Example_15 {
 	}
 
 	private Dimension getStochasticsDimension(int replicationCount, long seed) {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
@@ -150,7 +151,7 @@ public final class Example_15 {
 		}
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
-			builder.addLevel((context) -> {
+			builder.addValue("Level_" + i, (context) -> {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context
 						.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
@@ -168,7 +169,8 @@ public final class Example_15 {
 		builder.addMetaDatum("seed index");//
 		builder.addMetaDatum("seed value");//
 
-		return builder.build();
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 	/* end */
 

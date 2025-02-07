@@ -12,6 +12,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsPluginData;
@@ -39,7 +40,7 @@ public final class Example_11_A {
 
 	/* start code_ref=stochastics_plugin_policy_dimension|code_cap=The policy dimension has four levels for the infection rates that trigger school closure.*/
 	private static Dimension getPolicyDimension() {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
@@ -47,8 +48,9 @@ public final class Example_11_A {
 		schoolClosingInfectionRates.add(0.15);
 		schoolClosingInfectionRates.add(0.20);
 
-		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
-			builder.addLevel((context) -> {
+		for (int i = 0; i < schoolClosingInfectionRates.size(); i++) {
+			Double schoolClosingInfectionRate = schoolClosingInfectionRates.get(i);
+			builder.addValue("Level_" + i, (context) -> {
 				PolicyPluginData.Builder pluginDataBuilder = context
 						.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
@@ -62,7 +64,8 @@ public final class Example_11_A {
 
 		builder.addMetaDatum("school_closing_infection_rate");//
 
-		return builder.build();
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 
 	}
 	/* end */

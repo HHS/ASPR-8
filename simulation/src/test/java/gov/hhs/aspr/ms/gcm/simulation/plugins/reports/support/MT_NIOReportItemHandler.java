@@ -21,6 +21,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentStatusConsole;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestPlugin;
@@ -351,32 +352,35 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				}).build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				}).build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -432,38 +436,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		FunctionalDimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		FunctionalDimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xyz")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				})//
 				.build();//
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -518,38 +524,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xyz")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				})//
 				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -637,34 +645,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();//
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();//
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -728,34 +742,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -820,32 +840,38 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				}).build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//

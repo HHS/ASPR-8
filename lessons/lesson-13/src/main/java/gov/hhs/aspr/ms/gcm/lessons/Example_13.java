@@ -15,6 +15,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
@@ -68,10 +69,11 @@ public final class Example_13 {
 		alphaBetaPairs.add(new Pair<>(45.0, 70.0));
 		alphaBetaPairs.add(new Pair<>(80.0, 100.0));
 
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();
 
-		for (Pair<Double, Double> pair : alphaBetaPairs) {
-			dimensionBuilder.addLevel((c) -> {
+		for (int i = 0; i < alphaBetaPairs.size(); i++) {
+			Pair<Double, Double> pair = alphaBetaPairs.get(i);
+			dimensionDataBuilder.addValue("Level_" + i, (c) -> {
 				List<String> result = new ArrayList<>();
 				GlobalPropertiesPluginData.Builder builder = c
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
@@ -83,10 +85,11 @@ public final class Example_13 {
 			});
 		}
 
-		dimensionBuilder.addMetaDatum(GlobalProperty.ALPHA.toString());
-		dimensionBuilder.addMetaDatum(GlobalProperty.BETA.toString());
+		dimensionDataBuilder.addMetaDatum(GlobalProperty.ALPHA.toString());
+		dimensionDataBuilder.addMetaDatum(GlobalProperty.BETA.toString());
 
-		return dimensionBuilder.build();
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	/* end */
