@@ -2,162 +2,39 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.datamanagers.PersonPropertiesPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyError;
-import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
  * Dimension implementation for setting a person property to a list of values in
  * a person properties plugin data.
  */
-public class PersonPropertyDimension implements Dimension {
+public final class PersonPropertyDimension implements Dimension {
 
-    private static class Data {
-        private PersonPropertyId personPropertyId;
-        private boolean trackTimes = false;
-        private List<Object> values = new ArrayList<>();
-        private boolean locked;
+    private final PersonPropertyDimensionData personPropertyDimensionData;
 
-        private Data() {
-        }
-
-        private Data(Data data) {
-            personPropertyId = data.personPropertyId;
-            trackTimes = data.trackTimes;
-            values.addAll(data.values);
-            locked = data.locked;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(personPropertyId, values, trackTimes);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            Data other = (Data) obj;
-            return Objects.equals(personPropertyId, other.personPropertyId) && Objects.equals(values, other.values)
-                    && trackTimes == other.trackTimes;
-        }
-
+    public PersonPropertyDimension(PersonPropertyDimensionData personPropertyDimensionData) {
+        this.personPropertyDimensionData = personPropertyDimensionData;
     }
 
-    /**
-     * Returns a new builder for PersonPropertyDimension
-     */
-    public static Builder builder() {
-        return new Builder(new Data());
-    }
-
-    /**
-     * Builder class for PersonPropertyDimension
-     */
-    public static class Builder {
-		private Builder(Data data) {
-			this.data = data;
-		}
-
-        private Data data;
-
-        /**
-         * Returns the PersonPropertyDimension from the collected data.
-         * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
-         *                           person property id was not assigned
-         */
-        public PersonPropertyDimension build() {
-            if (!data.locked) {
-                validate();
-            }
-            ensureImmutability();
-            return new PersonPropertyDimension(data);
-        }
-
-        private void validate() {
-            if (data.personPropertyId == null) {
-                throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-            }
-        }
-
-        /**
-         * Sets the time tracking policy for this dimension. defaults to false
-         */
-        public Builder setTrackTimes(boolean trackTimes) {
-            ensureDataMutability();
-            data.trackTimes = trackTimes;
-            return this;
-        }
-
-        /**
-         * Sets the person property for the dimension. Defaults to null.
-         * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_ID} if the
-         *                           id is null
-         */
-        public Builder setPersonPropertyId(PersonPropertyId personPropertyId) {
-            ensureDataMutability();
-            validatePersonPropertyId(personPropertyId);
-            data.personPropertyId = personPropertyId;
-            return this;
-        }
-
-        /**
-         * Adds a value to the dimension.
-         * 
-         * @throws ContractException {@linkplain PropertyError#NULL_PROPERTY_VALUE} if
-         *                           the value is null
-         */
-        public Builder addValue(Object value) {
-            ensureDataMutability();
-            validateValue(value);
-            data.values.add(value);
-            return this;
-        }
-
-        private void ensureDataMutability() {
-			if (data.locked) {
-				data = new Data(data);
-				data.locked = false;
-			}
-		}
-
-		private void ensureImmutability() {
-			if (!data.locked) {
-				data.locked = true;
-			}
-		}
-    }
-
-    private final Data data;
-
-    private PersonPropertyDimension(Data data) {
-        this.data = data;
+    public DimensionData getDimensionData() {
+        return personPropertyDimensionData;
     }
 
     @Override
     public List<String> getExperimentMetaData() {
         List<String> result = new ArrayList<>();
-        result.add(data.personPropertyId.toString());
+        result.add(personPropertyDimensionData.getPersonPropertyId().toString());
         return result;
     }
 
     @Override
     public int levelCount() {
-        return data.values.size();
+        return personPropertyDimensionData.getLevelCount();
     }
 
     @Override
@@ -166,82 +43,35 @@ public class PersonPropertyDimension implements Dimension {
                 .getPluginData(PersonPropertiesPluginData.class);
         PersonPropertiesPluginData.Builder builder = dimensionContext
                 .getPluginDataBuilder(PersonPropertiesPluginData.Builder.class);
-        Object value = data.values.get(level);
+
+        Object value = personPropertyDimensionData.getValue(level);
+        PersonPropertyId personPropertyId = personPropertyDimensionData.getPersonPropertyId();
 
         PropertyDefinition existingPropDef = personPropertiesPluginData
-                .getPersonPropertyDefinition(data.personPropertyId);
-        double existingTime = personPropertiesPluginData.getPropertyDefinitionTime(data.personPropertyId);
+                .getPersonPropertyDefinition(personPropertyId);
 
-        PropertyDefinition newPropDef = PropertyDefinition.builder().setDefaultValue(value)
-                .setPropertyValueMutability(existingPropDef.propertyValuesAreMutable())
-                .setType(existingPropDef.getType()).build();
+        PropertyDefinition newPropDef = PropertyDefinition.builder()//
+                .setDefaultValue(value)//
+                .setPropertyValueMutability(existingPropDef.propertyValuesAreMutable())//
+                .setType(existingPropDef.getType())//
+                .build();
 
-        builder.definePersonProperty(data.personPropertyId, newPropDef, existingTime, data.trackTimes);
+        double existingTime = personPropertiesPluginData
+                .getPropertyDefinitionTime(personPropertyId);
+
+        boolean trackTimes = personPropertyDimensionData.getTrackTimes();
+
+        builder.definePersonProperty(personPropertyId, newPropDef, existingTime, trackTimes);
 
         List<String> result = new ArrayList<>();
+        String levelName = personPropertyDimensionData.getLevelName(level);
+        result.add(levelName);
         result.add(value.toString());
         return result;
     }
 
-    /**
-     * Returns the time tracking policy for this dimension
-     */
-    public boolean getTrackTimes() {
-        return data.trackTimes;
-    }
-
-    /**
-     * Returns the person property id for this dimension
-     */
-    public PersonPropertyId getPersonPropertyId() {
-        return data.personPropertyId;
-    }
-
-    /**
-     * Returns the ordered list of person property values for this dimension
-     */
-    public List<Object> getValues() {
-        return new ArrayList<>(data.values);
-    }
-
-    private static void validateValue(Object value) {
-        if (value == null) {
-            throw new ContractException(PropertyError.NULL_PROPERTY_VALUE);
-        }
-    }
-
-    private static void validatePersonPropertyId(PersonPropertyId personPropertyId) {
-        if (personPropertyId == null) {
-            throw new ContractException(PropertyError.NULL_PROPERTY_ID);
-        }
-    }
-
     @Override
-    public int hashCode() {
-        return Objects.hash(data);
+    public String toString() {
+        return "PersonPropertyDimension [personPropertyDimensionData=" + personPropertyDimensionData + "]";
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        PersonPropertyDimension other = (PersonPropertyDimension) obj;
-        return Objects.equals(data, other.data);
-    }
-
-    /**
-	 * Returns a new builder instance that is pre-filled with the current state of
-	 * this instance.
-	 */
-    public Builder toBuilder() {
-		return new Builder(data);
-	}
-
 }
