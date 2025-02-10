@@ -27,7 +27,7 @@ import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 public class AT_PersonPropertyDimensionData {
 
     @Test
-    @UnitTestMethod(target = PersonPropertyDimensionData.Builder.class, name = "addValue", args = { Object.class })
+    @UnitTestMethod(target = PersonPropertyDimensionData.Builder.class, name = "addValue", args = { String.class, Object.class })
     public void testAddValue() {
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3468803942988565031L);
