@@ -11,6 +11,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 /* start code_ref=experiments_example_steamlined_dimension|code_cap=Example 9 C improves on the creation of the R0 dimension.*/
@@ -35,7 +36,7 @@ public final class Example_9_C {
 	}
 
 	private static Dimension getDimension() {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Double> r0Values = new ArrayList<>();
 		r0Values.add(0.5);
@@ -45,8 +46,9 @@ public final class Example_9_C {
 		r0Values.add(2.0);
 		r0Values.add(2.5);
 
-		for (Double r0 : r0Values) {
-			builder.addLevel((context) -> {
+		for (int i = 0; i < r0Values.size(); i++) {
+			Double r0 = r0Values.get(i);
+			builder.addValue("Level_" + i, (context) -> {
 				DiseasePluginData.Builder pluginDataBuilder = context
 						.getPluginDataBuilder(DiseasePluginData.Builder.class);
 				pluginDataBuilder.setR0(r0);
@@ -57,7 +59,8 @@ public final class Example_9_C {
 		}
 		builder.addMetaDatum("r0");//
 
-		return builder.build();
+		FunctionalDimensionData dimensionData =  builder.build();
+		return new FunctionalDimension(dimensionData);
 	}
 	/* end */
 

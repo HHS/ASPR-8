@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class Example_10_B {
@@ -37,15 +38,16 @@ public final class Example_10_B {
 
 	private static Dimension getR0Dimension() {
 
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Double> r0Values = new ArrayList<>();
 		r0Values.add(1.5);
 		r0Values.add(2.0);
 		r0Values.add(2.5);
 
-		for (Double r0 : r0Values) {
-			builder.addLevel((context) -> {
+		for (int i = 0; i < r0Values.size(); i++) {
+			Double r0 = r0Values.get(i);
+			builder.addValue("Level_" + i, (context) -> {
 				DiseasePluginData.Builder pluginDataBuilder = context
 						.getPluginDataBuilder(DiseasePluginData.Builder.class);
 				pluginDataBuilder.setR0(r0);
@@ -54,14 +56,15 @@ public final class Example_10_B {
 				return result;
 			});//
 		}
+
 		builder.addMetaDatum("r0");//
 
-		return builder.build();
-
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	private static Dimension getPolicyDimension() {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
@@ -71,9 +74,13 @@ public final class Example_10_B {
 		localVaccineDistributionValues.add(false);
 		localVaccineDistributionValues.add(true);
 
-		for (Boolean localVaccineDistribution : localVaccineDistributionValues) {
-			for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
-				builder.addLevel((context) -> {
+		for (int i = 0; i < localVaccineDistributionValues.size(); i++) {
+			Boolean localVaccineDistribution = localVaccineDistributionValues.get(i);
+
+			for (int j = 0; j < schoolClosingInfectionRates.size(); j++) {
+				Double schoolClosingInfectionRate = schoolClosingInfectionRates.get(j);
+
+				builder.addValue("Level_" + i + j, (context) -> {
 					PolicyPluginData.Builder pluginDataBuilder = context
 							.getPluginDataBuilder(PolicyPluginData.Builder.class);
 					pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
@@ -86,10 +93,12 @@ public final class Example_10_B {
 				});//
 			}
 		}
+
 		builder.addMetaDatum("school_closing_infection_rate");//
 		builder.addMetaDatum("distribute_vaccine_locally");//
 
-		return builder.build();
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 
 	}
 

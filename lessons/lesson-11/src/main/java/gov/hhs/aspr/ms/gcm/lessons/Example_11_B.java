@@ -14,6 +14,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsPluginData;
@@ -40,7 +41,7 @@ public final class Example_11_B {
 	}
 
 	private static Dimension getPolicyDimension() {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		List<Double> schoolClosingInfectionRates = new ArrayList<>();
 		schoolClosingInfectionRates.add(0.05);
@@ -48,8 +49,9 @@ public final class Example_11_B {
 		schoolClosingInfectionRates.add(0.15);
 		schoolClosingInfectionRates.add(0.20);
 
-		for (Double schoolClosingInfectionRate : schoolClosingInfectionRates) {
-			builder.addLevel((context) -> {
+		for (int i = 0; i < schoolClosingInfectionRates.size(); i++) {
+			Double schoolClosingInfectionRate = schoolClosingInfectionRates.get(i);
+			builder.addValue("Level_" + i, (context) -> {
 				PolicyPluginData.Builder pluginDataBuilder = context
 						.getPluginDataBuilder(PolicyPluginData.Builder.class);
 				pluginDataBuilder.setSchoolClosingInfectionRate(schoolClosingInfectionRate);
@@ -63,13 +65,13 @@ public final class Example_11_B {
 
 		builder.addMetaDatum("school_closing_infection_rate");//
 
-		return builder.build();
-
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	/* start code_ref=stochastics_plugin_stochastics_dimension|code_cap=The stochastics dimension introduces three random seeds that will be used in creating the scenarios.  Note that seeds are generated outside of the levels within the dimension. */
 	private static Dimension getStochasticsDimension(long seed) {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();//
 
 		Random random = new Random(seed);
 
@@ -79,7 +81,7 @@ public final class Example_11_B {
 		}
 
 		IntStream.range(0, seedValues.size()).forEach((i) -> {
-			builder.addLevel((context) -> {
+			builder.addValue("Level_" + i, (context) -> {
 				StochasticsPluginData.Builder stochasticsPluginDataBuilder = context
 						.getPluginDataBuilder(StochasticsPluginData.Builder.class);
 				long seedValue = seedValues.get(i);
@@ -97,7 +99,8 @@ public final class Example_11_B {
 		builder.addMetaDatum("seed index");//
 		builder.addMetaDatum("seed value");//
 
-		return builder.build();
+		FunctionalDimensionData functionalDimensionData = builder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	/* end */

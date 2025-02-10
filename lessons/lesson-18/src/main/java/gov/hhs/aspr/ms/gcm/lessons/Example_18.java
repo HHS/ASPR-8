@@ -19,6 +19,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
@@ -174,9 +175,9 @@ public final class Example_18 {
 	/* end */
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
@@ -186,17 +187,18 @@ public final class Example_18 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum(header);//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum(header);//
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	private Dimension getHospitalStayDurationDimension() {
 		double[] minValues = { 2.0, 5.0 };
 		double[] maxValues = { 5.0, 10.0 };
 
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
@@ -209,9 +211,11 @@ public final class Example_18 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum("hospital_stay_duration_min");//
-		dimensionBuilder.addMetaDatum("hospital_stay_duration_max");//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum("hospital_stay_duration_min");//
+		dimensionDataBuilder.addMetaDatum("hospital_stay_duration_max");//
+
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	private Dimension getAntiviralDosesPerPersonDimension() {
@@ -229,9 +233,9 @@ public final class Example_18 {
 		double[] minValues = { 0.30, 5.0 };
 		double[] maxValues = { 0.50, 0.75 };
 
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, minValues.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double minValue = minValues[i];
@@ -244,9 +248,11 @@ public final class Example_18 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum("hospital_success_without_antiviral");//
-		dimensionBuilder.addMetaDatum("hospital_success_with_antiviral");//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum("hospital_success_without_antiviral");//
+		dimensionDataBuilder.addMetaDatum("hospital_success_with_antiviral");//
+		
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	private Dimension getAntiviralSuccessRateDimension() {

@@ -7,11 +7,12 @@ public class MT_ExperimentStatusConsole {
 	}
 
 	private Dimension getDimension(int size) {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();
 		for (int i = 0; i < size; i++) {
-			builder.addLevel((c) -> new ArrayList<>());
+			builder.addValue("Level_" + i, (c) -> new ArrayList<>());
 		}
-		return builder.build();
+		FunctionalDimensionData dimData = builder.build();
+		return new FunctionalDimension(dimData);
 	}
 
 	private void execute() {
@@ -21,9 +22,9 @@ public class MT_ExperimentStatusConsole {
 		 * tests for reporting scenario progress
 		 */
 
-		// testSetReportScenarioProgressDefault();
-		// testSetReportScenarioProgressOn();
-		// testSetReportScenarioProgressOff();
+		// testSetReportScenarioProgress_Default();
+		// testSetReportScenarioProgress_On();
+		// testSetReportScenarioProgress_Off();
 
 		/*
 		 * tests for immediate error reporting

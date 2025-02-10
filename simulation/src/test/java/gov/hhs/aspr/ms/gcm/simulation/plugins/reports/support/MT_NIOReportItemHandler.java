@@ -21,6 +21,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentStatusConsole;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestActorPlan;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestPlugin;
@@ -333,6 +334,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -351,32 +353,35 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				}).build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				}).build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -414,6 +419,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -432,38 +438,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		FunctionalDimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		FunctionalDimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xyz")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				})//
 				.build();//
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -500,6 +508,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -518,38 +527,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xyz")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
 				})//
 				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -619,6 +630,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -637,34 +649,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();//
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();//
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -710,6 +728,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -728,34 +747,40 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
 				})//
-				.addLevel((c) -> {
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				})//
 				.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -803,6 +828,7 @@ public final class MT_NIOReportItemHandler {
 		ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 		reportHeaderBuilder.add("alpha");
 		reportHeaderBuilder.add("beta");
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		ReportHeader reportHeader = reportHeaderBuilder.build();
 
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
@@ -820,32 +846,38 @@ public final class MT_NIOReportItemHandler {
 			}
 		}));
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("xxx")//
-				.addLevel((c) -> {
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("a");
 					return result;
-				}).addLevel((c) -> {
+				}).addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("b");
 					return result;
 				}).build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
-				.addMetaDatum("xyz").addLevel((c) -> {
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
+				.addMetaDatum("xyz")//
+				.addValue("Level_0", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("x");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_1", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("y");
 					return result;
-				}).addLevel((c) -> {
+				})//
+				.addValue("Level_2", (c) -> {
 					List<String> result = new ArrayList<>();
 					result.add("z");
 					return result;
-				}).build();
+				})//
+				.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
@@ -995,7 +1027,7 @@ public final class MT_NIOReportItemHandler {
 			sb.append("\t" + "After all 6 scenarios are completed, the console should show 1" + "\n");
 			sb.append("\t" + "value. You should observe a SUCCEEDED value of 6." + "\n");
 			sb.append("\t" + "A folder named 'test7' should appear in the specified directory." + "\n");
-			sb.append("\t" + "A file named 'report1.csv' should be in the 'test1' folder." + "\n");
+			sb.append("\t" + "A file named 'report1.csv' should be in the 'test7' folder." + "\n");
 			sb.append("\t" + "The file's data should be comma separated." + "\n");
 			sb.append("\t" + "The header of the text file should have the following columns: " + "\n");
 			sb.append("\t" + "\t" + "scenario" + "\n");

@@ -30,11 +30,12 @@ public class MT_Experiment {
 	private final Object LOCK = new Object();
 
 	private Dimension getDimension(final int dimSize) {
-		FunctionalDimension.Builder builder = FunctionalDimension.builder();
+		FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();
 		for (int i = 0; i < dimSize; i++) {
-			builder.addLevel((c) -> new ArrayList<>());
+			builder.addValue("Level_" + i, (c) -> new ArrayList<>());
 		}
-		return builder.build();
+		FunctionalDimensionData dimData = builder.build();
+		return new FunctionalDimension(dimData);
 	}
 
 	private void excecute() {
