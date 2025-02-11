@@ -17,13 +17,13 @@ public class AT_StandardVersioning {
     @Test
     @UnitTestField(target = StandardVersioning.class, name = "VERSION")
     public void testVersion() {
-        assertEquals("4.2.0", StandardVersioning.VERSION);
+        assertEquals("4.4.0", StandardVersioning.VERSION);
     }
 
     @Test
     @UnitTestMethod(target = StandardVersioning.class, name = "checkVersionSupported", args = { String.class })
     public void testCheckVersionSupported() {
-        List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+        List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
         for (String version : versions) {
             assertTrue(StandardVersioning.checkVersionSupported(version));

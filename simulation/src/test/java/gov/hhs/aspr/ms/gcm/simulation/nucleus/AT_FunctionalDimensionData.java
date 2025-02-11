@@ -218,7 +218,7 @@ public class AT_FunctionalDimensionData {
     @Test
     @UnitTestMethod(target = FunctionalDimensionData.class, name = "checkVersionSupported", args = { String.class })
     public void testCheckVersionSupported() {
-        List<String> versions = Arrays.asList("", StandardVersioning.VERSION);
+        List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
         for (String version : versions) {
             assertTrue(FunctionalDimensionData.checkVersionSupported(version));

@@ -424,7 +424,7 @@ public class AT_RegionPropertyReportPluginData {
 	@UnitTestMethod(target = RegionPropertyReportPluginData.class, name = "checkVersionSupported", args = {
 			String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(RegionPropertyReportPluginData.checkVersionSupported(version));
