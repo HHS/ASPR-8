@@ -222,10 +222,7 @@ public final class DataManagerContext {
 	 *                           requested if they are contained in different
 	 *                           plugins. Within a plugin, access is granted for
 	 *                           data manager types that were added by their plugin
-	 *                           before the invoking instance.<i>
-	 * 
-	 * 
-	 * 
+	 *                           before the invoking instance.</li>
 	 *                           </ul>
 	 * 
 	 */
