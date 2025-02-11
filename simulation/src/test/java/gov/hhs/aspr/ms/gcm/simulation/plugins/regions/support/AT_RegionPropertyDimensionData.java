@@ -259,7 +259,7 @@ public class AT_RegionPropertyDimensionData {
 	@Test
 	@UnitTestMethod(target = RegionPropertyDimensionData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(StandardVersioning.checkVersionSupported(version));

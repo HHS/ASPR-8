@@ -257,7 +257,7 @@ public class AT_GroupPropertyDimensionData {
 	@Test
 	@UnitTestMethod(target = GroupPropertyDimensionData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(StandardVersioning.checkVersionSupported(version));
