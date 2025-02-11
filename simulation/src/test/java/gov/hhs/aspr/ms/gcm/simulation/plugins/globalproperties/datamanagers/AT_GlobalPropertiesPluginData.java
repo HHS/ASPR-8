@@ -532,8 +532,8 @@ public class AT_GlobalPropertiesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9113503089361379130L);
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -549,7 +549,7 @@ public class AT_GlobalPropertiesPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		GlobalPropertiesPluginData.Builder cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
+		GlobalPropertiesPluginData.Builder cloneBuilder = globalPropertiesPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(globalPropertiesPluginData, cloneBuilder.build());
 
@@ -557,13 +557,13 @@ public class AT_GlobalPropertiesPluginData {
 		// made
 
 		// defineGlobalProperty
-		cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertiesPluginData.toBuilder();
 		cloneBuilder.defineGlobalProperty(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE,
 				TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE.getPropertyDefinition(), 0.0);
 		assertNotEquals(globalPropertiesPluginData, cloneBuilder.build());
 
 		// setGlobalPropertyValue
-		cloneBuilder = globalPropertiesPluginData.getCloneBuilder();
+		cloneBuilder = globalPropertiesPluginData.toBuilder();
 		cloneBuilder.setGlobalPropertyValue(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE, 2.3, 1.0);
 		assertNotEquals(globalPropertiesPluginData, cloneBuilder.build());
 	}
@@ -739,7 +739,7 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(GlobalPropertiesPluginData.checkVersionSupported(version));

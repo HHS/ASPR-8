@@ -20,7 +20,7 @@ import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 public class StatelessVaccineReport extends PeriodicReport {
 
 	private static enum VaccineStatus {
-		FAMILY_NONE("unvacinated_families"), FAMILY_PARTIAL("partially_vaccinated_families"),
+		FAMILY_NONE("unvaccinated_families"), FAMILY_PARTIAL("partially_vaccinated_families"),
 		FAMILY_FULL("fully_vaccinated_families"), INDIVIDUAL_NONE("unvaccinated_individuals"),
 		INDIVIDUAL_FULL("vaccinated_individuals");
 
@@ -36,7 +36,11 @@ public class StatelessVaccineReport extends PeriodicReport {
 	}
 
 	@Override
-	/* start code_ref=reports_plugin_stateless_vaccine_flush|code_cap= The stateless vaccine report does not process any events. Instead, it periodically derives the report item by polling the relevant data managers.*/
+	/*
+	 * start code_ref=reports_plugin_stateless_vaccine_flush|code_cap= The stateless
+	 * vaccine report does not process any events. Instead, it periodically derives
+	 * the report item by polling the relevant data managers.
+	 */
 	protected void flush(ReportContext reportContext) {
 
 		FamilyDataManager familyDataManager = reportContext.getDataManager(FamilyDataManager.class);
@@ -61,16 +65,9 @@ public class StatelessVaccineReport extends PeriodicReport {
 				statusMap.get(vaccineStatus).increment();
 			}
 		}
-		ReportHeader.Builder headerBuilder = ReportHeader.builder();
-		addTimeFieldHeaders(headerBuilder);
-		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
-			headerBuilder.add(vaccineStatus.description);
-		}
-		ReportHeader reportHeader = headerBuilder.build();
 
 		ReportItem.Builder builder = ReportItem.builder()//
-				.setReportLabel(getReportLabel())//
-				.setReportHeader(reportHeader);
+				.setReportLabel(getReportLabel());
 		fillTimeFields(builder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
 			int value = statusMap.get(vaccineStatus).getValue();
@@ -114,5 +111,17 @@ public class StatelessVaccineReport extends PeriodicReport {
 			result = VaccineStatus.INDIVIDUAL_NONE;
 		}
 		return result;
+	}
+
+	@Override
+	protected void prepare(ReportContext reportContext) {
+		ReportHeader.Builder headerBuilder = ReportHeader.builder();
+		addTimeFieldHeaders(headerBuilder);
+		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
+			headerBuilder.add(vaccineStatus.description);
+		}
+		ReportHeader reportHeader = headerBuilder.build();
+
+		reportContext.releaseOutput(reportHeader);
 	}
 }

@@ -22,6 +22,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
@@ -213,9 +214,9 @@ public final class Example_17 {
 	}
 
 	private Dimension getGlobalPropertyDimension(GlobalPropertyId globalPropertyId, String header, double[] values) {
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double value = values[i];
@@ -225,8 +226,10 @@ public final class Example_17 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum(header);//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum(header);//
+
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	/*
@@ -297,9 +300,9 @@ public final class Example_17 {
 		double[] cohortValues = { 0.001, 0.01, 0.1 };
 		double[] closureValues = { 0.01, 0.02, 0.2 };
 
-		FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, cohortValues.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				double cohortValue = cohortValues[i];
@@ -312,9 +315,11 @@ public final class Example_17 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum("school_cohort_infection_threshold");//
-		dimensionBuilder.addMetaDatum("school_closure_infection_threshold");//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum("school_cohort_infection_threshold");//
+		dimensionDataBuilder.addMetaDatum("school_closure_infection_threshold");//
+
+		FunctionalDimensionData functionalDimensionData = dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 }

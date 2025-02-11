@@ -72,28 +72,28 @@ public class AT_RegionPropertyReport {
 
 		// add the global property definitions
 
-		RegionsPluginData.Builder initialDatabuilder = RegionsPluginData.builder();
+		RegionsPluginData.Builder initialDataBuilder = RegionsPluginData.builder();
 
 		RegionId regionA = new SimpleRegionId("Region_A");
-		initialDatabuilder.addRegion(regionA);
+		initialDataBuilder.addRegion(regionA);
 		RegionId regionB = new SimpleRegionId("Region_B");
-		initialDatabuilder.addRegion(regionB);
+		initialDataBuilder.addRegion(regionB);
 		RegionId regionC = new SimpleRegionId("Region_C");
-		initialDatabuilder.addRegion(regionC);
+		initialDataBuilder.addRegion(regionC);
 
 		RegionPropertyId regionPropertyId_1 = new SimpleRegionPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_1, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_1, propertyDefinition);
 
 		RegionPropertyId regionPropertyId_2 = new SimpleRegionPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_2, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_2, propertyDefinition);
 
 		RegionPropertyId regionPropertyId_3 = new SimpleRegionPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_3, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_3, propertyDefinition);
 
-		RegionsPluginData regionsPluginData = initialDatabuilder.build();
+		RegionsPluginData regionsPluginData = initialDataBuilder.build();
 
 		/*
 		 * Define two more properties that are not included in the plugin data
@@ -205,7 +205,6 @@ public class AT_RegionPropertyReport {
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
-		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -384,7 +383,7 @@ public class AT_RegionPropertyReport {
 
 		RegionPropertyReportPluginData regionPropertyReportPluginData = //
 				RegionPropertyReportPluginData	.builder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
+												.setReportLabel(REPORT_LABEL)//
 												.build();
 
 		Factory factory = RegionsTestPluginFactory//
@@ -398,12 +397,8 @@ public class AT_RegionPropertyReport {
 																.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
-		assertFalse(outputItems.isEmpty());
-
-		for (ReportItem reportItem : outputItems.keySet()) {
-			assertEquals(REPORT_HEADER, reportItem.getReportHeader());
-		}
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test
@@ -532,28 +527,28 @@ public class AT_RegionPropertyReport {
 
 		// add the global property definitions
 
-		RegionsPluginData.Builder initialDatabuilder = RegionsPluginData.builder();
+		RegionsPluginData.Builder initialDataBuilder = RegionsPluginData.builder();
 
 		RegionId regionA = new SimpleRegionId("Region_A");
-		initialDatabuilder.addRegion(regionA);
+		initialDataBuilder.addRegion(regionA);
 		RegionId regionB = new SimpleRegionId("Region_B");
-		initialDatabuilder.addRegion(regionB);
+		initialDataBuilder.addRegion(regionB);
 		RegionId regionC = new SimpleRegionId("Region_C");
-		initialDatabuilder.addRegion(regionC);
+		initialDataBuilder.addRegion(regionC);
 
 		RegionPropertyId regionPropertyId_1 = new SimpleRegionPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_1, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_1, propertyDefinition);
 
 		RegionPropertyId regionPropertyId_2 = new SimpleRegionPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_2, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_2, propertyDefinition);
 
 		RegionPropertyId regionPropertyId_3 = new SimpleRegionPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineRegionProperty(regionPropertyId_3, propertyDefinition);
+		initialDataBuilder.defineRegionProperty(regionPropertyId_3, propertyDefinition);
 
-		RegionsPluginData regionsPluginData = initialDatabuilder.build();
+		RegionsPluginData regionsPluginData = initialDataBuilder.build();
 
 		/*
 		 * Define two more properties that are not included in the plugin data
@@ -645,5 +640,5 @@ public class AT_RegionPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("region").add("property").add("value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("time").add("region").add("property").add("value").build();
 }

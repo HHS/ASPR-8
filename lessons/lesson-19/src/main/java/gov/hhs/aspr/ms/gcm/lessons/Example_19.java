@@ -23,6 +23,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentParameterData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.GlobalPropertiesPlugin;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesPluginData;
@@ -170,9 +171,9 @@ public final class Example_19 {
 
 	private Dimension getGlobalPropertyDimension(final GlobalPropertyId globalPropertyId, final String header,
 			final Object[] values) {
-		final FunctionalDimension.Builder dimensionBuilder = FunctionalDimension.builder();//
+		final FunctionalDimensionData.Builder dimensionDataBuilder = FunctionalDimensionData.builder();//
 		IntStream.range(0, values.length).forEach((i) -> {
-			dimensionBuilder.addLevel((context) -> {
+			dimensionDataBuilder.addValue("Level_" + i, (context) -> {
 				final GlobalPropertiesPluginData.Builder builder = context
 						.getPluginDataBuilder(GlobalPropertiesPluginData.Builder.class);
 				final Object value = values[i];
@@ -182,8 +183,9 @@ public final class Example_19 {
 				return result;
 			});//
 		});
-		dimensionBuilder.addMetaDatum(header);//
-		return dimensionBuilder.build();
+		dimensionDataBuilder.addMetaDatum(header);//
+		FunctionalDimensionData functionalDimensionData= dimensionDataBuilder.build();
+		return new FunctionalDimension(functionalDimensionData);
 	}
 
 	private Plugin getGroupsPlugin() {

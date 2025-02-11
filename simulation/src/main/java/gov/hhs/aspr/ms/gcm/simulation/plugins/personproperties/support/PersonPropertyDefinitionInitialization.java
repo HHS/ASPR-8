@@ -25,15 +25,17 @@ public final class PersonPropertyDefinitionInitialization {
 		private PropertyDefinition propertyDefinition;
 		private boolean trackTimes;
 		private List<Pair<PersonId, Object>> propertyValues = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			personPropertyId = data.personPropertyId;
 			propertyDefinition = data.propertyDefinition;
 			propertyValues.addAll(data.propertyValues);
 			trackTimes = data.trackTimes;
+			locked = data.locked;
 		}
 	}
 
@@ -47,18 +49,18 @@ public final class PersonPropertyDefinitionInitialization {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	/**
 	 * Builder class for a PersonPropertyDefinitionInitialization
 	 */
 	public final static class Builder {
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
-
-		private Data data = new Data();
 
 		private void validate() {
 			if (data.propertyDefinition == null) {
@@ -95,8 +97,11 @@ public final class PersonPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public PersonPropertyDefinitionInitialization build() {
-			validate();
-			return new PersonPropertyDefinitionInitialization(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new PersonPropertyDefinitionInitialization(data);
 		}
 
 		/**
@@ -106,6 +111,7 @@ public final class PersonPropertyDefinitionInitialization {
 		 *                           property id is null
 		 */
 		public Builder setPersonPropertyId(PersonPropertyId propertyId) {
+			ensureDataMutability();
 			if (propertyId == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_ID);
 			}
@@ -120,6 +126,7 @@ public final class PersonPropertyDefinitionInitialization {
 		 *                           if the property definition is null
 		 */
 		public Builder setPropertyDefinition(PropertyDefinition propertyDefinition) {
+			ensureDataMutability();
 			if (propertyDefinition == null) {
 				throw new ContractException(PropertyError.NULL_PROPERTY_DEFINITION);
 			}
@@ -131,6 +138,7 @@ public final class PersonPropertyDefinitionInitialization {
 		 * Sets the time tracking policy. Defaults to false;
 		 */
 		public Builder setTrackTimes(boolean trackTimes) {
+			ensureDataMutability();
 			data.trackTimes = trackTimes;
 			return this;
 		}
@@ -147,6 +155,7 @@ public final class PersonPropertyDefinitionInitialization {
 		 *                           </ul>
 		 */
 		public Builder addPropertyValue(PersonId personId, Object value) {
+			ensureDataMutability();
 			if (personId == null) {
 				throw new ContractException(PersonError.NULL_PERSON_ID);
 			}
@@ -156,6 +165,19 @@ public final class PersonPropertyDefinitionInitialization {
 
 			data.propertyValues.add(new Pair<>(personId, value));
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 
 	}
@@ -189,6 +211,14 @@ public final class PersonPropertyDefinitionInitialization {
 	 */
 	public boolean trackTimes() {
 		return data.trackTimes;
+	}
+	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

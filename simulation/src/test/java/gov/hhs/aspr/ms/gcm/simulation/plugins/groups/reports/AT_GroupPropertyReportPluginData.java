@@ -526,8 +526,8 @@ public class AT_GroupPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
 
@@ -561,7 +561,7 @@ public class AT_GroupPropertyReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			GroupPropertyReportPluginData.Builder cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			GroupPropertyReportPluginData.Builder cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(groupPropertyReportPluginData, cloneBuilder.build());
 
@@ -569,29 +569,29 @@ public class AT_GroupPropertyReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("report label"));
 			assertNotEquals(groupPropertyReportPluginData, cloneBuilder.build());
 
 			// setDefaultInclusion
-			cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			cloneBuilder.setDefaultInclusion(!groupPropertyReportPluginData.getDefaultInclusionPolicy());
 			assertNotEquals(groupPropertyReportPluginData, cloneBuilder.build());
 
 			// setReportPeriod
-			cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportPeriod(reportPeriod.next());
 			assertNotEquals(groupPropertyReportPluginData, cloneBuilder.build());
 
 			// includeGroupProperty
-			cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			cloneBuilder.includeGroupProperty(
 					TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK.getTestGroupTypeId(),
 					TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK);
 			assertNotEquals(groupPropertyReportPluginData, cloneBuilder.build());
 
 			// includeGroupProperty
-			cloneBuilder = groupPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPropertyReportPluginData.toBuilder();
 			cloneBuilder.excludeGroupProperty(
 					TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK.getTestGroupTypeId(),
 					TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK);
@@ -616,7 +616,7 @@ public class AT_GroupPropertyReportPluginData {
 	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "checkVersionSupported", args = {
 			String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(GroupPropertyReportPluginData.checkVersionSupported(version));
@@ -671,7 +671,7 @@ public class AT_GroupPropertyReportPluginData {
 
 			// change the default inclusion
 			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.getCloneBuilder()//
+					groupPropertyReportPluginData1.toBuilder()//
 							.setDefaultInclusion(!defaultInclusion)//
 							.build();
 			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
@@ -681,7 +681,7 @@ public class AT_GroupPropertyReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.getCloneBuilder()//
+					groupPropertyReportPluginData1.toBuilder()//
 							.setReportPeriod(reportPeriod)//
 							.build();
 			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
@@ -689,7 +689,7 @@ public class AT_GroupPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.getCloneBuilder()//
+					groupPropertyReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
@@ -700,7 +700,7 @@ public class AT_GroupPropertyReportPluginData {
 					GroupPropertyId testGroupPropertyId = groupPropertyReportPluginData1
 							.getIncludedProperties(testGroupTypeId).iterator().next();
 					groupPropertyReportPluginData2 = //
-							groupPropertyReportPluginData1.getCloneBuilder()//
+							groupPropertyReportPluginData1.toBuilder()//
 									.excludeGroupProperty(testGroupTypeId, testGroupPropertyId)//
 									.build();
 					assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
@@ -712,7 +712,7 @@ public class AT_GroupPropertyReportPluginData {
 					GroupPropertyId testGroupPropertyId = groupPropertyReportPluginData1
 							.getExcludedProperties(testGroupTypeId).iterator().next();
 					groupPropertyReportPluginData2 = //
-							groupPropertyReportPluginData1.getCloneBuilder()//
+							groupPropertyReportPluginData1.toBuilder()//
 									.includeGroupProperty(testGroupTypeId, testGroupPropertyId)//
 									.build();
 					assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);

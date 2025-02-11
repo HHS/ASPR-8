@@ -10,6 +10,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.policy.PolicyPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Dimension;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Experiment;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimension;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.FunctionalDimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin;
 
 public final class Example_9_B {
@@ -44,8 +45,8 @@ public final class Example_9_B {
 
 		Plugin modelPlugin = ModelPlugin.getModelPlugin();
 
-		Dimension dimension = FunctionalDimension.builder()//
-				.addLevel((context) -> {
+		FunctionalDimensionData dimensionData = FunctionalDimensionData.builder()//
+				.addValue("Level_0", (context) -> {
 					DiseasePluginData.Builder builder = context.getPluginDataBuilder(DiseasePluginData.Builder.class);
 					double r0 = 2.5;
 					builder.setR0(r0);
@@ -54,7 +55,7 @@ public final class Example_9_B {
 					return result;
 				})//
 
-				.addLevel((context) -> {
+				.addValue("Level_1", (context) -> {
 					DiseasePluginData.Builder builder = context.getPluginDataBuilder(DiseasePluginData.Builder.class);
 					double r0 = 2.0;
 					builder.setR0(r0);
@@ -66,6 +67,7 @@ public final class Example_9_B {
 				.addMetaDatum("r0")//
 
 				.build();
+		Dimension dimension = new FunctionalDimension(dimensionData);
 
 		Experiment.builder()//
 				.addPlugin(diseasePlugin)//

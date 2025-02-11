@@ -82,8 +82,8 @@ public class AT_ResourcePropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcePropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = ResourcePropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -99,7 +99,7 @@ public class AT_ResourcePropertyReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			ResourcePropertyReportPluginData.Builder cloneBuilder = resourcePropertyReportPluginData.getCloneBuilder();
+			ResourcePropertyReportPluginData.Builder cloneBuilder = resourcePropertyReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(resourcePropertyReportPluginData, cloneBuilder.build());
 
@@ -107,7 +107,7 @@ public class AT_ResourcePropertyReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = resourcePropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = resourcePropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(resourcePropertyReportPluginData, cloneBuilder.build());
 
@@ -128,7 +128,7 @@ public class AT_ResourcePropertyReportPluginData {
 	@UnitTestMethod(target = ResourcePropertyReportPluginData.class, name = "checkVersionSupported", args = {
 			String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(ResourcePropertyReportPluginData.checkVersionSupported(version));
@@ -164,7 +164,7 @@ public class AT_ResourcePropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			resourcePropertyReportPluginData2 = //
-					resourcePropertyReportPluginData1	.getCloneBuilder()//
+					resourcePropertyReportPluginData1	.toBuilder()//
 														.setReportLabel(reportLabel)//
 														.build();
 			assertNotEquals(resourcePropertyReportPluginData2, resourcePropertyReportPluginData1);

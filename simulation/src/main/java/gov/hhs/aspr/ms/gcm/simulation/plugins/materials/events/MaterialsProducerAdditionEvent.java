@@ -19,13 +19,15 @@ public class MaterialsProducerAdditionEvent implements Event {
 	private static class Data {
 		private MaterialsProducerId materialsProducerId;
 		private List<Object> values = new ArrayList<>();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			materialsProducerId = data.materialsProducerId;
 			values.addAll(data.values);
+			locked = data.locked;
 		}
 	}
 
@@ -33,7 +35,7 @@ public class MaterialsProducerAdditionEvent implements Event {
 	 * Returns a new Builder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	private final Data data;
@@ -43,9 +45,10 @@ public class MaterialsProducerAdditionEvent implements Event {
 	 */
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		private void validate() {
@@ -61,8 +64,11 @@ public class MaterialsProducerAdditionEvent implements Event {
 		 *                           if the materials producer id was not set
 		 */
 		public MaterialsProducerAdditionEvent build() {
-			validate();
-			return new MaterialsProducerAdditionEvent(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new MaterialsProducerAdditionEvent(data);
 		}
 
 		/**
@@ -72,6 +78,7 @@ public class MaterialsProducerAdditionEvent implements Event {
 		 *                           if the materials producer id is null
 		 */
 		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
+			ensureDataMutability();
 			if (materialsProducerId == null) {
 				throw new ContractException(MaterialsError.NULL_MATERIALS_PRODUCER_ID);
 			}
@@ -87,11 +94,25 @@ public class MaterialsProducerAdditionEvent implements Event {
 		 *                           the value is null
 		 */
 		public Builder addValue(Object value) {
+			ensureDataMutability();
 			if (value == null) {
 				throw new ContractException(MaterialsError.NULL_AUXILIARY_DATA);
 			}
 			data.values.add(value);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -119,6 +140,14 @@ public class MaterialsProducerAdditionEvent implements Event {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

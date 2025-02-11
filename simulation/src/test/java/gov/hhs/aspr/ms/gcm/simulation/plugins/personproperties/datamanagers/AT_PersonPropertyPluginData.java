@@ -415,8 +415,8 @@ public class AT_PersonPropertyPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3666595741799189966L);
 		PersonPropertiesPluginData.Builder pluginBuilder = PersonPropertiesPluginData.builder();
 
@@ -444,7 +444,7 @@ public class AT_PersonPropertyPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		PersonPropertiesPluginData.Builder cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		PersonPropertiesPluginData.Builder cloneBuilder = personPropertiesPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(personPropertiesPluginData, cloneBuilder.build());
 
@@ -452,19 +452,19 @@ public class AT_PersonPropertyPluginData {
 		// made
 
 		// definePersonProperty
-		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		cloneBuilder = personPropertiesPluginData.toBuilder();
 		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK;
 		cloneBuilder.definePersonProperty(testPersonPropertyId, testPersonPropertyId.getPropertyDefinition(), 2.7,
 				false);
 		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
 
 		// setPersonPropertyTime
-		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		cloneBuilder = personPropertiesPluginData.toBuilder();
 		cloneBuilder.setPersonPropertyTime(new PersonId(0), testPersonPropertyId, 2.5);
 		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
 
 		// setPersonPropertyValue -- we know that the current value is true
-		cloneBuilder = personPropertiesPluginData.getCloneBuilder();
+		cloneBuilder = personPropertiesPluginData.toBuilder();
 		cloneBuilder.setPersonPropertyValue(new PersonId(0), testPersonPropertyId, false);
 		assertNotEquals(personPropertiesPluginData, cloneBuilder.build());
 
@@ -946,7 +946,7 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(PersonPropertiesPluginData.checkVersionSupported(version));

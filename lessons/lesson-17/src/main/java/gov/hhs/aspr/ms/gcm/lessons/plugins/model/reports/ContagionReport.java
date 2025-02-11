@@ -26,6 +26,8 @@ public final class ContagionReport {
 
 	public void init(ReportContext reportContext) {
 		reportContext.subscribeToSimulationClose(this::report);
+
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void report(ReportContext reportContext) {
@@ -59,7 +61,6 @@ public final class ContagionReport {
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
 			MutableInteger mutableInteger = countMap.get(i);
 			reportItemBuilder.setReportLabel(reportLabel);
-			reportItemBuilder.setReportHeader(reportHeader);
 			reportItemBuilder.addValue(i);
 			reportItemBuilder.addValue(mutableInteger.getValue());
 			ReportItem reportItem = reportItemBuilder.build();

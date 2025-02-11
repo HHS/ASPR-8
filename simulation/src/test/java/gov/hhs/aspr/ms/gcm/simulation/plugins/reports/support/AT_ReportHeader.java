@@ -31,7 +31,7 @@ public class AT_ReportHeader {
 		/*
 		 * Show that when no strings are added, the resulting header is empty
 		 */
-		List<String> headerStrings = ReportHeader.builder().build().getHeaderStrings();
+		List<String> headerStrings = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).build().getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertTrue(headerStrings.isEmpty());
 
@@ -39,14 +39,14 @@ public class AT_ReportHeader {
 		 * Show that the returned header is composed of the inputs in the
 		 * correct order
 		 */
-		ReportHeader reportHeader = ReportHeader.builder().add("alpha").add("beta").build();
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(2, headerStrings.size());
 		assertEquals("alpha", headerStrings.get(0));
 		assertEquals("beta", headerStrings.get(1));
 
-		reportHeader = ReportHeader.builder().add("beta").add("alpha").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("beta").add("alpha").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(2, headerStrings.size());
@@ -56,7 +56,7 @@ public class AT_ReportHeader {
 		/*
 		 * Show that repeated values are handled correctly
 		 */
-		reportHeader = ReportHeader.builder().add("alpha").add("beta").add("alpha").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").add("alpha").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(3, headerStrings.size());
@@ -70,16 +70,48 @@ public class AT_ReportHeader {
 	}
 
 	@Test
+	@UnitTestMethod(target = ReportHeader.Builder.class, name = "setReportLabel", args = { ReportLabel.class })
+	public void testSetReportLabel() {
+
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(reportLabel).build();
+
+		assertEquals(reportLabel, reportHeader.getReportLabel());
+
+		// precondition tests
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ReportItem.builder().setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ReportItem.class, name = "getReportLabel", args = {})
+	public void testGetReportLabel() {
+		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(reportLabel).build();
+
+		assertEquals(reportLabel, reportHeader.getReportLabel());
+	}
+
+	@Test
 	@UnitTestMethod(target = ReportHeader.Builder.class, name = "build", args = {})
 	public void testBuild() {
-		ReportHeader reportHeader = ReportHeader.builder().build();
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).build();
 		assertNotNull(reportHeader);
 
-		reportHeader = ReportHeader.builder().add("alpha").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").build();
 		assertNotNull(reportHeader);
 
-		reportHeader = ReportHeader.builder().add("alpha").add("beta").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").build();
 		assertNotNull(reportHeader);
+
+		// precondition tests
+		ContractException contractException = assertThrows(ContractException.class,
+				() -> ReportItem.builder().setReportLabel(null));
+		assertEquals(ReportError.NULL_REPORT_LABEL, contractException.getErrorType());
 	}
 
 	@Test
@@ -88,7 +120,7 @@ public class AT_ReportHeader {
 		/*
 		 * Show that when no strings are added, the resulting header is empty
 		 */
-		List<String> headerStrings = ReportHeader.builder().build().getHeaderStrings();
+		List<String> headerStrings = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).build().getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertTrue(headerStrings.isEmpty());
 
@@ -96,14 +128,14 @@ public class AT_ReportHeader {
 		 * Show that the returned header is composed of the inputs in the
 		 * correct order
 		 */
-		ReportHeader reportHeader = ReportHeader.builder().add("alpha").add("beta").build();
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(2, headerStrings.size());
 		assertEquals("alpha", headerStrings.get(0));
 		assertEquals("beta", headerStrings.get(1));
 
-		reportHeader = ReportHeader.builder().add("beta").add("alpha").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("beta").add("alpha").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(2, headerStrings.size());
@@ -113,7 +145,7 @@ public class AT_ReportHeader {
 		/*
 		 * Show that repeated values are handled correctly
 		 */
-		reportHeader = ReportHeader.builder().add("alpha").add("beta").add("alpha").build();
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").add("alpha").build();
 		headerStrings = reportHeader.getHeaderStrings();
 		assertNotNull(headerStrings);
 		assertEquals(3, headerStrings.size());
@@ -126,20 +158,20 @@ public class AT_ReportHeader {
 	@UnitTestMethod(target = ReportHeader.class, name = "toString", args = {})
 	public void testToString() {
 
-		ReportHeader reportHeader = ReportHeader.builder().build();
-		String expectedValue = "ReportHeader [headerStrings=[]]";
+		ReportHeader reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).build();
+		String expectedValue = "ReportHeader [reportLabel=SimpleReportLabel [value=test], headerStrings=[]]";
 		assertEquals(expectedValue, reportHeader.toString());
 
-		reportHeader = ReportHeader.builder().add("alpha").add("beta").build();
-		expectedValue = "ReportHeader [headerStrings=[alpha, beta]]";
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").build();
+		expectedValue = "ReportHeader [reportLabel=SimpleReportLabel [value=test], headerStrings=[alpha, beta]]";
 		assertEquals(expectedValue, reportHeader.toString());
 
-		reportHeader = ReportHeader.builder().add("beta").add("alpha").build();
-		expectedValue = "ReportHeader [headerStrings=[beta, alpha]]";
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("beta").add("alpha").build();
+		expectedValue = "ReportHeader [reportLabel=SimpleReportLabel [value=test], headerStrings=[beta, alpha]]";
 		assertEquals(expectedValue, reportHeader.toString());
 
-		reportHeader = ReportHeader.builder().add("alpha").add("beta").add("alpha").build();
-		expectedValue = "ReportHeader [headerStrings=[alpha, beta, alpha]]";
+		reportHeader = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("alpha").add("beta").add("alpha").build();
+		expectedValue = "ReportHeader [reportLabel=SimpleReportLabel [value=test], headerStrings=[alpha, beta, alpha]]";
 		assertEquals(expectedValue, reportHeader.toString());
 
 	}
@@ -175,7 +207,7 @@ public class AT_ReportHeader {
 				String randomHeaderString = generateRandomString(randomGenerator, length);
 				builder.add(randomHeaderString);
 			}
-			ReportHeader reportHeader = builder.build();
+			ReportHeader reportHeader = builder.setReportLabel(new SimpleReportLabel("test")).build();
 			hashCodeValues.add(reportHeader.hashCode());
 		}
 
@@ -193,8 +225,8 @@ public class AT_ReportHeader {
 				builder.add(randomHeaderString);
 				builder2.add(new String(randomHeaderString));
 			}
-			ReportHeader reportHeader = builder.build();
-			ReportHeader reportHeader2 = builder2.build();
+			ReportHeader reportHeader = builder.setReportLabel(new SimpleReportLabel("test")).build();
+			ReportHeader reportHeader2 = builder2.setReportLabel(new SimpleReportLabel("test")).build();
 
 			assertEquals(reportHeader.hashCode(), reportHeader2.hashCode());
 
@@ -206,12 +238,12 @@ public class AT_ReportHeader {
 	@UnitTestMethod(target = ReportHeader.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		
-		ReportHeader AB1 = ReportHeader.builder().add("A").add("B").build();
-		ReportHeader BA = ReportHeader.builder().add("B").add("A").build();
-		ReportHeader ABC1 = ReportHeader.builder().add("A").add("B").add("C").build();
-		ReportHeader AB2 = ReportHeader.builder().add("A").add("B").build();
-		ReportHeader ABC2 = ReportHeader.builder().add("A").add("B").add("C").build();
-		ReportHeader ABC3 = ReportHeader.builder().add("A").add("B").add("C").build();
+		ReportHeader AB1 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").build();
+		ReportHeader BA = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("B").add("A").build();
+		ReportHeader ABC1 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
+		ReportHeader AB2 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").build();
+		ReportHeader ABC2 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
+		ReportHeader ABC3 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
 
 		// Reflexive
 		assertEquals(AB1, AB1);

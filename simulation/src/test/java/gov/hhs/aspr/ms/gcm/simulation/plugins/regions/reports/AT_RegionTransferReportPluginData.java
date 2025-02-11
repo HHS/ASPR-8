@@ -134,8 +134,8 @@ public class AT_RegionTransferReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
 		for (int i = 0; i < 10; i++) {
@@ -153,7 +153,7 @@ public class AT_RegionTransferReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			RegionTransferReportPluginData.Builder cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			RegionTransferReportPluginData.Builder cloneBuilder = regionTransferReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(regionTransferReportPluginData, cloneBuilder.build());
 
@@ -161,12 +161,12 @@ public class AT_RegionTransferReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			cloneBuilder = regionTransferReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(regionTransferReportPluginData, cloneBuilder.build());
 			
 			// setReportPeriod
-			cloneBuilder = regionTransferReportPluginData.getCloneBuilder();
+			cloneBuilder = regionTransferReportPluginData.toBuilder();
 			cloneBuilder.setReportPeriod(regionTransferReportPluginData.getReportPeriod().next());
 			assertNotEquals(regionTransferReportPluginData, cloneBuilder.build());
 
@@ -188,7 +188,7 @@ public class AT_RegionTransferReportPluginData {
 	@UnitTestMethod(target = RegionTransferReportPluginData.class, name = "checkVersionSupported", args = {
 			String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(RegionTransferReportPluginData.checkVersionSupported(version));
@@ -230,7 +230,7 @@ public class AT_RegionTransferReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1.getCloneBuilder()//
+					regionTransferReportPluginData1.toBuilder()//
 							.setReportPeriod(reportPeriod)//
 							.build();
 			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);
@@ -238,7 +238,7 @@ public class AT_RegionTransferReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1.getCloneBuilder()//
+					regionTransferReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);

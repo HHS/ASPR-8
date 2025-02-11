@@ -41,7 +41,7 @@ public class AT_DimesionContext {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			return new Builder();
 		}
 	}
@@ -72,7 +72,7 @@ public class AT_DimesionContext {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			return new Builder();
 		}
 	}
@@ -103,7 +103,7 @@ public class AT_DimesionContext {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			return new Builder();
 		}
 	}
@@ -135,10 +135,10 @@ public class AT_DimesionContext {
 		DimensionContext dimensionContext = dimensionContextBuilder.build();
 
 		PluginDataBuilder p = dimensionContext.getPluginDataBuilder(PluginData1.Builder.class);
-		assertEquals(p3.getCloneBuilder(), p);
+		assertEquals(p3.toBuilder(), p);
 
 		p = dimensionContext.getPluginDataBuilder(PluginData2.Builder.class);
-		assertEquals(p4.getCloneBuilder(), p);
+		assertEquals(p4.toBuilder(), p);
 
 		/*
 		 * precondition test : if more than one plugin data builder matches the
@@ -218,8 +218,8 @@ public class AT_DimesionContext {
 		PluginDataBuilder p1b = builder.add(p1);
 		PluginDataBuilder p2b = builder.add(p2);
 
-		assertEquals(p1.getCloneBuilder(), p1b);
-		assertEquals(p2.getCloneBuilder(), p2b);
+		assertEquals(p1.toBuilder(), p1b);
+		assertEquals(p2.toBuilder(), p2b);
 
 		DimensionContext dimensionContext = builder.build();
 		Set<PluginData> actualContents = new LinkedHashSet<>();
@@ -250,8 +250,8 @@ public class AT_DimesionContext {
 		PluginDataBuilder p1b = builder.add(p1);
 		PluginDataBuilder p2b = builder.add(p2);
 
-		assertEquals(p1.getCloneBuilder(), p1b);
-		assertEquals(p2.getCloneBuilder(), p2b);
+		assertEquals(p1.toBuilder(), p1b);
+		assertEquals(p2.toBuilder(), p2b);
 
 		DimensionContext dimensionContext = builder.build();
 

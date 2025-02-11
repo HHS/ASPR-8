@@ -175,6 +175,9 @@ public final class AT_MaterialsProducerResourceReport {
 				.execute();
 
 		assertEquals(expectedReportItems, testOutputConsumer.getOutputItemMap(ReportItem.class));
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test
@@ -283,7 +286,7 @@ public final class AT_MaterialsProducerResourceReport {
 	}
 
 	private static ReportItem getReportItem(Object... values) {
-		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL).setReportHeader(REPORT_HEADER);
+		Builder builder = ReportItem.builder().setReportLabel(REPORT_LABEL);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -296,6 +299,7 @@ public final class AT_MaterialsProducerResourceReport {
 
 	private static ReportHeader getReportHeader() {
 		return ReportHeader.builder()//
+				.setReportLabel(REPORT_LABEL)//
 				.add("time")//
 				.add("resource")//
 				.add("materials_producer")//

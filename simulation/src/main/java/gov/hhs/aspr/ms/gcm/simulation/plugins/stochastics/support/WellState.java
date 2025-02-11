@@ -12,14 +12,16 @@ public class WellState {
 		long seed;
 		int index;
 		int[] vArray;
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			seed = data.seed;
 			index = data.index;
 			vArray = Arrays.copyOf(data.vArray, data.vArray.length);
+			locked = data.locked;
 		}
 
 		@Override
@@ -68,29 +70,37 @@ public class WellState {
 	}
 
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
 	}
 
 	public static class Builder {
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		public WellState build() {
+			if (!data.locked) {
+				validateData();
+			}
+			ensureImmutability();
+
 			if (data.vArray == null) {
 				return new Well(data.seed).getWellState();
 			}
-			return new WellState(new Data(data));
+			
+			return new WellState(data);
 		}
 
 		public Builder setSeed(long seed) {
+			ensureDataMutability();
 			data.seed = seed;
 			return this;
 		}
 
 		public Builder setInternals(int index, int[] vArray) {
+			ensureDataMutability();
 			if (vArray == null) {
 				throw new ContractException(StochasticsError.ILLEGAL_SEED_ININITIAL_STATE);
 			}
@@ -103,6 +113,23 @@ public class WellState {
 			data.index = index;
 			data.vArray = Arrays.copyOf(vArray, vArray.length);
 			return this;
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
+		}
+
+		private void validateData() {
+
 		}
 
 	}
@@ -159,6 +186,14 @@ public class WellState {
 		builder2.append(data);
 		builder2.append("]");
 		return builder2.toString();
+	}
+	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 }

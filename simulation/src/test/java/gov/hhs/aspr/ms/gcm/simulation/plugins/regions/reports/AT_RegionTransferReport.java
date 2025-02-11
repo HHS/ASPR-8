@@ -58,7 +58,7 @@ public class AT_RegionTransferReport {
 	@Test
 	@UnitTestMethod(target = RegionTransferReport.class, name = "init", args = { ReportContext.class }, tags = { UnitTag.INCOMPLETE })
 	public void testInit() {
-		TestOutputConsumer expectedConsumer = new TestOutputConsumer();
+		TestOutputConsumer testOutputConsumer = new TestOutputConsumer();
 		/*
 		 * TEST IS INCOMPLETE
 		 * 
@@ -103,10 +103,11 @@ public class AT_RegionTransferReport {
 				peopleDataManager.addPerson(personConstructionData);
 			}
 
-			expectedConsumer.accept(getReportItem(1, regionA, regionA, 25));
-			expectedConsumer.accept(getReportItem(1, regionB, regionB, 25));
-			expectedConsumer.accept(getReportItem(1, regionC, regionC, 25));
-			expectedConsumer.accept(getReportItem(1, regionD, regionD, 25));
+			testOutputConsumer.accept(REPORT_HEADER);
+			testOutputConsumer.accept(getReportItem(1, regionA, regionA, 25));
+			testOutputConsumer.accept(getReportItem(1, regionB, regionB, 25));
+			testOutputConsumer.accept(getReportItem(1, regionC, regionC, 25));
+			testOutputConsumer.accept(getReportItem(1, regionD, regionD, 25));
 		}));
 
 		// create an actor to move people from one region to another
@@ -119,7 +120,7 @@ public class AT_RegionTransferReport {
 			// randomly move 25 people each to region a, region b, region c and
 			// region d
 			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
-			Map<Pair<RegionId, RegionId>, Integer> transfermap = new LinkedHashMap<>();
+			Map<Pair<RegionId, RegionId>, Integer> transferMap = new LinkedHashMap<>();
 
 			for (int i = 0; i < numPeople; i++) {
 				int person = randomGenerator.nextInt(personIds.size());
@@ -128,20 +129,20 @@ public class AT_RegionTransferReport {
 				RegionId nextRegionId = regionIds[i % 4];
 				Pair<RegionId, RegionId> transfer = new Pair<>(prevRegionId, nextRegionId);
 				int numTransfers = 1;
-				if (transfermap.containsKey(transfer)) {
-					numTransfers += transfermap.get(transfer);
+				if (transferMap.containsKey(transfer)) {
+					numTransfers += transferMap.get(transfer);
 				}
-				transfermap.put(transfer, numTransfers);
+				transferMap.put(transfer, numTransfers);
 
 				regionsDataManager.setPersonRegion(personId, nextRegionId);
 			}
 
-			for (Pair<RegionId, RegionId> regionTransfer : transfermap.keySet()) {
+			for (Pair<RegionId, RegionId> regionTransfer : transferMap.keySet()) {
 				RegionId sourceRegionId = regionTransfer.getFirst();
 				RegionId destRegionId = regionTransfer.getSecond();
-				int numTransfers = transfermap.get(regionTransfer);
+				int numTransfers = transferMap.get(regionTransfer);
 
-				expectedConsumer.accept(getReportItem(2, sourceRegionId, destRegionId, numTransfers));
+				testOutputConsumer.accept(getReportItem(2, sourceRegionId, destRegionId, numTransfers));
 			}
 		}));
 
@@ -166,10 +167,13 @@ public class AT_RegionTransferReport {
 				.build()//
 				.execute();
 
-		Map<ReportItem, Integer> expectedReportItems = expectedConsumer.getOutputItemMap(ReportItem.class);
+		Map<ReportItem, Integer> expectedReportItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
 		Map<ReportItem, Integer> actualReportItems = actualConsumer.getOutputItemMap(ReportItem.class);
 
 		assertEquals(expectedReportItems, actualReportItems);
+
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 
 		// precondition: Actor context is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -231,7 +235,7 @@ public class AT_RegionTransferReport {
 			// randomly move 25 people each to region a, region b, region c and
 			// region d
 			RegionId[] regionIds = { regionA, regionB, regionC, regionD };
-			Map<Pair<RegionId, RegionId>, Integer> transfermap = new LinkedHashMap<>();
+			Map<Pair<RegionId, RegionId>, Integer> transferMap = new LinkedHashMap<>();
 
 			for (int i = 0; i < numPeople; i++) {
 				int person = randomGenerator.nextInt(personIds.size());
@@ -240,10 +244,10 @@ public class AT_RegionTransferReport {
 				RegionId nextRegionId = regionIds[i % 4];
 				Pair<RegionId, RegionId> transfer = new Pair<>(prevRegionId, nextRegionId);
 				int numTransfers = 1;
-				if (transfermap.containsKey(transfer)) {
-					numTransfers += transfermap.get(transfer);
+				if (transferMap.containsKey(transfer)) {
+					numTransfers += transferMap.get(transfer);
 				}
-				transfermap.put(transfer, numTransfers);
+				transferMap.put(transfer, numTransfers);
 
 				regionsDataManager.setPersonRegion(personId, nextRegionId);
 			}
@@ -296,7 +300,6 @@ public class AT_RegionTransferReport {
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
-		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -305,5 +308,5 @@ public class AT_RegionTransferReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("region transfer report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("day").add("source_region").add("destination_region").add("transfers").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("source_region").add("destination_region").add("transfers").build();
 }

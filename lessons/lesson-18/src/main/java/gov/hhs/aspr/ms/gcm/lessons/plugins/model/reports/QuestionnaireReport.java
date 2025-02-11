@@ -14,8 +14,6 @@ import gov.hhs.aspr.ms.util.stats.MutableStat;
 /**
  * A report that groups people at the end of the simulation by their shared
  * person property values.
- * 
- *
  */
 public final class QuestionnaireReport {
 	private final ReportLabel reportLabel;
@@ -26,17 +24,19 @@ public final class QuestionnaireReport {
 
 	public void init(ReportContext reportContext) {
 		reportContext.subscribeToSimulationClose(this::report);
-	}
-
-	private void report(ReportContext reportContext) {
-		PersonPropertiesDataManager personPropertiesDataManager = reportContext
-				.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
 				.add("delivery rate")//
 				.add("mean delivery time")//
 				.add("stdev delivery time")//
 				.build();
+
+		reportContext.releaseOutput(reportHeader);
+	}
+
+	private void report(ReportContext reportContext) {
+		PersonPropertiesDataManager personPropertiesDataManager = reportContext
+				.getDataManager(PersonPropertiesDataManager.class);
 
 		ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		List<PersonId> infectedPeople = personPropertiesDataManager.getPeopleWithPropertyValue(PersonProperty.INFECTED,
@@ -64,7 +64,6 @@ public final class QuestionnaireReport {
 			deliveryRate /= infectedPeople.size();
 		}
 
-		reportItemBuilder.setReportHeader(reportHeader);
 		reportItemBuilder.setReportLabel(reportLabel);
 		reportItemBuilder.addValue(deliveryRate);
 		reportItemBuilder.addValue(mean);

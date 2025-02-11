@@ -75,21 +75,21 @@ public class AT_GlobalPropertyReport {
 
 		// add the global property definitions
 
-		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
+		GlobalPropertiesPluginData.Builder initialDataBuilder = GlobalPropertiesPluginData.builder();
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
 
-		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
+		GlobalPropertiesPluginData globalPropertiesPluginData = initialDataBuilder.build();
 
 		/*
 		 * Define two more properties that are not included in the plugin data
@@ -184,7 +184,6 @@ public class AT_GlobalPropertyReport {
 	private static ReportItem getReportItem(Object... values) {
 		ReportItem.Builder builder = ReportItem.builder();
 		builder.setReportLabel(REPORT_LABEL);
-		builder.setReportHeader(REPORT_HEADER);
 		for (Object value : values) {
 			builder.addValue(value);
 		}
@@ -371,7 +370,7 @@ public class AT_GlobalPropertyReport {
 
 		GlobalPropertyReportPluginData globalPropertyReportPluginData = //
 				GlobalPropertyReportPluginData	.builder()//
-												.setReportLabel(new SimpleReportLabel("report label"))//
+												.setReportLabel(REPORT_LABEL)//
 												.build();
 
 		Plugin globalPropertiesPlugin = GlobalPropertiesPlugin	.builder()//
@@ -387,12 +386,8 @@ public class AT_GlobalPropertyReport {
 					.execute();
 
 		// show that the report labels are what we expect for each report item
-		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
-		assertFalse(outputItems.isEmpty());
-
-		for (ReportItem reportItem : outputItems.keySet()) {
-			assertEquals(REPORT_HEADER, reportItem.getReportHeader());
-		}
+		ReportHeader reportHeader = testOutputConsumer.getOutputItem(ReportHeader.class).get();
+		assertEquals(REPORT_HEADER, reportHeader);
 	}
 
 	@Test
@@ -533,21 +528,21 @@ public class AT_GlobalPropertyReport {
 
 		// add the global property definitions
 
-		GlobalPropertiesPluginData.Builder initialDatabuilder = GlobalPropertiesPluginData.builder();
+		GlobalPropertiesPluginData.Builder initialDataBuilder = GlobalPropertiesPluginData.builder();
 
 		GlobalPropertyId globalPropertyId_1 = new SimpleGlobalPropertyId("id_1");
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(3).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_1, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_2 = new SimpleGlobalPropertyId("id_2");
 		propertyDefinition = PropertyDefinition.builder().setType(Double.class).setDefaultValue(6.78).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_2, propertyDefinition,0);
 
 		GlobalPropertyId globalPropertyId_3 = new SimpleGlobalPropertyId("id_3");
 		propertyDefinition = PropertyDefinition.builder().setType(Boolean.class).setDefaultValue(true).build();
-		initialDatabuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
+		initialDataBuilder.defineGlobalProperty(globalPropertyId_3, propertyDefinition,0);
 
-		GlobalPropertiesPluginData globalPropertiesPluginData = initialDatabuilder.build();
+		GlobalPropertiesPluginData globalPropertiesPluginData = initialDataBuilder.build();
 
 		/*
 		 * Define two more properties that are not included in the plugin data
@@ -633,5 +628,5 @@ public class AT_GlobalPropertyReport {
 
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("global property report");
 
-	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().add("time").add("property").add("value").build();
+	private static final ReportHeader REPORT_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("time").add("property").add("value").build();
 }

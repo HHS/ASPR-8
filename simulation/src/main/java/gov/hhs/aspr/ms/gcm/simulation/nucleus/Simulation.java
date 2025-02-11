@@ -48,16 +48,17 @@ public class Simulation {
 
 	public static class Builder {
 
-		private Data data = new Data();
+		private Data data;
 
-		private Builder() {
-
+		private Builder(Data data) {
+			this.data = data;
 		}
 
 		/**
 		 * Sets the output consumer for the simulation. Tolerates null.
 		 */
 		public Builder setOutputConsumer(Consumer<Object> outputConsumer) {
+			ensureDataMutability();
 			data.outputConsumer = outputConsumer;
 			return this;
 		}
@@ -67,6 +68,7 @@ public class Simulation {
 		 * output to the experiment Defaults to false.
 		 */
 		public Builder setRecordState(boolean recordState) {
+			ensureDataMutability();
 			data.stateRecordingIsScheduled = recordState;
 			return this;
 		}
@@ -79,6 +81,7 @@ public class Simulation {
 		 * result in an exception.
 		 */
 		public Builder setSimulationHaltTime(Double simulationHaltTime) {
+			ensureDataMutability();
 			data.simulationHaltTime = simulationHaltTime;
 			return this;
 		}
@@ -94,6 +97,7 @@ public class Simulation {
 			if (simulationState == null) {
 				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
 			}
+			ensureDataMutability();
 			data.simulationState = simulationState;
 			return this;
 		}
@@ -108,6 +112,7 @@ public class Simulation {
 			if (plugin == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN);
 			}
+			ensureDataMutability();
 			data.plugins.add(plugin);
 			return this;
 		}
@@ -140,8 +145,24 @@ public class Simulation {
 		 *                           </ul>
 		 */
 		public Simulation build() {
-			validate();
-			return new Simulation(new Data(data));
+			if (!data.locked) {
+				validate();
+			}
+			ensureImmutability();
+			return new Simulation(data);
+		}
+
+		private void ensureDataMutability() {
+			if (data.locked) {
+				data = new Data(data);
+				data.locked = false;
+			}
+		}
+
+		private void ensureImmutability() {
+			if (!data.locked) {
+				data.locked = true;
+			}
 		}
 	}
 
@@ -151,16 +172,18 @@ public class Simulation {
 		private List<Plugin> plugins = new ArrayList<>();
 		private Consumer<Object> outputConsumer;
 		private SimulationState simulationState = SimulationState.builder().build();
+		private boolean locked;
 
-		public Data() {
+		private Data() {
 		}
 
-		public Data(Data data) {
+		private Data(Data data) {
 			simulationHaltTime = data.simulationHaltTime;
 			stateRecordingIsScheduled = data.stateRecordingIsScheduled;
 			plugins.addAll(data.plugins);
 			outputConsumer = data.outputConsumer;
 			simulationState = data.simulationState;
+			locked = data.locked;
 		}
 	}
 
@@ -168,7 +191,15 @@ public class Simulation {
 	 * Returns a reusable EngineBuilder instance
 	 */
 	public static Builder builder() {
-		return new Builder();
+		return new Builder(new Data());
+	}
+
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
+	public Builder toBuilder() {
+		return new Builder(data);
 	}
 
 	private final Comparator<Plan> futureComparable = new Comparator<Plan>() {
@@ -1275,6 +1306,40 @@ public class Simulation {
 		containsDeletedActors = true;
 	}
 
+	protected <T extends DataManager> boolean dataManagerExists(Class<T> dataManagerClass) {
+		boolean result = false;
+		if (dataManagerClass != null) {
+
+			DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+			/*
+			 * If the working map does not contain the data manager, try to find a single
+			 * match from the base map that was collected from the plugins.
+			 * 
+			 * If two or more matches are found, then throw an exception.
+			 * 
+			 * If exactly one match is found, update the working map.
+			 * 
+			 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+			 * slower performance if the data manager is sought repeatedly.
+			 */
+			if (dataManager == null) {
+				List<Class<?>> candidates = new ArrayList<>();
+				for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+					if (dataManagerClass.isAssignableFrom(c)) {
+						candidates.add(c);
+					}
+				}
+
+				if (candidates.size() == 1) {
+					dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+					workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+				}
+			}
+			result = dataManager != null;
+		}
+		return result;
+	}
+
 	@SuppressWarnings("unchecked")
 	protected <T extends DataManager> T getDataManagerForActor(Class<T> dataManagerClass) {
 
@@ -1314,6 +1379,58 @@ public class Simulation {
 			throw new ContractException(NucleusError.UNKNOWN_DATA_MANAGER, " : " + dataManagerClass.getSimpleName());
 		}
 		return (T) dataManager;
+	}
+	
+	
+	protected <T extends DataManager> boolean dataManagerExistsForDataManager(DataManagerId dataManagerId,
+			Class<T> dataManagerClass) {
+
+		if (dataManagerClass == null) {
+			return false;
+		}
+
+		DataManager dataManager = workingClassToDataManagerMap.get(dataManagerClass);
+		/*
+		 * If the working map does not contain the data manager, try to find a single
+		 * match from the base map that was collected from the plugins.
+		 * 
+		 * If two or more matches are found, then throw an exception.
+		 * 
+		 * If exactly one match is found, update the working map.
+		 * 
+		 * If no matches are found, nothing is done, but we are vulnerable to somewhat
+		 * slower performance if the data manager is sought repeatedly.
+		 */
+		if (dataManager == null) {
+			List<Class<?>> candidates = new ArrayList<>();
+			for (Class<?> c : baseClassToDataManagerMap.keySet()) {
+				if (dataManagerClass.isAssignableFrom(c)) {
+					candidates.add(c);
+				}
+			}
+			if (candidates.size() > 1) {
+				return false;
+			}
+			if (candidates.size() == 1) {
+				dataManager = baseClassToDataManagerMap.get(candidates.get(0));
+				workingClassToDataManagerMap.put(dataManagerClass, dataManager);
+			}
+		}
+
+		if (dataManager == null) {
+			return false;
+		}
+
+		int requestorId = dataManagerId.getValue();
+		DataManagerId dataManagerId2 = dataManagerToDataManagerIdMap.get(dataManager);
+		int requesteeId = dataManagerId2.getValue();
+
+		boolean accessGranted = dataManagerAccessPermissions[requestorId][requesteeId];
+
+		if (!accessGranted) {
+			return false;
+		}
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1492,10 +1609,10 @@ public class Simulation {
 	}
 
 	/*
-	 * Recursively processes the event through the filter node to the given actor. Events should be
-	 * processed through the root filter node. Each node's consumers have each such
-	 * consumer scheduled onto the actor queue for delayed execution of the
-	 * consumer.
+	 * Recursively processes the event through the filter node to the given actor.
+	 * Events should be processed through the root filter node. Each node's
+	 * consumers have each such consumer scheduled onto the actor queue for delayed
+	 * execution of the consumer.
 	 */
 	private void broadcastEventToFilterNodeAndActor(final Event event, FilterNode filterNode, ActorId actorId) {
 		// determine the value of the function for the given event
@@ -1857,6 +1974,13 @@ public class Simulation {
 	 */
 	protected LocalDateTime getLocalDateTime(double simulationTime) {
 		return simulationTimeConverter.getLocalDateTime(simulationTime);
+	}
+	
+	protected Optional<Double> getSimulationHaltTime(){		
+		if(forcedHaltPresent) {
+			return Optional.of(simulationHaltTime);
+		}
+		return Optional.ofNullable(null);
 	}
 
 }

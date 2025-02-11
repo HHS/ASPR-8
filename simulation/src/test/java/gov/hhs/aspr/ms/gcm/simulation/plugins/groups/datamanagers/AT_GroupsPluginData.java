@@ -829,8 +829,8 @@ public class AT_GroupsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupsPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = GroupsPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9130589441333999144L);
 
 		GroupsPluginData.Builder groupPluginDataBuilder = GroupsPluginData.builder();
@@ -873,7 +873,7 @@ public class AT_GroupsPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		GroupsPluginData.Builder cloneBuilder = groupsPluginData.getCloneBuilder();
+		GroupsPluginData.Builder cloneBuilder = groupsPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(groupsPluginData, cloneBuilder.build());
 
@@ -881,34 +881,34 @@ public class AT_GroupsPluginData {
 		// made
 
 		// addGroup
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		cloneBuilder.resetNextGroupIdValue();
 		cloneBuilder.addGroup(new GroupId(groupCount), TestGroupTypeId.GROUP_TYPE_1);
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// setNextGroupIdValue
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		cloneBuilder.setNextGroupIdValue(1000);
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// addGroupToPerson and addPersonToGroup must be performed together
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		cloneBuilder.addGroupToPerson(new GroupId(0), new PersonId(1045));
 		cloneBuilder.addPersonToGroup(new PersonId(1045), new GroupId(0));
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// associatePersonToGroup
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		cloneBuilder.associatePersonToGroup(new GroupId(0), new PersonId(1045));
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// addGroupTypeId
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		cloneBuilder.addGroupTypeId(TestGroupTypeId.getUnknownGroupTypeId());
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// defineGroupProperty
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
 				.setDefaultValue(123)//
 				.setPropertyValueMutability(true)//
@@ -919,7 +919,7 @@ public class AT_GroupsPluginData {
 		assertNotEquals(groupsPluginData, cloneBuilder.build());
 
 		// setGroupPropertyValue
-		cloneBuilder = groupsPluginData.getCloneBuilder();
+		cloneBuilder = groupsPluginData.toBuilder();
 		GroupTypeId groupTypeId = groupsPluginData.getGroupTypeId(new GroupId(0));
 		TestGroupPropertyId selectedTestGroupPropertyId = null;
 		for (TestGroupPropertyId testGroupPropertyId : TestGroupPropertyId.values()) {
@@ -1169,7 +1169,7 @@ public class AT_GroupsPluginData {
 	@Test
 	@UnitTestMethod(target = GroupsPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(GroupsPluginData.checkVersionSupported(version));

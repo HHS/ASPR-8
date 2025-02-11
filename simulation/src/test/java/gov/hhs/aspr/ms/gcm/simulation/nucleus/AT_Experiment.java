@@ -30,38 +30,40 @@ public class AT_Experiment {
 	@UnitTestMethod(target = Experiment.Builder.class, name = "addDimension", args = { Dimension.class })
 	public void testAddDimension() {
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("Alpha")//
-				.addLevel((context) -> {
+				.addValue("Level_0", (context) -> {
 					List<String> result = new ArrayList<>();
 					result.add("alpha1");
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_1", (context) -> {
 					List<String> result = new ArrayList<>();
 					result.add("alpha2");
 					return result;
 				})//
 				.build();//
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("Beta")//
-				.addLevel((context) -> {
+				.addValue("Level_0", (context) -> {
 					List<String> result = new ArrayList<>();
 					result.add("beta1");
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_1", (context) -> {
 					List<String> result = new ArrayList<>();
 					result.add("beta2");
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_2", (context) -> {
 					List<String> result = new ArrayList<>();
 					result.add("beta3");
 					return result;
 				})//
 				.build();//
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		Set<MultiKey> expectedExperimentInstances = new LinkedHashSet<>();
 		expectedExperimentInstances.add(new MultiKey("alpha1", "beta1"));
@@ -163,33 +165,35 @@ public class AT_Experiment {
 			});
 		};
 
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 				.addMetaDatum("dim1")//
-				.addLevel((tmap) -> {
+				.addValue("Level_0", (tmap) -> {
 					List<String> result = new ArrayList<>();
 					result.add("var_1_1");
 					return result;
 				})//
-				.addLevel((tmap) -> {
+				.addValue("Level_1", (tmap) -> {
 					List<String> result = new ArrayList<>();
 					result.add("var_1_2");
 					return result;
 				})//
 				.build();//
+		FunctionalDimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 				.addMetaDatum("dim2")//
-				.addLevel((tmap) -> {
+				.addValue("Level_0", (tmap) -> {
 					List<String> result = new ArrayList<>();
 					result.add("var_2_1");
 					return result;
 				})//
-				.addLevel((tmap) -> {
+				.addValue("Level_1", (tmap) -> {
 					List<String> result = new ArrayList<>();
 					result.add("var_2_2");
 					return result;
 				})//
 				.build();//
+		FunctionalDimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		Experiment.builder()//
 				.addDimension(dimension1)//
@@ -311,27 +315,29 @@ public class AT_Experiment {
 
 		// add two dimensions that will cause the experiment to execute 40
 		// simulation instances
-		FunctionalDimension.Builder dimBuilder = FunctionalDimension.builder().addMetaDatum("alpha");//
+		FunctionalDimensionData.Builder dimDataBuilder = FunctionalDimensionData.builder().addMetaDatum("alpha");//
 		IntStream.range(0, 5).forEach((i) -> {
-			dimBuilder.addLevel((context) -> {
+			dimDataBuilder.addValue("Level_" + i, (context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;
 			});
 		});
 
-		Dimension dimension1 = dimBuilder.build();
+		FunctionalDimensionData dimensionData1 = dimDataBuilder.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		FunctionalDimension.Builder dimBuilder2 = FunctionalDimension.builder();
+		FunctionalDimensionData.Builder dimDataBuilder2 = FunctionalDimensionData.builder();
 		IntStream.range(0, 8).forEach((i) -> {
-			dimBuilder2.addLevel((context) -> {
+			dimDataBuilder2.addValue("Level_" + i, (context) -> {
 				List<String> result = new ArrayList<>();
 				result.add(Integer.toString(i));
 				return result;
 			});
 		});
 
-		Dimension dimension2 = dimBuilder2.addMetaDatum("beta").build();
+		FunctionalDimensionData dimensionData2 = dimDataBuilder2.addMetaDatum("beta").build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		/*
 		 * Create a thread safe set to record the thread ids that are used by each
@@ -402,10 +408,11 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension.builder()//
-				.addLevel((c) -> new ArrayList<>())//
-				.addLevel((c) -> new ArrayList<>())//
+		FunctionalDimensionData dimensionData = FunctionalDimensionData.builder()//
+				.addValue("Level_0", (c) -> new ArrayList<>())//
+				.addValue("Level_1", (c) -> new ArrayList<>())//
 				.build();
+		Dimension dimension = new FunctionalDimension(dimensionData);
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -465,10 +472,11 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension.builder()//
-				.addLevel((c) -> new ArrayList<>())//
-				.addLevel((c) -> new ArrayList<>())//
+		FunctionalDimensionData dimensionData = FunctionalDimensionData.builder()//
+				.addValue("Level_0", (c) -> new ArrayList<>())//
+				.addValue("Level_1", (c) -> new ArrayList<>())//
 				.build();
+		Dimension dimension = new FunctionalDimension(dimensionData);
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception
@@ -518,10 +526,11 @@ public class AT_Experiment {
 		MutableObject<ExperimentContext> experimentContext = new MutableObject<>();
 
 		// we create a dimension with two levels
-		Dimension dimension = FunctionalDimension.builder()//
-				.addLevel((c) -> new ArrayList<>())//
-				.addLevel((c) -> new ArrayList<>())//
+		FunctionalDimensionData dimensionData = FunctionalDimensionData.builder()//
+				.addValue("Level_0", (c) -> new ArrayList<>())//
+				.addValue("Level_1", (c) -> new ArrayList<>())//
 				.build();
+		Dimension dimension = new FunctionalDimension(dimensionData);
 
 		// we create a plugin that will instantiate three actors, with the
 		// second actor throwing a runtime exception

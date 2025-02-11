@@ -45,7 +45,7 @@ public final class RegionTransferReport extends PeriodicReport {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
 			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
-
+					.setReportLabel(getReportLabel())//
 					.add("source_region")//
 					.add("destination_region")//
 					.add("transfers")//
@@ -62,7 +62,6 @@ public final class RegionTransferReport extends PeriodicReport {
 			RegionId destinationRegionId = multiKey.getKey(1);
 			MutableInteger mutableInteger = baseMap.get(multiKey);
 			ReportItem.Builder reportItemBuilder = ReportItem.builder();
-			reportItemBuilder.setReportHeader(getReportHeader());
 			reportItemBuilder.setReportLabel(getReportLabel());
 			fillTimeFields(reportItemBuilder);
 			reportItemBuilder.addValue(sourceRegionId.toString());
@@ -118,6 +117,9 @@ public final class RegionTransferReport extends PeriodicReport {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

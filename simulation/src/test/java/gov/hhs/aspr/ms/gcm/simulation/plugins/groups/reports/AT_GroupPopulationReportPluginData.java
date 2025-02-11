@@ -132,8 +132,8 @@ public class AT_GroupPopulationReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1807247797909883254L);
 		for (int i = 0; i < 10; i++) {
@@ -150,7 +150,7 @@ public class AT_GroupPopulationReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			GroupPopulationReportPluginData.Builder cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();
+			GroupPopulationReportPluginData.Builder cloneBuilder = groupPopulationReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(groupPopulationReportPluginData, cloneBuilder.build());
 
@@ -158,12 +158,12 @@ public class AT_GroupPopulationReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();
+			cloneBuilder = groupPopulationReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(groupPopulationReportPluginData, cloneBuilder.build());
 
 			// setReportPeriod
-			cloneBuilder = groupPopulationReportPluginData.getCloneBuilder();			
+			cloneBuilder = groupPopulationReportPluginData.toBuilder();			
 			int index = (reportPeriod.ordinal()+1)%ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[index];
 			cloneBuilder.setReportPeriod(reportPeriod);
@@ -189,7 +189,7 @@ public class AT_GroupPopulationReportPluginData {
 	@Test
 	@UnitTestMethod(target = GroupPopulationReportPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(GroupPopulationReportPluginData.checkVersionSupported(version));
@@ -231,7 +231,7 @@ public class AT_GroupPopulationReportPluginData {
 			ord = ord % ReportPeriod.values().length;
 			reportPeriod = ReportPeriod.values()[ord];
 			proupPopulationReportPluginData2 = //
-					proupPopulationReportPluginData1.getCloneBuilder()//
+					proupPopulationReportPluginData1.toBuilder()//
 													.setReportPeriod(reportPeriod)//
 													.build();
 			assertNotEquals(proupPopulationReportPluginData2, proupPopulationReportPluginData1);
@@ -239,7 +239,7 @@ public class AT_GroupPopulationReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			proupPopulationReportPluginData2 = //
-					proupPopulationReportPluginData1.getCloneBuilder()//
+					proupPopulationReportPluginData1.toBuilder()//
 													.setReportLabel(reportLabel)//
 													.build();
 			assertNotEquals(proupPopulationReportPluginData2, proupPopulationReportPluginData1);

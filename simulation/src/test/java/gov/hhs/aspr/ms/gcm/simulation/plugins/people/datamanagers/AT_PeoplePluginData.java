@@ -231,8 +231,8 @@ public final class AT_PeoplePluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PeoplePluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PeoplePluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		PeoplePluginData peoplePluginData = PeoplePluginData.builder()//
 				.addPersonRange(new PersonRange(3, 9))//
@@ -242,7 +242,7 @@ public final class AT_PeoplePluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		PeoplePluginData.Builder cloneBuilder = peoplePluginData.getCloneBuilder();
+		PeoplePluginData.Builder cloneBuilder = peoplePluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(peoplePluginData, cloneBuilder.build());
 
@@ -250,22 +250,22 @@ public final class AT_PeoplePluginData {
 		// made
 
 		// addPersonRange
-		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder = peoplePluginData.toBuilder();
 		cloneBuilder.addPersonRange(new PersonRange(22, 25));
 		assertNotEquals(peoplePluginData, cloneBuilder.build());
 
 		// setAssignmentTime
-		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder = peoplePluginData.toBuilder();
 		cloneBuilder.setAssignmentTime(123.4);
 		assertNotEquals(peoplePluginData, cloneBuilder.build());
 
 		// setPersonCount
-		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder = peoplePluginData.toBuilder();
 		cloneBuilder.setPersonCount(123);
 		assertNotEquals(peoplePluginData, cloneBuilder.build());
 
 		// resetPersonCount
-		cloneBuilder = peoplePluginData.getCloneBuilder();
+		cloneBuilder = peoplePluginData.toBuilder();
 		cloneBuilder.resetPersonCount();
 		assertNotEquals(peoplePluginData, cloneBuilder.build());
 
@@ -373,7 +373,7 @@ public final class AT_PeoplePluginData {
 	@Test
 	@UnitTestMethod(target = PeoplePluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(PeoplePluginData.checkVersionSupported(version));

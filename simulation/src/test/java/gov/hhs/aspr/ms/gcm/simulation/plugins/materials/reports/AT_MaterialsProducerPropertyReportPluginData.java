@@ -83,8 +83,8 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -101,7 +101,7 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			MaterialsProducerPropertyReportPluginData.Builder cloneBuilder = materialsProducerPropertyReportPluginData.getCloneBuilder();
+			MaterialsProducerPropertyReportPluginData.Builder cloneBuilder = materialsProducerPropertyReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(materialsProducerPropertyReportPluginData, cloneBuilder.build());
 
@@ -109,7 +109,7 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = materialsProducerPropertyReportPluginData.getCloneBuilder();
+			cloneBuilder = materialsProducerPropertyReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(materialsProducerPropertyReportPluginData, cloneBuilder.build());
 
@@ -129,7 +129,7 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 	@Test
 	@UnitTestMethod(target = MaterialsProducerPropertyReportPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(MaterialsProducerPropertyReportPluginData.checkVersionSupported(version));
@@ -168,7 +168,7 @@ public class AT_MaterialsProducerPropertyReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			materialsProducerPropertyReportPluginData2 = //
-					materialsProducerPropertyReportPluginData1.getCloneBuilder()//
+					materialsProducerPropertyReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(materialsProducerPropertyReportPluginData2, materialsProducerPropertyReportPluginData1);

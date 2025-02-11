@@ -27,11 +27,7 @@ public final class GlobalPropertyReport {
 	private final ReportLabel reportLabel;
 	private final boolean includeNewPropertyIds;
 
-	private final ReportHeader reportHeader = ReportHeader.builder()//
-			.add("time")//
-			.add("property")//
-			.add("value")//
-			.build();//
+	private final ReportHeader reportHeader;
 
 	private boolean isCurrentProperty(GlobalPropertyId globalPropertyId) {
 		return currentProperties.contains(globalPropertyId);
@@ -106,6 +102,13 @@ public final class GlobalPropertyReport {
 		includedPropertyIds.addAll(globalPropertyReportPluginData.getIncludedProperties());
 		excludedPropertyIds.addAll(globalPropertyReportPluginData.getExcludedProperties());
 		includeNewPropertyIds = globalPropertyReportPluginData.getDefaultInclusionPolicy();
+
+		reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
+				.add("time")//
+				.add("property")//
+				.add("value")//
+				.build();//
 	}
 
 	private void handleGlobalPropertyDefinitionEvent(final ReportContext reportContext,
@@ -150,6 +153,8 @@ public final class GlobalPropertyReport {
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
 		}
 
+		// release header
+		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
@@ -168,11 +173,11 @@ public final class GlobalPropertyReport {
 	private void writeProperty(final ReportContext reportContext, final GlobalPropertyId globalPropertyId,
 			final Object globalPropertyValue) {
 		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
-		reportItemBuilder.setReportHeader(reportHeader);
-		reportItemBuilder.setReportLabel(reportLabel);
-		reportItemBuilder.addValue(reportContext.getTime());
-		reportItemBuilder.addValue(globalPropertyId.toString());
-		reportItemBuilder.addValue(globalPropertyValue);
+		reportItemBuilder//
+				.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime())//
+				.addValue(globalPropertyId.toString())//
+				.addValue(globalPropertyValue);
 		reportContext.releaseOutput(reportItemBuilder.build());
 	}
 

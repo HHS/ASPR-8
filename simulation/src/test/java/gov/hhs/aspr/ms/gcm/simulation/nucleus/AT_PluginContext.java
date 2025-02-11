@@ -123,7 +123,7 @@ public class AT_PluginContext {
     private static class PluginData1 implements PluginData {
 
         @Override
-        public PluginDataBuilder getCloneBuilder() {
+        public PluginDataBuilder toBuilder() {
             throw new UnsupportedOperationException();
         }
 
@@ -132,14 +132,14 @@ public class AT_PluginContext {
     private static class PluginData2 implements PluginData {
 
         @Override
-        public PluginDataBuilder getCloneBuilder() {
+        public PluginDataBuilder toBuilder() {
             throw new UnsupportedOperationException();
         }
     }
 
     private static class PluginData3 implements PluginData {
         @Override
-        public PluginDataBuilder getCloneBuilder() {
+        public PluginDataBuilder toBuilder() {
             throw new UnsupportedOperationException();
         }
     }

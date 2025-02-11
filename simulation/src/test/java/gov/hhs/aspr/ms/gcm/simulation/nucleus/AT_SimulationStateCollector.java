@@ -47,7 +47,7 @@ public class AT_SimulationStateCollector {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			AlphaPluginDataBuilder result = new AlphaPluginDataBuilder();
 			result.setAlpha(alpha);
 			return result;
@@ -95,9 +95,9 @@ public class AT_SimulationStateCollector {
 	}
 
 	private static Dimension getAlphaDimension() {
-		return FunctionalDimension.builder()//
+		FunctionalDimensionData dimData = FunctionalDimensionData.builder()//
 				.addMetaDatum("Alpha")//
-				.addLevel((context) -> {
+				.addValue("Level_0", (context) -> {
 					AlphaPluginDataBuilder alphaPluginDataBuilder = context
 							.getPluginDataBuilder(AlphaPluginDataBuilder.class);
 					int value = 17;
@@ -106,7 +106,7 @@ public class AT_SimulationStateCollector {
 					result.add(Integer.toString(value));
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_1", (context) -> {
 					AlphaPluginDataBuilder alphaPluginDataBuilder = context
 							.getPluginDataBuilder(AlphaPluginDataBuilder.class);
 					int value = 25;
@@ -116,6 +116,8 @@ public class AT_SimulationStateCollector {
 					return result;
 				})//
 				.build();//
+		
+		return new FunctionalDimension(dimData);
 	}
 
 	private static class BetaPluginDataBuilder implements PluginDataBuilder {
@@ -140,7 +142,7 @@ public class AT_SimulationStateCollector {
 		}
 
 		@Override
-		public PluginDataBuilder getCloneBuilder() {
+		public PluginDataBuilder toBuilder() {
 			BetaPluginDataBuilder result = new BetaPluginDataBuilder();
 			result.setBeta(beta);
 			return result;
@@ -188,9 +190,9 @@ public class AT_SimulationStateCollector {
 	}
 
 	private static Dimension getBetaDimension() {
-		return FunctionalDimension.builder()//
+		FunctionalDimensionData dimData = FunctionalDimensionData.builder()//
 				.addMetaDatum("Beta")//
-				.addLevel((context) -> {
+				.addValue("Level_0", (context) -> {
 					BetaPluginDataBuilder betaPluginDataBuilder = context
 							.getPluginDataBuilder(BetaPluginDataBuilder.class);
 					double value = 12.9;
@@ -199,7 +201,7 @@ public class AT_SimulationStateCollector {
 					result.add(Double.toString(value));
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_1", (context) -> {
 					BetaPluginDataBuilder betaPluginDataBuilder = context
 							.getPluginDataBuilder(BetaPluginDataBuilder.class);
 					double value = 16.8;
@@ -208,7 +210,7 @@ public class AT_SimulationStateCollector {
 					result.add(Double.toString(value));
 					return result;
 				})//
-				.addLevel((context) -> {
+				.addValue("Level_2", (context) -> {
 					BetaPluginDataBuilder betaPluginDataBuilder = context
 							.getPluginDataBuilder(BetaPluginDataBuilder.class);
 					double value = 38.6;
@@ -218,6 +220,8 @@ public class AT_SimulationStateCollector {
 					return result;
 				})//
 				.build();//
+
+		return new FunctionalDimension(dimData);
 	}
 
 	@Test

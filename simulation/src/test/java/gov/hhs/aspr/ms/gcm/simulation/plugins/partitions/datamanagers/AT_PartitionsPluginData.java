@@ -24,22 +24,22 @@ public class AT_PartitionsPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = PartitionsPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 		PartitionsPluginData p1 = PartitionsPluginData.builder().setRunContinuitySupport(true).build();
-		PluginData p2 = p1.getCloneBuilder().build();
+		PluginData p2 = p1.toBuilder().build();
 		assertEquals(p1, p2);
 		
 		
 
 		p1 = PartitionsPluginData.builder().setRunContinuitySupport(false).build();
-		p2 = p1.getCloneBuilder().build();
+		p2 = p1.toBuilder().build();
 		assertEquals(p1, p2);
 		
 		
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		PartitionsPluginData.Builder cloneBuilder = p1.getCloneBuilder();
+		PartitionsPluginData.Builder cloneBuilder = p1.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(p1, cloneBuilder.build());
 
@@ -47,7 +47,7 @@ public class AT_PartitionsPluginData {
 		// made
 
 		// defineGlobalProperty
-		cloneBuilder = p1.getCloneBuilder();
+		cloneBuilder = p1.toBuilder();
 		cloneBuilder.setRunContinuitySupport(true);
 		assertNotEquals(p1, cloneBuilder.build());
 
@@ -63,7 +63,7 @@ public class AT_PartitionsPluginData {
 	@Test
 	@UnitTestMethod(target = PartitionsPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(PartitionsPluginData.checkVersionSupported(version));

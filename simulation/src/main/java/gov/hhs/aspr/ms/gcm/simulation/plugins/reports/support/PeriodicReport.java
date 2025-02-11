@@ -106,7 +106,8 @@ public abstract class PeriodicReport {
 	/**
 	 * Subscribes to simulation close. Initializes periodic flushing of report
 	 * contents with the first flush scheduled for one time period from simulation
-	 * start. Descendant implementors of PeriodicReport must invoke super.init().
+	 * start. Descendant implementors of PeriodicReport must implement prepare()
+	 * which is invoked by init().
 	 * 
 	 * @throws ContractException if the report context is null
 	 */
@@ -126,12 +127,9 @@ public abstract class PeriodicReport {
 
 		prepare(reportContext);
 
-		if (reportContext.getTime() == 0) {
-			if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
-				flush(reportContext);
-				incrementReportingTimeFields();
-				reportContext.addPlan(this::executePlan, getNextPlanTime());
-			}
+		if (reportPeriod != ReportPeriod.END_OF_SIMULATION) {
+			incrementReportingTimeFields();
+			reportContext.addPlan(this::executePlan, getNextPlanTime());
 		}
 	}
 
@@ -139,8 +137,7 @@ public abstract class PeriodicReport {
 	 * Called by the init() to allow descendant report classes to initialize. The
 	 * init() will invoke a flush() command after the prepare()
 	 */
-	protected void prepare(ReportContext reportContext) {
-	}
+	protected abstract void prepare(ReportContext reportContext);
 
 	private void close(final ReportContext reportContext) {
 		if (lastFlushTime == null || reportContext.getTime() > lastFlushTime) {

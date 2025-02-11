@@ -84,8 +84,8 @@ public class AT_BatchStatusReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8951274294108578550L);
 		for (int i = 0; i < 10; i++) {
@@ -101,7 +101,7 @@ public class AT_BatchStatusReportPluginData {
 
 			// show that the returned clone builder will build an identical instance if no
 			// mutations are made
-			Builder cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
+			Builder cloneBuilder = batchStatusReportPluginData.toBuilder();
 			assertNotNull(cloneBuilder);
 			assertEquals(batchStatusReportPluginData, cloneBuilder.build());
 
@@ -109,7 +109,7 @@ public class AT_BatchStatusReportPluginData {
 			// made
 
 			// setReportLabel
-			cloneBuilder = batchStatusReportPluginData.getCloneBuilder();
+			cloneBuilder = batchStatusReportPluginData.toBuilder();
 			cloneBuilder.setReportLabel(new SimpleReportLabel("asdf"));
 			assertNotEquals(batchStatusReportPluginData, cloneBuilder.build());
 
@@ -128,7 +128,7 @@ public class AT_BatchStatusReportPluginData {
 	@Test
 	@UnitTestMethod(target = BatchStatusReportPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(BatchStatusReportPluginData.checkVersionSupported(version));
@@ -164,7 +164,7 @@ public class AT_BatchStatusReportPluginData {
 			// change the report label
 			reportLabel = new SimpleReportLabel(1000);
 			batchStatusReportPluginData2 = //
-					batchStatusReportPluginData1.getCloneBuilder()//
+					batchStatusReportPluginData1.toBuilder()//
 							.setReportLabel(reportLabel)//
 							.build();
 			assertNotEquals(batchStatusReportPluginData2, batchStatusReportPluginData1);

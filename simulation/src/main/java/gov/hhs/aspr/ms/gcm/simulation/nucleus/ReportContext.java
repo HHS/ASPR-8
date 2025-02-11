@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -33,8 +34,8 @@ public final class ReportContext {
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
-	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the consumer is
-	 *                           null</li>
+	 *                           <li>{@link NucleusError#NULL_PLAN_CONSUMER} if the
+	 *                           consumer is null</li>
 	 *                           <li>{@link NucleusError#PAST_PLANNING_TIME} if the
 	 *                           plan is scheduled for a time in the past *</li>
 	 *                           <li>{@link NucleusError#PLANNING_QUEUE_CLOSED} if
@@ -146,6 +147,14 @@ public final class ReportContext {
 		return simulation.getDataManagerForActor(dataManagerClass);
 	}
 
+	/**
+	 * Returns true if and only if there is exactly one data manager instance
+	 * matching the given class reference. Null tolerant.
+	 */
+	public <T extends DataManager> boolean dataManagerExists(Class<T> dataManagerClass) {
+		return simulation.dataManagerExists(dataManagerClass);
+	}
+
 	public double getTime() {
 		return simulation.time;
 	}
@@ -185,6 +194,13 @@ public final class ReportContext {
 	 */
 	public List<ReportPlan> retrievePlans() {
 		return simulation.retrievePlansForReport();
+	}
+	
+	/**
+	 * Returns the current known forced halt time.
+	 */
+	public Optional<Double> getSimulationHaltTime() {
+		return simulation.getSimulationHaltTime();
 	}
 
 }

@@ -9,16 +9,16 @@ public class MT_ProgressFileTest {
 	public static void main(String[] args) {
 
 		Path experimentProgressPath = Paths.get(args[0]);
-		Dimension dimension1 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData1 = FunctionalDimensionData.builder()//
 										.addMetaDatum("alpha")//
 										.addMetaDatum("beta")//
-										.addLevel((t) -> {
+										.addValue("Level_0", (t) -> {
 											List<String> result = new ArrayList<>();
 											result.add("45");
 											result.add("fred");
 											return result;
 										})//
-										.addLevel((t) -> {
+										.addValue("Level_1", (t) -> {
 											List<String> result = new ArrayList<>();
 											result.add("66");
 											result.add("betty");
@@ -26,26 +26,27 @@ public class MT_ProgressFileTest {
 										})//
 
 										.build();
+		Dimension dimension1 = new FunctionalDimension(dimensionData1);
 
-		Dimension dimension2 = FunctionalDimension.builder()//
+		FunctionalDimensionData dimensionData2 = FunctionalDimensionData.builder()//
 										.addMetaDatum("comet")//
 										.addMetaDatum("cupid")//
 										.addMetaDatum("vixen")//
-										.addLevel((t) -> {
+										.addValue("Level_0", (t) -> {
 											List<String> result = new ArrayList<>();
 											result.add("1");
 											result.add("2");
 											result.add("3");
 											return result;
 										})//
-										.addLevel((t) -> {
+										.addValue("Level_1", (t) -> {
 											List<String> result = new ArrayList<>();
 											result.add("4");
 											result.add("5");
 											result.add("6");
 											return result;
 										})//
-										.addLevel((t) -> {
+										.addValue("Level_2", (t) -> {
 											List<String> result = new ArrayList<>();
 											result.add("7");
 											result.add("8");
@@ -54,6 +55,7 @@ public class MT_ProgressFileTest {
 										})//
 
 										.build();
+		Dimension dimension2 = new FunctionalDimension(dimensionData2);
 
 		ExperimentParameterData experimentParameterData = ExperimentParameterData	.builder()//
 																					.setContinueFromProgressLog(true)//

@@ -322,7 +322,7 @@ public final class AT_ResourcesPluginData {
 	@Test
 	@UnitTestMethod(target = ResourcesPluginData.class, name = "checkVersionSupported", args = { String.class })
 	public void testCheckVersionSupported() {
-		List<String> versions = Arrays.asList("", "4.0.0", "4.1.0", StandardVersioning.VERSION);
+		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
 		for (String version : versions) {
 			assertTrue(ResourcesPluginData.checkVersionSupported(version));
@@ -1390,8 +1390,8 @@ public final class AT_ResourcesPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = ResourcesPluginData.class, name = "getCloneBuilder", args = {})
-	public void testGetCloneBuilder() {
+	@UnitTestMethod(target = ResourcesPluginData.class, name = "toBuilder", args = {})
+	public void testToBuilder() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7644775230297230691L);
 		ResourcesPluginData.Builder pluginDataBuilder = ResourcesPluginData.builder();
@@ -1441,7 +1441,7 @@ public final class AT_ResourcesPluginData {
 
 		// show that the returned clone builder will build an identical instance if no
 		// mutations are made
-		ResourcesPluginData.Builder cloneBuilder = resourcesPluginData.getCloneBuilder();
+		ResourcesPluginData.Builder cloneBuilder = resourcesPluginData.toBuilder();
 		assertNotNull(cloneBuilder);
 		assertEquals(resourcesPluginData, cloneBuilder.build());
 
@@ -1449,12 +1449,12 @@ public final class AT_ResourcesPluginData {
 		// made
 
 		// addResource
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		cloneBuilder.addResource(TestResourceId.getUnknownResourceId(), 2.5, false);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
 		// defineResourceProperty
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setDefaultValue(6).setType(Integer.class)
 				.setPropertyValueMutability(true).build();
 		cloneBuilder.defineResourceProperty(TestResourceId.RESOURCE_1,
@@ -1462,22 +1462,22 @@ public final class AT_ResourcesPluginData {
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
 		// setPersonResourceLevel
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		cloneBuilder.setPersonResourceLevel(new PersonId(1000), TestResourceId.RESOURCE_3, 234L);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
 		// setPersonResourceTime
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		cloneBuilder.setPersonResourceTime(new PersonId(1000), TestResourceId.RESOURCE_3, 64.745);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
 		// setRegionResourceLevel
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		cloneBuilder.setRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE_3, 234L);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());
 
 		// setResourcePropertyValue
-		cloneBuilder = resourcesPluginData.getCloneBuilder();
+		cloneBuilder = resourcesPluginData.toBuilder();
 		cloneBuilder.setResourcePropertyValue(TestResourceId.RESOURCE_1,
 				TestResourcePropertyId.ResourceProperty_1_3_DOUBLE_MUTABLE, 18.6);
 		assertNotEquals(resourcesPluginData, cloneBuilder.build());

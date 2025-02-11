@@ -161,8 +161,12 @@ public final class MaterialsProducerResourceReportPluginData implements PluginDa
 		return StandardVersioning.checkVersionSupported(version);
 	}
 	
+	/**
+	 * Returns a new builder instance that is pre-filled with the current state of
+	 * this instance.
+	 */
 	@Override
-	public Builder getCloneBuilder() {
+	public Builder toBuilder() {
 		return new Builder(data);
 	}
 

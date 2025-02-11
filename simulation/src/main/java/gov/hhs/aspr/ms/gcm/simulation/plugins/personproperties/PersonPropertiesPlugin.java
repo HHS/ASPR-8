@@ -43,14 +43,14 @@ public final class PersonPropertiesPlugin {
 
 		private void validate() {
 			if (data.personPropertiesPluginData == null) {
-				throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGN_DATA);
+				throw new ContractException(PersonPropertyError.NULL_PERSON_PROPERTY_PLUGIN_DATA);
 			}
 		}
 
 		/**
 		 * Builds the PersonPropertiesPlugin from the collected inputs
 		 * 
-		 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGN_DATA}
+		 * @throws ContractException {@linkplain PersonPropertyError#NULL_PERSON_PROPERTY_PLUGIN_DATA}
 		 *                           if the personPropertiesPluginData is null
 		 */
 		public Plugin getPersonPropertyPlugin() {
