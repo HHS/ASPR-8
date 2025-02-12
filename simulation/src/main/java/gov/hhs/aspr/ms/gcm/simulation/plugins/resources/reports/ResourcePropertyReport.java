@@ -55,6 +55,10 @@ public final class ResourcePropertyReport {
 		}
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			for (final ResourcePropertyId resourcePropertyId : resourcesDataManager
 					.getResourcePropertyIds(resourceId)) {
@@ -63,9 +67,6 @@ public final class ResourcePropertyReport {
 				writeProperty(reportContext, resourceId, resourcePropertyId, resourcePropertyValue);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

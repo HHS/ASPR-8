@@ -39,6 +39,7 @@ public final class VaccineReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeaderBuilder.setReportLabel(getReportLabel());
 			addTimeFieldHeaders(reportHeaderBuilder);//
 			reportHeaderBuilder.add("vaccine_scheduled");
 			reportHeaderBuilder.add("vaccinated");

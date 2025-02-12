@@ -17,11 +17,16 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportLabel;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class ContagionReport {
-	private final ReportHeader reportHeader = ReportHeader.builder().add("infected").add("count").build();
+	private final ReportHeader reportHeader;
 	private final ReportLabel reportLabel;
 
 	public ContagionReport(ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
+		reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
+				.add("infected")//
+				.add("count")//
+				.build();
 	}
 
 	public void init(ReportContext reportContext) {

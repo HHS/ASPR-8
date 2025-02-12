@@ -235,6 +235,9 @@ public final class GroupPropertyReport extends PeriodicReport {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
+		// release header
+		reportContext.releaseOutput(getReportHeader());
+
 		// update the current properties from the existing properties found in
 		// the data manager
 		for (GroupTypeId groupTypeId : groupsDataManager.getGroupTypeIds()) {
@@ -256,9 +259,6 @@ public final class GroupPropertyReport extends PeriodicReport {
 				}
 			}
 		}
-
-		// release header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

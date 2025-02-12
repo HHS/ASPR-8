@@ -286,12 +286,12 @@ public final class Example_19 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
-				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.xls"))//
+				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
 				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT,
-						outputDirectory.resolve("person_property_report.xls"))//
-				.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.xls"))//
+						outputDirectory.resolve("person_property_report.csv"))//
+				.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.csv"))//
 				.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT,
-						outputDirectory.resolve("vaccine_production_report.xls"))//
+						outputDirectory.resolve("vaccine_production_report.csv"))//
 				.build();
 	}
 

@@ -86,9 +86,9 @@ public final class Example_14 {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 						.addReport(ModelReportLabel.POPULATION_TRACE, //
-								outputDirectory.resolve("population_trace_report.xls"))//
+								outputDirectory.resolve("population_trace_report.csv"))//
 						.addReport(ModelReportLabel.VACCINATION, //
-								outputDirectory.resolve("vaccination_report.xls"))//
+								outputDirectory.resolve("vaccination_report.csv"))//
 						.build();
 
 		/* end */

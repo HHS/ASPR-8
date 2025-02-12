@@ -141,6 +141,9 @@ public final class GlobalPropertyReport {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
+		// release header
+		reportContext.releaseOutput(reportHeader);
+
 		for (GlobalPropertyId globalPropertyId : globalPropertiesDataManager.getGlobalPropertyIds()) {
 			addToCurrentProperties(globalPropertyId);
 		}
@@ -151,10 +154,7 @@ public final class GlobalPropertyReport {
 		for (final GlobalPropertyId globalPropertyId : currentProperties) {
 			final Object globalPropertyValue = globalPropertiesDataManager.getGlobalPropertyValue(globalPropertyId);
 			writeProperty(reportContext, globalPropertyId, globalPropertyValue);
-		}
-
-		// release header
-		reportContext.releaseOutput(reportHeader);
+		}		
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

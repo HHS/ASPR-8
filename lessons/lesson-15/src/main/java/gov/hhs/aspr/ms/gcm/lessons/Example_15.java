@@ -52,11 +52,11 @@ public final class Example_15 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
-						outputDirectory.resolve("region_property_report.xls"))//
+						outputDirectory.resolve("region_property_report.csv"))//
 				.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
-						outputDirectory.resolve("region_transfer_report.xls"))//
+						outputDirectory.resolve("region_transfer_report.csv"))//
 				.addReport(ModelReportLabel.VACCINATION, //
-						outputDirectory.resolve("vaccine_report.xls"))//
+						outputDirectory.resolve("vaccine_report.csv"))//
 				.build();
 	}
 	/* end */

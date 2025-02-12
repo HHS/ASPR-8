@@ -192,18 +192,21 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	private void handleReportHeader(ExperimentContext experimentContext, Integer scenarioId,
 			ReportHeader reportHeader) {
 		final ReportLabel reportLabel = reportHeader.getReportLabel();
-
-		if (data.reportMap.get(reportLabel) != null) {
-			synchronized (lineWriterMap) {
-				LineWriter lineWriterUnsafe = lineWriterMap.get(reportLabel);
-				if (lineWriterUnsafe == null) {
-					lineWriterUnsafe = new LineWriter(experimentContext, data.reportMap.get(reportLabel),
-							data.displayExperimentColumnsInReports, data.delimiter);
-					lineWriterMap.put(reportLabel, lineWriterUnsafe);
+		synchronized(data.reportMap) {
+			if (data.reportMap.get(reportLabel) != null) {
+				synchronized (lineWriterMap) {
+					LineWriter lineWriterUnsafe = lineWriterMap.get(reportLabel);
+					if (lineWriterUnsafe == null) {
+						lineWriterUnsafe = new LineWriter(experimentContext, data.reportMap.get(reportLabel),
+								data.displayExperimentColumnsInReports, data.delimiter);
+						lineWriterMap.put(reportLabel, lineWriterUnsafe);
+					}
 				}
+				final LineWriter lineWriter = lineWriterMap.get(reportLabel);
+				lineWriter.writeReportHeader(experimentContext, reportHeader);
+	
+				data.reportMap.remove(reportLabel);
 			}
-			final LineWriter lineWriter = lineWriterMap.get(reportLabel);
-			lineWriter.writeReportHeader(experimentContext, reportHeader);
 		}
 	}
 

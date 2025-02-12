@@ -51,7 +51,10 @@ public final class VaccineProductionReport extends PeriodicReport {
 		resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		regionsDataManager = reportContext.getDataManager(RegionsDataManager.class);
 
+		reportContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
+
 		final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.setReportLabel(getReportLabel());
 		addTimeFieldHeaders(reportHeaderBuilder);//
 
 		reportHeaderBuilder
@@ -99,8 +102,6 @@ public final class VaccineProductionReport extends PeriodicReport {
 		reportHeaderBuilder.add(header);
 
 		reportHeader = reportHeaderBuilder.build();
-
-		reportContext.subscribe(StageOfferUpdateEvent.class, this::handleStageOfferUpdateEvent);
 
 		reportContext.releaseOutput(reportHeader);
 	}

@@ -73,6 +73,7 @@ public class FamilyVaccineReport {
 
 		final ReportHeader.Builder builder = ReportHeader.builder();
 		builder.add("time");
+		builder.setReportLabel(reportLabel);
 		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			builder.add(familyVaccineStatus.description);
 		}
@@ -199,8 +200,8 @@ public class FamilyVaccineReport {
 		/* end */
 
 		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output|code_cap=The initial state of the report is released as a single report item.*/
-		releaseReportItem();
 		reportContext.releaseOutput(reportHeader);
+		releaseReportItem();
 		/* end */
 	}
 
@@ -272,6 +273,7 @@ public class FamilyVaccineReport {
 	private void releaseReportItem() {
 		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel);
 		builder.addValue(reportContext.getTime());
+		builder.setReportLabel(reportLabel);
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
 			builder.addValue(mutableInteger.getValue());

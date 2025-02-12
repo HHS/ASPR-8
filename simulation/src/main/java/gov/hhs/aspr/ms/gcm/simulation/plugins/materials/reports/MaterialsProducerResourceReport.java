@@ -114,6 +114,10 @@ public final class MaterialsProducerResourceReport {
 
 		ResourcesDataManager resourcesDataManager = reportContext.getDataManager(ResourcesDataManager.class);
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
+
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 				long materialsProducerResourceLevel = materialsDataManager
@@ -122,9 +126,6 @@ public final class MaterialsProducerResourceReport {
 						materialsProducerResourceLevel);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

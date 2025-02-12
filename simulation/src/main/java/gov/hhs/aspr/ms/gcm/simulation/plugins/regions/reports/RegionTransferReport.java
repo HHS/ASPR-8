@@ -113,13 +113,13 @@ public final class RegionTransferReport extends PeriodicReport {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			final RegionId regionId = regionsDataManager.getPersonRegion(personId);
 			increment(regionId, regionId);
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {
