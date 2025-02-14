@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ExperimentContext;
@@ -148,7 +150,13 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 
 	private final Map<Object, LineWriter> lineWriterMap = Collections.synchronizedMap(new LinkedHashMap<>());
 
+	// protected by reportHeaderWriteLock
+	private final Set<ReportLabel> reportHeadersWritten = new LinkedHashSet<>();
+
 	private LineWriter experimentLineWriter;
+
+	// protects additions to the reportHeadersWritten set
+	private Object reportHeaderWriteLock = new Object(){};
 
 	private final Data data;
 
@@ -192,20 +200,21 @@ public final class NIOReportItemHandler implements Consumer<ExperimentContext> {
 	private void handleReportHeader(ExperimentContext experimentContext, Integer scenarioId,
 			ReportHeader reportHeader) {
 		final ReportLabel reportLabel = reportHeader.getReportLabel();
-		synchronized(data.reportMap) {
+		synchronized(reportHeaderWriteLock) {
 			if (data.reportMap.get(reportLabel) != null) {
-				synchronized (lineWriterMap) {
+				boolean added = this.reportHeadersWritten.add(reportLabel);
+
+				if (added) {
 					LineWriter lineWriterUnsafe = lineWriterMap.get(reportLabel);
 					if (lineWriterUnsafe == null) {
 						lineWriterUnsafe = new LineWriter(experimentContext, data.reportMap.get(reportLabel),
 								data.displayExperimentColumnsInReports, data.delimiter);
 						lineWriterMap.put(reportLabel, lineWriterUnsafe);
 					}
+
+					final LineWriter lineWriter = lineWriterMap.get(reportLabel);
+					lineWriter.writeReportHeader(experimentContext, reportHeader);
 				}
-				final LineWriter lineWriter = lineWriterMap.get(reportLabel);
-				lineWriter.writeReportHeader(experimentContext, reportHeader);
-	
-				data.reportMap.remove(reportLabel);
 			}
 		}
 	}
