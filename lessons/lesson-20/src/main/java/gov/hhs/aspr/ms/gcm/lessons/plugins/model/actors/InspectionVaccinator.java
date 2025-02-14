@@ -39,12 +39,12 @@ public class InspectionVaccinator {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		establishWorkingVaribles();
+		establishWorkingVariables();
 		planNextVaccination();
 	}
 	/* end */
 
-	private void establishWorkingVaribles() {
+	private void establishWorkingVariables() {
 		int vaccinationsPerDay = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
 		personInterVaccinationDelay = globalPropertiesDataManager
@@ -181,10 +181,10 @@ public class InspectionVaccinator {
 			Double extendedWeight = extendedWeights.get(multiKey);
 			selectedWeight -= extendedWeight;
 			if (selectedWeight <= 0) {
-				List<PersonId> seletedCandidates = candidates.get(multiKey);
-				if (!seletedCandidates.isEmpty()) {
-					int index = randomGenerator.nextInt(seletedCandidates.size());
-					selectedCandidate = seletedCandidates.get(index);
+				List<PersonId> selectedCandidates = candidates.get(multiKey);
+				if (!selectedCandidates.isEmpty()) {
+					int index = randomGenerator.nextInt(selectedCandidates.size());
+					selectedCandidate = selectedCandidates.get(index);
 				}
 				break;
 			}

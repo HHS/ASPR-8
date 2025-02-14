@@ -6,7 +6,7 @@ import gov.hhs.aspr.ms.gcm.lessons.plugins.model.support.GlobalProperty;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers.GlobalPropertiesDataManager;
 
-/* start code_ref= global_proerties_plugin_gamma_actor|code_cap=The gamma actor sets the value of the GAMMA property over time as a function of the ALPHA and BETA properties.*/
+/* start code_ref= global_properties_plugin_gamma_actor|code_cap=The gamma actor sets the value of the GAMMA property over time as a function of the ALPHA and BETA properties.*/
 public final class GammaActor {
 
 	public void init(ActorContext actorContext) {

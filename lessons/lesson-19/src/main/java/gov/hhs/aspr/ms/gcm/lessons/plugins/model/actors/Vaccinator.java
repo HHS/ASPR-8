@@ -53,7 +53,7 @@ public class Vaccinator {
 	private boolean manufactureStarted;
 
 	/* start code_ref=materials_plugin_vaccinator_manufacture_start|code_cap=If vaccine manufacture has not yet started and the number of infected people exceeds a threshold, then the vaccinator set the MANUFACTURE_VACCINE global property to true, signaling to the vaccine related materials producers to start.*/
-	private void determineVaccineManufacutureStart() {
+	private void determineVaccineManufactureStart() {
 		if (!manufactureStarted) {
 			if (infectedPersonCount >= infectionPersonCountThreshold) {
 				manufactureStarted = true;
@@ -104,7 +104,7 @@ public class Vaccinator {
 		final DiseaseState diseaseState = (DiseaseState) personPropertyUpdateEvent.getCurrentPropertyValue();
 		if (diseaseState == DiseaseState.INFECTIOUS) {
 			infectedPersonCount++;
-			determineVaccineManufacutureStart();
+			determineVaccineManufactureStart();
 		}
 	}
 
@@ -138,7 +138,7 @@ public class Vaccinator {
 		infectedPersonCount = personPropertiesDataManager
 				.getPeopleWithPropertyValue(PersonProperty.DISEASE_STATE, DiseaseState.INFECTIOUS).size();
 		infectionPersonCountThreshold = (int) (peopleDataManager.getPopulationCount() * infectionThreshold);
-		determineVaccineManufacutureStart();
+		determineVaccineManufactureStart();
 		scheduleVaccinations();
 	}
 
