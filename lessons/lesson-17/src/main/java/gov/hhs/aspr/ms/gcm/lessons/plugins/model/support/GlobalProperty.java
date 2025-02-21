@@ -20,7 +20,7 @@ public enum GlobalProperty implements GlobalPropertyId {
 	TELEWORK_INFECTION_THRESHOLD, // the total infection density that triggers
 									// some work places to institute telework
 									// mode
-	TELEWORK_PROBABILTY, // the probability that a work place will convert to
+	TELEWORK_PROBABILITY, // the probability that a work place will convert to
 							// telework mode once telework is allowed
 	SCHOOL_COHORT_INFECTION_THRESHOLD, // the infection density within a school
 										// that triggers the school moving to a

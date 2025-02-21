@@ -57,7 +57,7 @@ public final class Example_20 {
 	}
 
 	/*
-	 * start code_ref=partitions_plugin_partiions_init|code_cap=The partitions
+	 * start code_ref=partitions_plugin_partitions_init|code_cap=The partitions
 	 * plugin is simple, but requires that it has dependencies on those plugins that
 	 * will be used to calculate partition filters and labelers.
 	 */
@@ -164,7 +164,7 @@ public final class Example_20 {
 
 		propertyDefinition = PropertyDefinition.builder().setPropertyValueMutability(false).setDefaultValue(0.15)
 				.setType(Double.class).build();
-		builder.defineGlobalProperty(GlobalProperty.TRANSMISSION_PROBABILTY, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.TRANSMISSION_PROBABILITY, propertyDefinition, 0);
 
 		propertyDefinition = PropertyDefinition.builder().setPropertyValueMutability(false).setDefaultValue(100)
 				.setType(Integer.class).build();
@@ -182,7 +182,7 @@ public final class Example_20 {
 	/* end */
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
-				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.xls"))//
+				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
 				.build();
 	}
 

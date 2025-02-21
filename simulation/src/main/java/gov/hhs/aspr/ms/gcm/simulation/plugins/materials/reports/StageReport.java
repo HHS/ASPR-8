@@ -139,6 +139,9 @@ public final class StageReport {
 
 		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (StageId stageId : materialsDataManager.getStages(materialsProducerId)) {
 
@@ -152,9 +155,6 @@ public final class StageReport {
 				writeReportItem(reportContext, stageRecord);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

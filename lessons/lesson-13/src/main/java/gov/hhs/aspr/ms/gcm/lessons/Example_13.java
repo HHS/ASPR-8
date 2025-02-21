@@ -29,7 +29,7 @@ public final class Example_13 {
 	private Example_13() {
 	}
 
-	/* start code_ref= global_proerties_plugin_get_property_data|code_cap=Initializing the global properties plugin data with three property definitions.*/
+	/* start code_ref= global_properties_plugin_get_property_data|code_cap=Initializing the global properties plugin data with three property definitions.*/
 	private static GlobalPropertiesPluginData getGlobalPropertiesPluginData() {
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();//
 
@@ -60,7 +60,7 @@ public final class Example_13 {
 	}
 	/* end */
 
-	/* start code_ref= global_proerties_plugin_alpha_beta_dimension|code_cap=A dimension is created that adds five pairs of values over the ALPHA and BETA global properties. */
+	/* start code_ref= global_properties_plugin_alpha_beta_dimension|code_cap=A dimension is created that adds five pairs of values over the ALPHA and BETA global properties. */
 	private static Dimension getAlphaBetaDimension() {
 		List<Pair<Double, Double>> alphaBetaPairs = new ArrayList<>();
 		alphaBetaPairs.add(new Pair<>(3.0, 10.0));
@@ -94,7 +94,7 @@ public final class Example_13 {
 
 	/* end */
 
-	/* start code_ref= global_proerties_plugin_example_13|code_cap= Using the global properties plugin to add three global properties. */
+	/* start code_ref= global_properties_plugin_example_13|code_cap= Using the global properties plugin to add three global properties. */
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			throw new RuntimeException("One output directory argument is required");
@@ -125,7 +125,7 @@ public final class Example_13 {
 		NIOReportItemHandler nioReportItemHandler = //
 				NIOReportItemHandler.builder()//
 						.addReport(ModelReportLabel.GLOBAL_PROPERTY_REPORT, //
-								outputDirectory.resolve("global property report.xls"))//
+								outputDirectory.resolve("global property report.csv"))//
 						.build();
 
 		Dimension alphaBetaDimension = getAlphaBetaDimension();

@@ -51,8 +51,8 @@ public final class Example_16 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT,
-						outputDirectory.resolve("person_property_report.xls"))//
-				.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.xls"))//
+						outputDirectory.resolve("person_property_report.csv"))//
+				.addReport(ModelReportLabel.VACCINATION, outputDirectory.resolve("vaccination_report.csv"))//
 				.build();
 	}
 

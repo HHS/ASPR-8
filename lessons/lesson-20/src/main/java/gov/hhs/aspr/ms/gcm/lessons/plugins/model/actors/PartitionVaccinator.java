@@ -41,7 +41,7 @@ public class PartitionVaccinator {
 		personPropertiesDataManager = actorContext.getDataManager(PersonPropertiesDataManager.class);
 		partitionsDataManager = actorContext.getDataManager(PartitionsDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
-		establishWorkingVaribles();
+		establishWorkingVariables();
 		createPartitions();
 		planNextVaccination();
 	}
@@ -90,7 +90,7 @@ public class PartitionVaccinator {
 	}
 	/* end */
 
-	private void establishWorkingVaribles() {
+	private void establishWorkingVariables() {
 		int vaccinationsPerDay = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
 

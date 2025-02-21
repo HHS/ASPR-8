@@ -96,9 +96,9 @@ public final class Example_12 {
 
 		/* start code_ref=reports_plugin_nio|code_cap=The three reports in this experiment each produce report items and release them as output.  The NIOReportItemHandler is initialized here by indicating the file associated with each report.  */
 		NIOReportItemHandler nioReportItemHandler = NIOReportItemHandler.builder()//
-				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.xls"))//
-				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.xls"))//
-				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.xls"))//
+				.addReport(ModelLabel.FAMILY_VACCINE_REPORT, outputDirectory.resolve("family_vaccine_report.csv"))//
+				.addReport(ModelLabel.HOURLY_VACCINE_REPORT, outputDirectory.resolve("hourly_vaccine_report.csv"))//
+				.addReport(ModelLabel.STATELESS_VACCINE_REPORT, outputDirectory.resolve("stateless_vaccine_report.csv"))//
 				.build();
 		/* end */
 

@@ -34,6 +34,7 @@ public class PersonStatusReport {
 		reportContext.subscribeToSimulationClose(this::reportState);
 
 		final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+		reportHeaderBuilder.setReportLabel(reportLabel);
 		reportHeaderBuilder.add("age_group");
 		reportHeaderBuilder.add("disease_state");
 		reportHeaderBuilder.add("vaccinations");
@@ -71,8 +72,8 @@ public class PersonStatusReport {
 			AgeGroup ageGroup = multiKey.getKey(0);
 			DiseaseState diseaseState = multiKey.getKey(1);
 			int vaccinationCount = multiKey.getKey(2);
-			ReportItem reportItem = ReportItem.builder().setReportLabel(reportLabel)
-					
+			ReportItem reportItem = ReportItem.builder()//
+					.setReportLabel(reportLabel)//
 					.addValue(ageGroup)//
 					.addValue(diseaseState)//
 					.addValue(vaccinationCount)//

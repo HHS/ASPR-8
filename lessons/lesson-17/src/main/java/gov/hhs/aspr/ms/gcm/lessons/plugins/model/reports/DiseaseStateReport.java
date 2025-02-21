@@ -27,6 +27,7 @@ public final class DiseaseStateReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeaderBuilder.setReportLabel(getReportLabel());
 			addTimeFieldHeaders(reportHeaderBuilder);//
 			for (DiseaseState diseaseState : DiseaseState.values()) {
 				reportHeaderBuilder.add(diseaseState.toString().toLowerCase());

@@ -26,6 +26,7 @@ public final class QuestionnaireReport {
 		reportContext.subscribeToSimulationClose(this::report);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
 				.add("delivery rate")//
 				.add("mean delivery time")//
 				.add("stdev delivery time")//

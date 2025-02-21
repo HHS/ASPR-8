@@ -258,6 +258,9 @@ public final class BatchStatusReport {
 
 		materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (MaterialId materialId : materialsDataManager.getMaterialIds()) {
 			this.batchPropertyMap.put(materialId, materialsDataManager.getBatchPropertyIds(materialId));
 		}
@@ -274,9 +277,6 @@ public final class BatchStatusReport {
 				}
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

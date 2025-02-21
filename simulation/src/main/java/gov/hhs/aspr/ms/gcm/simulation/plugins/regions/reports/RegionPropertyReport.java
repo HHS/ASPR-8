@@ -169,6 +169,9 @@ public final class RegionPropertyReport {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
+		// release report header
+		reportContext.releaseOutput(reportHeader);
+
 		for (RegionPropertyId regionPropertyId : regionsDataManager.getRegionPropertyIds()) {
 			addToCurrentProperties(regionPropertyId);
 		}
@@ -180,9 +183,6 @@ public final class RegionPropertyReport {
 				writeProperty(reportContext, regionId, regionPropertyId, regionPropertyValue);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

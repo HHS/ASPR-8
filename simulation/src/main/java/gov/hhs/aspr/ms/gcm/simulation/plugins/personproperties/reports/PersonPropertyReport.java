@@ -276,6 +276,9 @@ public final class PersonPropertyReport extends PeriodicReport {
 		reportContext.subscribe(PersonPropertyDefinitionEvent.class, this::handlePersonPropertyDefinitionEvent);
 		reportContext.subscribe(PersonPropertyUpdateEvent.class, this::handlePersonPropertyUpdateEvent);
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (PersonPropertyId personPropertyId : personPropertiesDataManager.getPersonPropertyIds()) {
 			addToCurrentProperties(personPropertyId);
 		}
@@ -288,9 +291,6 @@ public final class PersonPropertyReport extends PeriodicReport {
 				increment(regionId, personPropertyId, personPropertyValue);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

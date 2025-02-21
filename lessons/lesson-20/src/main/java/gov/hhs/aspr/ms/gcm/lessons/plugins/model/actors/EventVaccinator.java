@@ -50,14 +50,14 @@ public class EventVaccinator {
 		peopleDataManager = actorContext.getDataManager(PeopleDataManager.class);
 		globalPropertiesDataManager = actorContext.getDataManager(GlobalPropertiesDataManager.class);
 
-		establishWorkingVaribles();
+		establishWorkingVariables();
 		subscribeToPersonPropertyUpdateEvents();
-		intializeCandidatesAndWeights();
+		initializeCandidatesAndWeights();
 		planNextVaccination();
 	}
 
 	/* end */
-	private void establishWorkingVaribles() {
+	private void establishWorkingVariables() {
 		int vaccinationsPerDay = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.VACCINATIONS_PER_DAY);
 		interVaccinationTime = 1.0 / vaccinationsPerDay;
@@ -166,7 +166,7 @@ public class EventVaccinator {
 		return result;
 	}
 
-	private void intializeCandidatesAndWeights() {
+	private void initializeCandidatesAndWeights() {
 
 		List<PersonId> people = peopleDataManager.getPeople();
 
@@ -228,9 +228,9 @@ public class EventVaccinator {
 		for (MultiKey multiKey : weights.keySet()) {
 			Double weight = weights.get(multiKey);
 			int candidateCount = candidates.get(multiKey).size();
-			Double extenedWeight = weight * candidateCount;
-			extendedWeights.put(multiKey, extenedWeight);
-			sumOfExtendedWeights += extenedWeight;
+			Double extendedWeight = weight * candidateCount;
+			extendedWeights.put(multiKey, extendedWeight);
+			sumOfExtendedWeights += extendedWeight;
 		}
 
 		PersonId selectedCandidate = null;
@@ -240,10 +240,10 @@ public class EventVaccinator {
 			Double extendedWeight = extendedWeights.get(multiKey);
 			selectedWeight -= extendedWeight;
 			if (selectedWeight <= 0) {
-				List<PersonId> seletedCandidates = candidates.get(multiKey);
-				if (!seletedCandidates.isEmpty()) {
-					int index = randomGenerator.nextInt(seletedCandidates.size());
-					selectedCandidate = seletedCandidates.get(index);
+				List<PersonId> selectedCandidates = candidates.get(multiKey);
+				if (!selectedCandidates.isEmpty()) {
+					int index = randomGenerator.nextInt(selectedCandidates.size());
+					selectedCandidate = selectedCandidates.get(index);
 				}
 				break;
 			}
@@ -274,7 +274,7 @@ public class EventVaccinator {
 	/*
 	 * start code_ref=partitions_plugin_event_end_wait|code_cap= The
 	 * event-vaccinator can restart the vaccination process when a person becomes
-	 * eligible after the post-vacination waiting period is over.
+	 * eligible after the post-vaccination waiting period is over.
 	 */
 	private void endWaitTime(PersonId personId) {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);

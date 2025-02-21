@@ -17,6 +17,13 @@ public final class VaccineReport {
 
 	public VaccineReport(ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
+		reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
+				.add("vaccinated_immune")//
+				.add("vaccinated_susceptible")//
+				.add("unvaccinated_immune")//
+				.add("unvaccinated_susceptible")//
+				.build();
 	}
 
 	public void init(ReportContext reportContext) {
@@ -25,12 +32,7 @@ public final class VaccineReport {
 		reportContext.releaseOutput(reportHeader);
 	}
 
-	private ReportHeader reportHeader = ReportHeader.builder()//
-			.add("vaccinated_immune")//
-			.add("vaccinated_susceptible")//
-			.add("unvaccinated_immune")//
-			.add("unvaccinated_susceptible")//
-			.build();
+	private ReportHeader reportHeader;
 
 	private void report(ReportContext reportContext) {
 		PeopleDataManager peopleDataManager = reportContext.getDataManager(PeopleDataManager.class);
