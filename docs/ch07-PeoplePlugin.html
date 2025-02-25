@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.475">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>GCM-Docs - 7&nbsp; People Plugin</title>
+<title>7&nbsp; People Plugin – GCM-Docs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -17,11 +17,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -32,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -46,43 +47,13 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -110,7 +81,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -119,13 +96,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
-
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
 
 
 <link rel="stylesheet" href="styles.css">
@@ -135,11 +115,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch07-PeoplePlugin.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav>
@@ -147,105 +132,120 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">GCM-Docs</a> 
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link">The General Computation Model (GCM)</a>
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The General Computation Model (GCM)</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch01-Introduction.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  <a href="./ch01-Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch02-GettingStarted.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Getting Started</span></a>
+  <a href="./ch02-GettingStarted.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Getting Started</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch03-StochasticsPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></a>
+  <a href="./ch03-StochasticsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch04-ReportsPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reports Plugin</span></a>
+  <a href="./ch04-ReportsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reports Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch05-Properties.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Properties</span></a>
+  <a href="./ch05-Properties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Properties</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch06-GlobalPropertiesPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Global Properties Plugin</span></a>
+  <a href="./ch06-GlobalPropertiesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Global Properties Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch07-PeoplePlugin.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></a>
+  <a href="./ch07-PeoplePlugin.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch08-RegionsPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></a>
+  <a href="./ch08-RegionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch09-PersonPropertiesPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></a>
+  <a href="./ch09-PersonPropertiesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch10-GroupsPlugins.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Groups Plugin</span></a>
+  <a href="./ch10-GroupsPlugins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Groups Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch11-ResourcesPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Resources Plugin</span></a>
+  <a href="./ch11-ResourcesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Resources Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch12-MaterialsPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Materials Plugin</span></a>
+  <a href="./ch12-MaterialsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Materials Plugin</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ch13-PartitionsPlugin.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Partitions Plugin</span></a>
+  <a href="./ch13-PartitionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Partitions Plugin</span></span></a>
   </div>
 </li>
     </ul>
     </div>
 </nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#plugin-data-initialization" id="toc-plugin-data-initialization" class="nav-link active" data-scroll-target="#plugin-data-initialization"><span class="toc-section-number">7.1</span>  Plugin Data Initialization</a></li>
-  <li><a href="#plugin-behavior" id="toc-plugin-behavior" class="nav-link" data-scroll-target="#plugin-behavior"><span class="toc-section-number">7.2</span>  Plugin Behavior</a></li>
-  <li><a href="#data-manager" id="toc-data-manager" class="nav-link" data-scroll-target="#data-manager"><span class="toc-section-number">7.3</span>  Data Manager</a></li>
-  <li><a href="#addremove-event-patterns" id="toc-addremove-event-patterns" class="nav-link" data-scroll-target="#addremove-event-patterns"><span class="toc-section-number">7.4</span>  Add/Remove event patterns</a></li>
-  <li><a href="#example-code-lesson-14" id="toc-example-code-lesson-14" class="nav-link" data-scroll-target="#example-code-lesson-14"><span class="toc-section-number">7.5</span>  Example Code (Lesson 14)</a></li>
-  <li><a href="#interacting-with-the-addition-and-removal-events" id="toc-interacting-with-the-addition-and-removal-events" class="nav-link" data-scroll-target="#interacting-with-the-addition-and-removal-events"><span class="toc-section-number">7.6</span>  Interacting with the addition and removal events</a></li>
-  <li><a href="#inspecting-the-output" id="toc-inspecting-the-output" class="nav-link" data-scroll-target="#inspecting-the-output"><span class="toc-section-number">7.7</span>  Inspecting the output</a></li>
+  <li><a href="#plugin-data-initialization" id="toc-plugin-data-initialization" class="nav-link active" data-scroll-target="#plugin-data-initialization"><span class="header-section-number">7.1</span> Plugin Data Initialization</a></li>
+  <li><a href="#plugin-behavior" id="toc-plugin-behavior" class="nav-link" data-scroll-target="#plugin-behavior"><span class="header-section-number">7.2</span> Plugin Behavior</a></li>
+  <li><a href="#data-manager" id="toc-data-manager" class="nav-link" data-scroll-target="#data-manager"><span class="header-section-number">7.3</span> Data Manager</a></li>
+  <li><a href="#addremove-event-patterns" id="toc-addremove-event-patterns" class="nav-link" data-scroll-target="#addremove-event-patterns"><span class="header-section-number">7.4</span> Add/Remove event patterns</a></li>
+  <li><a href="#example-code-lesson-14" id="toc-example-code-lesson-14" class="nav-link" data-scroll-target="#example-code-lesson-14"><span class="header-section-number">7.5</span> Example Code (Lesson 14)</a></li>
+  <li><a href="#interacting-with-the-addition-and-removal-events" id="toc-interacting-with-the-addition-and-removal-events" class="nav-link" data-scroll-target="#interacting-with-the-addition-and-removal-events"><span class="header-section-number">7.6</span> Interacting with the addition and removal events</a></li>
+  <li><a href="#inspecting-the-output" id="toc-inspecting-the-output" class="nav-link" data-scroll-target="#inspecting-the-output"><span class="header-section-number">7.7</span> Inspecting the output</a></li>
   </ul>
 </nav>
     </div>
@@ -254,7 +254,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></h1>
 </div>
 
 
@@ -267,11 +267,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </div>
   
 
+
 </header>
 
-<div class="cell">
 
-</div>
 <p>The people plugin implements the dynamic management of person identity. Each person is identified with an immutable PersonId object that wraps an int value. People are numbered with non-negative values starting with zero and filling a contiguous range, but may contain any number of gaps in that range.</p>
 <section id="plugin-data-initialization" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="plugin-data-initialization"><span class="header-section-number">7.1</span> Plugin Data Initialization</h2>
@@ -346,232 +345,283 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li>Vaccine plugin – (local plugin) used to track vaccinations for each person</li>
 </ul>
-<p>The example’s main method starts in <a href="#lst-people_plugin_example_14_init">Code Block&nbsp;<span>7.1</span></a> by establishing two reports:</p>
+<p>The example’s main method starts in <a href="#lst-people_plugin_example_14_init" class="quarto-xref">Code Block&nbsp;<span>7.1</span></a> by establishing two reports:</p>
 <ul>
 <li>The population trace report simply lists the additions and deletions of people by time. The report is managed by the PopulationTraceReport and is added to the simulation by the model plugin.</li>
 <li>The vaccination report shows a daily accounting of the number of people having 0, 1…6+ vaccinations. The report is managed by the VaccineReport class added by the vaccine plugin.</li>
 </ul>
 <div class="cell">
-<div id="lst-people_plugin_example_14_init" class="listing">
-<p>Code Block&nbsp;7.1: The population trace and vaccination reports are associated with corresponding file names via the NIO report item handler.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_example_14_init" data-lst-cap="The population trace and vaccination reports are associated with corresponding file names via the NIO report item handler."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_example_14_init-1"><a href="#lst-people_plugin_example_14_init-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_init-2"><a href="#lst-people_plugin_example_14_init-2"></a>    <span class="cf">if</span> <span class="op">(</span>args<span class="op">.</span><span class="fu">length</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_init-3"><a href="#lst-people_plugin_example_14_init-3"></a>        <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">RuntimeException</span><span class="op">(</span><span class="st">"One output directory argument is required"</span><span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_init-4"><a href="#lst-people_plugin_example_14_init-4"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_example_14_init-5"><a href="#lst-people_plugin_example_14_init-5"></a>    Path outputDirectory <span class="op">=</span> Paths<span class="op">.</span><span class="fu">get</span><span class="op">(</span>args<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
-<span id="lst-people_plugin_example_14_init-6"><a href="#lst-people_plugin_example_14_init-6"></a>    <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">exists</span><span class="op">(</span>outputDirectory<span class="op">))</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_init-7"><a href="#lst-people_plugin_example_14_init-7"></a>        Files<span class="op">.</span><span class="fu">createDirectory</span><span class="op">(</span>outputDirectory<span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_init-8"><a href="#lst-people_plugin_example_14_init-8"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_init-9"><a href="#lst-people_plugin_example_14_init-9"></a>        <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">isDirectory</span><span class="op">(</span>outputDirectory<span class="op">))</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_init-10"><a href="#lst-people_plugin_example_14_init-10"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IOException</span><span class="op">(</span><span class="st">"Provided path is not a directory"</span><span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_init-11"><a href="#lst-people_plugin_example_14_init-11"></a>        <span class="op">}</span></span>
-<span id="lst-people_plugin_example_14_init-12"><a href="#lst-people_plugin_example_14_init-12"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_example_14_init-13"><a href="#lst-people_plugin_example_14_init-13"></a></span>
-<span id="lst-people_plugin_example_14_init-14"><a href="#lst-people_plugin_example_14_init-14"></a>    <span class="co">// reports</span></span>
-<span id="lst-people_plugin_example_14_init-15"><a href="#lst-people_plugin_example_14_init-15"></a>    NIOReportItemHandler nioReportItemHandler <span class="op">=</span> <span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-16"><a href="#lst-people_plugin_example_14_init-16"></a>            NIOReportItemHandler<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-17"><a href="#lst-people_plugin_example_14_init-17"></a>                    <span class="op">.</span><span class="fu">addReport</span><span class="op">(</span>ModelReportLabel<span class="op">.</span><span class="fu">POPULATION_TRACE</span><span class="op">,</span> <span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-18"><a href="#lst-people_plugin_example_14_init-18"></a>                            outputDirectory<span class="op">.</span><span class="fu">resolve</span><span class="op">(</span><span class="st">"population_trace_report.xls"</span><span class="op">))</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-19"><a href="#lst-people_plugin_example_14_init-19"></a>                    <span class="op">.</span><span class="fu">addReport</span><span class="op">(</span>ModelReportLabel<span class="op">.</span><span class="fu">VACCINATION</span><span class="op">,</span> <span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-20"><a href="#lst-people_plugin_example_14_init-20"></a>                            outputDirectory<span class="op">.</span><span class="fu">resolve</span><span class="op">(</span><span class="st">"vaccination_report.xls"</span><span class="op">))</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_init-21"><a href="#lst-people_plugin_example_14_init-21"></a>                    <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_example_14_init" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_example_14_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.1: The population trace and vaccination reports are associated with corresponding file names via the NIO report item handler.
+</figcaption>
+<div aria-describedby="lst-people_plugin_example_14_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_example_14_init"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_example_14_init-1"><a href="#lst-people_plugin_example_14_init-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_init-2"><a href="#lst-people_plugin_example_14_init-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>args<span class="op">.</span><span class="fu">length</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_init-3"><a href="#lst-people_plugin_example_14_init-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">RuntimeException</span><span class="op">(</span><span class="st">"One output directory argument is required"</span><span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_init-4"><a href="#lst-people_plugin_example_14_init-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_example_14_init-5"><a href="#lst-people_plugin_example_14_init-5" aria-hidden="true" tabindex="-1"></a>    Path outputDirectory <span class="op">=</span> Paths<span class="op">.</span><span class="fu">get</span><span class="op">(</span>args<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="lst-people_plugin_example_14_init-6"><a href="#lst-people_plugin_example_14_init-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">exists</span><span class="op">(</span>outputDirectory<span class="op">))</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_init-7"><a href="#lst-people_plugin_example_14_init-7" aria-hidden="true" tabindex="-1"></a>        Files<span class="op">.</span><span class="fu">createDirectory</span><span class="op">(</span>outputDirectory<span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_init-8"><a href="#lst-people_plugin_example_14_init-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_init-9"><a href="#lst-people_plugin_example_14_init-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">isDirectory</span><span class="op">(</span>outputDirectory<span class="op">))</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_init-10"><a href="#lst-people_plugin_example_14_init-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IOException</span><span class="op">(</span><span class="st">"Provided path is not a directory"</span><span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_init-11"><a href="#lst-people_plugin_example_14_init-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-people_plugin_example_14_init-12"><a href="#lst-people_plugin_example_14_init-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_example_14_init-13"><a href="#lst-people_plugin_example_14_init-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_example_14_init-14"><a href="#lst-people_plugin_example_14_init-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// reports</span></span>
+<span id="lst-people_plugin_example_14_init-15"><a href="#lst-people_plugin_example_14_init-15" aria-hidden="true" tabindex="-1"></a>    NIOReportItemHandler nioReportItemHandler <span class="op">=</span> <span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-16"><a href="#lst-people_plugin_example_14_init-16" aria-hidden="true" tabindex="-1"></a>            NIOReportItemHandler<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-17"><a href="#lst-people_plugin_example_14_init-17" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">addReport</span><span class="op">(</span>ModelReportLabel<span class="op">.</span><span class="fu">POPULATION_TRACE</span><span class="op">,</span> <span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-18"><a href="#lst-people_plugin_example_14_init-18" aria-hidden="true" tabindex="-1"></a>                            outputDirectory<span class="op">.</span><span class="fu">resolve</span><span class="op">(</span><span class="st">"population_trace_report.csv"</span><span class="op">))</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-19"><a href="#lst-people_plugin_example_14_init-19" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">addReport</span><span class="op">(</span>ModelReportLabel<span class="op">.</span><span class="fu">VACCINATION</span><span class="op">,</span> <span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-20"><a href="#lst-people_plugin_example_14_init-20" aria-hidden="true" tabindex="-1"></a>                            outputDirectory<span class="op">.</span><span class="fu">resolve</span><span class="op">(</span><span class="st">"vaccination_report.csv"</span><span class="op">))</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_init-21"><a href="#lst-people_plugin_example_14_init-21" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
-<p>The main method continues by creating the people plugin and initializing it with 10 people. Note that the people will have id values of 1, 3, 5, … ,19 showing that any set of non-negative values are acceptable. The stochastics plugin is next and is initialized with a seed value. We will be controlling the random seed values via a dimension as presented in <a href="#lst-people_plugin_stochastics_dimension">Code Block&nbsp;<span>7.3</span></a>. As a result, the experiment will have 5 scenarios, with each scenario differing in only the random seed value that starts the simulation.</p>
+<p>The main method continues by creating the people plugin and initializing it with 10 people. Note that the people will have id values of 1, 3, 5, … ,19 showing that any set of non-negative values are acceptable. The stochastics plugin is next and is initialized with a seed value. We will be controlling the random seed values via a dimension as presented in <a href="#lst-people_plugin_stochastics_dimension" class="quarto-xref">Code Block&nbsp;<span>7.3</span></a>. As a result, the experiment will have 5 scenarios, with each scenario differing in only the random seed value that starts the simulation.</p>
 <div class="cell">
-<div id="lst-people_plugin_example_14_adding_plugins" class="listing">
-<p>Code Block&nbsp;7.2: The various plugins are initialized with data and added to the experiment.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_example_14_adding_plugins" data-lst-cap="The various plugins are initialized with data and added to the experiment."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_example_14_adding_plugins-1"><a href="#lst-people_plugin_example_14_adding_plugins-1"></a>        <span class="co">// create the people plugin with an initial population of ten people,</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-2"><a href="#lst-people_plugin_example_14_adding_plugins-2"></a>        <span class="co">// numbered 1, 3, 5,...,19</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-3"><a href="#lst-people_plugin_example_14_adding_plugins-3"></a>        PeoplePluginData<span class="op">.</span><span class="fu">Builder</span> peoplePluginDataBuilder <span class="op">=</span> PeoplePluginData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-4"><a href="#lst-people_plugin_example_14_adding_plugins-4"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">10</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-5"><a href="#lst-people_plugin_example_14_adding_plugins-5"></a>            PersonId personId <span class="op">=</span> <span class="kw">new</span> <span class="fu">PersonId</span><span class="op">(</span>i <span class="op">*</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-6"><a href="#lst-people_plugin_example_14_adding_plugins-6"></a>            peoplePluginDataBuilder<span class="op">.</span><span class="fu">addPersonRange</span><span class="op">(</span><span class="kw">new</span> <span class="fu">PersonRange</span><span class="op">(</span>personId<span class="op">.</span><span class="fu">getValue</span><span class="op">(),</span> personId<span class="op">.</span><span class="fu">getValue</span><span class="op">()));</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-7"><a href="#lst-people_plugin_example_14_adding_plugins-7"></a>        <span class="op">}</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-8"><a href="#lst-people_plugin_example_14_adding_plugins-8"></a>        PeoplePluginData peoplePluginData <span class="op">=</span> peoplePluginDataBuilder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-9"><a href="#lst-people_plugin_example_14_adding_plugins-9"></a>        Plugin peoplePlugin <span class="op">=</span> PeoplePlugin<span class="op">.</span><span class="fu">getPeoplePlugin</span><span class="op">(</span>peoplePluginData<span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-10"><a href="#lst-people_plugin_example_14_adding_plugins-10"></a></span>
-<span id="lst-people_plugin_example_14_adding_plugins-11"><a href="#lst-people_plugin_example_14_adding_plugins-11"></a>        <span class="co">// create the stochastics plugin and build a dimension with 5 seed</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-12"><a href="#lst-people_plugin_example_14_adding_plugins-12"></a>        <span class="co">// values</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-13"><a href="#lst-people_plugin_example_14_adding_plugins-13"></a>        WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span><span class="dv">463390897335624435L</span><span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-14"><a href="#lst-people_plugin_example_14_adding_plugins-14"></a>        StochasticsPluginData stochasticsPluginData <span class="op">=</span> StochasticsPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">)</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-15"><a href="#lst-people_plugin_example_14_adding_plugins-15"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-16"><a href="#lst-people_plugin_example_14_adding_plugins-16"></a>        Plugin stochasticsPlugin <span class="op">=</span> StochasticsPlugin<span class="op">.</span><span class="fu">getStochasticsPlugin</span><span class="op">(</span>stochasticsPluginData<span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-17"><a href="#lst-people_plugin_example_14_adding_plugins-17"></a></span>
-<span id="lst-people_plugin_example_14_adding_plugins-18"><a href="#lst-people_plugin_example_14_adding_plugins-18"></a>        <span class="bu">Dimension</span> stochasticsDimension <span class="op">=</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">8265427588292179209L</span><span class="op">);</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-19"><a href="#lst-people_plugin_example_14_adding_plugins-19"></a></span>
-<span id="lst-people_plugin_example_14_adding_plugins-20"><a href="#lst-people_plugin_example_14_adding_plugins-20"></a>        <span class="co">// create the vaccine and model plugins</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-21"><a href="#lst-people_plugin_example_14_adding_plugins-21"></a>        Plugin vaccinePlugin <span class="op">=</span> VaccinePlugin<span class="op">.</span><span class="fu">getVaccinePlugin</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-22"><a href="#lst-people_plugin_example_14_adding_plugins-22"></a>        Plugin modelPlugin <span class="op">=</span> ModelPlugin<span class="op">.</span><span class="fu">getModelPlugin</span><span class="op">();</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-23"><a href="#lst-people_plugin_example_14_adding_plugins-23"></a></span>
-<span id="lst-people_plugin_example_14_adding_plugins-24"><a href="#lst-people_plugin_example_14_adding_plugins-24"></a>        Experiment<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-25"><a href="#lst-people_plugin_example_14_adding_plugins-25"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>modelPlugin<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-26"><a href="#lst-people_plugin_example_14_adding_plugins-26"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>peoplePlugin<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-27"><a href="#lst-people_plugin_example_14_adding_plugins-27"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>stochasticsPlugin<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-28"><a href="#lst-people_plugin_example_14_adding_plugins-28"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>vaccinePlugin<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-29"><a href="#lst-people_plugin_example_14_adding_plugins-29"></a>                <span class="op">.</span><span class="fu">addExperimentContextConsumer</span><span class="op">(</span>nioReportItemHandler<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-30"><a href="#lst-people_plugin_example_14_adding_plugins-30"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span>stochasticsDimension<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-31"><a href="#lst-people_plugin_example_14_adding_plugins-31"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">()</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-32"><a href="#lst-people_plugin_example_14_adding_plugins-32"></a>                <span class="op">.</span><span class="fu">execute</span><span class="op">();</span><span class="co">//</span></span>
-<span id="lst-people_plugin_example_14_adding_plugins-33"><a href="#lst-people_plugin_example_14_adding_plugins-33"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_example_14_adding_plugins" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_example_14_adding_plugins-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.2: The various plugins are initialized with data and added to the experiment.
+</figcaption>
+<div aria-describedby="lst-people_plugin_example_14_adding_plugins-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_example_14_adding_plugins"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_example_14_adding_plugins-1"><a href="#lst-people_plugin_example_14_adding_plugins-1" aria-hidden="true" tabindex="-1"></a>        <span class="co">// create the people plugin with an initial population of ten people,</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-2"><a href="#lst-people_plugin_example_14_adding_plugins-2" aria-hidden="true" tabindex="-1"></a>        <span class="co">// numbered 1, 3, 5,...,19</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-3"><a href="#lst-people_plugin_example_14_adding_plugins-3" aria-hidden="true" tabindex="-1"></a>        PeoplePluginData<span class="op">.</span><span class="fu">Builder</span> peoplePluginDataBuilder <span class="op">=</span> PeoplePluginData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-4"><a href="#lst-people_plugin_example_14_adding_plugins-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">10</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-5"><a href="#lst-people_plugin_example_14_adding_plugins-5" aria-hidden="true" tabindex="-1"></a>            PersonId personId <span class="op">=</span> <span class="kw">new</span> <span class="fu">PersonId</span><span class="op">(</span>i <span class="op">*</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-6"><a href="#lst-people_plugin_example_14_adding_plugins-6" aria-hidden="true" tabindex="-1"></a>            peoplePluginDataBuilder<span class="op">.</span><span class="fu">addPersonRange</span><span class="op">(</span><span class="kw">new</span> <span class="fu">PersonRange</span><span class="op">(</span>personId<span class="op">.</span><span class="fu">getValue</span><span class="op">(),</span> personId<span class="op">.</span><span class="fu">getValue</span><span class="op">()));</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-7"><a href="#lst-people_plugin_example_14_adding_plugins-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-8"><a href="#lst-people_plugin_example_14_adding_plugins-8" aria-hidden="true" tabindex="-1"></a>        PeoplePluginData peoplePluginData <span class="op">=</span> peoplePluginDataBuilder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-9"><a href="#lst-people_plugin_example_14_adding_plugins-9" aria-hidden="true" tabindex="-1"></a>        Plugin peoplePlugin <span class="op">=</span> PeoplePlugin<span class="op">.</span><span class="fu">getPeoplePlugin</span><span class="op">(</span>peoplePluginData<span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-10"><a href="#lst-people_plugin_example_14_adding_plugins-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_example_14_adding_plugins-11"><a href="#lst-people_plugin_example_14_adding_plugins-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// create the stochastics plugin and build a dimension with 5 seed</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-12"><a href="#lst-people_plugin_example_14_adding_plugins-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// values</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-13"><a href="#lst-people_plugin_example_14_adding_plugins-13" aria-hidden="true" tabindex="-1"></a>        WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span><span class="dv">463390897335624435L</span><span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-14"><a href="#lst-people_plugin_example_14_adding_plugins-14" aria-hidden="true" tabindex="-1"></a>        StochasticsPluginData stochasticsPluginData <span class="op">=</span> StochasticsPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">)</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-15"><a href="#lst-people_plugin_example_14_adding_plugins-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-16"><a href="#lst-people_plugin_example_14_adding_plugins-16" aria-hidden="true" tabindex="-1"></a>        Plugin stochasticsPlugin <span class="op">=</span> StochasticsPlugin<span class="op">.</span><span class="fu">getStochasticsPlugin</span><span class="op">(</span>stochasticsPluginData<span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-17"><a href="#lst-people_plugin_example_14_adding_plugins-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_example_14_adding_plugins-18"><a href="#lst-people_plugin_example_14_adding_plugins-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Dimension</span> stochasticsDimension <span class="op">=</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="dv">8265427588292179209L</span><span class="op">);</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-19"><a href="#lst-people_plugin_example_14_adding_plugins-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_example_14_adding_plugins-20"><a href="#lst-people_plugin_example_14_adding_plugins-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// create the vaccine and model plugins</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-21"><a href="#lst-people_plugin_example_14_adding_plugins-21" aria-hidden="true" tabindex="-1"></a>        Plugin vaccinePlugin <span class="op">=</span> VaccinePlugin<span class="op">.</span><span class="fu">getVaccinePlugin</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-22"><a href="#lst-people_plugin_example_14_adding_plugins-22" aria-hidden="true" tabindex="-1"></a>        Plugin modelPlugin <span class="op">=</span> ModelPlugin<span class="op">.</span><span class="fu">getModelPlugin</span><span class="op">();</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-23"><a href="#lst-people_plugin_example_14_adding_plugins-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_example_14_adding_plugins-24"><a href="#lst-people_plugin_example_14_adding_plugins-24" aria-hidden="true" tabindex="-1"></a>        Experiment<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-25"><a href="#lst-people_plugin_example_14_adding_plugins-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>modelPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-26"><a href="#lst-people_plugin_example_14_adding_plugins-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>peoplePlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-27"><a href="#lst-people_plugin_example_14_adding_plugins-27" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>stochasticsPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-28"><a href="#lst-people_plugin_example_14_adding_plugins-28" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>vaccinePlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-29"><a href="#lst-people_plugin_example_14_adding_plugins-29" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addExperimentContextConsumer</span><span class="op">(</span>nioReportItemHandler<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-30"><a href="#lst-people_plugin_example_14_adding_plugins-30" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span>stochasticsDimension<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-31"><a href="#lst-people_plugin_example_14_adding_plugins-31" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-32"><a href="#lst-people_plugin_example_14_adding_plugins-32" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">execute</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-people_plugin_example_14_adding_plugins-33"><a href="#lst-people_plugin_example_14_adding_plugins-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 <div class="cell">
-<div id="lst-people_plugin_stochastics_dimension" class="listing">
-<p>Code Block&nbsp;7.3: The stochastics dimension contains levels for each replication value. Note that the generation of the random seed values occurs outside of the lambda code.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_stochastics_dimension" data-lst-cap="The stochastics dimension contains levels for each replication value. Note that the generation of the random seed values occurs outside of the lambda code."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_stochastics_dimension-1"><a href="#lst-people_plugin_stochastics_dimension-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="bu">Dimension</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dt">int</span> replicationCount<span class="op">,</span> <span class="dt">long</span> seed<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_stochastics_dimension-2"><a href="#lst-people_plugin_stochastics_dimension-2"></a>    FunctionalDimension<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> FunctionalDimension<span class="op">.</span><span class="fu">builder</span><span class="op">();</span><span class="co">//</span></span>
-<span id="lst-people_plugin_stochastics_dimension-3"><a href="#lst-people_plugin_stochastics_dimension-3"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-4"><a href="#lst-people_plugin_stochastics_dimension-4"></a>    RandomGenerator randomGenerator <span class="op">=</span> RandomGeneratorProvider<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">(</span>seed<span class="op">);</span></span>
-<span id="lst-people_plugin_stochastics_dimension-5"><a href="#lst-people_plugin_stochastics_dimension-5"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-6"><a href="#lst-people_plugin_stochastics_dimension-6"></a>    <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> seedValues <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
-<span id="lst-people_plugin_stochastics_dimension-7"><a href="#lst-people_plugin_stochastics_dimension-7"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> replicationCount<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_stochastics_dimension-8"><a href="#lst-people_plugin_stochastics_dimension-8"></a>        seedValues<span class="op">.</span><span class="fu">add</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextLong</span><span class="op">());</span></span>
-<span id="lst-people_plugin_stochastics_dimension-9"><a href="#lst-people_plugin_stochastics_dimension-9"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_stochastics_dimension-10"><a href="#lst-people_plugin_stochastics_dimension-10"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-11"><a href="#lst-people_plugin_stochastics_dimension-11"></a>    IntStream<span class="op">.</span><span class="fu">range</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> seedValues<span class="op">.</span><span class="fu">size</span><span class="op">()).</span><span class="fu">forEach</span><span class="op">((</span>i<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_stochastics_dimension-12"><a href="#lst-people_plugin_stochastics_dimension-12"></a>        builder<span class="op">.</span><span class="fu">addLevel</span><span class="op">((</span>context<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_stochastics_dimension-13"><a href="#lst-people_plugin_stochastics_dimension-13"></a>            StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span> stochasticsPluginDataBuilder <span class="op">=</span> context</span>
-<span id="lst-people_plugin_stochastics_dimension-14"><a href="#lst-people_plugin_stochastics_dimension-14"></a>                    <span class="op">.</span><span class="fu">getPluginDataBuilder</span><span class="op">(</span>StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_stochastics_dimension-15"><a href="#lst-people_plugin_stochastics_dimension-15"></a>            <span class="dt">long</span> seedValue <span class="op">=</span> seedValues<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">);</span></span>
-<span id="lst-people_plugin_stochastics_dimension-16"><a href="#lst-people_plugin_stochastics_dimension-16"></a>            WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span>seedValue<span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_stochastics_dimension-17"><a href="#lst-people_plugin_stochastics_dimension-17"></a>            stochasticsPluginDataBuilder<span class="op">.</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">);</span></span>
-<span id="lst-people_plugin_stochastics_dimension-18"><a href="#lst-people_plugin_stochastics_dimension-18"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-19"><a href="#lst-people_plugin_stochastics_dimension-19"></a>            <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
-<span id="lst-people_plugin_stochastics_dimension-20"><a href="#lst-people_plugin_stochastics_dimension-20"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Integer</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>i<span class="op">));</span></span>
-<span id="lst-people_plugin_stochastics_dimension-21"><a href="#lst-people_plugin_stochastics_dimension-21"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Long</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>seedValue<span class="op">)</span> <span class="op">+</span> <span class="st">"L"</span><span class="op">);</span></span>
-<span id="lst-people_plugin_stochastics_dimension-22"><a href="#lst-people_plugin_stochastics_dimension-22"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-23"><a href="#lst-people_plugin_stochastics_dimension-23"></a>            <span class="cf">return</span> result<span class="op">;</span></span>
-<span id="lst-people_plugin_stochastics_dimension-24"><a href="#lst-people_plugin_stochastics_dimension-24"></a>        <span class="op">});</span><span class="co">//</span></span>
-<span id="lst-people_plugin_stochastics_dimension-25"><a href="#lst-people_plugin_stochastics_dimension-25"></a>    <span class="op">});</span></span>
-<span id="lst-people_plugin_stochastics_dimension-26"><a href="#lst-people_plugin_stochastics_dimension-26"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-27"><a href="#lst-people_plugin_stochastics_dimension-27"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed_index"</span><span class="op">);</span><span class="co">//</span></span>
-<span id="lst-people_plugin_stochastics_dimension-28"><a href="#lst-people_plugin_stochastics_dimension-28"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed_value"</span><span class="op">);</span><span class="co">//</span></span>
-<span id="lst-people_plugin_stochastics_dimension-29"><a href="#lst-people_plugin_stochastics_dimension-29"></a></span>
-<span id="lst-people_plugin_stochastics_dimension-30"><a href="#lst-people_plugin_stochastics_dimension-30"></a>    <span class="cf">return</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_stochastics_dimension-31"><a href="#lst-people_plugin_stochastics_dimension-31"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_stochastics_dimension" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_stochastics_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.3: The stochastics dimension contains levels for each replication value. Note that the generation of the random seed values occurs outside of the lambda code.
+</figcaption>
+<div aria-describedby="lst-people_plugin_stochastics_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_stochastics_dimension"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_stochastics_dimension-1"><a href="#lst-people_plugin_stochastics_dimension-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="bu">Dimension</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dt">int</span> replicationCount<span class="op">,</span> <span class="dt">long</span> seed<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_stochastics_dimension-2"><a href="#lst-people_plugin_stochastics_dimension-2" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> FunctionalDimensionData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-people_plugin_stochastics_dimension-3"><a href="#lst-people_plugin_stochastics_dimension-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-4"><a href="#lst-people_plugin_stochastics_dimension-4" aria-hidden="true" tabindex="-1"></a>    RandomGenerator randomGenerator <span class="op">=</span> RandomGeneratorProvider<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">(</span>seed<span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-5"><a href="#lst-people_plugin_stochastics_dimension-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-6"><a href="#lst-people_plugin_stochastics_dimension-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> seedValues <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-people_plugin_stochastics_dimension-7"><a href="#lst-people_plugin_stochastics_dimension-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> replicationCount<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_stochastics_dimension-8"><a href="#lst-people_plugin_stochastics_dimension-8" aria-hidden="true" tabindex="-1"></a>        seedValues<span class="op">.</span><span class="fu">add</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextLong</span><span class="op">());</span></span>
+<span id="lst-people_plugin_stochastics_dimension-9"><a href="#lst-people_plugin_stochastics_dimension-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_stochastics_dimension-10"><a href="#lst-people_plugin_stochastics_dimension-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-11"><a href="#lst-people_plugin_stochastics_dimension-11" aria-hidden="true" tabindex="-1"></a>    IntStream<span class="op">.</span><span class="fu">range</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> seedValues<span class="op">.</span><span class="fu">size</span><span class="op">()).</span><span class="fu">forEach</span><span class="op">((</span>i<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_stochastics_dimension-12"><a href="#lst-people_plugin_stochastics_dimension-12" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">addValue</span><span class="op">(</span><span class="st">"Level_"</span> <span class="op">+</span> i<span class="op">,</span> <span class="op">(</span>context<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_stochastics_dimension-13"><a href="#lst-people_plugin_stochastics_dimension-13" aria-hidden="true" tabindex="-1"></a>            StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span> stochasticsPluginDataBuilder <span class="op">=</span> context</span>
+<span id="lst-people_plugin_stochastics_dimension-14"><a href="#lst-people_plugin_stochastics_dimension-14" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">getPluginDataBuilder</span><span class="op">(</span>StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-15"><a href="#lst-people_plugin_stochastics_dimension-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">long</span> seedValue <span class="op">=</span> seedValues<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-16"><a href="#lst-people_plugin_stochastics_dimension-16" aria-hidden="true" tabindex="-1"></a>            WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span>seedValue<span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_stochastics_dimension-17"><a href="#lst-people_plugin_stochastics_dimension-17" aria-hidden="true" tabindex="-1"></a>            stochasticsPluginDataBuilder<span class="op">.</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-18"><a href="#lst-people_plugin_stochastics_dimension-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-19"><a href="#lst-people_plugin_stochastics_dimension-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-people_plugin_stochastics_dimension-20"><a href="#lst-people_plugin_stochastics_dimension-20" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Integer</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="lst-people_plugin_stochastics_dimension-21"><a href="#lst-people_plugin_stochastics_dimension-21" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Long</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>seedValue<span class="op">)</span> <span class="op">+</span> <span class="st">"L"</span><span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-22"><a href="#lst-people_plugin_stochastics_dimension-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-23"><a href="#lst-people_plugin_stochastics_dimension-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="lst-people_plugin_stochastics_dimension-24"><a href="#lst-people_plugin_stochastics_dimension-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span><span class="co">//</span></span>
+<span id="lst-people_plugin_stochastics_dimension-25"><a href="#lst-people_plugin_stochastics_dimension-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="lst-people_plugin_stochastics_dimension-26"><a href="#lst-people_plugin_stochastics_dimension-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-27"><a href="#lst-people_plugin_stochastics_dimension-27" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed_index"</span><span class="op">);</span><span class="co">//</span></span>
+<span id="lst-people_plugin_stochastics_dimension-28"><a href="#lst-people_plugin_stochastics_dimension-28" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed_value"</span><span class="op">);</span><span class="co">//</span></span>
+<span id="lst-people_plugin_stochastics_dimension-29"><a href="#lst-people_plugin_stochastics_dimension-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_stochastics_dimension-30"><a href="#lst-people_plugin_stochastics_dimension-30" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData functionalDimensionData <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_stochastics_dimension-31"><a href="#lst-people_plugin_stochastics_dimension-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">new</span> <span class="fu">FunctionalDimension</span><span class="op">(</span>functionalDimensionData<span class="op">);</span></span>
+<span id="lst-people_plugin_stochastics_dimension-32"><a href="#lst-people_plugin_stochastics_dimension-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
-<p>There are two actors provided by the model plugin. The first is the PopulationManager (<a href="#lst-people_plugin_population_manager">Code Block&nbsp;<span>7.4</span></a>) that upon its initialization plans 100 future actions to randomly remove (10% chance) or add (90% chance) people to the simulation. For people who are added, an initial vaccination count is included in the request to add the person so that the vaccine data manager can set the proper count.</p>
+<p>There are two actors provided by the model plugin. The first is the PopulationManager (<a href="#lst-people_plugin_population_manager" class="quarto-xref">Code Block&nbsp;<span>7.4</span></a>) that upon its initialization plans 100 future actions to randomly remove (10% chance) or add (90% chance) people to the simulation. For people who are added, an initial vaccination count is included in the request to add the person so that the vaccine data manager can set the proper count.</p>
 <div class="cell">
-<div id="lst-people_plugin_population_manager" class="listing">
-<p>Code Block&nbsp;7.4: The population manager schedules 100 randomized actions to either add or remove people.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_population_manager" data-lst-cap="The population manager schedules 100 randomized actions to either add or remove people."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_population_manager-1"><a href="#lst-people_plugin_population_manager-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-2"><a href="#lst-people_plugin_population_manager-2"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-3"><a href="#lst-people_plugin_population_manager-3"></a>    RandomGenerator randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
-<span id="lst-people_plugin_population_manager-4"><a href="#lst-people_plugin_population_manager-4"></a>    <span class="dt">double</span> planTime <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
-<span id="lst-people_plugin_population_manager-5"><a href="#lst-people_plugin_population_manager-5"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">100</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-6"><a href="#lst-people_plugin_population_manager-6"></a>        actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-7"><a href="#lst-people_plugin_population_manager-7"></a>            PeopleDataManager peopleDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-8"><a href="#lst-people_plugin_population_manager-8"></a>            <span class="cf">if</span> <span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-9"><a href="#lst-people_plugin_population_manager-9"></a>                <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> people <span class="op">=</span> peopleDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">();</span></span>
-<span id="lst-people_plugin_population_manager-10"><a href="#lst-people_plugin_population_manager-10"></a>                <span class="cf">if</span> <span class="op">(!</span>people<span class="op">.</span><span class="fu">isEmpty</span><span class="op">())</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-11"><a href="#lst-people_plugin_population_manager-11"></a>                    PersonId personId <span class="op">=</span> people<span class="op">.</span><span class="fu">get</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span>people<span class="op">.</span><span class="fu">size</span><span class="op">()));</span></span>
-<span id="lst-people_plugin_population_manager-12"><a href="#lst-people_plugin_population_manager-12"></a>                    peopleDataManager<span class="op">.</span><span class="fu">removePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-13"><a href="#lst-people_plugin_population_manager-13"></a>                <span class="op">}</span></span>
-<span id="lst-people_plugin_population_manager-14"><a href="#lst-people_plugin_population_manager-14"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_population_manager-15"><a href="#lst-people_plugin_population_manager-15"></a>                <span class="dt">int</span> intialVaccineCount <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span><span class="dv">3</span><span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-16"><a href="#lst-people_plugin_population_manager-16"></a>                VaccineInitialization vaccineInitialization <span class="op">=</span> <span class="kw">new</span> <span class="fu">VaccineInitialization</span><span class="op">(</span>intialVaccineCount<span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-17"><a href="#lst-people_plugin_population_manager-17"></a>                PersonConstructionData personConstructionData <span class="op">=</span> PersonConstructionData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
-<span id="lst-people_plugin_population_manager-18"><a href="#lst-people_plugin_population_manager-18"></a>                        <span class="op">.</span><span class="fu">add</span><span class="op">(</span>vaccineInitialization<span class="op">)</span><span class="co">//</span></span>
-<span id="lst-people_plugin_population_manager-19"><a href="#lst-people_plugin_population_manager-19"></a>                        <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
-<span id="lst-people_plugin_population_manager-20"><a href="#lst-people_plugin_population_manager-20"></a>                peopleDataManager<span class="op">.</span><span class="fu">addPerson</span><span class="op">(</span>personConstructionData<span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-21"><a href="#lst-people_plugin_population_manager-21"></a>            <span class="op">}</span></span>
-<span id="lst-people_plugin_population_manager-22"><a href="#lst-people_plugin_population_manager-22"></a>        <span class="op">},</span> planTime<span class="op">);</span></span>
-<span id="lst-people_plugin_population_manager-23"><a href="#lst-people_plugin_population_manager-23"></a>        planTime <span class="op">+=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
-<span id="lst-people_plugin_population_manager-24"><a href="#lst-people_plugin_population_manager-24"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_population_manager-25"><a href="#lst-people_plugin_population_manager-25"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_population_manager" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_population_manager-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.4: The population manager schedules 100 randomized actions to either add or remove people.
+</figcaption>
+<div aria-describedby="lst-people_plugin_population_manager-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_population_manager"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_population_manager-1"><a href="#lst-people_plugin_population_manager-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-2"><a href="#lst-people_plugin_population_manager-2" aria-hidden="true" tabindex="-1"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-3"><a href="#lst-people_plugin_population_manager-3" aria-hidden="true" tabindex="-1"></a>    RandomGenerator randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
+<span id="lst-people_plugin_population_manager-4"><a href="#lst-people_plugin_population_manager-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> planTime <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
+<span id="lst-people_plugin_population_manager-5"><a href="#lst-people_plugin_population_manager-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">100</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-6"><a href="#lst-people_plugin_population_manager-6" aria-hidden="true" tabindex="-1"></a>        actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-7"><a href="#lst-people_plugin_population_manager-7" aria-hidden="true" tabindex="-1"></a>            PeopleDataManager peopleDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-8"><a href="#lst-people_plugin_population_manager-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-9"><a href="#lst-people_plugin_population_manager-9" aria-hidden="true" tabindex="-1"></a>                <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> people <span class="op">=</span> peopleDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">();</span></span>
+<span id="lst-people_plugin_population_manager-10"><a href="#lst-people_plugin_population_manager-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(!</span>people<span class="op">.</span><span class="fu">isEmpty</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-11"><a href="#lst-people_plugin_population_manager-11" aria-hidden="true" tabindex="-1"></a>                    PersonId personId <span class="op">=</span> people<span class="op">.</span><span class="fu">get</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span>people<span class="op">.</span><span class="fu">size</span><span class="op">()));</span></span>
+<span id="lst-people_plugin_population_manager-12"><a href="#lst-people_plugin_population_manager-12" aria-hidden="true" tabindex="-1"></a>                    peopleDataManager<span class="op">.</span><span class="fu">removePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-13"><a href="#lst-people_plugin_population_manager-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="lst-people_plugin_population_manager-14"><a href="#lst-people_plugin_population_manager-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_population_manager-15"><a href="#lst-people_plugin_population_manager-15" aria-hidden="true" tabindex="-1"></a>                <span class="dt">int</span> intialVaccineCount <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span><span class="dv">3</span><span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-16"><a href="#lst-people_plugin_population_manager-16" aria-hidden="true" tabindex="-1"></a>                VaccineInitialization vaccineInitialization <span class="op">=</span> <span class="kw">new</span> <span class="fu">VaccineInitialization</span><span class="op">(</span>intialVaccineCount<span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-17"><a href="#lst-people_plugin_population_manager-17" aria-hidden="true" tabindex="-1"></a>                PersonConstructionData personConstructionData <span class="op">=</span> PersonConstructionData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-people_plugin_population_manager-18"><a href="#lst-people_plugin_population_manager-18" aria-hidden="true" tabindex="-1"></a>                        <span class="op">.</span><span class="fu">add</span><span class="op">(</span>vaccineInitialization<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-people_plugin_population_manager-19"><a href="#lst-people_plugin_population_manager-19" aria-hidden="true" tabindex="-1"></a>                        <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-people_plugin_population_manager-20"><a href="#lst-people_plugin_population_manager-20" aria-hidden="true" tabindex="-1"></a>                peopleDataManager<span class="op">.</span><span class="fu">addPerson</span><span class="op">(</span>personConstructionData<span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-21"><a href="#lst-people_plugin_population_manager-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="lst-people_plugin_population_manager-22"><a href="#lst-people_plugin_population_manager-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">},</span> planTime<span class="op">);</span></span>
+<span id="lst-people_plugin_population_manager-23"><a href="#lst-people_plugin_population_manager-23" aria-hidden="true" tabindex="-1"></a>        planTime <span class="op">+=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
+<span id="lst-people_plugin_population_manager-24"><a href="#lst-people_plugin_population_manager-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_population_manager-25"><a href="#lst-people_plugin_population_manager-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
-<p><a href="#lst-people_plugin_vaccinator">Code Block&nbsp;<span>7.5</span></a> shows the second actor, the Vaccinator. It plans 300 vaccination actions over a period of approximately 100 days, selecting a random person to vaccinate each time. There is no limit to the number of vaccinations a person can have and we would expect that some people will have a relatively high number of vaccinations in the vaccine report.</p>
+<p><a href="#lst-people_plugin_vaccinator" class="quarto-xref">Code Block&nbsp;<span>7.5</span></a> shows the second actor, the Vaccinator. It plans 300 vaccination actions over a period of approximately 100 days, selecting a random person to vaccinate each time. There is no limit to the number of vaccinations a person can have and we would expect that some people will have a relatively high number of vaccinations in the vaccine report.</p>
 <div class="cell">
-<div id="lst-people_plugin_vaccinator" class="listing">
-<p>Code Block&nbsp;7.5: The vaccinator administers 300 vaccine doses over 100 days.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_vaccinator" data-lst-cap="The vaccinator administers 300 vaccine doses over 100 days."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccinator-1"><a href="#lst-people_plugin_vaccinator-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccinator-2"><a href="#lst-people_plugin_vaccinator-2"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_vaccinator-3"><a href="#lst-people_plugin_vaccinator-3"></a>    RandomGenerator randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccinator-4"><a href="#lst-people_plugin_vaccinator-4"></a>    <span class="dt">double</span> planTime <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccinator-5"><a href="#lst-people_plugin_vaccinator-5"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">300</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccinator-6"><a href="#lst-people_plugin_vaccinator-6"></a>        actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccinator-7"><a href="#lst-people_plugin_vaccinator-7"></a>            PeopleDataManager peopleDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_vaccinator-8"><a href="#lst-people_plugin_vaccinator-8"></a>            VaccinationDataManager vaccinationDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>VaccinationDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_vaccinator-9"><a href="#lst-people_plugin_vaccinator-9"></a>            <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> people <span class="op">=</span> peopleDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccinator-10"><a href="#lst-people_plugin_vaccinator-10"></a>            <span class="cf">if</span> <span class="op">(!</span>people<span class="op">.</span><span class="fu">isEmpty</span><span class="op">())</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccinator-11"><a href="#lst-people_plugin_vaccinator-11"></a>                PersonId personId <span class="op">=</span> people<span class="op">.</span><span class="fu">get</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span>people<span class="op">.</span><span class="fu">size</span><span class="op">()));</span></span>
-<span id="lst-people_plugin_vaccinator-12"><a href="#lst-people_plugin_vaccinator-12"></a>                vaccinationDataManager<span class="op">.</span><span class="fu">vaccinatePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccinator-13"><a href="#lst-people_plugin_vaccinator-13"></a>            <span class="op">}</span></span>
-<span id="lst-people_plugin_vaccinator-14"><a href="#lst-people_plugin_vaccinator-14"></a>        <span class="op">},</span> planTime<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccinator-15"><a href="#lst-people_plugin_vaccinator-15"></a>        planTime <span class="op">+=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">/</span> <span class="dv">3</span><span class="op">;</span></span>
-<span id="lst-people_plugin_vaccinator-16"><a href="#lst-people_plugin_vaccinator-16"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_vaccinator-17"><a href="#lst-people_plugin_vaccinator-17"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_vaccinator" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_vaccinator-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.5: The vaccinator administers 300 vaccine doses over 100 days.
+</figcaption>
+<div aria-describedby="lst-people_plugin_vaccinator-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_vaccinator"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccinator-1"><a href="#lst-people_plugin_vaccinator-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccinator-2"><a href="#lst-people_plugin_vaccinator-2" aria-hidden="true" tabindex="-1"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_vaccinator-3"><a href="#lst-people_plugin_vaccinator-3" aria-hidden="true" tabindex="-1"></a>    RandomGenerator randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccinator-4"><a href="#lst-people_plugin_vaccinator-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> planTime <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccinator-5"><a href="#lst-people_plugin_vaccinator-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">300</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccinator-6"><a href="#lst-people_plugin_vaccinator-6" aria-hidden="true" tabindex="-1"></a>        actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccinator-7"><a href="#lst-people_plugin_vaccinator-7" aria-hidden="true" tabindex="-1"></a>            PeopleDataManager peopleDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_vaccinator-8"><a href="#lst-people_plugin_vaccinator-8" aria-hidden="true" tabindex="-1"></a>            VaccinationDataManager vaccinationDataManager <span class="op">=</span> c<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>VaccinationDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_vaccinator-9"><a href="#lst-people_plugin_vaccinator-9" aria-hidden="true" tabindex="-1"></a>            <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> people <span class="op">=</span> peopleDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccinator-10"><a href="#lst-people_plugin_vaccinator-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(!</span>people<span class="op">.</span><span class="fu">isEmpty</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccinator-11"><a href="#lst-people_plugin_vaccinator-11" aria-hidden="true" tabindex="-1"></a>                PersonId personId <span class="op">=</span> people<span class="op">.</span><span class="fu">get</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span>people<span class="op">.</span><span class="fu">size</span><span class="op">()));</span></span>
+<span id="lst-people_plugin_vaccinator-12"><a href="#lst-people_plugin_vaccinator-12" aria-hidden="true" tabindex="-1"></a>                vaccinationDataManager<span class="op">.</span><span class="fu">vaccinatePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccinator-13"><a href="#lst-people_plugin_vaccinator-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="lst-people_plugin_vaccinator-14"><a href="#lst-people_plugin_vaccinator-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">},</span> planTime<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccinator-15"><a href="#lst-people_plugin_vaccinator-15" aria-hidden="true" tabindex="-1"></a>        planTime <span class="op">+=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">/</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="lst-people_plugin_vaccinator-16"><a href="#lst-people_plugin_vaccinator-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_vaccinator-17"><a href="#lst-people_plugin_vaccinator-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 </section>
 <section id="interacting-with-the-addition-and-removal-events" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="interacting-with-the-addition-and-removal-events"><span class="header-section-number">7.6</span> Interacting with the addition and removal events</h2>
 <p>The remaining code blocks will focus on the handling of the four person addition and removal events in the vaccine data manager and the population trace report. The vaccine report is periodic and does not subscribe to any events and is left for the reader to examine.</p>
-<p>Following the general conventions above, the vaccine data manager subscribes to the PersonRemovalEvent and the PersonImminentAdditionEvent during its initialization in <a href="#lst-people_plugin_vaccination_data_manager">Code Block&nbsp;<span>7.6</span></a>.</p>
+<p>Following the general conventions above, the vaccine data manager subscribes to the PersonRemovalEvent and the PersonImminentAdditionEvent during its initialization in <a href="#lst-people_plugin_vaccination_data_manager" class="quarto-xref">Code Block&nbsp;<span>7.6</span></a>.</p>
 <div class="cell">
-<div id="lst-people_plugin_vaccination_data_manager" class="listing">
-<p>Code Block&nbsp;7.6: The vaccination data manager initializes by recording initial vaccine counts for each person and subscribing to person addition, person removal and person vaccination events.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_vaccination_data_manager" data-lst-cap="The vaccination data manager initializes by recording initial vaccine counts for each person and subscribing to person addition, person removal and person vaccination events."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccination_data_manager-1"><a href="#lst-people_plugin_vaccination_data_manager-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-2"><a href="#lst-people_plugin_vaccination_data_manager-2"></a>    <span class="kw">super</span><span class="op">.</span><span class="fu">init</span><span class="op">(</span>dataManagerContext<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-3"><a href="#lst-people_plugin_vaccination_data_manager-3"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>PersonRemovalEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handlePersonRemovalEvent<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-4"><a href="#lst-people_plugin_vaccination_data_manager-4"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>PersonImminentAdditionEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handlePersonImminentAdditionEvent<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-5"><a href="#lst-people_plugin_vaccination_data_manager-5"></a>    personDataManager <span class="op">=</span> dataManagerContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-6"><a href="#lst-people_plugin_vaccination_data_manager-6"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">dataManagerContext</span> <span class="op">=</span> dataManagerContext<span class="op">;</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-7"><a href="#lst-people_plugin_vaccination_data_manager-7"></a>    <span class="cf">for</span> <span class="op">(</span>PersonId personId <span class="op">:</span> personDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">())</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-8"><a href="#lst-people_plugin_vaccination_data_manager-8"></a>        vaccinationCounts<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> <span class="kw">new</span> <span class="fu">MutableInteger</span><span class="op">());</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-9"><a href="#lst-people_plugin_vaccination_data_manager-9"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-10"><a href="#lst-people_plugin_vaccination_data_manager-10"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>VaccinationMutationEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handleVaccinationMutationEvent<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_data_manager-11"><a href="#lst-people_plugin_vaccination_data_manager-11"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_vaccination_data_manager" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_vaccination_data_manager-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.6: The vaccination data manager initializes by recording initial vaccine counts for each person and subscribing to person addition, person removal and person vaccination events.
+</figcaption>
+<div aria-describedby="lst-people_plugin_vaccination_data_manager-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_vaccination_data_manager"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccination_data_manager-1"><a href="#lst-people_plugin_vaccination_data_manager-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-2"><a href="#lst-people_plugin_vaccination_data_manager-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">super</span><span class="op">.</span><span class="fu">init</span><span class="op">(</span>dataManagerContext<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-3"><a href="#lst-people_plugin_vaccination_data_manager-3" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>PersonRemovalEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handlePersonRemovalEvent<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-4"><a href="#lst-people_plugin_vaccination_data_manager-4" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>PersonImminentAdditionEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handlePersonImminentAdditionEvent<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-5"><a href="#lst-people_plugin_vaccination_data_manager-5" aria-hidden="true" tabindex="-1"></a>    personDataManager <span class="op">=</span> dataManagerContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-6"><a href="#lst-people_plugin_vaccination_data_manager-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">dataManagerContext</span> <span class="op">=</span> dataManagerContext<span class="op">;</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-7"><a href="#lst-people_plugin_vaccination_data_manager-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>PersonId personId <span class="op">:</span> personDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-8"><a href="#lst-people_plugin_vaccination_data_manager-8" aria-hidden="true" tabindex="-1"></a>        vaccinationCounts<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> <span class="kw">new</span> <span class="fu">MutableInteger</span><span class="op">());</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-9"><a href="#lst-people_plugin_vaccination_data_manager-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-10"><a href="#lst-people_plugin_vaccination_data_manager-10" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>VaccinationMutationEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handleVaccinationMutationEvent<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_data_manager-11"><a href="#lst-people_plugin_vaccination_data_manager-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 <p>The vaccine data manager uses a simple map from person id to a counter to track the number of vaccinations for each person:</p>
 <div class="cell">
-<div id="lst-people_plugin_vaccine_counts" class="listing">
-<p>Code Block&nbsp;7.7: The vaccination data manager uses a simple map from person id to a counter to track the number of vaccinations for each person.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_vaccine_counts" data-lst-cap="The vaccination data manager uses a simple map from person id to a counter to track the number of vaccinations for each person."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccine_counts-1"><a href="#lst-people_plugin_vaccine_counts-1"></a><span class="kw">private</span> <span class="bu">Map</span><span class="op">&lt;</span>PersonId<span class="op">,</span> MutableInteger<span class="op">&gt;</span> vaccinationCounts <span class="op">=</span> <span class="kw">new</span> <span class="bu">LinkedHashMap</span><span class="op">&lt;&gt;();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_vaccine_counts" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_vaccine_counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.7: The vaccination data manager uses a simple map from person id to a counter to track the number of vaccinations for each person.
+</figcaption>
+<div aria-describedby="lst-people_plugin_vaccine_counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_vaccine_counts"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccine_counts-1"><a href="#lst-people_plugin_vaccine_counts-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="bu">Map</span><span class="op">&lt;</span>PersonId<span class="op">,</span> MutableInteger<span class="op">&gt;</span> vaccinationCounts <span class="op">=</span> <span class="kw">new</span> <span class="bu">LinkedHashMap</span><span class="op">&lt;&gt;();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
-<p>The subscriptions above refer to the local methods of the vaccine data manager in <a href="#lst-people_plugin_vaccination_handling_person_removal">Code Block&nbsp;<span>7.8</span></a>. Handling the removal of a person is simple; the person id dropped from the map. Handling the addition requires that the manager try to locate a VaccinationInitialization object (which is just a wrapper around and integer count) contained in the construction. If the VaccinationInitialization is present, then the manager further validates the count is not negative.</p>
+<p>The subscriptions above refer to the local methods of the vaccine data manager in <a href="#lst-people_plugin_vaccination_handling_person_removal" class="quarto-xref">Code Block&nbsp;<span>7.8</span></a>. Handling the removal of a person is simple; the person id dropped from the map. Handling the addition requires that the manager try to locate a VaccinationInitialization object (which is just a wrapper around and integer count) contained in the construction. If the VaccinationInitialization is present, then the manager further validates the count is not negative.</p>
 <div class="cell">
-<div id="lst-people_plugin_vaccination_handling_person_removal" class="listing">
-<p>Code Block&nbsp;7.8: The vaccination manager removes people from its count tracking as needed. Newly added people may enter into the simulation with some vaccinations.</p>
-<div class="sourceCode cell-code" id="lst-people_plugin_vaccination_handling_person_removal" data-lst-cap="The vaccination manager removes people from its count tracking as needed.  Newly added people may enter into the simulation with some vaccinations."><pre class="sourceCode numberSource java number-lines code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccination_handling_person_removal-1"><a href="#lst-people_plugin_vaccination_handling_person_removal-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">handlePersonRemovalEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-2"><a href="#lst-people_plugin_vaccination_handling_person_removal-2"></a>            PersonRemovalEvent personRemovalEvent<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-3"><a href="#lst-people_plugin_vaccination_handling_person_removal-3"></a>        PersonId personId <span class="op">=</span> personRemovalEvent<span class="op">.</span><span class="fu">personId</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-4"><a href="#lst-people_plugin_vaccination_handling_person_removal-4"></a>        vaccinationCounts<span class="op">.</span><span class="fu">remove</span><span class="op">(</span>personId<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-5"><a href="#lst-people_plugin_vaccination_handling_person_removal-5"></a>    <span class="op">}</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-6"><a href="#lst-people_plugin_vaccination_handling_person_removal-6"></a></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-7"><a href="#lst-people_plugin_vaccination_handling_person_removal-7"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">handlePersonImminentAdditionEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-8"><a href="#lst-people_plugin_vaccination_handling_person_removal-8"></a>            PersonImminentAdditionEvent personImminentAdditionEvent<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-9"><a href="#lst-people_plugin_vaccination_handling_person_removal-9"></a>        PersonId personId <span class="op">=</span> personImminentAdditionEvent<span class="op">.</span><span class="fu">personId</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-10"><a href="#lst-people_plugin_vaccination_handling_person_removal-10"></a>        <span class="fu">validateNewPersonId</span><span class="op">(</span>personId<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-11"><a href="#lst-people_plugin_vaccination_handling_person_removal-11"></a>        MutableInteger mutableInteger <span class="op">=</span> <span class="kw">new</span> <span class="fu">MutableInteger</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-12"><a href="#lst-people_plugin_vaccination_handling_person_removal-12"></a>        vaccinationCounts<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> mutableInteger<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-13"><a href="#lst-people_plugin_vaccination_handling_person_removal-13"></a>        Optional<span class="op">&lt;</span>VaccineInitialization<span class="op">&gt;</span> optional <span class="op">=</span> personImminentAdditionEvent<span class="co">//</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-14"><a href="#lst-people_plugin_vaccination_handling_person_removal-14"></a>                <span class="op">.</span><span class="fu">personConstructionData</span><span class="op">()</span><span class="co">//</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-15"><a href="#lst-people_plugin_vaccination_handling_person_removal-15"></a>                <span class="op">.</span><span class="fu">getValue</span><span class="op">(</span>VaccineInitialization<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-16"><a href="#lst-people_plugin_vaccination_handling_person_removal-16"></a>        <span class="cf">if</span> <span class="op">(</span>optional<span class="op">.</span><span class="fu">isPresent</span><span class="op">())</span> <span class="op">{</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-17"><a href="#lst-people_plugin_vaccination_handling_person_removal-17"></a>            VaccineInitialization vaccineInitialization <span class="op">=</span> optional<span class="op">.</span><span class="fu">get</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-18"><a href="#lst-people_plugin_vaccination_handling_person_removal-18"></a>            <span class="dt">int</span> vaccineCount <span class="op">=</span> vaccineInitialization<span class="op">.</span><span class="fu">getVaccineCount</span><span class="op">();</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-19"><a href="#lst-people_plugin_vaccination_handling_person_removal-19"></a>            <span class="fu">validateInitialVaccineCount</span><span class="op">(</span>vaccineCount<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-20"><a href="#lst-people_plugin_vaccination_handling_person_removal-20"></a>            mutableInteger<span class="op">.</span><span class="fu">setValue</span><span class="op">(</span>vaccineCount<span class="op">);</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-21"><a href="#lst-people_plugin_vaccination_handling_person_removal-21"></a>        <span class="op">}</span></span>
-<span id="lst-people_plugin_vaccination_handling_person_removal-22"><a href="#lst-people_plugin_vaccination_handling_person_removal-22"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="lst-people_plugin_vaccination_handling_person_removal" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-people_plugin_vaccination_handling_person_removal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;7.8: The vaccination manager removes people from its count tracking as needed. Newly added people may enter into the simulation with some vaccinations.
+</figcaption>
+<div aria-describedby="lst-people_plugin_vaccination_handling_person_removal-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-people_plugin_vaccination_handling_person_removal"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-people_plugin_vaccination_handling_person_removal-1"><a href="#lst-people_plugin_vaccination_handling_person_removal-1" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">handlePersonRemovalEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-2"><a href="#lst-people_plugin_vaccination_handling_person_removal-2" aria-hidden="true" tabindex="-1"></a>            PersonRemovalEvent personRemovalEvent<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-3"><a href="#lst-people_plugin_vaccination_handling_person_removal-3" aria-hidden="true" tabindex="-1"></a>        PersonId personId <span class="op">=</span> personRemovalEvent<span class="op">.</span><span class="fu">personId</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-4"><a href="#lst-people_plugin_vaccination_handling_person_removal-4" aria-hidden="true" tabindex="-1"></a>        vaccinationCounts<span class="op">.</span><span class="fu">remove</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-5"><a href="#lst-people_plugin_vaccination_handling_person_removal-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-6"><a href="#lst-people_plugin_vaccination_handling_person_removal-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-7"><a href="#lst-people_plugin_vaccination_handling_person_removal-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">void</span> <span class="fu">handlePersonImminentAdditionEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-8"><a href="#lst-people_plugin_vaccination_handling_person_removal-8" aria-hidden="true" tabindex="-1"></a>            PersonImminentAdditionEvent personImminentAdditionEvent<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-9"><a href="#lst-people_plugin_vaccination_handling_person_removal-9" aria-hidden="true" tabindex="-1"></a>        PersonId personId <span class="op">=</span> personImminentAdditionEvent<span class="op">.</span><span class="fu">personId</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-10"><a href="#lst-people_plugin_vaccination_handling_person_removal-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">validateNewPersonId</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-11"><a href="#lst-people_plugin_vaccination_handling_person_removal-11" aria-hidden="true" tabindex="-1"></a>        MutableInteger mutableInteger <span class="op">=</span> <span class="kw">new</span> <span class="fu">MutableInteger</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-12"><a href="#lst-people_plugin_vaccination_handling_person_removal-12" aria-hidden="true" tabindex="-1"></a>        vaccinationCounts<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> mutableInteger<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-13"><a href="#lst-people_plugin_vaccination_handling_person_removal-13" aria-hidden="true" tabindex="-1"></a>        Optional<span class="op">&lt;</span>VaccineInitialization<span class="op">&gt;</span> optional <span class="op">=</span> personImminentAdditionEvent<span class="co">//</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-14"><a href="#lst-people_plugin_vaccination_handling_person_removal-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">personConstructionData</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-15"><a href="#lst-people_plugin_vaccination_handling_person_removal-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">getValue</span><span class="op">(</span>VaccineInitialization<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-16"><a href="#lst-people_plugin_vaccination_handling_person_removal-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>optional<span class="op">.</span><span class="fu">isPresent</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-17"><a href="#lst-people_plugin_vaccination_handling_person_removal-17" aria-hidden="true" tabindex="-1"></a>            VaccineInitialization vaccineInitialization <span class="op">=</span> optional<span class="op">.</span><span class="fu">get</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-18"><a href="#lst-people_plugin_vaccination_handling_person_removal-18" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> vaccineCount <span class="op">=</span> vaccineInitialization<span class="op">.</span><span class="fu">getVaccineCount</span><span class="op">();</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-19"><a href="#lst-people_plugin_vaccination_handling_person_removal-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">validateInitialVaccineCount</span><span class="op">(</span>vaccineCount<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-20"><a href="#lst-people_plugin_vaccination_handling_person_removal-20" aria-hidden="true" tabindex="-1"></a>            mutableInteger<span class="op">.</span><span class="fu">setValue</span><span class="op">(</span>vaccineCount<span class="op">);</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-21"><a href="#lst-people_plugin_vaccination_handling_person_removal-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-people_plugin_vaccination_handling_person_removal-22"><a href="#lst-people_plugin_vaccination_handling_person_removal-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
 </div>
 </div>
 </section>
 <section id="inspecting-the-output" class="level2" data-number="7.7">
 <h2 data-number="7.7" class="anchored" data-anchor-id="inspecting-the-output"><span class="header-section-number">7.7</span> Inspecting the output</h2>
-<p><a href="#fig-people_plugin_output_1">Figure&nbsp;<span>7.1</span></a> shows the population trace report spanning the five scenarios and 500 additions and removals of people. In <a href="#fig-people_plugin_output_2">Figure&nbsp;<span>7.2</span></a> we have the vaccination report showing the number of people having from 0 to 6+ vaccinations over each day of the simulation across the five scenarios. As expected, the number of people having six or more vaccinations starts out at zero and monotonically increases as the days progress.</p>
+<p><a href="#fig-people_plugin_output_1" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> shows the population trace report spanning the five scenarios and 500 additions and removals of people. In <a href="#fig-people_plugin_output_2" class="quarto-xref">Figure&nbsp;<span>7.2</span></a> we have the vaccination report showing the number of people having from 0 to 6+ vaccinations over each day of the simulation across the five scenarios. As expected, the number of people having six or more vaccinations starts out at zero and monotonically increases as the days progress.</p>
 <div class="cell">
-<div id="fig-people_plugin_output_1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p></p><figcaption class="figure-caption">Figure&nbsp;7.1: An excerpt of the population trace report.</figcaption><p></p>
+<div id="fig-people_plugin_output_1" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-people_plugin_output_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.1: An excerpt of the population trace report.
+</figcaption>
+<div aria-describedby="fig-people_plugin_output_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
-
 <table class="table" style="font-family: monospace; width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1447,18 +1497,20 @@ ADDITION
 </td>
 </tr>
 </tbody>
-
 </table>
+</div>
 </div>
 </figure>
 </div>
 </div>
 <div class="cell">
-<div id="fig-people_plugin_output_2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p></p><figcaption class="figure-caption">Figure&nbsp;7.2: An excerpt of the vaccination report.</figcaption><p></p>
+<div id="fig-people_plugin_output_2" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-people_plugin_output_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7.2: An excerpt of the vaccination report.
+</figcaption>
+<div aria-describedby="fig-people_plugin_output_2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
-
 <table class="table" style="font-family: monospace; width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2869,8 +2921,8 @@ count_6+
 </td>
 </tr>
 </tbody>
-
 </table>
+</div>
 </div>
 </figure>
 </div>
@@ -2907,12 +2959,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
     }
-  });
-  clipboard.on('success', function(e) {
+    return false;
+  }
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -2944,11 +2999,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2958,8 +3052,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2971,9 +3074,245 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -3015,17 +3354,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./ch06-GlobalPropertiesPlugin.html" class="pagination-link">
+      <a href="./ch06-GlobalPropertiesPlugin.html" class="pagination-link" aria-label="Global Properties Plugin">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Global Properties Plugin</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./ch08-RegionsPlugin.html" class="pagination-link">
+      <a href="./ch08-RegionsPlugin.html" class="pagination-link" aria-label="Regions Plugin">
         <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
