@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "GCM-Docs",
     "section": "",
-    "text": "The General Computation Model (GCM)\nThe General Computation Model (GCM) is a Java based simulation framework for building disease progression models. Users of GCM should have a general familiarity with Java and object oriented programming and would benefit from some exposure to event based modeling.\nChanges to the documentation will be maintained in the table below:\n\nChange History\n\n\n\n\n\n\n\n\nID\nDate\nDescription\n\n\n\n\n1\n2023-09-08\nInitial GCM Documentation made available in Quarto",
+    "text": "The General Computation Model (GCM)\nThe General Computation Model (GCM) is a Java based simulation framework for building disease progression models. Users of GCM should have a general familiarity with Java and object oriented programming and would benefit from some exposure to event based modeling.\nChanges to the documentation will be maintained in the table below:\n\nChange History\n\n\n\n\n\n\n\n\nID\nDate\nDescription\n\n\n\n\n1\n2023-09-08\nInitial GCM Documentation made available in Quarto\n\n\n2\n2025-02-25\nUpdated for GCM release v4.4.0",
     "crumbs": [
       "The General Computation Model (GCM)"
     ]
