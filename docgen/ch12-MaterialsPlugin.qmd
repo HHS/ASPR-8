@@ -1,0 +1,459 @@
+# Materials Plugin
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'svg') # set output device to svg
+```
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The materials plugin manages the transformation of materials into resources. It is dependent on the resource and regions plugins. A material is a real-valued, non-negative quantity of a tangible substance such as eggs, blood products, purified water, etc. These materials are used in the manufacture of resources such as vaccines, antivirals and other medicines. The plugin defines several key concepts:
+
+-   Material Id -- The identifier for a material substance used in the manufacture of resources
+-   Batches -- A real valued, non-negative, amount of a material
+-   Materials Producers -- A physical site of manufacture where materials may be manipulated into resources
+-   Stages -- A grouping of batches used to organize the manufacturing process
+
+The plugin represents these material transformations in a low fidelity manner providing only the basic structures and ensuring numerical consistency. Material amounts are guaranteed to be non-negative, finite values. Direct mixing of quantities of different materials is not allowed and all material operations are conducted locally to a materials producer. Expiration of materials, the representation of specific chemical or mechanical processes and other higher fidelity considerations are left to the modeler using the plugin.
+
+The batch is the basic unit of material (@fig-materials_plugin_batches_and_properties). Each batch is a non-negative, finite amount of a single material and has property values associated with the material. Material properties are modeler defined and specific to each material type.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$materials_plugin_batches_and_properties
+#| label: fig-materials_plugin_batches_and_properties
+#| out-width: 100%
+knitr::include_graphics("inputimages/materials_plugin_batches_and_properties.svg")
+```
+
+The flow and transformation of materials is diagramed in @fig-materials_plugin_materials_producer.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$materials_plugin_materials_producer
+#| label: fig-materials_plugin_materials_producer
+#| out-width: 100%
+knitr::include_graphics("inputimages/materials_plugin_materials_producer.svg")
+```
+
+1.  Material are created in batches and placed into the inventory of a Materials Producer.  Material amounts may be exchanged between batches and batches may have individualized property value assignments.
+
+2.  Batches may be grouped onto stages. A stage represents an ongoing process that is possibly transforming the materials.  Batches may be removed from staging and placed back into inventory.
+
+3.  Stages may be offered to other materials producers. Once offered, the stage and its batches cannot be altered until the offer is revoked or the stage is transferred. 
+
+4.  An offered stage can be transferred to any materials producer where it will be placed with the non-offered stages of that producer. This ensures that materials cannot interact across multiple locations until a physical transfer has occurred.
+
+5.  A non-offered stage can be transformed into a discrete amount of a single resource.  The stage and its associated batches are destroyed in this process.  Alternatively, the stage can be transformed into a single batch of some material that is then placed into the inventory of the materials producer.
+
+6.  Resources produced by a materials producer are stored on the materials producer and can be distributed to any region(s) in a piecemeal fashion. Resource flow to and from people is restricted to the region that is associated with the person.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a MaterialsPluginData object that:
+
+-   Contains material producer ids
+-   Defines materials producer properties
+-   Sets materials producer property values
+-   Sets materials producer initial resource levels
+-   Initializes stage and batches in initial inventory
+-   Defines batch property properties
+-   Sets initial batch property values
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the MaterialsDataManager that is initialized with the MaterialsPluginData.
+
+## Data Manager
+
+The data manager manages the batch and stage inventories of the materials producers as well as managing the relevant property values and material transformations to resources. The data manager provides public methods that:
+
+-   Defined a new material type
+-   Add and remove batches
+-   Add and remove stages
+-   Move batches to and from stages
+-   Exchange materials between batches
+-   Offer stages for distribution to other materials producers
+-   Move stages between producers
+-   Add materials producers
+-   Define various properties for producers and batches
+-   Set various property values
+-   Transform stages into new batches
+-   Transform stages into resources
+-   Distribute resources to regions
+-   Provide a wide range of materials related queries
+    -   Details per batch and stage
+    -   Inventories by producer/material type
+    -   Offered stages that can be transferred
+
+The data manager also produces observable events:
+
+-   BatchAdditionEvent -- when a batch is created
+-   BatchAmountUpdateEvent -- when material is exchanged between batches
+-   BatchImminentRemovalEvent -- when a batch is about to be removed from the simulation
+-   BatchPropertyDefinitionEvent -- when a new material property is defined
+-   BatchPropertyUpdateEvent -- when a batch property value is updated
+-   MaterialIdAdditionEvent. -- when a new material type is added
+-   MaterialsProducerAdditionEvent -- when a new materials producer is added
+-   MaterialsProducerPropertyDefinitionEvent -- when a new materials producer property is defined
+-   MaterialsProducerPropertyUpdateEvent -- when a material producer property value is updated
+-   MaterialsProducerResourceUpdateEvent -- when a resource amount is added to a materials producer
+-   StageAdditionEvent -- when a stage is created
+-   StageImminentRemovalEvent -- when a stage is about to be removed from the simulation
+-   StageMaterialsProducerUpdateEvent -- when a stage is exchanged between materials producers
+-   StageMembershipAdditionEvent -- when a batch is added to a stage
+-   StageMembershipRemovalEvent -- when a batch is removed from a stage
+-   StageOfferUpdateEvent -- when a stage's offer state is updated
+
+## Example Code (Lesson 19)
+
+Example_19.java shows the use of the materials plugin. In it we will examine:
+
+-   The initialization of the materials plugin
+-   The flow of materials and resources between regions and materials producers
+-   The observation of materials events
+
+The example includes nine plugins:
+
+-   Materials plugin -- (GCM core plugin) used to manage materials
+-   Resources plugin -- (GCM core plugin) used to manage resources
+-   People plugin -- (GCM core plugin) used to manage people
+-   Groups plugin -- (GCM core plugin) used for spreading infections to people via their homes, schools and work places
+-   Person properties plugin-- (GCM core plugin) used to decorate properties onto people
+-   Global properties plugin-- (GCM core plugin) used to store policies and initial conditions
+-   Stochastics plugin -- (GCM core plugin) used to generate random numbers used in various decisions
+-   Regions Plugin-- (GCM core plugin) used for resource flow
+-   Model plugin -- (local plugin) used to introduce five actors that will:
+    -   Load the population
+    -   Manage infectious contacts
+    -   Manage vaccinations
+    -   Produce antigen used in vaccine production
+    -   Produce vaccines
+
+## Model
+
+The example's model represents a disease that is preventable through vaccination. People at the start of the simulation are either immune or susceptible and some of the susceptible adults are infected. The disease is transmitted via home, work, and school environments. Vaccination is the only disease mitigation strategy and vaccinated people do not infect others nor can be infected. Vaccine production is started once a threshold of infections is reached and continues until adequate vaccine has been produced to cover the entire population. Vaccines are modeled as a resource and are produced using several materials by two actors. The first of these actors produces antigen materials that are used in the production of the vaccine by the second actor.
+
+## Model Execution
+
+The example's execution is shown in @lst-materials_plugin_example_19_execute
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_example_19_execute$code_cap
+#| code: !expr fig$materials_plugin_example_19_execute$code
+#| echo: true
+```
+
+The first action is to add the materials plugin (@lst-materials_plugin_example_19_materials_plugin, @lst-materials_plugin_materials_producer_ids, @lst-materials_plugin_material_ids). Only the material producer id values contained in the MaterialsProducer enumeration and the material ids contained in the Material enumeration are added to the plugin's data.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_example_19_materials_plugin$code_cap
+#| code: !expr fig$materials_plugin_example_19_materials_plugin$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_materials_producer_ids$code_cap
+#| code: !expr fig$materials_plugin_materials_producer_ids$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_material_ids$code_cap
+#| code: !expr fig$materials_plugin_material_ids$code
+#| echo: true
+```
+
+The next action is to add the resources plugin (@lst-materials_plugin_example_19_resources_plugin, @lst-materials_plugin_resource_ids). Only the resource id values contained in the Resource enumeration are added to the plugin's data. Region and person resource levels are initialized to zero.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_example_19_resources_plugin$code_cap
+#| code: !expr fig$materials_plugin_example_19_resources_plugin$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_resource_ids$code_cap
+#| code: !expr fig$materials_plugin_resource_ids$code
+#| echo: true
+```
+
+The next action is to load the global properties plugin (@lst-materials_plugin_example_19_global_properties_plugin). All of the global properties are marked as immutable since they will not change over the course of the simulation.
+
+-   SUSCEPTIBLE_POPULATION_PROPORTION -- The fraction of the population that is susceptible
+-   INITIAL_INFECTIONS -- The number of adults initially infected
+-   MIN_INFECTIOUS_PERIOD -- The minimum number of days a person is infectious
+-   MAX_INFECTIOUS_PERIOD -- The maximum number of days a person is infectious
+-   POPULATION_SIZE -- The initial size of the population
+-   CHILD_POPULATION_PROPORTION -- The fraction of the population between the ages of 0 and 18, inclusive
+-   SENIOR_POPULATION_PROPORTION -- The fraction of the population 65 and older
+-   R0 -- The expected number of people a single person will infect if all contacts are susceptible and transmission success is 100%
+-   AVERAGE_HOME_SIZE -- The average number of people per household
+-   AVERAGE_SCHOOL_SIZE -- The average number of students in a school
+-   AVERAGE_WORK_SIZE -- The average number of people per work place
+-   COMMUNITY_CONTACT_RATE -- The proportion of contacts that will be randomly chosen from the entire population
+-   MANUFACTURE_VACCINE -- Boolean that triggers vaccine manufacture
+-   INFECTION_THRESHOLD -- The fraction of the population that are infected in order to start vaccine manufacture
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_example_19_global_properties_plugin$code_cap
+#| code: !expr fig$materials_plugin_example_19_global_properties_plugin$code
+#| echo: true
+```
+
+The person properties plugin is loaded (@lst-materials_plugin_example_19_person_properties_plugin).
+
+-   AGE -- The integer age of a person
+-   VACCINATED -- Boolean vaccination status
+-   VACCINE_SCHEDULED -- Boolean indicating whether a vaccination is scheduled for a person
+-   DISEASE_STATE -- IMMUNE, SUSCEPTIBLE, INFECTIOUS or RECOVERED
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_example_19_person_properties_plugin$code_cap
+#| code: !expr fig$materials_plugin_example_19_person_properties_plugin$code
+#| echo: true
+```
+
+There are four reports:
+
+-   DiseaseStateReport -- Shows the number of people in each of the disease states at the end of each simulation
+-   PersonPropertyReport -- Shows an hourly summary the number of people having various person property values
+-   VaccineReport -- Shows a daily summary of the number of people who have been scheduled for or have received vaccination
+-   VaccineProductionReport -- Shows a daily summary of the internal inventory of the antigen and vaccine producers
+
+The stochastic plugin is initialized with a random seed and all simulations will start in the same stochastic state. The Regions plugin has one region and the people plugin is loaded in an empty state. People are added by an actor in the model plugin. The groups plugin is initialized with the three group types: HOME, SCHOOL, and WORK.
+
+The model plugin adds three actors:
+
+-   PopulationLoader -- Adds people to the simulation and initializes immunity
+-   ContactManager -- Manages person to person transmission of the disease
+-   Vaccinator -- Distributes vaccine to people
+
+## Experiment dimensions
+
+Four dimensions are added to the experiment that define alternate values for some of the global properties resulting in 81 scenarios. The dimension values are:
+
+-   INFECTION_THRESHOLD -- 0.01, 0.02, 0.05
+-   COMMUNITY_CONTACT_RATE -- 0.0, 0.01, 0.05
+-   INITIAL_INFECTIONS -- 1, 10, 100
+-   R0 -- 2.0, 2.5, 3.0
+
+The fixed values are:
+
+-   POPULATION_SIZE -- 10,000
+-   SUSCEPTIBLE_POPULATION_PROPORTION - 100%
+-   MIN_INFECTIOUS_PERIOD -- 7 days
+-   MAX_INFECTIOUS_PERIOD -- 14 days
+-   CHILD_POPULATION_PROPORTION -- 0.235
+-   SENIOR_POPULATION_PROPORTION -- 0.169
+-   AVERAGE_HOME_SIZE -- 2.5
+-   AVERAGE_SCHOOL_SIZE -- 250.0
+-   AVERAGE_WORK_SIZE -- 30.0
+-   MANUFACTURE_VACCINE -- false
+
+## The actors
+
+We will finish this chapter by reviewing the actors and then examine the output.
+
+### Population Loader
+
+The PopulationLoader actor adds people to the simulation based on the number in the POPULATION_SIZE global property. The people are evenly distributed among the regions and each region creates children, working age adults and seniors based on the relevant global variables. The people are assigned homes, schools and work places accordingly, with each home having at least one adult. All people start out as either IMMUNE or SUSCEPTIBLE to the disease based on the SUSCEPTIBLE_POPULATION_PROPORTION global property.
+
+### Contact Manager
+
+The ContactManager actor, @lst-materials_plugin_contact_manager_init, schedules infectious contacts between infected people and the susceptible population. On its initialization, it establishes various parameters from the global variables and schedules the initial infections over the first day of the simulation.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_contact_manager_init$code_cap
+#| code: !expr fig$materials_plugin_contact_manager_init$code
+#| echo: true
+```
+
+When a person is infected (@lst-materials_plugin_contact_manager_infect_person), the contact manager determines the number of days that the person will be infectious and the number of potential infections that person will cause over those days. For each potential infectious contact, the manager schedules that contact at the relevant time. Finally, it schedules the transition of the person from infectious to recovered.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_contact_manager_infect_person$code_cap
+#| code: !expr fig$materials_plugin_contact_manager_infect_person$code
+#| echo: true
+```
+
+For each potential infectious contact, the manager (@lst-materials_plugin_contact_manager_infect_contact) first determines if the contact is in one of the person's groups or is in the general community. If it is a community contact, a person is selected from the general population. If it is a group contact, one of the person's groups is chosen at random and a person is selected from that group. The selected person must be susceptible and unvaccinated for the contact to transfer the infection. Thus, as more people are either infected or vaccinated, the number of people each infectious person infects decreases.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_contact_manager_infect_contact$code_cap
+#| code: !expr fig$materials_plugin_contact_manager_infect_contact$code
+#| echo: true
+```
+
+### Vaccinator
+
+The Vaccinator actor, in @lst-materials_plugin_vaccinator_init, creates the VaccineProducer and AntigenProducer actors and initializes various parameters and data structures that will help it distribute vaccines. It subscribes to changes in the disease state of people so that it can determine how many vaccines are needed. It subscribes to changes in the resource states of materials producers so that it can distribute vaccines from the VaccineProduer to the regions and then on to the people in those regions. The two producers will not start manufacturing materials until the Vaccinator determines that enough people have been infected. When the number of infected exceeds the required threshold the Vaccinator will set the MANUFACTURE_VACCINE global variable to true and the producers will begin material and resource production.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_init$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_init$code
+#| echo: true
+```
+
+As people become infected (@lst-materials_plugin_vaccinator_person_property_update, @lst-materials_plugin_vaccinator_manufacture_start), the Vaccinator will determine if the vaccine manufacture needs to be started. Once the decision is made to start manufacture, the Vaccinator no longer needs to observe people becoming infectious, so it unsubscribes to changes in the disease states of people.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_person_property_update$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_person_property_update$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_manufacture_start$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_manufacture_start$code
+#| echo: true
+```
+
+Whenever resources (vaccines in this case) are accumulated on a materials producer (@lst-materials_plugin_vaccinator_producer_resource_update), the Vaccinator must determine (@lst-materials_plugin_vaccinator_producer_capturable_resource) if the resource is a vaccine, whether the change to the resource level represents an addition of that resource to the inventory of the materials producer and whether any vaccine is needed. If the vaccine is available and needed, then the Vaccinator transfers the vaccines evenly amongst the regions and tries to schedule new vaccinations.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_producer_resource_update$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_producer_resource_update$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_producer_capturable_resource$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_producer_capturable_resource$code
+#| echo: true
+```
+
+Once vaccine doses are available, the Vaccinator schedules vaccinations (@lst-materials_plugin_vaccinator_producer_schedule_vaccinations) at a fixed rate of 100 per day. The vaccines doses are distributed evenly amongst the regions and people are scheduled for vaccination throughout the day(s) following the receipt of vaccines from the VaccineProducer. Finally, the Vaccinator determines if enough vaccine has been received and to vaccinate the entire population and thus the manufacture of resource and materials can be halted.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_producer_schedule_vaccinations$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_producer_schedule_vaccinations$code
+#| echo: true
+```
+
+The vaccination for each person (@lst-materials_plugin_vaccinator_producer_vaccinate_person) sets the person's VACCINATED property to true and transfers a single unit (dose) of vaccine from the person's region to the person.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccinator_producer_vaccinate_person$code_cap
+#| code: !expr fig$materials_plugin_vaccinator_producer_vaccinate_person$code
+#| echo: true
+```
+
+### Antigen Producer
+
+The AntigenProducer creates the ANTIGEN material from the GROWTH_MEDIUM and VIRUS materials. The generated ANTIGEN material is placed on stages in batches of 25 units of antigen and the stages are offered up to other materials producers. The VaccineProducer will transfer these stages to itself and use the ANTIGEN material in its own production of vaccine. Various factors limit the production of antigen. The GROWTH_MEDIUM and VIRUS materials initialize to a zero inventory and are scheduled to be received at regular intervals depending on ongoing demands and ordering limits. The AntigenProducer has a maximum stage storage capacity of 60 stages and production must halt once that limit is reached. The VaccineProducer must remove the stages for manufacture to continue. Each batch requires 6 hours to create and 15 days to ferment. The AntigenProducer can only start one batch of fermentation at a time.
+
+The AntigenProducer initializes (@lst-materials_plugin_antigen_producer_init) by adding specifications for the two materials used in the production of antigen. GROWTH_MEDIUM is ordered in allotments of 35 units and there is a 7 day delay from the time of order to receipt. VIRUS is ordered in allotments of 100 units with a 21 day delay. Both resources are utilized at one unit per unit of ANTIGEN produced. The AntigenProducer subscribes to the transfer of stages away from itself (capture by the VaccineProduer) so that it can possibly resume manufacture. It also subscribes to changes in the MANUFACTURE_VACCINE global property which must be true for any manufacturing of antigen to continue.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_antigen_producer_init$code_cap
+#| code: !expr fig$materials_plugin_antigen_producer_init$code
+#| echo: true
+```
+
+The planning of antigen batch creation and fermentation is triggered by several events:
+
+-   Initialization of the AntigenProducer
+-   Transfer of an offered stage to the VaccineProducer
+-   Change of the MANUFACTURE_VACCINE global property by the Vaccinator
+-   Receipt of ordered GROWTH_MEDIUM or VIRUS
+-   The fermentation of a batch of ANTIGEN
+
+The planning process (@lst-materials_plugin_antigen_producer_plan_fermentation) starts by determining if manufacture has been halted by the Vaccinator. If manufacturing is allowed, then each of the required materials are analyzed and ordered as needed to build a full complement of offered stages. The process continues by constructing stages from the batches of GROWTH_MEDIUM and VIRUS that are held in inventory until there are either insufficient materials or no more capacity to store stages. The start of the fermentation process is determined and the end of each fermentation is scheduled.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_antigen_producer_plan_fermentation$code_cap
+#| code: !expr fig$materials_plugin_antigen_producer_plan_fermentation$code
+#| echo: true
+```
+
+Once fermentation is complete (@lst-materials_plugin_antigen_producer_end_fermentation) for a stage containing the GROWTH_MEDIUM and VIRUS, the stage is converted into a batch of 25 ANTIGEN units and staged. The new stage is offered for transfer to the VaccineProducer.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_antigen_producer_end_fermentation$code_cap
+#| code: !expr fig$materials_plugin_antigen_producer_end_fermentation$code
+#| echo: true
+```
+
+### Vaccine Producer
+
+The VaccineProducer creates 50 VACCINE resource units from staged ANTIGEN, ADJUVANT, PRESERVATIVE and STABILIZER materials and stores those vaccines. The Vaccinator gathers the stored vaccines and distributes them to the regions and people. The ANTIGEN material is gathered from the offered stages of the AntigenProducer and the other materials are ordered and received in a similar manner to the AntigenProducer. Vaccine production is limited by various factors. The non-ANTIGEN materials initialize to a zero inventory and are scheduled to be received at regular intervals depending on ongoing demands and ordering limits. The ANTIGEN material must be received from the AntigenProducer. There is a maximum stage storage capacity of 15 stages and production must halt once that limit is reached. Staged batches require 2.4 hours to assemble and 2 days to produce vaccine doses.
+
+The VaccineProducer initializes (@lst-materials_plugin_vaccine_producer_init) by constructing an empty batch of ANTIGEN that will act as the inventory for all ANTIGEN used in stage creation. It then initializes the ordering constraints for the remaining materials. It subscribes to changes in stage offer states that will be used to detect when the AntigenProducer is offering stages containing ANTIGEN. Finally, it subscribes to changes in the MANUFACTURE_VACCINE global property which must be true for any manufacturing of vaccine to continue.
+
+The planning of vaccine preparation and creation is triggered by several events:
+
+-   Initialization of the VaccineProducer
+-   The offering of a stage containing ANTIGEN from the AntigenProducer
+-   Change of the MANUFACTURE_VACCINE global property by the Vaccinator
+-   Receipt of ordered ADJUVANT, PRESERVATIVE or STABILIZER
+-   The completion of stage conversion into vaccine doses
+
+The planning process (@lst-materials_plugin_vaccine_producer_plan_vaccine_preparation) starts by determining if manufacture has been halted by the Vaccinator. If manufacturing is allowed, then each of the required materials are analyzed and ordered as needed to build a full complement of offered stages. The process continues by constructing stages from the batches of ANTIGEN, ADJUVANT, PRESERVATIVE and STABILIZER that are held in inventory until there are either insufficient materials or no more capacity to store stages. The start of the vaccine preparation process is determined and the end of each preparation is scheduled.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccine_producer_init$code_cap
+#| code: !expr fig$materials_plugin_vaccine_producer_init$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccine_producer_plan_vaccine_preparation$code_cap
+#| code: !expr fig$materials_plugin_vaccine_producer_plan_vaccine_preparation$code
+#| echo: true
+```
+
+Once vaccine preparation is complete (@lst-materials_plugin_vaccine_producer_end_vaccine_preparation) for a stage containing the ANTIGEN, ADJUVANT, PRESERVATIVE and STABILIZER materials, the stage is converted into 25 VACCINE units and stored on the producer. The Vaccinator will observe this change in inventory and may transfer the vaccine units to the regions and people as needed.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$materials_plugin_vaccine_producer_end_vaccine_preparation$code_cap
+#| code: !expr fig$materials_plugin_vaccine_producer_end_vaccine_preparation$code
+#| echo: true
+```
+
+## Inspecting the output
+
+### Person Property Report
+
+The 81 scenarios result in a large amount of output (\>1,000,000 rows) in the person property report. It shows the aggregate counts for people across all the person properties.
+
+### Disease State Report
+
+Analysis of the number of recovered people at the end of each simulation shows that R0 and infection threshold needed to start vaccine manufacture play a significant role in the outcome. The number of initial infections and the community contact rate also show the expected positive correlation to the number of recovered, but to a lesser extent.
+
+### Vaccine Report
+
+The vaccine report shows that lower infection thresholds drive an earlier start of vaccine manufacture. However, due to the relatively low production of the vaccine, it still takes 20-23 weeks to vaccinate the entire population.
+
+### Vaccine Production Report
+
+The vaccine production report records the slow build up of ordered materials and conversion of those into vaccines. From the start of the materials collection to the first doses of vaccine being administered is approximately 32 days.

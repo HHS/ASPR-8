@@ -1,0 +1,312 @@
+# Reports Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The reports plugin implements an experiment context consumer that records output into tab-delimited (or other delimiter) text files via the java.nio library using blocking file writes. Three new concepts form the core of the reports:
+
+1.  Report Label -- a unique identifier for each report
+2.  Report Header -- the header content for the report
+3.  Report Item -- the data content(strings) for each line in the report
+
+The report label is a unique identifier used to mark every report item that the plugin processes and helps associate those items to the specific files where they will be recorded. Report items are a flexible list of values that have an associated report label as well as a report header used to build the header of the file. A report file is built from the report items that are associated with a specific report label in the order received. The first report item is used to build the header of the report file. All other lines of the file are an ordered, delimited listing of the string values contained in each report item. No attempt is made to ensure that the header matches the report lines or that all report lines have equal field lengths.
+
+While any data manager or actor can release report items, in practice most reports are managed solely by special purpose, passive reports that simply observe events and do not act on any data manager. These reports often subscribe to multiple event types and aggregate several events into a single report item. This reduces the amount of information recorded in output files and thus output files are often more complex than simple event trace files.
+
+Reports enjoy most of the privileges of actors and use a ReportContext to work with the simulation. They can get information directly from data managers, subscribe to events and plan. However, they cannot mutate data and thus their presence should have little to no impact on the state of the simulation. Like actors, reports are confined to simulation instances and there will often be multiple report instances contributing to the same output file from simultaneously running scenarios.
+
+## Plugin Data Initialization
+
+There is no plugin initialization data class. Reports are contributed by other plugins via their initializers.
+
+## Plugin Behavior
+
+The Plugin contains no data managers, actors or reports.
+
+## Experiment Context Consumer
+
+So far we have seen that reports tend to be produced by specialized classes and that those classes can be added to the simulation via the plugin initialization data. This covers the production and release of the report items from each simulation instance but not what happens to the report items afterward. The output files that receive the report items must work with multiple threads. We manage this with a threadsafe experiment context consumer, the NIOReportItemHandler, that is added to the experiment. The NIOReportItemHandler is created via a builder pattern that allows the modeler to associate report ids to file paths.
+
+## Example Reports (Lesson 12)
+
+We reach back to the previous lessons where we introduced plugins for people, families and vaccines for a demonstration of reports. The reports will center on the vaccination of families in various forms and are implemented by three dedicated report classes in the vaccine plugin:
+
+-   FamilyVaccineReport -- Immediate reporting based on observed events
+-   HourlyVaccineReport -- Hourly reporting based on observed events
+-   StatelessVaccineReport -- Hourly reports based on inspection of current state
+
+## General Setup
+
+This example uses the following plugins:
+
+-   Person Plugin -- provides containment for person identifiers
+-   Stochastics Plugin -- (GCM plugin) provides random number generation
+-   Reports Plugin -- (GCM plugin) provides reporting mechanisms
+-   Family Plugin -- defines families and associates people with families
+-   Vaccine Plugin -- maintains vaccine assignments with people and families and defines the three reports
+-   Model Plugin -- provides an actor for loading the initial population and an actor for scheduling vaccinations
+
+The general flow of action in the simulation is that the PopulationLoader actor will add people and families to the simulation based on the initial plugin data provided in the family plugin.  The VaccineScheduler actor will then schedule people at random times to be vaccinated. As people and families are created, people join families and people are vaccinated, the various data mangers will generate the relevant events for observation by the three reports.  The reports will observe these events and correspondingly generate report items that will flow out of the simulation into the experiment level report mechanisms that will result in report files being written.
+
+Let's examine Example_12. In @lst-reports_plugin_example_12_plugins we see that the plugins are generated with the person, vaccine and model plugins requiring no input data. The stochastics plugin is generated with a fixed seed value.  Next, the family plugin is created with initial data specifying that 30 families will be created and that each family will have a random number of members up to 5 people.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_example_12_plugins$code_cap
+#| code: !expr fig$reports_plugin_example_12_plugins$code
+#| echo: true
+```
+
+@lst-reports_plugin_nio continues with the association of report labels with specific report files. Recall that reports generally use a unique report label and mark each report item with that label. The three reports are added to the simulation by the vaccine plugin.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_nio$code_cap
+#| code: !expr fig$reports_plugin_nio$code
+#| echo: true
+```
+
+Each report label is now associated with a particular file path. Although each file is a tab-delimited text file, we use the .xls file extension so that they can be automatically opened as a spreadsheet. Had we skipped adding these last specifications, the report items would flow out of the simulation and into the experiment but would not find an associated file and thus be ignored.
+
+Finally, in @lst-reports_plugin_example_12_execution and @lst-reports_plugin_family_dimension, we create a single experiment dimension that will override the maximum family size with four values and thus create four scenarios for the experiment.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_example_12_execution$code_cap
+#| code: !expr fig$reports_plugin_example_12_execution$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_dimension$code_cap
+#| code: !expr fig$reports_plugin_family_dimension$code
+#| echo: true
+```
+
+## The Family Vaccine Report
+
+The first report documents the changes in the number of families that are vaccinated over time as individual people receive the vaccine. The field headers for the report are:
+
+-   scenario -- the id of the scenario
+-   max_family_size -- the maximum family size dictated by the scenario
+-   time -- the time in days for each item in the report
+-   unvacinated_families -- the number of families that have no members vaccinated
+-   partially_vaccinated_families -- the number of families that have at least one, but not all members vaccinated
+-   fully_vaccinated_families -- the number of families that have all members vaccinated
+-   unvaccinated_individuals -- the number of people who are unvaccinated and have no family assignment
+-   vaccinated_individuals -- the number of people who are vaccinated and have no family assignment
+
+The experiment report mechanisms are responsible for reporting the scenario and the max_family_size fields since they are part of the experiment design. The remaining fields are contributed by the report. Note that family membership is not guaranteed and that some people may not be associated with any family id. The report accounts for these people in the last two fields.
+
+There are four events that drive the report:
+
+1.  the addition of a person to the simulation
+2.  the addition of a family to the simulation
+3.  the assignment of a person to a family
+4.  the vaccination of a person
+
+Note that the model logic does not allow for the removal of a person from the simulation, the removal of person from a family or loss of vaccination coverage for a person. In a more nuanced model, there would likely be more events that would influence the report.
+
+The FamilyVaccineReport has several private fields and classes for maintaining the five counts of the reports. In @lst-reports_plugin_family_vaccine_report_enums we have two convenience enumerations for families and individuals that help with the creation of the report header and with maintaining counts.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_enums$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_enums$code
+#| echo: true
+```
+
+@lst-reports_plugin_family_vaccine_report_fields shows the remaining private fields.
+
+-   report id -- remains fixed from construction and is used to mark every report item
+-   reportHeader -- is constructed once and used in the construction of every report item
+-   actorContext -- a convenience reference kept by the actor to retrieve the simulation time
+-   vaccinationDataManager -- a convenience reference to retrieve the vaccination status of each person
+-   familyDataManager -- a convenience reference to retrieve the family members associated with a given person who has just been vaccinated
+-   statusToFamiliesMap -- a map from family vaccine status to a mutable counter
+-   familyToStatusMap -- a map for recording the current family vaccine status for each family
+-   statusToIndividualMap -- a map from individual vaccine status to a mutable counter
+-   individualToStatusMap -- a map for recording the current individual vaccine status for each person not assigned to a family
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_fields$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_fields$code
+#| echo: true
+```
+
+The report's methods start with its constructor in @lst-reports_plugin_family_vaccine_report_constructor. The report label is recorded and the report header field is built from the support enumerations.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_constructor$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_constructor$code
+#| echo: true
+```
+
+Next is the initialization method that was passed to the simulation. This is invoked by the simulation just once at the begining of time flow and gives the report a chance to register for events and to initialize the private fields from @lst-reports_plugin_family_vaccine_report_fields. The report records the actor context and subscribes to the four events of interest in @lst-reports_plugin_family_vaccine_report_init_subscriptions. These subscriptions reference local private methods that will be discussed later.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_subscriptions$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_subscriptions$code
+#| echo: true
+```
+
+In @lst-reports_plugin_family_vaccine_report_init_setup we continue with the retrieval of the person, family and vaccination data managers. The maps containing the counts are initialized to zero.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_setup$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_setup$code
+#| echo: true
+```
+
+@lst-reports_plugin_family_vaccine_report_init_family_status and @lst-reports_plugin_family_vaccine_report_init_person_status use the data managers to fill the count structures with the current state of the population.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_family_status$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_family_status$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_person_status$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_person_status$code
+#| echo: true
+```
+
+Initialization finishes with the release of a single report item that summarizes the state of family vaccination at time zero.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_releasing_output$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_releasing_output$code
+#| echo: true
+```
+
+The methods for handling each event are shown in @lst-reports_plugin_family_vaccine_report_handling_events. All four methods select some relevant family id or person id and process changes to the counting data structures using the refreshFamilyStatus() and refreshInidividual() methods. The accounting for reports that are synthesizing multiple events can be somewhat tricky. No assumptions are made as to how people are created, vaccinated and added to families so that changes to those processes in future versions of the model do not cause errors in the report.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_handling_events$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_handling_events$code
+#| echo: true
+```
+
+The refresh methods in @lst-reports_plugin_family_vaccine_report_refreshing_family_status and @lst-reports_plugin_family_vaccine_report_refreshing_individual_status compare the current vaccination state of the families and individuals against the corresponding states tracked in the counting maps. If a change in the counts has occurred the counts are corrected and a new report item is released.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_refreshing_family_status$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_refreshing_family_status$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_refreshing_individual_status$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_refreshing_individual_status$code
+#| echo: true
+```
+
+Releasing the report items that summarizes the family vaccination counts requires building a new report item with the fixed report label and report header values determined in the constructor. We then go on to add the time and count values in the order dictated by the helper enumerations so that they follow the header values established in the report header. Once the report item is complete it is released as output via the report context. The simulation will in turn release the report item to the experiment where it will be distributed to the NIOReportItemHandler and then on the specific file manager(s) that record the items.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_family_vaccine_report_init_releasing_report_item$code_cap
+#| code: !expr fig$reports_plugin_family_vaccine_report_init_releasing_report_item$code
+#| echo: true
+```
+
+The resulting output in @fig-reports_plugin_family_vaccine_output contains the four scenarios showing the buildup of the population with all families and individuals being unvaccinated. Over time the number of vaccinated families increase and each simulation ends when all people have been vaccinated. The increase of max family size over the experiment causes there to be more people and thus the number of days to reach full vaccination also increases as expected.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$reports_plugin_family_vaccine_output$code_cap
+#| label: fig-reports_plugin_family_vaccine_output
+options(knitr.kable.NA = '')
+metadata$reports_plugin_family_vaccine_output$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+## Periodic Reports
+
+Producing a new report item each time a relevant event changes the internal tracking variable of a report actor will often produce too much output. An alternative is to periodically release one or more report items, usually on an hourly or daily basis. The reports plugin defines an abstract report class, the PeriodicReport, that manages the periodic flushing of the state of the report. This allows descendant report classes to concentrate on responding to events while leaving the periodic production of report items to the base class.
+
+The PeriodicReport defines a constructor that requires both a report label and a reporting period. If the constructor is overridden, the super() constructor must be invoked. The init() method is declared final in the PeriodicReport class and the descendant report class should implement the prepare() method to conduct initialization. Several protected methods are introduced:
+
+-   ***prepare*** is called by the init() method of the periodic report, it provides the descendant report class with an opportunity to initialize
+-   ***getReportLabel*** and ***getReportPeriod*** retrieve the label and report period passed in construction
+-   ***addTimeFieldHeaders*** is used to help create the report header
+-   ***fillTimeFields*** is used to help create report items
+-   ***flush*** is an abstract method for flushing the content of the report actor that must be implemented by the descendant report class
+
+Our next example report is the HourlyVaccineReport that descends from the PeriodicReport. It produces the same output as the FamilyVaccineReport, but does so on an hourly basis. This outputs a report item every hour whether or not there were stimulating events. The implementation of this report is nearly identical to the previous report and we will concentrate on highlighting the differences between the two approaches.
+
+In @lst-reports_plugin_hourly_vaccine_constructor we see that the constructor invokes the super constructor. The construction of the report header is aided by the protected method addTimeFieldHeaders() which should be invoked as the first inputs to the report header builder. Note as well that we do not store the report label locally.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_hourly_vaccine_constructor$code_cap
+#| code: !expr fig$reports_plugin_hourly_vaccine_constructor$code
+#| echo: true
+```
+
+The prepare() method is nearly identical to the previous report's init() method.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_hourly_vaccine_initialization$code_cap
+#| code: !expr fig$reports_plugin_hourly_vaccine_initialization$code
+#| echo: true
+```
+
+The releaseReportItem() method of the previous report is now replaced by the flush() method override in @lst-reports_plugin_hourly_vaccine_flush.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_hourly_vaccine_flush$code_cap
+#| code: !expr fig$reports_plugin_hourly_vaccine_flush$code
+#| echo: true
+```
+
+The corresponding invocations of the releaseReportItem() that would have generated a new report item each time an event changed the internal counting variables are dropped. The flush() method will be invoked each time the parent report class determines that the planned next period has occurred. Note also that the time fields of the report item are filled by invoking the fillTimeFields() method which will add the correct time value for the period being reported rather than the current time. Otherwise, the implementations are identical.
+
+The resulting output in @fig-reports_plugin_hourly_vaccine_output contains the four scenarios showing the buildup of the population with all families and individuals being unvaccinated. It shows the same overall pattern as the previous report, but treats the reporting of time in integer days and hours. Note that some of the output values repeat over the days and hours since there were no vaccinations during those periods.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$reports_plugin_hourly_vaccine_output$code_cap
+#| label: fig-reports_plugin_hourly_vaccine_output
+options(knitr.kable.NA = '')
+metadata$reports_plugin_hourly_vaccine_output$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+Our final example, the StatelessVaccineReport , @lst-reports_plugin_stateless_vaccine_flush, continues from the HourlyVaccineReport but eschews the stateful counting mechanisms. Like the previous report, it is a periodic report actor but it does not store any state and does not subscribe to any events. Instead, it simply derives the report item on each flush() invocation.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$reports_plugin_stateless_vaccine_flush$code_cap
+#| code: !expr fig$reports_plugin_stateless_vaccine_flush$code
+#| echo: true
+```
+
+This approach may seem wasteful since there is the potential for a great deal of recalculation, but since this is done on a daily basis, it may be well worth the reduction in memory if the report was actively tracking millions of families.

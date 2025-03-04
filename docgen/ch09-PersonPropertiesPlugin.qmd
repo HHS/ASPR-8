@@ -1,0 +1,239 @@
+# Person Properties Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The person properties plugin manages the assignment of properties to individual people. As such, it is dependent on the people plugin. It also depends on the regions plugin for reports. Property definitions apply to every person in the simulation and are generally added to the person properties plugin data. However, person property definitions can be added dynamically and thus other plugins can contribute person property definitions directly rather than as inputs to the person properties plugin data.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a PersonPropertiesPluginData object that collects person property definitions and person property value assignments for the initial population.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the PersonPropertiesDataManager that is initialized with the PersonPropertiesPluginData.
+
+## Data Manager
+
+The data manager manages person properties and stores their property values in a memory dense fashion that is transparent to the modeler. The data manager provides public methods that:
+
+-   Define person properties
+-   Set person property values
+-   Answer various questions about:
+    -   The value of a person property for particular people
+    -   The people associated with a particular property value
+    -   The existence and value of property definitions
+
+The data manager also produces observable events:
+
+-   PersonPropertyUpdateEvent -- when a person is assigned a person property value
+-   PersonPropertyDefintionEvent -- when a new person property is defined
+
+## Example Code (Lesson 16)
+
+Example_16.java shows the use of the person properties plugin. In it we will examine
+
+-   The initialization of the person properties plugin
+-   The assignment of values to individuals
+-   The dynamic definition of person properties
+
+The example includes six plugins:
+
+-   People plugin -- (GCM core plugin) used to manage people
+-   Person properties plugin-- (GCM core plugin) used to decorate properties onto people
+-   Global properties plugin-- (GCM core plugin) used to store policies and initial conditions affecting vaccination
+-   Stochastics plugin -- (GCM core plugin) used to generate random numbers used in various decisions
+-   Regions Plugin -- (GCM core plugin) used to represent regions
+-   Model plugin -- (local plugin) used to introduce three actors that will:
+    -   Load the population
+    -   Vaccinate people
+    -   Educate people on the vaccine
+
+The example's main method starts in @lst-person_properties_example_16_main by creating an instance of the example class rather than building the experiment directly since this example is somewhat more complex than previous examples. The population starts out being unvaccinated and some proportion of people initially refuse the vaccine. Attempts to both vaccinate and educate people are ongoing until a person is vaccinated. This will demonstrate the planning capability as well. If education is successful, the person is immediately vaccinated, demonstrating the cancellation of planning. At some point in the timeline, immunity will become discoverable during vaccine attempts and immune people will no longer pursue vaccination. The simulation is terminated at one year and output reports are then generated.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_example_16_main$code_cap
+#| code: !expr fig$person_properties_example_16_main$code
+#| echo: true
+```
+
+The execution method first gathers together the six plugins in @lst-person_properties_example_16_execute:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_example_16_execute$code_cap
+#| code: !expr fig$person_properties_example_16_execute$code
+#| echo: true
+```
+
+The first action is to generate the global properties plugin, (@lst-person_properties_get_global_properties_plugin). All of the global properties are marked as immutable since they will not change over the course of the simulation:
+
+-   VACCINE_ATTEMPT_INTERVAL -- The maximum time between attempts to vaccinate an unvaccinated person. Specific intervals are chosen using a uniform random time between zero and the maximum.
+-   EDUCATION_ATTEMPT_INTERVAL -- The maximum time between attempts to educate an unvaccinated person who is currently refusing vaccination. Specific intervals are chosen using a uniform random time between zero and the maximum.
+-   VACCINE_REFUSAL_PROPBABILTY -- The initial probability that a person will refuse vaccination. Used to initialize the person property REFUSES_VACCINE.
+-   EDUCATION_SUCCESS_RATE -- The probability that an attempt to educate a person to accept vaccination will succeed.
+-   IMMUNITY_START_TIME -- The time when immunity is detectable in people. Used to halt attempts at vaccination and to demonstrate the dynamic addition of the person property IS_IMMUNE.
+-   IMMUNITY_PROBABILITY -- The probability that a person will be immune when the IS_IMMUNE person property is added.
+-   POPULATION_SIZE -- The number of people in the simulation.
+-   SIMULATION_DURATION -- The maximum time (in days) that the simulation will execute.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_get_global_properties_plugin$code_cap
+#| code: !expr fig$person_properties_get_global_properties_plugin$code
+#| echo: true
+```
+
+The execution method then loads reports (@lst-person_properties_get_person_properties_plugin). The person property report will be quite large and is set to only show the state of each person at the end of the simulation for brevity. The vaccine report will show the state of vaccination and immunity at the end of the simulation to allow for analysis of the experiment.
+
+The people plugin is created without any initial people since that will be handled by one of the model plugin's actors. The regions plugin is initialized with five regions and only plays a role in the person property report.
+
+The person properties plugin is generated in @lst-person_properties_get_person_properties_plugin. All of the person properties are mutable since they will change over the course of the simulation:
+
+-   EDUCATION_ATTEMPTS -- The number of attempts to change a person's vaccine refusal.
+-   VACCINE_ATTEMPTS -- The number of attempts to vaccinate a person.
+-   REFUSES_VACCINE -- Boolean indicating whether the person will refuse vaccination attempts. Note that there is no default value and that new people must have this property set as part of the addition of the person to the simulation.
+-   VACCINATED -- Boolean indicating that a person has been vaccinated. People all start out with no vaccination and receive at most one vaccination.
+
+Note that the final person property, IS_IMMUNE, is not added at the beginning of the simulation as a demonstration of the dynamic addition of person properties.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_get_person_properties_plugin$code_cap
+#| code: !expr fig$person_properties_get_person_properties_plugin$code
+#| echo: true
+```
+
+Adding the stochastics plugin involves setting only the seed that will be used in every simulation instance. It will not play a role in defining the experiment space since that will be quite large already with various global property variants. Finally, the execution method generates the model plugin which in turn adds three actors:
+
+-   Vaccinator -- vaccinates people at random times
+-   Vaccine Educator -- seeks to get people to accept vaccination
+-   Population Loader -- initializes the population
+
+The execute method finishes (@lst-person_properties_execute_experiment) by constructing and executing the experiment.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_execute_experiment$code_cap
+#| code: !expr fig$person_properties_execute_experiment$code
+#| echo: true
+```
+
+Five dimensions are added to the experiment that define alternate values for five of the global properties resulting in 810 scenarios. These values are:
+
+-   Immunity start time -- 120 and 180 days
+-   Immunity probability -- 0, 10 and 20 percent
+-   Vaccine attempt interval -- 30, 45 and 60 days
+-   Education attempt interval -- 30, 60 and 180 days
+-   Education success rate -- 0, 10 and 20 percent
+-   Initial vaccine refusal -- 0, 25, 50, 75 and 100 percent
+
+## The actors
+
+We will finish this chapter by reviewing the three actors of the model plugin and then examining the vaccine report.
+
+The PopulationLoader actor, in @lst-person_properties_population_loader_init, adds people to the simulation based on the number in the POPULATION_SIZE global property. Each person is assigned a random region and the person property, REFUSES_VACCINE, is randomly assigned based on the global property VACCINE_REFUSAL_PROBABILITY.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_population_loader_init$code_cap
+#| code: !expr fig$person_properties_population_loader_init$code
+#| echo: true
+```
+
+The actor finishes its initialization by scheduling a time to halt the simulation based on the global property, SIMULATION_DURATION. It also schedules the addition of the person property, IS_IMMUNE, based on the global property, IMMUNITY_START_TIME. @lst-person_properties_population_loader_add_immunity_property 
+shows the details of this dynamic definition.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_population_loader_add_immunity_property$code_cap
+#| code: !expr fig$person_properties_population_loader_add_immunity_property$code
+#| echo: true
+```
+
+The vaccine educator (@lst-person_properties_vaccine_educator_init) attempts to change unvaccinated people who refuse vaccination to vaccine acceptance. It initializes by planning an educational attempt for each person in the existing population who has not been vaccinated and who will refuse vaccination. It also subscribes to the addition of people so that it might plan education for newly added people.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccine_educator_init$code_cap
+#| code: !expr fig$person_properties_vaccine_educator_init$code
+#| echo: true
+```
+
+The education of a person (@lst-person_properties_vaccine_educator_handle_new_person) is accomplished with planning that schedules the education at a random time between the current time and a globally defined attempt interval.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccine_educator_handle_new_person$code_cap
+#| code: !expr fig$person_properties_vaccine_educator_handle_new_person$code
+#| echo: true
+```
+
+The education attempt sets the vaccine refusal to false on a random draw based on the EDUCATION_SUCCESS_RATE global variable in @lst-person_properties_vaccine_educator_educate_person.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccine_educator_educate_person$code_cap
+#| code: !expr fig$person_properties_vaccine_educator_educate_person$code
+#| echo: true
+```
+
+The Vaccinator (@lst-person_properties_vaccinator_init) tries to vaccinate the population. It initializes by planning a vaccination attempt for each person in the existing population who has not yet been vaccinated. It subscribes to the addition of people so that it might plan vaccination for newly added people. It also subscribes to changes to the VACCINE_REFUSAL person property so that it can immediately attempt vaccination.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccinator_init$code_cap
+#| code: !expr fig$person_properties_vaccinator_init$code
+#| echo: true
+```
+
+Vaccination of a person (@lst-person_properties_vaccinator_plan_vaccination) is accomplished with planning that schedules the vaccination at a random time between the current time and a globally defined attempt interval.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccinator_plan_vaccination$code_cap
+#| code: !expr fig$person_properties_vaccinator_plan_vaccination$code
+#| echo: true
+```
+
+Note that the plan uses a key value set to the person id. This is used when reacting to a person changing from refusal of the vaccine to acceptance. Instead of waiting for the next vaccine attempt (@lst-person_properties_vaccinator_handle_vaccine_acceptance), the current plan to vaccinate is removed and the person is immediately vaccinated.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccinator_handle_vaccine_acceptance$code_cap
+#| code: !expr fig$person_properties_vaccinator_handle_vaccine_acceptance$code
+#| echo: true
+```
+
+The vaccination attempt (@lst-person_properties_vaccinator_vaccinate_person) first considers whether the IS_IMMUNE property has been added. If it has then immunity for the person is determined. Immune people do not receive the vaccine and no more attempts to vaccinate the person will be scheduled. If the person is still refusing the vaccine, then a new attempt to vaccinate the person is scheduled. Otherwise the person is vaccinated and no further attempts are scheduled.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$person_properties_vaccinator_vaccinate_person$code_cap
+#| code: !expr fig$person_properties_vaccinator_vaccinate_person$code
+#| echo: true
+```
+
+## Inspecting the output
+
+The 810 scenarios result in a large amount of output in the person properties report with over 125,000 entries. The vaccine report is a bit too large to fully present here. Its fields are:
+
+-   Scenario -- 0 to 809
+-   Experiment fields that show what differentiates each scenario
+    -   immunity start time
+    -   immunity probabilty
+    -   vaccine attempt interval
+    -   education attempt interval
+    -   education success rate
+    -   intial refusal probability
+-   The metric fields produced as a result of the experiment choices
+    -   vaccinated immune
+    -   vaccinated susceptible
+    -   unvaccinated immune
+    -   unvaccinated susceptible
+
+Analyzing the output yields no surprises. Higher education attempt rates and greater probabilities of education success yield more people getting vaccinated. Similarly, early and high levels of immunity have a slight dampening effect on vaccinations.
