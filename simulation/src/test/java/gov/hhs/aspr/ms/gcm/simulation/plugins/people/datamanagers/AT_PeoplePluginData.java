@@ -388,7 +388,7 @@ public final class AT_PeoplePluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821493557306870L);
 
-		// never equal to null
+		// never equal to another type
 		for (int i = 0; i < 30; i++) {
 			PeoplePluginData pluginData = getRandomPeoplePluginData(randomGenerator.nextLong());
 			assertFalse(pluginData.equals(new Object()));
@@ -411,7 +411,8 @@ public final class AT_PeoplePluginData {
 			long seed = randomGenerator.nextLong();
 			PeoplePluginData pluginData1 = getRandomPeoplePluginData(seed);
 			PeoplePluginData pluginData2 = getRandomPeoplePluginData(seed);
-			for (int j = 0; j < 10; j++) {
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {				
 				assertTrue(pluginData1.equals(pluginData2));
 				assertTrue(pluginData2.equals(pluginData1));
 			}
