@@ -1,0 +1,57 @@
+crossref:
+  lst-title: 'Code Block'
+  fig-title: "Figure"
+  lst-prefix: 'Code Block'
+##  title-delim: ""
+##  labels: arabic
+##  lst-labels: arabic
+project:
+  type: book
+  output-dir: docs   #Change to redirect where compiled html pages are saved upon rendering
+documentclass: book
+language: 
+  ui:
+    chapter_name: "Chapter"
+##biblio-style: apalike
+##link-citations: true
+##colorlinks: true
+#lot: true  #- only for PDF
+#lof: true  #- only for PDF
+book:
+  title: "GCM-Docs"
+  author: "HHS ASPR Modeling Group"
+  date: "02/25/2025"
+  chapters:
+    - index.qmd
+    - ch01-Introduction.qmd
+    - ch02-GettingStarted.qmd
+    - ch03-StochasticsPlugin.qmd
+    - ch04-ReportsPlugin.qmd
+    - ch05-Properties.qmd
+    - ch06-GlobalPropertiesPlugin.qmd
+    - ch07-PeoplePlugin.qmd
+    - ch08-RegionsPlugin.qmd
+    - ch09-PersonPropertiesPlugin.qmd
+    - ch10-GroupsPlugins.qmd
+    - ch11-ResourcesPlugin.qmd
+    - ch12-MaterialsPlugin.qmd
+    - ch13-PartitionsPlugin.qmd
+##bibliography: references.bib
+format:
+  html:
+    syntax-definitions: 
+      - java.xml
+    code-line-numbers: true
+#    code-fold: show
+    number-sections: true
+    number-depth: 5
+    css: styles.css
+    global-numbering: true
+    fig-cap-location: top
+    fig-format: svg
+    fig-align: center
+    #highlight-style: nord
+    #highlight-style: oblivion
+    theme: cosmo
+editor: visual
+

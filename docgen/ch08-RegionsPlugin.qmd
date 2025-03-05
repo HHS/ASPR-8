@@ -1,0 +1,278 @@
+# Regions Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The regions plugin manages the assignment of people to regions. As such, it is dependent on the people plugin. A region does not have an associated geo-location and does not specifically designate a county, state or any other regional concept. The interpretation of what defines a region is left to the modeler, although it will usually represent some sort of contiguous land area. When the regions plugin is being used, each person has a region association at all times and regions can be associated with zero to many people. Regions may also have a set of associated property values that can be dynamically defined. Regions are identified via the RegionId marker interface that does not define any methods. It is left to the modeler to implement a RegionId data type. When the number of regions is fixed and relatively small this can be accomplished via an enumeration. For larger or dynamic sets of region id values it is typical to implement a simple immutable class that wraps an integer.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a RegionsPluginData object that collects person to region assignments and region property values.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the RegionsDataManager that is initialized with the RegionsPluginData.
+
+## Data Manager
+
+The data manager controls regions, their properties and the assignment of people to those regions. The data manager provides public methods that:
+
+-   Add a region
+-   Define a region property
+-   Set a region property value
+-   Move a person from one region to another
+-   Answer various questions about:
+    -   Person membership in regions
+    -   Region property values
+
+The data manager also produces observable events:
+
+-   PersonRegionUpdateEvent -- when a person is moved from one region to another
+-   RegionAdditionEvent -- when a region is added to the simulation
+-   RegionPropertyDefintionEvent -- when a new region property is defined
+-   RegionPropertyUpdateEvent -- when a region property value is assigned
+
+## Example Code (Lesson 15)
+
+Example_15.java shows the use of the regions plugin. In it we will examine
+
+-   The initialization of the regions plugin
+-   The movement of people between regions
+-   The dynamic addition of regions
+-   The dynamic addition of region properties
+-   The update of region property values
+
+The example includes five plugins:
+
+-   Regions Plugin-- (GCM core plugin) used to manage regions, their properties and person membership in regions
+-   People plugin -- (GCM core plugin) used to manage people
+-   Stochastics plugin -- (GCM core plugin) used to generate random numbers used in various decisions
+-   Model plugin -- (local plugin) used to introduce three actors that will:
+    -   Move people between regions
+    -   Create new regions
+    -   Vaccinate people, reacting to changes in region properties
+-   Vaccine plugin -- (local plugin) used to track vaccinations for each person
+
+The example's main method starts in @lst-regions_plugin_example_15_main by creating an instance of the example class rather than building the experiment directly since this example is somewhat more complex than previous examples.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_main$code_cap
+#| code: !expr fig$regions_plugin_example_15_main$code
+#| echo: true
+```
+
+The execution method first gathers together the five plugins in @lst-regions_plugin_example_15_execute:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_execute$code_cap
+#| code: !expr fig$regions_plugin_example_15_execute$code
+#| echo: true
+```
+
+The first action is to create 1000 people and 5 regions that will be used in the creation of both the people plugin and the regions plugin.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_initialize_people_regions$code_cap
+#| code: !expr fig$regions_plugin_example_15_initialize_people_regions$code
+#| echo: true
+```
+
+The regions plugin defines a region id with a marker interface. Marker interfaces are used to differentiate arguments and reduce variable type ambiguities while not imposing any particular implementation on the modeler. Region ids might reasonably be implemented as integer based identifiers or as strings that represent place names. In this example we will implement the region ids with an integer based class, the Region (@lst-regions_plugin_implementing_regionId), which is a boiler-plate wrapper around an int id value.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_implementing_regionId$code_cap
+#| code: !expr fig$regions_plugin_implementing_regionId$code
+#| echo: true
+```
+
+The example contains three reports in @lst-regions_plugin_example_15_nio:
+
+-   RegionPropertyReport - shows changes to region property values
+-   RegionTransferReport - shows movements of people between regions
+-   VaccinationReport - shows vaccinations of people
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_nio$code_cap
+#| code: !expr fig$regions_plugin_example_15_nio$code
+#| echo: true
+```
+
+The people plugin, @lst-regions_plugin_example_getting_people_plugin, is built from the 1000 people created earlier.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_getting_people_plugin$code_cap
+#| code: !expr fig$regions_plugin_example_getting_people_plugin$code
+#| echo: true
+```
+
+Creating the regions plugin @lst-regions_plugin_example_getting_regions_plugin is a bit more involved. First, the five regions created before are added to the plugin. Since the plugin requires that every person always have a region assignment, we assign a randomly selected region to each person. We define the LAT and LON properties to give the regions a geographic location. Notice that the definitions do not have default values since it does not make sense to say a region has a default position. This then will require that we assign specific latitude and longitude values for each region. Later on we will examine adding a new region property definition dynamically as the simulation is running.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_getting_regions_plugin$code_cap
+#| code: !expr fig$regions_plugin_example_getting_regions_plugin$code
+#| echo: true
+```
+
+Adding the stochastics plugin with a corresponding dimension that will create five scenarios proceeds in the usual way in @lst-regions_plugin_example_15_stochastics:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_stochastics$code_cap
+#| code: !expr fig$regions_plugin_example_15_stochastics$code
+#| echo: true
+```
+
+Finally, we add the vaccine and model plugins. This will add the vaccine data manager as well as three previously mentioned actors that will be used to demonstrate the various capabilities of the regions plugin.
+
+-   PersonMover -- used to move people between regions
+-   RegionCreator -- used to create new regions during the simulation run
+-   Vaccinator -- used to vaccinate people, reacting to changes in region properties
+
+The execute method finishes (@lst-regions_plugin_example_15_executing_experiment) by constructing and executing the experiment:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_example_15_executing_experiment$code_cap
+#| code: !expr fig$regions_plugin_example_15_executing_experiment$code
+#| echo: true
+```
+
+## The actors
+
+We will finish this chapter by reviewing the three actors of the model plugin and then examine the three reports.
+
+The PersonMover actor, in @lst-regions_plugin_person_mover_init and @lst-regions_plugin_person_mover_move_person, schedules 1000 random moves of a person from one region to another over the course of 100 days.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_person_mover_init$code_cap
+#| code: !expr fig$regions_plugin_person_mover_init$code
+#| echo: true
+```
+
+Moving the person requires that we use the stochastics plugin and the people plugin to select a random person. We next use the regions plugin to first select a random new region for the person and then move the person to that region.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_person_mover_move_person$code_cap
+#| code: !expr fig$regions_plugin_person_mover_move_person$code
+#| echo: true
+```
+
+The RegionCreator actor, in @lst-regions_plugin_region_creator_init and @lst-regions_plugin_region_creator_add_region, follows a similar pattern, scheduling the creation of five new regions over 101 days.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_region_creator_init$code_cap
+#| code: !expr fig$regions_plugin_region_creator_init$code
+#| echo: true
+```
+
+When adding a region, we have to be aware that the region will have LAT and LON properties and that these properties were not defined with default values. Thus we must supply values for the region's latitude and longitude as part of the RegionConstructionData object that is passed to the regions data manager. We will similarly assign a new random Boolean value for the VACCINE_PRIORITY property. The VACCINE_PRIORITY is a dynamically added property that is introduced later. Note that we first check for the existence of the property and only then set a value since setting such a value before the property is defined will result in a runtime exception.
+
+::: callout-note
+Such considerations are unusual since properties are usually defined in the plugin initialization data or added very early in the simulation before any actors have initialized. We do so here for the purposes of demonstrating dynamic property definitions.
+:::
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_region_creator_add_region$code_cap
+#| code: !expr fig$regions_plugin_region_creator_add_region$code
+#| echo: true
+```
+
+The Vaccinator actor is somewhat more complicated than the other actors. It initializes (@lst-regions_plugin_vaccinator_init) by storing references to various data managers for convenience and then plans 5000 vaccinations spread over 100 days. It also plans to add the VACCINE_PRIORITY property on day 50.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_vaccinator_init$code_cap
+#| code: !expr fig$regions_plugin_vaccinator_init$code
+#| echo: true
+```
+
+Let's first look at the addition of the new region property on day 50 in @lst-regions_plugin_vaccinator_priority_property. The new property is a Boolean value defaulted to false and indicates whether people should be chosen from regions randomly or by preferring people with the fewest vaccinations. Since the property has a default value, we do not have to set values for each region in the RegionPropertyDefinitionInitialization object that is passed to the regions data manager when creating the region. We do so anyway to demonstrate such value assignments. Once the new property is in place, the Vaccinator schedules the switching of the value for random regions once per day for the next 50 days.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_vaccinator_priority_property$code_cap
+#| code: !expr fig$regions_plugin_vaccinator_priority_property$code
+#| echo: true
+```
+
+In @lst-regions_plugin_vaccinator_alter_priority_property the Vaccinator performs this value switching:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_vaccinator_alter_priority_property$code_cap
+#| code: !expr fig$regions_plugin_vaccinator_alter_priority_property$code
+#| echo: true
+```
+
+The Vaccinator vaccinates people at random (@lst-regions_plugin_vaccinator_vaccinate_random_person) by first selecting a random region and then selecting a random person in that region. The selection of the person is subject to the presence of the VACCINE_PRIORITY property and whether the value of the property is true for the selected region. If the priority selection is being used, then a first pass through the people in the region establishes the lowest number of vaccines received by any person. A second pass through the same people now selects only those having this number of vaccinations. Finally, a person is selected at random from the eligible people.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$regions_plugin_vaccinator_vaccinate_random_person$code_cap
+#| code: !expr fig$regions_plugin_vaccinator_vaccinate_random_person$code
+#| echo: true
+```
+
+## Inspecting the output
+
+The region transfer report shows the number of transfers of a person from one region to another across all days in the simulation. The rows where the source and destination regions are the same represent the addition of people at the start of the simulation and, as expected, the sum of such transfers equals to 1000. We also expect to see regions that were added beyond the original five regions and that transfers in and out of those regions should be reduced compared to the original regions since they start out with no people and come into the simulation only after day 50.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$regions_plugin_output_1$code_cap
+#| label: fig-regions_plugin_output_1
+options(knitr.kable.NA = '')
+metadata$regions_plugin_output_1$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+In the region property report (@fig-regions_plugin_output_2) we see that the LAT and LON properties were set for the first five regions at the start of the simulation. Starting on day 1, new regions were added and each has an assigned LAT and LON value at that time. Beginning on day 50, all regions are assigned a VACCINE_PRIOITY value and assignments to that property continue daily for random regions.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$regions_plugin_output_2$code_cap
+#| label: fig-regions_plugin_output_2
+options(knitr.kable.NA = '')
+metadata$regions_plugin_output_2$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+Finally, the vaccine report shows the number of people having various vaccine counts at the end of each simulation. Although the priority policy was being used, most vaccinations were for randomly selected people so we expect a fairly wide distribution in those values.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$regions_plugin_output_3$code_cap
+#| label: fig-regions_plugin_output_3
+options(knitr.kable.NA = '')
+metadata$regions_plugin_output_3$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%")
+```

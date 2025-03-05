@@ -1,0 +1,51 @@
+# Properties
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+Modelers often need to associate properties with concepts found in plugins. For example, you may want to associate an integer number of times a person has been given a vaccine booster or have a double valued disease detection threshold that can be defined regionally. Most plugins will have a flexible, modeler-defined, set of properties that can be associated with people, groups or any other concept defined by the plugin. The core plugins included with GCM use a common property utility that introduces property Ids, property definitions and property values. It also provides several property value container classes to aid in efficient storage and retrieval.
+
+## Property Identifiers
+
+Property Ids are generally marker interfaces used to force unambiguous types in method signatures dealing with property related concepts. Each plugin that uses properties will introduce its own marker interface(s) and instances of the identifier are left to client (other plugins) to implement. This is often accomplished with enumerations.
+
+## Property Definitions
+
+Property definitions supply each plugin with:
+
+-   A class reference that defines the type of the property values
+-   A Boolean value indicating if property values are mutable
+-   An optional default property value
+
+The mutability indicator controls whether property values can be set after the initial value is established. For example, consider the integer property "age" that is defined for people. Each person has a distinct integer age upon initial value assignment. If the property definition asserts that the property is not mutable, then the age value cannot be changed during the simulation's execution. This is often used to fix global property values so that there is no chance that they can be reset by mistake.
+
+It is often useful to know when a property was last assigned. Some plugins will introduce tracking of property value assignment times based on a policy per property id to avoid recording such time values where there would be tens of millions of entries and no use of these values by the modeler.
+
+Default property values are used to spare the modeler from having to set property values when introducing new items to the simulation. For example, when adding a person to the simulation it might be useful to have a default of false for the property of "vaccinated". However, for some properties there may be no meaningful default value. For example, consider the "age" property for a person. What would constitute a good default value? For this reason, supplying a default value as part of the property definition is optional. Property values in GCM are never null. If a property definition does not supply a default value, then all assoicated property values must be explicitly set to non-null values.
+
+## Concurrency Requirements
+
+Property ids, property definitions and property values must be thread safe since they are shared across multiple scenarios (different simulation instances). It is usually best practice if they are implemented as immutable classes.
+
+-   Property ids are usually marker interfaces and are often implemented by static enumerations and are thus generally threadsafe
+-   The PropertyDefinition class is provided by the utility and is threadsafe subject to the thread safety of its default value
+-   Property values are often boxed primitives and are generally threadsafe. In general, mutation of a property value in GCM does not mean that the property value is mutated. Rather, it usually means that a new immutable value is now associated with the property id.
+
+## Immutability
+
+For a class to be immutable in Java it must meet three requirements:
+
+1.  Its internal fields must not be mutated. There can be no setter methods or any other mechanism that changes an assignment post construction
+2.  All fields are declared final
+3.  No reference to the immutable object may be passed during its construction
+
+## Expected Behaviors of Plugins using properties
+
+All implementations of property mechanisms in GCM are expected to meet the following requirements:
+
+-   Property values are never null
+-   Property definitions that do not supply a default value must be supported by other mechanisms that ensure that property values are never null
+-   Property instance values must always be assignment compatible to their corresponding property definition's property type reference

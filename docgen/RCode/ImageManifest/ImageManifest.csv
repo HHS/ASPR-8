@@ -1,0 +1,12 @@
+ref,caption
+dag_simple_diagram,"The three plugins form a simple, directed acyclic graph(DAG).  GCM uses this DAG to ensure that all information provided by any data manager is fully updated whenever an event is being processed by a dependent of the data manager."
+experiments_diagram_plugins_and_data,"Each plugin contains zero to many plugin data objects.  For simplicity, we show one plugin data object per plugin."
+experiments_diagram_prefilled_data,"Using the clone builder mechanism, each plugin data generates a new plugin data builder that is prefilled with the plugin data's information."
+experiments_diagram_dimension_levels,Dimensions are contributed to the experiment.  Each dimension has a fixed number of levels and each such level alters the plugin data builders in a consistent way.
+experiments_diagram_level_functions,Dimension levels act as a function to change plugin data builders.
+experiments_diagram_scenarios_and_levels,The scenario id is a numberical composite of the level ids in each of the dimensions.
+experiments_diagram_gathering_builders,"Once all of the dimensions have added content to the plugin data builders, the experiment builds the resulting plugin datas to be used in the next scenario."
+experiments_diagram_scenario_plugins,"For each original experiment level plugin, a copy of the plugin is made with the various plugin datas replaced with those specific to the scenario. These altered plugins will be contributed to the simulation instance for the scenario."
+materials_plugin_batches_and_properties,Materials are collected in non-negative amounts called batches.  Each batch has properties defined by the material type.
+materials_plugin_materials_producer,"The materials life cycle has materials gathered in the inventories of materials producers that are then staged, traded or converted into new materials or resources."
+resource_plugins_flow_diagram,Resource plugins flow diagram
