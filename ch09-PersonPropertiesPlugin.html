@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Person Properties Plugin – GCM-Docs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ch10-GroupsPlugins.html" rel="next">
+<link href="./ch08-RegionsPlugin.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch09-PersonPropertiesPlugin.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">GCM-Docs</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The General Computation Model (GCM)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch01-Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch02-GettingStarted.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Getting Started</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch03-StochasticsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch04-ReportsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reports Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch05-Properties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Properties</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch06-GlobalPropertiesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Global Properties Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch07-PeoplePlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch08-RegionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch09-PersonPropertiesPlugin.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch10-GroupsPlugins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Groups Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch11-ResourcesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Resources Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch12-MaterialsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Materials Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch13-PartitionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Partitions Plugin</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#plugin-data-initialization" id="toc-plugin-data-initialization" class="nav-link active" data-scroll-target="#plugin-data-initialization"><span class="header-section-number">9.1</span> Plugin Data Initialization</a></li>
+  <li><a href="#plugin-behavior" id="toc-plugin-behavior" class="nav-link" data-scroll-target="#plugin-behavior"><span class="header-section-number">9.2</span> Plugin Behavior</a></li>
+  <li><a href="#data-manager" id="toc-data-manager" class="nav-link" data-scroll-target="#data-manager"><span class="header-section-number">9.3</span> Data Manager</a></li>
+  <li><a href="#example-code-lesson-16" id="toc-example-code-lesson-16" class="nav-link" data-scroll-target="#example-code-lesson-16"><span class="header-section-number">9.4</span> Example Code (Lesson 16)</a></li>
+  <li><a href="#the-actors" id="toc-the-actors" class="nav-link" data-scroll-target="#the-actors"><span class="header-section-number">9.5</span> The actors</a></li>
+  <li><a href="#inspecting-the-output" id="toc-inspecting-the-output" class="nav-link" data-scroll-target="#inspecting-the-output"><span class="header-section-number">9.6</span> Inspecting the output</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The person properties plugin manages the assignment of properties to individual people. As such, it is dependent on the people plugin. It also depends on the regions plugin for reports. Property definitions apply to every person in the simulation and are generally added to the person properties plugin data. However, person property definitions can be added dynamically and thus other plugins can contribute person property definitions directly rather than as inputs to the person properties plugin data.</p>
+<section id="plugin-data-initialization" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="plugin-data-initialization"><span class="header-section-number">9.1</span> Plugin Data Initialization</h2>
+<p>The plugin is initialized using a PersonPropertiesPluginData object that collects person property definitions and person property value assignments for the initial population.</p>
+</section>
+<section id="plugin-behavior" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="plugin-behavior"><span class="header-section-number">9.2</span> Plugin Behavior</h2>
+<p>The plugin adds a single data manager to the simulation as an instance of the PersonPropertiesDataManager that is initialized with the PersonPropertiesPluginData.</p>
+</section>
+<section id="data-manager" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="data-manager"><span class="header-section-number">9.3</span> Data Manager</h2>
+<p>The data manager manages person properties and stores their property values in a memory dense fashion that is transparent to the modeler. The data manager provides public methods that:</p>
+<ul>
+<li>Define person properties</li>
+<li>Set person property values</li>
+<li>Answer various questions about:
+<ul>
+<li>The value of a person property for particular people</li>
+<li>The people associated with a particular property value</li>
+<li>The existence and value of property definitions</li>
+</ul></li>
+</ul>
+<p>The data manager also produces observable events:</p>
+<ul>
+<li>PersonPropertyUpdateEvent – when a person is assigned a person property value</li>
+<li>PersonPropertyDefintionEvent – when a new person property is defined</li>
+</ul>
+</section>
+<section id="example-code-lesson-16" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="example-code-lesson-16"><span class="header-section-number">9.4</span> Example Code (Lesson 16)</h2>
+<p>Example_16.java shows the use of the person properties plugin. In it we will examine</p>
+<ul>
+<li>The initialization of the person properties plugin</li>
+<li>The assignment of values to individuals</li>
+<li>The dynamic definition of person properties</li>
+</ul>
+<p>The example includes six plugins:</p>
+<ul>
+<li>People plugin – (GCM core plugin) used to manage people</li>
+<li>Person properties plugin– (GCM core plugin) used to decorate properties onto people</li>
+<li>Global properties plugin– (GCM core plugin) used to store policies and initial conditions affecting vaccination</li>
+<li>Stochastics plugin – (GCM core plugin) used to generate random numbers used in various decisions</li>
+<li>Regions Plugin – (GCM core plugin) used to represent regions</li>
+<li>Model plugin – (local plugin) used to introduce three actors that will:
+<ul>
+<li>Load the population</li>
+<li>Vaccinate people</li>
+<li>Educate people on the vaccine</li>
+</ul></li>
+</ul>
+<p>The example’s main method starts in <a href="#lst-person_properties_example_16_main" class="quarto-xref">Code Block&nbsp;<span>9.1</span></a> by creating an instance of the example class rather than building the experiment directly since this example is somewhat more complex than previous examples. The population starts out being unvaccinated and some proportion of people initially refuse the vaccine. Attempts to both vaccinate and educate people are ongoing until a person is vaccinated. This will demonstrate the planning capability as well. If education is successful, the person is immediately vaccinated, demonstrating the cancellation of planning. At some point in the timeline, immunity will become discoverable during vaccine attempts and immune people will no longer pursue vaccination. The simulation is terminated at one year and output reports are then generated.</p>
+<div class="cell">
+<div id="lst-person_properties_example_16_main" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_example_16_main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.1: Executing example 16 with an output directory.
+</figcaption>
+<div aria-describedby="lst-person_properties_example_16_main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_example_16_main"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_example_16_main-1"><a href="#lst-person_properties_example_16_main-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_main-2"><a href="#lst-person_properties_example_16_main-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>args<span class="op">.</span><span class="fu">length</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_main-3"><a href="#lst-person_properties_example_16_main-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">RuntimeException</span><span class="op">(</span><span class="st">"One output directory argument is required"</span><span class="op">);</span></span>
+<span id="lst-person_properties_example_16_main-4"><a href="#lst-person_properties_example_16_main-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_example_16_main-5"><a href="#lst-person_properties_example_16_main-5" aria-hidden="true" tabindex="-1"></a>    Path outputPath <span class="op">=</span> Paths<span class="op">.</span><span class="fu">get</span><span class="op">(</span>args<span class="op">[</span><span class="dv">0</span><span class="op">]);</span></span>
+<span id="lst-person_properties_example_16_main-6"><a href="#lst-person_properties_example_16_main-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">exists</span><span class="op">(</span>outputPath<span class="op">))</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_main-7"><a href="#lst-person_properties_example_16_main-7" aria-hidden="true" tabindex="-1"></a>        Files<span class="op">.</span><span class="fu">createDirectory</span><span class="op">(</span>outputPath<span class="op">);</span></span>
+<span id="lst-person_properties_example_16_main-8"><a href="#lst-person_properties_example_16_main-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_main-9"><a href="#lst-person_properties_example_16_main-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>Files<span class="op">.</span><span class="fu">isDirectory</span><span class="op">(</span>outputPath<span class="op">))</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_main-10"><a href="#lst-person_properties_example_16_main-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IOException</span><span class="op">(</span><span class="st">"Provided path is not a directory"</span><span class="op">);</span></span>
+<span id="lst-person_properties_example_16_main-11"><a href="#lst-person_properties_example_16_main-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-person_properties_example_16_main-12"><a href="#lst-person_properties_example_16_main-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_example_16_main-13"><a href="#lst-person_properties_example_16_main-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">Example_16</span><span class="op">(</span>outputPath<span class="op">).</span><span class="fu">execute</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_main-14"><a href="#lst-person_properties_example_16_main-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The execution method first gathers together the six plugins in <a href="#lst-person_properties_example_16_execute" class="quarto-xref">Code Block&nbsp;<span>9.2</span></a>:</p>
+<div class="cell">
+<div id="lst-person_properties_example_16_execute" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_example_16_execute-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.2: The various plugins are gathered from their initial data.
+</figcaption>
+<div aria-describedby="lst-person_properties_example_16_execute-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_example_16_execute"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_example_16_execute-1"><a href="#lst-person_properties_example_16_execute-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">execute</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-person_properties_example_16_execute-2"><a href="#lst-person_properties_example_16_execute-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-3"><a href="#lst-person_properties_example_16_execute-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_example_16_execute-4"><a href="#lst-person_properties_example_16_execute-4" aria-hidden="true" tabindex="-1"></a><span class="co">         * Create the global properties plugin</span></span>
+<span id="lst-person_properties_example_16_execute-5"><a href="#lst-person_properties_example_16_execute-5" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_example_16_execute-6"><a href="#lst-person_properties_example_16_execute-6" aria-hidden="true" tabindex="-1"></a>    Plugin globalPropertiesPlugin <span class="op">=</span> <span class="fu">getGlobalPropertiesPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-7"><a href="#lst-person_properties_example_16_execute-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-8"><a href="#lst-person_properties_example_16_execute-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_example_16_execute-9"><a href="#lst-person_properties_example_16_execute-9" aria-hidden="true" tabindex="-1"></a><span class="co">         * Create the reports</span></span>
+<span id="lst-person_properties_example_16_execute-10"><a href="#lst-person_properties_example_16_execute-10" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_example_16_execute-11"><a href="#lst-person_properties_example_16_execute-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-12"><a href="#lst-person_properties_example_16_execute-12" aria-hidden="true" tabindex="-1"></a>    NIOReportItemHandler nioReportItemHandler <span class="op">=</span> <span class="fu">getNIOReportItemHandler</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-13"><a href="#lst-person_properties_example_16_execute-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-14"><a href="#lst-person_properties_example_16_execute-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_example_16_execute-15"><a href="#lst-person_properties_example_16_execute-15" aria-hidden="true" tabindex="-1"></a><span class="co">         * Create the people plugin filled with 1000 people</span></span>
+<span id="lst-person_properties_example_16_execute-16"><a href="#lst-person_properties_example_16_execute-16" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_example_16_execute-17"><a href="#lst-person_properties_example_16_execute-17" aria-hidden="true" tabindex="-1"></a>    Plugin peoplePlugin <span class="op">=</span> <span class="fu">getPeoplePlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-18"><a href="#lst-person_properties_example_16_execute-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-19"><a href="#lst-person_properties_example_16_execute-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_example_16_execute-20"><a href="#lst-person_properties_example_16_execute-20" aria-hidden="true" tabindex="-1"></a><span class="co">         * Create the region plugin 5 regions, each having a lat and lon and assign the</span></span>
+<span id="lst-person_properties_example_16_execute-21"><a href="#lst-person_properties_example_16_execute-21" aria-hidden="true" tabindex="-1"></a><span class="co">         * people to random regions.</span></span>
+<span id="lst-person_properties_example_16_execute-22"><a href="#lst-person_properties_example_16_execute-22" aria-hidden="true" tabindex="-1"></a><span class="co">         * </span></span>
+<span id="lst-person_properties_example_16_execute-23"><a href="#lst-person_properties_example_16_execute-23" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_example_16_execute-24"><a href="#lst-person_properties_example_16_execute-24" aria-hidden="true" tabindex="-1"></a>    Plugin regionsPlugin <span class="op">=</span> <span class="fu">getRegionsPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-25"><a href="#lst-person_properties_example_16_execute-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-26"><a href="#lst-person_properties_example_16_execute-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Create the person properties plugin</span></span>
+<span id="lst-person_properties_example_16_execute-27"><a href="#lst-person_properties_example_16_execute-27" aria-hidden="true" tabindex="-1"></a>    Plugin personPropertiesPlugin <span class="op">=</span> <span class="fu">getPersonPropertiesPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-28"><a href="#lst-person_properties_example_16_execute-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-29"><a href="#lst-person_properties_example_16_execute-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_example_16_execute-30"><a href="#lst-person_properties_example_16_execute-30" aria-hidden="true" tabindex="-1"></a><span class="co">         * create the stochastics plugin</span></span>
+<span id="lst-person_properties_example_16_execute-31"><a href="#lst-person_properties_example_16_execute-31" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_example_16_execute-32"><a href="#lst-person_properties_example_16_execute-32" aria-hidden="true" tabindex="-1"></a>    Plugin stochasticsPlugin <span class="op">=</span> <span class="fu">getStochasticsPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_example_16_execute-33"><a href="#lst-person_properties_example_16_execute-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_example_16_execute-34"><a href="#lst-person_properties_example_16_execute-34" aria-hidden="true" tabindex="-1"></a>    Plugin modelPlugin <span class="op">=</span> ModelPlugin<span class="op">.</span><span class="fu">getModelPlugin</span><span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The first action is to generate the global properties plugin, (<a href="#lst-person_properties_get_global_properties_plugin" class="quarto-xref">Code Block&nbsp;<span>9.3</span></a>). All of the global properties are marked as immutable since they will not change over the course of the simulation:</p>
+<ul>
+<li>VACCINE_ATTEMPT_INTERVAL – The maximum time between attempts to vaccinate an unvaccinated person. Specific intervals are chosen using a uniform random time between zero and the maximum.</li>
+<li>EDUCATION_ATTEMPT_INTERVAL – The maximum time between attempts to educate an unvaccinated person who is currently refusing vaccination. Specific intervals are chosen using a uniform random time between zero and the maximum.</li>
+<li>VACCINE_REFUSAL_PROPBABILTY – The initial probability that a person will refuse vaccination. Used to initialize the person property REFUSES_VACCINE.</li>
+<li>EDUCATION_SUCCESS_RATE – The probability that an attempt to educate a person to accept vaccination will succeed.</li>
+<li>IMMUNITY_START_TIME – The time when immunity is detectable in people. Used to halt attempts at vaccination and to demonstrate the dynamic addition of the person property IS_IMMUNE.</li>
+<li>IMMUNITY_PROBABILITY – The probability that a person will be immune when the IS_IMMUNE person property is added.</li>
+<li>POPULATION_SIZE – The number of people in the simulation.</li>
+<li>SIMULATION_DURATION – The maximum time (in days) that the simulation will execute.</li>
+</ul>
+<div class="cell">
+<div id="lst-person_properties_get_global_properties_plugin" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_get_global_properties_plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.3: The global properties plugin is initialized with several properties.
+</figcaption>
+<div aria-describedby="lst-person_properties_get_global_properties_plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_get_global_properties_plugin"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_get_global_properties_plugin-1"><a href="#lst-person_properties_get_global_properties_plugin-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> Plugin <span class="fu">getGlobalPropertiesPlugin</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-2"><a href="#lst-person_properties_get_global_properties_plugin-2" aria-hidden="true" tabindex="-1"></a>    GlobalPropertiesPluginData<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> GlobalPropertiesPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-3"><a href="#lst-person_properties_get_global_properties_plugin-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-4"><a href="#lst-person_properties_get_global_properties_plugin-4" aria-hidden="true" tabindex="-1"></a>    PropertyDefinition propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-5"><a href="#lst-person_properties_get_global_properties_plugin-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Double</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-6"><a href="#lst-person_properties_get_global_properties_plugin-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultValue</span><span class="op">(</span><span class="fl">0.0</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-7"><a href="#lst-person_properties_get_global_properties_plugin-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setPropertyValueMutability</span><span class="op">(</span><span class="kw">false</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-8"><a href="#lst-person_properties_get_global_properties_plugin-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-9"><a href="#lst-person_properties_get_global_properties_plugin-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-10"><a href="#lst-person_properties_get_global_properties_plugin-10" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">IMMUNITY_START_TIME</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-11"><a href="#lst-person_properties_get_global_properties_plugin-11" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">VACCINE_ATTEMPT_INTERVAL</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-12"><a href="#lst-person_properties_get_global_properties_plugin-12" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">EDUCATION_ATTEMPT_INTERVAL</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-13"><a href="#lst-person_properties_get_global_properties_plugin-13" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">EDUCATION_SUCCESS_RATE</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-14"><a href="#lst-person_properties_get_global_properties_plugin-14" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">VACCINE_REFUSAL_PROBABILITY</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-15"><a href="#lst-person_properties_get_global_properties_plugin-15" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">IMMUNITY_PROBABILITY</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-16"><a href="#lst-person_properties_get_global_properties_plugin-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-17"><a href="#lst-person_properties_get_global_properties_plugin-17" aria-hidden="true" tabindex="-1"></a>    propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-18"><a href="#lst-person_properties_get_global_properties_plugin-18" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Double</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-19"><a href="#lst-person_properties_get_global_properties_plugin-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultValue</span><span class="op">(</span><span class="fl">365.0</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-20"><a href="#lst-person_properties_get_global_properties_plugin-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setPropertyValueMutability</span><span class="op">(</span><span class="kw">false</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-21"><a href="#lst-person_properties_get_global_properties_plugin-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-22"><a href="#lst-person_properties_get_global_properties_plugin-22" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">SIMULATION_DURATION</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-23"><a href="#lst-person_properties_get_global_properties_plugin-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-24"><a href="#lst-person_properties_get_global_properties_plugin-24" aria-hidden="true" tabindex="-1"></a>    propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-25"><a href="#lst-person_properties_get_global_properties_plugin-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Integer</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-26"><a href="#lst-person_properties_get_global_properties_plugin-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultValue</span><span class="op">(</span><span class="dv">1000</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-27"><a href="#lst-person_properties_get_global_properties_plugin-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setPropertyValueMutability</span><span class="op">(</span><span class="kw">false</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-28"><a href="#lst-person_properties_get_global_properties_plugin-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-29"><a href="#lst-person_properties_get_global_properties_plugin-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-30"><a href="#lst-person_properties_get_global_properties_plugin-30" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">defineGlobalProperty</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">POPULATION_SIZE</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-31"><a href="#lst-person_properties_get_global_properties_plugin-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-32"><a href="#lst-person_properties_get_global_properties_plugin-32" aria-hidden="true" tabindex="-1"></a>    GlobalPropertiesPluginData globalPropertiesPluginData <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-33"><a href="#lst-person_properties_get_global_properties_plugin-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-34"><a href="#lst-person_properties_get_global_properties_plugin-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> GlobalPropertiesPlugin<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setGlobalPropertiesPluginData</span><span class="op">(</span>globalPropertiesPluginData<span class="op">)</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-35"><a href="#lst-person_properties_get_global_properties_plugin-35" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertiesPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_global_properties_plugin-36"><a href="#lst-person_properties_get_global_properties_plugin-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_global_properties_plugin-37"><a href="#lst-person_properties_get_global_properties_plugin-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The execution method then loads reports (<a href="#lst-person_properties_get_person_properties_plugin" class="quarto-xref">Code Block&nbsp;<span>9.4</span></a>). The person property report will be quite large and is set to only show the state of each person at the end of the simulation for brevity. The vaccine report will show the state of vaccination and immunity at the end of the simulation to allow for analysis of the experiment.</p>
+<p>The people plugin is created without any initial people since that will be handled by one of the model plugin’s actors. The regions plugin is initialized with five regions and only plays a role in the person property report.</p>
+<p>The person properties plugin is generated in <a href="#lst-person_properties_get_person_properties_plugin" class="quarto-xref">Code Block&nbsp;<span>9.4</span></a>. All of the person properties are mutable since they will change over the course of the simulation:</p>
+<ul>
+<li>EDUCATION_ATTEMPTS – The number of attempts to change a person’s vaccine refusal.</li>
+<li>VACCINE_ATTEMPTS – The number of attempts to vaccinate a person.</li>
+<li>REFUSES_VACCINE – Boolean indicating whether the person will refuse vaccination attempts. Note that there is no default value and that new people must have this property set as part of the addition of the person to the simulation.</li>
+<li>VACCINATED – Boolean indicating that a person has been vaccinated. People all start out with no vaccination and receive at most one vaccination.</li>
+</ul>
+<p>Note that the final person property, IS_IMMUNE, is not added at the beginning of the simulation as a demonstration of the dynamic addition of person properties.</p>
+<div class="cell">
+<div id="lst-person_properties_get_person_properties_plugin" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_get_person_properties_plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.4: The person properties plugin is built with the four person properties needed to model each person. The person property report is set to report only at the end of the simulation.
+</figcaption>
+<div aria-describedby="lst-person_properties_get_person_properties_plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_get_person_properties_plugin"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_get_person_properties_plugin-1"><a href="#lst-person_properties_get_person_properties_plugin-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> Plugin <span class="fu">getPersonPropertiesPlugin</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-2"><a href="#lst-person_properties_get_person_properties_plugin-2" aria-hidden="true" tabindex="-1"></a>    PersonPropertiesPluginData<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> PersonPropertiesPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-3"><a href="#lst-person_properties_get_person_properties_plugin-3" aria-hidden="true" tabindex="-1"></a>    PropertyDefinition propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-4"><a href="#lst-person_properties_get_person_properties_plugin-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Integer</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-5"><a href="#lst-person_properties_get_person_properties_plugin-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultValue</span><span class="op">(</span><span class="dv">0</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-6"><a href="#lst-person_properties_get_person_properties_plugin-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-7"><a href="#lst-person_properties_get_person_properties_plugin-7" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">definePersonProperty</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">EDUCATION_ATTEMPTS</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-8"><a href="#lst-person_properties_get_person_properties_plugin-8" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">definePersonProperty</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">VACCINE_ATTEMPTS</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-9"><a href="#lst-person_properties_get_person_properties_plugin-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_person_properties_plugin-10"><a href="#lst-person_properties_get_person_properties_plugin-10" aria-hidden="true" tabindex="-1"></a>    propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-11"><a href="#lst-person_properties_get_person_properties_plugin-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Boolean</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-12"><a href="#lst-person_properties_get_person_properties_plugin-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-13"><a href="#lst-person_properties_get_person_properties_plugin-13" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">definePersonProperty</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-14"><a href="#lst-person_properties_get_person_properties_plugin-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_person_properties_plugin-15"><a href="#lst-person_properties_get_person_properties_plugin-15" aria-hidden="true" tabindex="-1"></a>    propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-16"><a href="#lst-person_properties_get_person_properties_plugin-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Boolean</span><span class="op">.</span><span class="fu">class</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-17"><a href="#lst-person_properties_get_person_properties_plugin-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultValue</span><span class="op">(</span><span class="kw">false</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-18"><a href="#lst-person_properties_get_person_properties_plugin-18" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-19"><a href="#lst-person_properties_get_person_properties_plugin-19" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">definePersonProperty</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">,</span> propertyDefinition<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-20"><a href="#lst-person_properties_get_person_properties_plugin-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_person_properties_plugin-21"><a href="#lst-person_properties_get_person_properties_plugin-21" aria-hidden="true" tabindex="-1"></a>    PersonPropertiesPluginData personPropertiesPluginData <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-22"><a href="#lst-person_properties_get_person_properties_plugin-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_person_properties_plugin-23"><a href="#lst-person_properties_get_person_properties_plugin-23" aria-hidden="true" tabindex="-1"></a>    PersonPropertyReportPluginData personPropertyReportPluginData <span class="op">=</span> PersonPropertyReportPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-24"><a href="#lst-person_properties_get_person_properties_plugin-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setReportLabel</span><span class="op">(</span>ModelReportLabel<span class="op">.</span><span class="fu">PERSON_PROPERTY_REPORT</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-25"><a href="#lst-person_properties_get_person_properties_plugin-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setReportPeriod</span><span class="op">(</span>ReportPeriod<span class="op">.</span><span class="fu">END_OF_SIMULATION</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-26"><a href="#lst-person_properties_get_person_properties_plugin-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setDefaultInclusion</span><span class="op">(</span><span class="kw">true</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-27"><a href="#lst-person_properties_get_person_properties_plugin-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-28"><a href="#lst-person_properties_get_person_properties_plugin-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_get_person_properties_plugin-29"><a href="#lst-person_properties_get_person_properties_plugin-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> PersonPropertiesPlugin<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-30"><a href="#lst-person_properties_get_person_properties_plugin-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setPersonPropertiesPluginData</span><span class="op">(</span>personPropertiesPluginData<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-31"><a href="#lst-person_properties_get_person_properties_plugin-31" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setPersonPropertyReportPluginData</span><span class="op">(</span>personPropertyReportPluginData<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-32"><a href="#lst-person_properties_get_person_properties_plugin-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getPersonPropertyPlugin</span><span class="op">();</span></span>
+<span id="lst-person_properties_get_person_properties_plugin-33"><a href="#lst-person_properties_get_person_properties_plugin-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Adding the stochastics plugin involves setting only the seed that will be used in every simulation instance. It will not play a role in defining the experiment space since that will be quite large already with various global property variants. Finally, the execution method generates the model plugin which in turn adds three actors:</p>
+<ul>
+<li>Vaccinator – vaccinates people at random times</li>
+<li>Vaccine Educator – seeks to get people to accept vaccination</li>
+<li>Population Loader – initializes the population</li>
+</ul>
+<p>The execute method finishes (<a href="#lst-person_properties_execute_experiment" class="quarto-xref">Code Block&nbsp;<span>9.5</span></a>) by constructing and executing the experiment.</p>
+<div class="cell">
+<div id="lst-person_properties_execute_experiment" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_execute_experiment-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.5: The experiment executes 810 scenarios on 8 threads.
+</figcaption>
+<div aria-describedby="lst-person_properties_execute_experiment-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_execute_experiment"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_execute_experiment-1"><a href="#lst-person_properties_execute_experiment-1" aria-hidden="true" tabindex="-1"></a>        ExperimentParameterData experimentParameterData <span class="op">=</span> ExperimentParameterData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-2"><a href="#lst-person_properties_execute_experiment-2" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">setThreadCount</span><span class="op">(</span><span class="dv">8</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-3"><a href="#lst-person_properties_execute_experiment-3" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_execute_experiment-4"><a href="#lst-person_properties_execute_experiment-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_execute_experiment-5"><a href="#lst-person_properties_execute_experiment-5" aria-hidden="true" tabindex="-1"></a>        Experiment<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-6"><a href="#lst-person_properties_execute_experiment-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_execute_experiment-7"><a href="#lst-person_properties_execute_experiment-7" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>personPropertiesPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-8"><a href="#lst-person_properties_execute_experiment-8" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>globalPropertiesPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-9"><a href="#lst-person_properties_execute_experiment-9" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>modelPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-10"><a href="#lst-person_properties_execute_experiment-10" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>regionsPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-11"><a href="#lst-person_properties_execute_experiment-11" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>peoplePlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-12"><a href="#lst-person_properties_execute_experiment-12" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>stochasticsPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-13"><a href="#lst-person_properties_execute_experiment-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_execute_experiment-14"><a href="#lst-person_properties_execute_experiment-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getImmunityStartTimeDimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-15"><a href="#lst-person_properties_execute_experiment-15" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getImmunityProbabilityDimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-16"><a href="#lst-person_properties_execute_experiment-16" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getVaccineAttemptIntervalDimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-17"><a href="#lst-person_properties_execute_experiment-17" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getEducationAttemptIntervalDimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-18"><a href="#lst-person_properties_execute_experiment-18" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getEducationSuccessRatedimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-19"><a href="#lst-person_properties_execute_experiment-19" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span><span class="fu">getVaccineRefusalProbabilityDimension</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-20"><a href="#lst-person_properties_execute_experiment-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addExperimentContextConsumer</span><span class="op">(</span>nioReportItemHandler<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-21"><a href="#lst-person_properties_execute_experiment-21" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">setExperimentParameterData</span><span class="op">(</span>experimentParameterData<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-22"><a href="#lst-person_properties_execute_experiment-22" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">build</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-person_properties_execute_experiment-23"><a href="#lst-person_properties_execute_experiment-23" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">execute</span><span class="op">();</span><span class="co">//</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Five dimensions are added to the experiment that define alternate values for five of the global properties resulting in 810 scenarios. These values are:</p>
+<ul>
+<li>Immunity start time – 120 and 180 days</li>
+<li>Immunity probability – 0, 10 and 20 percent</li>
+<li>Vaccine attempt interval – 30, 45 and 60 days</li>
+<li>Education attempt interval – 30, 60 and 180 days</li>
+<li>Education success rate – 0, 10 and 20 percent</li>
+<li>Initial vaccine refusal – 0, 25, 50, 75 and 100 percent</li>
+</ul>
+</section>
+<section id="the-actors" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="the-actors"><span class="header-section-number">9.5</span> The actors</h2>
+<p>We will finish this chapter by reviewing the three actors of the model plugin and then examining the vaccine report.</p>
+<p>The PopulationLoader actor, in <a href="#lst-person_properties_population_loader_init" class="quarto-xref">Code Block&nbsp;<span>9.6</span></a>, adds people to the simulation based on the number in the POPULATION_SIZE global property. Each person is assigned a random region and the person property, REFUSES_VACCINE, is randomly assigned based on the global property VACCINE_REFUSAL_PROBABILITY.</p>
+<div class="cell">
+<div id="lst-person_properties_population_loader_init" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_population_loader_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.6: The population loader initializes by creating people dictated by the POPULATION_SIZE global property. Each person is assigned a region and random value for the person property, REFUSES_VACCINE, based on the global property, VACCINE_REFUSAL_PROBABILITY.
+</figcaption>
+<div aria-describedby="lst-person_properties_population_loader_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_population_loader_init"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_population_loader_init-1"><a href="#lst-person_properties_population_loader_init-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_population_loader_init-2"><a href="#lst-person_properties_population_loader_init-2" aria-hidden="true" tabindex="-1"></a>    peopleDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-3"><a href="#lst-person_properties_population_loader_init-3" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PersonPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-4"><a href="#lst-person_properties_population_loader_init-4" aria-hidden="true" tabindex="-1"></a>    globalPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>GlobalPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-5"><a href="#lst-person_properties_population_loader_init-5" aria-hidden="true" tabindex="-1"></a>    RegionsDataManager regionsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>RegionsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-6"><a href="#lst-person_properties_population_loader_init-6" aria-hidden="true" tabindex="-1"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-7"><a href="#lst-person_properties_population_loader_init-7" aria-hidden="true" tabindex="-1"></a>    randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_init-8"><a href="#lst-person_properties_population_loader_init-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>RegionId<span class="op">&gt;</span> regionIds <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(</span>regionsDataManager<span class="op">.</span><span class="fu">getRegionIds</span><span class="op">());</span></span>
+<span id="lst-person_properties_population_loader_init-9"><a href="#lst-person_properties_population_loader_init-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_init-10"><a href="#lst-person_properties_population_loader_init-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> populationSize <span class="op">=</span> globalPropertiesDataManager<span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">POPULATION_SIZE</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-11"><a href="#lst-person_properties_population_loader_init-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> refusalProbability <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_population_loader_init-12"><a href="#lst-person_properties_population_loader_init-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">VACCINE_REFUSAL_PROBABILITY</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-13"><a href="#lst-person_properties_population_loader_init-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_init-14"><a href="#lst-person_properties_population_loader_init-14" aria-hidden="true" tabindex="-1"></a>    Builder personConstructionDataBuilder <span class="op">=</span> PersonConstructionData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_init-15"><a href="#lst-person_properties_population_loader_init-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> populationSize<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_population_loader_init-16"><a href="#lst-person_properties_population_loader_init-16" aria-hidden="true" tabindex="-1"></a>        RegionId regionId <span class="op">=</span> regionIds<span class="op">.</span><span class="fu">get</span><span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextInt</span><span class="op">(</span>regionIds<span class="op">.</span><span class="fu">size</span><span class="op">()));</span></span>
+<span id="lst-person_properties_population_loader_init-17"><a href="#lst-person_properties_population_loader_init-17" aria-hidden="true" tabindex="-1"></a>        personConstructionDataBuilder<span class="op">.</span><span class="fu">add</span><span class="op">(</span>regionId<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-18"><a href="#lst-person_properties_population_loader_init-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_init-19"><a href="#lst-person_properties_population_loader_init-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span> refusesVaccine <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">&lt;</span> refusalProbability<span class="op">;</span></span>
+<span id="lst-person_properties_population_loader_init-20"><a href="#lst-person_properties_population_loader_init-20" aria-hidden="true" tabindex="-1"></a>        PersonPropertyValueInitialization personPropertyInitialization <span class="op">=</span> <span class="kw">new</span> <span class="fu">PersonPropertyValueInitialization</span><span class="op">(</span></span>
+<span id="lst-person_properties_population_loader_init-21"><a href="#lst-person_properties_population_loader_init-21" aria-hidden="true" tabindex="-1"></a>                PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">,</span> refusesVaccine<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-22"><a href="#lst-person_properties_population_loader_init-22" aria-hidden="true" tabindex="-1"></a>        personConstructionDataBuilder<span class="op">.</span><span class="fu">add</span><span class="op">(</span>personPropertyInitialization<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-23"><a href="#lst-person_properties_population_loader_init-23" aria-hidden="true" tabindex="-1"></a>        PersonConstructionData personConstructionData <span class="op">=</span> personConstructionDataBuilder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_init-24"><a href="#lst-person_properties_population_loader_init-24" aria-hidden="true" tabindex="-1"></a>        peopleDataManager<span class="op">.</span><span class="fu">addPerson</span><span class="op">(</span>personConstructionData<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-25"><a href="#lst-person_properties_population_loader_init-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_population_loader_init-26"><a href="#lst-person_properties_population_loader_init-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_init-27"><a href="#lst-person_properties_population_loader_init-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> simulationDuration <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_population_loader_init-28"><a href="#lst-person_properties_population_loader_init-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">SIMULATION_DURATION</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-29"><a href="#lst-person_properties_population_loader_init-29" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> c<span class="op">.</span><span class="fu">halt</span><span class="op">(),</span> simulationDuration<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-30"><a href="#lst-person_properties_population_loader_init-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_init-31"><a href="#lst-person_properties_population_loader_init-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> immunityStartTime <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_population_loader_init-32"><a href="#lst-person_properties_population_loader_init-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">IMMUNITY_START_TIME</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-33"><a href="#lst-person_properties_population_loader_init-33" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">((</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="fu">addImmunityProperty</span><span class="op">(),</span> immunityStartTime<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_init-34"><a href="#lst-person_properties_population_loader_init-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The actor finishes its initialization by scheduling a time to halt the simulation based on the global property, SIMULATION_DURATION. It also schedules the addition of the person property, IS_IMMUNE, based on the global property, IMMUNITY_START_TIME. <a href="#lst-person_properties_population_loader_add_immunity_property" class="quarto-xref">Code Block&nbsp;<span>9.7</span></a> shows the details of this dynamic definition.</p>
+<div class="cell">
+<div id="lst-person_properties_population_loader_add_immunity_property" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_population_loader_add_immunity_property-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.7: At the time set via the global property, IMMUNITY_START_TIME, the population loader defines the person property, IS_IMMUNE, and sets the property value for each person.
+</figcaption>
+<div aria-describedby="lst-person_properties_population_loader_add_immunity_property-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_population_loader_add_immunity_property"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_population_loader_add_immunity_property-1"><a href="#lst-person_properties_population_loader_add_immunity_property-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">addImmunityProperty</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-2"><a href="#lst-person_properties_population_loader_add_immunity_property-2" aria-hidden="true" tabindex="-1"></a>    PersonPropertyDefinitionInitialization<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> PersonPropertyDefinitionInitialization<span class="op">.</span><span class="fu">builder</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-3"><a href="#lst-person_properties_population_loader_add_immunity_property-3" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">setPersonPropertyId</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">IS_IMMUNE</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-4"><a href="#lst-person_properties_population_loader_add_immunity_property-4" aria-hidden="true" tabindex="-1"></a>    PropertyDefinition propertyDefinition <span class="op">=</span> PropertyDefinition<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setType</span><span class="op">(</span><span class="bu">Boolean</span><span class="op">.</span><span class="fu">class</span><span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-5"><a href="#lst-person_properties_population_loader_add_immunity_property-5" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">setPropertyDefinition</span><span class="op">(</span>propertyDefinition<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-6"><a href="#lst-person_properties_population_loader_add_immunity_property-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> immunityProbability <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_population_loader_add_immunity_property-7"><a href="#lst-person_properties_population_loader_add_immunity_property-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">IMMUNITY_PROBABILITY</span><span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-8"><a href="#lst-person_properties_population_loader_add_immunity_property-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-9"><a href="#lst-person_properties_population_loader_add_immunity_property-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>PersonId personId <span class="op">:</span> peopleDataManager<span class="op">.</span><span class="fu">getPeople</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-10"><a href="#lst-person_properties_population_loader_add_immunity_property-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span> isImmune <span class="op">=</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">&lt;</span> immunityProbability<span class="op">;</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-11"><a href="#lst-person_properties_population_loader_add_immunity_property-11" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">addPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> isImmune<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-12"><a href="#lst-person_properties_population_loader_add_immunity_property-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-13"><a href="#lst-person_properties_population_loader_add_immunity_property-13" aria-hidden="true" tabindex="-1"></a>    PersonPropertyDefinitionInitialization personPropertyDefinitionInitialization <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-14"><a href="#lst-person_properties_population_loader_add_immunity_property-14" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager<span class="op">.</span><span class="fu">definePersonProperty</span><span class="op">(</span>personPropertyDefinitionInitialization<span class="op">);</span></span>
+<span id="lst-person_properties_population_loader_add_immunity_property-15"><a href="#lst-person_properties_population_loader_add_immunity_property-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The vaccine educator (<a href="#lst-person_properties_vaccine_educator_init" class="quarto-xref">Code Block&nbsp;<span>9.8</span></a>) attempts to change unvaccinated people who refuse vaccination to vaccine acceptance. It initializes by planning an educational attempt for each person in the existing population who has not been vaccinated and who will refuse vaccination. It also subscribes to the addition of people so that it might plan education for newly added people.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccine_educator_init" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccine_educator_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.8: The vaccine educator initializes by planning the education for each person who refuses vaccination.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccine_educator_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccine_educator_init"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccine_educator_init-1"><a href="#lst-person_properties_vaccine_educator_init-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_init-2"><a href="#lst-person_properties_vaccine_educator_init-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">actorContext</span> <span class="op">=</span> actorContext<span class="op">;</span></span>
+<span id="lst-person_properties_vaccine_educator_init-3"><a href="#lst-person_properties_vaccine_educator_init-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_init-4"><a href="#lst-person_properties_vaccine_educator_init-4" aria-hidden="true" tabindex="-1"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-5"><a href="#lst-person_properties_vaccine_educator_init-5" aria-hidden="true" tabindex="-1"></a>    randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
+<span id="lst-person_properties_vaccine_educator_init-6"><a href="#lst-person_properties_vaccine_educator_init-6" aria-hidden="true" tabindex="-1"></a>    PeopleDataManager peopleDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-7"><a href="#lst-person_properties_vaccine_educator_init-7" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PersonPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-8"><a href="#lst-person_properties_vaccine_educator_init-8" aria-hidden="true" tabindex="-1"></a>    globalPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>GlobalPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-9"><a href="#lst-person_properties_vaccine_educator_init-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_init-10"><a href="#lst-person_properties_vaccine_educator_init-10" aria-hidden="true" tabindex="-1"></a>    educationAttemptInterval <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_vaccine_educator_init-11"><a href="#lst-person_properties_vaccine_educator_init-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">EDUCATION_ATTEMPT_INTERVAL</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-12"><a href="#lst-person_properties_vaccine_educator_init-12" aria-hidden="true" tabindex="-1"></a>    educationSuccessRate <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_vaccine_educator_init-13"><a href="#lst-person_properties_vaccine_educator_init-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">EDUCATION_SUCCESS_RATE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-14"><a href="#lst-person_properties_vaccine_educator_init-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_init-15"><a href="#lst-person_properties_vaccine_educator_init-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> unvaccinatedPeople <span class="op">=</span> personPropertiesDataManager</span>
+<span id="lst-person_properties_vaccine_educator_init-16"><a href="#lst-person_properties_vaccine_educator_init-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getPeopleWithPropertyValue</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-17"><a href="#lst-person_properties_vaccine_educator_init-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>PersonId personId <span class="op">:</span> unvaccinatedPeople<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_init-18"><a href="#lst-person_properties_vaccine_educator_init-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Boolean</span> refusesVaccine <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span></span>
+<span id="lst-person_properties_vaccine_educator_init-19"><a href="#lst-person_properties_vaccine_educator_init-19" aria-hidden="true" tabindex="-1"></a>                PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-20"><a href="#lst-person_properties_vaccine_educator_init-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>refusesVaccine<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_init-21"><a href="#lst-person_properties_vaccine_educator_init-21" aria-hidden="true" tabindex="-1"></a>            <span class="fu">planEducation</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_init-22"><a href="#lst-person_properties_vaccine_educator_init-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_init-23"><a href="#lst-person_properties_vaccine_educator_init-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_init-24"><a href="#lst-person_properties_vaccine_educator_init-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_init-25"><a href="#lst-person_properties_vaccine_educator_init-25" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>peopleDataManager<span class="op">.</span><span class="fu">getEventFilterForPersonAdditionEvent</span><span class="op">(),</span> <span class="op">(</span>c<span class="op">,</span> e<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_init-26"><a href="#lst-person_properties_vaccine_educator_init-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">handleNewPerson</span><span class="op">(</span>e<span class="op">.</span><span class="fu">personId</span><span class="op">());</span></span>
+<span id="lst-person_properties_vaccine_educator_init-27"><a href="#lst-person_properties_vaccine_educator_init-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="lst-person_properties_vaccine_educator_init-28"><a href="#lst-person_properties_vaccine_educator_init-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The education of a person (<a href="#lst-person_properties_vaccine_educator_handle_new_person" class="quarto-xref">Code Block&nbsp;<span>9.9</span></a>) is accomplished with planning that schedules the education at a random time between the current time and a globally defined attempt interval.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccine_educator_handle_new_person" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccine_educator_handle_new_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.9: Attempts to educate a person on vaccination are scheduled at random times in the future based on the global property, EDUCATION_ATTEMPT_INTERVAL.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccine_educator_handle_new_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccine_educator_handle_new_person"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccine_educator_handle_new_person-1"><a href="#lst-person_properties_vaccine_educator_handle_new_person-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">planEducation</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-2"><a href="#lst-person_properties_vaccine_educator_handle_new_person-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> planTime <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getTime</span><span class="op">()</span> <span class="op">+</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">*</span> educationAttemptInterval<span class="op">;</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-3"><a href="#lst-person_properties_vaccine_educator_handle_new_person-3" aria-hidden="true" tabindex="-1"></a>    Consumer<span class="op">&lt;</span>ActorContext<span class="op">&gt;</span> plan <span class="op">=</span> <span class="op">(</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="fu">educatePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-4"><a href="#lst-person_properties_vaccine_educator_handle_new_person-4" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">(</span>plan<span class="op">,</span> planTime<span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-5"><a href="#lst-person_properties_vaccine_educator_handle_new_person-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-6"><a href="#lst-person_properties_vaccine_educator_handle_new_person-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-7"><a href="#lst-person_properties_vaccine_educator_handle_new_person-7" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleNewPerson</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-8"><a href="#lst-person_properties_vaccine_educator_handle_new_person-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> vaccinated <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-9"><a href="#lst-person_properties_vaccine_educator_handle_new_person-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>vaccinated<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-10"><a href="#lst-person_properties_vaccine_educator_handle_new_person-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Boolean</span> refusesVaccine <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-11"><a href="#lst-person_properties_vaccine_educator_handle_new_person-11" aria-hidden="true" tabindex="-1"></a>                PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-12"><a href="#lst-person_properties_vaccine_educator_handle_new_person-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>refusesVaccine<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-13"><a href="#lst-person_properties_vaccine_educator_handle_new_person-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">planEducation</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-14"><a href="#lst-person_properties_vaccine_educator_handle_new_person-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-15"><a href="#lst-person_properties_vaccine_educator_handle_new_person-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_handle_new_person-16"><a href="#lst-person_properties_vaccine_educator_handle_new_person-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The education attempt sets the vaccine refusal to false on a random draw based on the EDUCATION_SUCCESS_RATE global variable in <a href="#lst-person_properties_vaccine_educator_educate_person" class="quarto-xref">Code Block&nbsp;<span>9.10</span></a>.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccine_educator_educate_person" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccine_educator_educate_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.10: After updating the number of educational attempts for a person, the vaccine educator succeeds in educating the person to stop refusing vaccination based on the global property, EDUCATION_SUCCESS_RATE.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccine_educator_educate_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccine_educator_educate_person"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccine_educator_educate_person-1"><a href="#lst-person_properties_vaccine_educator_educate_person-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">educatePerson</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-2"><a href="#lst-person_properties_vaccine_educator_educate_person-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> educationAttempts <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-3"><a href="#lst-person_properties_vaccine_educator_educate_person-3" aria-hidden="true" tabindex="-1"></a>            PersonProperty<span class="op">.</span><span class="fu">EDUCATION_ATTEMPTS</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-4"><a href="#lst-person_properties_vaccine_educator_educate_person-4" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager<span class="op">.</span><span class="fu">setPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">EDUCATION_ATTEMPTS</span><span class="op">,</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-5"><a href="#lst-person_properties_vaccine_educator_educate_person-5" aria-hidden="true" tabindex="-1"></a>            educationAttempts <span class="op">+</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-6"><a href="#lst-person_properties_vaccine_educator_educate_person-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-7"><a href="#lst-person_properties_vaccine_educator_educate_person-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">&lt;</span> educationSuccessRate<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-8"><a href="#lst-person_properties_vaccine_educator_educate_person-8" aria-hidden="true" tabindex="-1"></a>        personPropertiesDataManager<span class="op">.</span><span class="fu">setPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-9"><a href="#lst-person_properties_vaccine_educator_educate_person-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-10"><a href="#lst-person_properties_vaccine_educator_educate_person-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">planEducation</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-11"><a href="#lst-person_properties_vaccine_educator_educate_person-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccine_educator_educate_person-12"><a href="#lst-person_properties_vaccine_educator_educate_person-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The Vaccinator (<a href="#lst-person_properties_vaccinator_init" class="quarto-xref">Code Block&nbsp;<span>9.11</span></a>) tries to vaccinate the population. It initializes by planning a vaccination attempt for each person in the existing population who has not yet been vaccinated. It subscribes to the addition of people so that it might plan vaccination for newly added people. It also subscribes to changes to the VACCINE_REFUSAL person property so that it can immediately attempt vaccination.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccinator_init" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccinator_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.11: The vaccinator initializes by planning vaccination attempts for each person who is unvaccinated. It also subscribes to changes in the vaccine refusal property for all people so that when a person stops refusing vaccine, they can be vaccinated immediately.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccinator_init-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccinator_init"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccinator_init-1"><a href="#lst-person_properties_vaccinator_init-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>ActorContext actorContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_init-2"><a href="#lst-person_properties_vaccinator_init-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">actorContext</span> <span class="op">=</span> actorContext<span class="op">;</span></span>
+<span id="lst-person_properties_vaccinator_init-3"><a href="#lst-person_properties_vaccinator_init-3" aria-hidden="true" tabindex="-1"></a>    StochasticsDataManager stochasticsDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>StochasticsDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-4"><a href="#lst-person_properties_vaccinator_init-4" aria-hidden="true" tabindex="-1"></a>    randomGenerator <span class="op">=</span> stochasticsDataManager<span class="op">.</span><span class="fu">getRandomGenerator</span><span class="op">();</span></span>
+<span id="lst-person_properties_vaccinator_init-5"><a href="#lst-person_properties_vaccinator_init-5" aria-hidden="true" tabindex="-1"></a>    peopleDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PeopleDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-6"><a href="#lst-person_properties_vaccinator_init-6" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>PersonPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-7"><a href="#lst-person_properties_vaccinator_init-7" aria-hidden="true" tabindex="-1"></a>    globalPropertiesDataManager <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getDataManager</span><span class="op">(</span>GlobalPropertiesDataManager<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-8"><a href="#lst-person_properties_vaccinator_init-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_init-9"><a href="#lst-person_properties_vaccinator_init-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> unvaccinatedPeople <span class="op">=</span> personPropertiesDataManager</span>
+<span id="lst-person_properties_vaccinator_init-10"><a href="#lst-person_properties_vaccinator_init-10" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getPeopleWithPropertyValue</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">,</span> <span class="kw">false</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-11"><a href="#lst-person_properties_vaccinator_init-11" aria-hidden="true" tabindex="-1"></a>    vaccineAttemptInterval <span class="op">=</span> globalPropertiesDataManager</span>
+<span id="lst-person_properties_vaccinator_init-12"><a href="#lst-person_properties_vaccinator_init-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getGlobalPropertyValue</span><span class="op">(</span>GlobalProperty<span class="op">.</span><span class="fu">VACCINE_ATTEMPT_INTERVAL</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-13"><a href="#lst-person_properties_vaccinator_init-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>PersonId personId <span class="op">:</span> unvaccinatedPeople<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_init-14"><a href="#lst-person_properties_vaccinator_init-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">planVaccination</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-15"><a href="#lst-person_properties_vaccinator_init-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_init-16"><a href="#lst-person_properties_vaccinator_init-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_init-17"><a href="#lst-person_properties_vaccinator_init-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">EventFilter</span><span class="op">&lt;</span>PersonPropertyUpdateEvent<span class="op">&gt;</span> eventFilter <span class="op">=</span> personPropertiesDataManager<span class="co">//</span></span>
+<span id="lst-person_properties_vaccinator_init-18"><a href="#lst-person_properties_vaccinator_init-18" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">getEventFilterForPersonPropertyUpdateEvent</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-19"><a href="#lst-person_properties_vaccinator_init-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_init-20"><a href="#lst-person_properties_vaccinator_init-20" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>eventFilter<span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handleVaccineAcceptance<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_init-21"><a href="#lst-person_properties_vaccinator_init-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_init-22"><a href="#lst-person_properties_vaccinator_init-22" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>peopleDataManager<span class="op">.</span><span class="fu">getEventFilterForPersonAdditionEvent</span><span class="op">(),</span> <span class="op">(</span>c<span class="op">,</span> e<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_init-23"><a href="#lst-person_properties_vaccinator_init-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">handleNewPerson</span><span class="op">(</span>e<span class="op">.</span><span class="fu">personId</span><span class="op">());</span></span>
+<span id="lst-person_properties_vaccinator_init-24"><a href="#lst-person_properties_vaccinator_init-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="lst-person_properties_vaccinator_init-25"><a href="#lst-person_properties_vaccinator_init-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_init-26"><a href="#lst-person_properties_vaccinator_init-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Vaccination of a person (<a href="#lst-person_properties_vaccinator_plan_vaccination" class="quarto-xref">Code Block&nbsp;<span>9.12</span></a>) is accomplished with planning that schedules the vaccination at a random time between the current time and a globally defined attempt interval.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccinator_plan_vaccination" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccinator_plan_vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.12: Each unvaccinated person has a planned vaccination based on the VACCINE_ATTEMPT_INTERVAL global property.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccinator_plan_vaccination-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccinator_plan_vaccination"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccinator_plan_vaccination-1"><a href="#lst-person_properties_vaccinator_plan_vaccination-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">planVaccination</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-2"><a href="#lst-person_properties_vaccinator_plan_vaccination-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> planTime <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getTime</span><span class="op">()</span> <span class="op">+</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">*</span> vaccineAttemptInterval<span class="op">;</span>       </span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-3"><a href="#lst-person_properties_vaccinator_plan_vaccination-3" aria-hidden="true" tabindex="-1"></a>    ActorPlan plan <span class="op">=</span> <span class="kw">new</span> <span class="fu">ConsumerActorPlan</span><span class="op">(</span>planTime<span class="op">,</span> <span class="op">(</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="fu">vaccinatePerson</span><span class="op">(</span>personId<span class="op">));</span>             </span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-4"><a href="#lst-person_properties_vaccinator_plan_vaccination-4" aria-hidden="true" tabindex="-1"></a>    actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">(</span>plan<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-5"><a href="#lst-person_properties_vaccinator_plan_vaccination-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">//record the plan for possible cancellation</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-6"><a href="#lst-person_properties_vaccinator_plan_vaccination-6" aria-hidden="true" tabindex="-1"></a>    actorPlans<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> plan<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-7"><a href="#lst-person_properties_vaccinator_plan_vaccination-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-8"><a href="#lst-person_properties_vaccinator_plan_vaccination-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-9"><a href="#lst-person_properties_vaccinator_plan_vaccination-9" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleNewPerson</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-10"><a href="#lst-person_properties_vaccinator_plan_vaccination-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> vaccinated <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-11"><a href="#lst-person_properties_vaccinator_plan_vaccination-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>vaccinated<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-12"><a href="#lst-person_properties_vaccinator_plan_vaccination-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">planVaccination</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-13"><a href="#lst-person_properties_vaccinator_plan_vaccination-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_plan_vaccination-14"><a href="#lst-person_properties_vaccinator_plan_vaccination-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>Note that the plan uses a key value set to the person id. This is used when reacting to a person changing from refusal of the vaccine to acceptance. Instead of waiting for the next vaccine attempt (<a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance" class="quarto-xref">Code Block&nbsp;<span>9.13</span></a>), the current plan to vaccinate is removed and the person is immediately vaccinated.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccinator_handle_vaccine_acceptance" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccinator_handle_vaccine_acceptance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.13: When a person stops refusing vaccination, the vaccinator immediately attempts the vaccination of that person.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccinator_handle_vaccine_acceptance-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccinator_handle_vaccine_acceptance"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-1"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleVaccineAcceptance</span><span class="op">(</span>ActorContext actorContext<span class="op">,</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-2"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-2" aria-hidden="true" tabindex="-1"></a>        PersonPropertyUpdateEvent personPropertyUpdateEvent<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-3"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/*</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-4"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-4" aria-hidden="true" tabindex="-1"></a><span class="co">         * We know that the person property is PersonProperty.REFUSES_VACCINE since we</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-5"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-5" aria-hidden="true" tabindex="-1"></a><span class="co">         * used an event filter when subscribing</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-6"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-6" aria-hidden="true" tabindex="-1"></a><span class="co">         */</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-7"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Boolean</span> refusesVaccine <span class="op">=</span> personPropertyUpdateEvent<span class="op">.</span><span class="fu">getCurrentPropertyValue</span><span class="op">();</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-8"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>refusesVaccine<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-9"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-9" aria-hidden="true" tabindex="-1"></a>        PersonId personId <span class="op">=</span> personPropertyUpdateEvent<span class="op">.</span><span class="fu">personId</span><span class="op">();</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-10"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// drop the current plan</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-11"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-11" aria-hidden="true" tabindex="-1"></a>        ActorPlan actorPlan <span class="op">=</span> actorPlans<span class="op">.</span><span class="fu">remove</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-12"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>actorPlan <span class="op">!=</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-13"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-13" aria-hidden="true" tabindex="-1"></a>            actorPlan<span class="op">.</span><span class="fu">cancelPlan</span><span class="op">();</span>             </span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-14"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>           </span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-15"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">vaccinatePerson</span><span class="op">(</span>personId<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-16"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_handle_vaccine_acceptance-17"><a href="#lst-person_properties_vaccinator_handle_vaccine_acceptance-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The vaccination attempt (<a href="#lst-person_properties_vaccinator_vaccinate_person" class="quarto-xref">Code Block&nbsp;<span>9.14</span></a>) first considers whether the IS_IMMUNE property has been added. If it has then immunity for the person is determined. Immune people do not receive the vaccine and no more attempts to vaccinate the person will be scheduled. If the person is still refusing the vaccine, then a new attempt to vaccinate the person is scheduled. Otherwise the person is vaccinated and no further attempts are scheduled.</p>
+<div class="cell">
+<div id="lst-person_properties_vaccinator_vaccinate_person" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-person_properties_vaccinator_vaccinate_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;9.14: With each vaccination attempt, the vaccinator updates the VACCINE_ATTEMPTS person property for the person. People who refuse vaccination are scheduled for another vaccination attempt.
+</figcaption>
+<div aria-describedby="lst-person_properties_vaccinator_vaccinate_person-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-person_properties_vaccinator_vaccinate_person"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-person_properties_vaccinator_vaccinate_person-1"><a href="#lst-person_properties_vaccinator_vaccinate_person-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">vaccinatePerson</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-2"><a href="#lst-person_properties_vaccinator_vaccinate_person-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> vaccineAttempts <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-3"><a href="#lst-person_properties_vaccinator_vaccinate_person-3" aria-hidden="true" tabindex="-1"></a>            PersonProperty<span class="op">.</span><span class="fu">VACCINE_ATTEMPTS</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-4"><a href="#lst-person_properties_vaccinator_vaccinate_person-4" aria-hidden="true" tabindex="-1"></a>    personPropertiesDataManager<span class="op">.</span><span class="fu">setPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">VACCINE_ATTEMPTS</span><span class="op">,</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-5"><a href="#lst-person_properties_vaccinator_vaccinate_person-5" aria-hidden="true" tabindex="-1"></a>            vaccineAttempts <span class="op">+</span> <span class="dv">1</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-6"><a href="#lst-person_properties_vaccinator_vaccinate_person-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-7"><a href="#lst-person_properties_vaccinator_vaccinate_person-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> isImmune <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-8"><a href="#lst-person_properties_vaccinator_vaccinate_person-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>personPropertiesDataManager<span class="op">.</span><span class="fu">personPropertyIdExists</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">IS_IMMUNE</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-9"><a href="#lst-person_properties_vaccinator_vaccinate_person-9" aria-hidden="true" tabindex="-1"></a>        isImmune <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">IS_IMMUNE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-10"><a href="#lst-person_properties_vaccinator_vaccinate_person-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-11"><a href="#lst-person_properties_vaccinator_vaccinate_person-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-12"><a href="#lst-person_properties_vaccinator_vaccinate_person-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Boolean</span> refusesVaccine <span class="op">=</span> personPropertiesDataManager<span class="op">.</span><span class="fu">getPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-13"><a href="#lst-person_properties_vaccinator_vaccinate_person-13" aria-hidden="true" tabindex="-1"></a>            PersonProperty<span class="op">.</span><span class="fu">REFUSES_VACCINE</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-14"><a href="#lst-person_properties_vaccinator_vaccinate_person-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>isImmune<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-15"><a href="#lst-person_properties_vaccinator_vaccinate_person-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>refusesVaccine<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-16"><a href="#lst-person_properties_vaccinator_vaccinate_person-16" aria-hidden="true" tabindex="-1"></a>            <span class="dt">double</span> planTime <span class="op">=</span> actorContext<span class="op">.</span><span class="fu">getTime</span><span class="op">()</span> <span class="op">+</span> randomGenerator<span class="op">.</span><span class="fu">nextDouble</span><span class="op">()</span> <span class="op">*</span> vaccineAttemptInterval<span class="op">;</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-17"><a href="#lst-person_properties_vaccinator_vaccinate_person-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-18"><a href="#lst-person_properties_vaccinator_vaccinate_person-18" aria-hidden="true" tabindex="-1"></a>            ActorPlan plan <span class="op">=</span> <span class="kw">new</span> <span class="fu">ConsumerActorPlan</span><span class="op">(</span>planTime<span class="op">,</span> <span class="op">(</span>c<span class="op">)</span> <span class="op">-&gt;</span> <span class="fu">vaccinatePerson</span><span class="op">(</span>personId<span class="op">));</span>             </span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-19"><a href="#lst-person_properties_vaccinator_vaccinate_person-19" aria-hidden="true" tabindex="-1"></a>            actorContext<span class="op">.</span><span class="fu">addPlan</span><span class="op">(</span>plan<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-20"><a href="#lst-person_properties_vaccinator_vaccinate_person-20" aria-hidden="true" tabindex="-1"></a>            <span class="co">//record the plan for possible cancellation</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-21"><a href="#lst-person_properties_vaccinator_vaccinate_person-21" aria-hidden="true" tabindex="-1"></a>            actorPlans<span class="op">.</span><span class="fu">put</span><span class="op">(</span>personId<span class="op">,</span> plan<span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-22"><a href="#lst-person_properties_vaccinator_vaccinate_person-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-23"><a href="#lst-person_properties_vaccinator_vaccinate_person-23" aria-hidden="true" tabindex="-1"></a>            personPropertiesDataManager<span class="op">.</span><span class="fu">setPersonPropertyValue</span><span class="op">(</span>personId<span class="op">,</span> PersonProperty<span class="op">.</span><span class="fu">VACCINATED</span><span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-24"><a href="#lst-person_properties_vaccinator_vaccinate_person-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-25"><a href="#lst-person_properties_vaccinator_vaccinate_person-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-person_properties_vaccinator_vaccinate_person-26"><a href="#lst-person_properties_vaccinator_vaccinate_person-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="inspecting-the-output" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="inspecting-the-output"><span class="header-section-number">9.6</span> Inspecting the output</h2>
+<p>The 810 scenarios result in a large amount of output in the person properties report with over 125,000 entries. The vaccine report is a bit too large to fully present here. Its fields are:</p>
+<ul>
+<li>Scenario – 0 to 809</li>
+<li>Experiment fields that show what differentiates each scenario
+<ul>
+<li>immunity start time</li>
+<li>immunity probabilty</li>
+<li>vaccine attempt interval</li>
+<li>education attempt interval</li>
+<li>education success rate</li>
+<li>intial refusal probability</li>
+</ul></li>
+<li>The metric fields produced as a result of the experiment choices
+<ul>
+<li>vaccinated immune</li>
+<li>vaccinated susceptible</li>
+<li>unvaccinated immune</li>
+<li>unvaccinated susceptible</li>
+</ul></li>
+</ul>
+<p>Analyzing the output yields no surprises. Higher education attempt rates and greater probabilities of education success yield more people getting vaccinated. Similarly, early and high levels of immunity have a slight dampening effect on vaccinations.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ch08-RegionsPlugin.html" class="pagination-link" aria-label="Regions Plugin">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ch10-GroupsPlugins.html" class="pagination-link" aria-label="Groups Plugin">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Groups Plugin</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

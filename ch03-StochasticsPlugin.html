@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Stochastics Plugin – GCM-Docs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./ch04-ReportsPlugin.html" rel="next">
+<link href="./ch02-GettingStarted.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./ch03-StochasticsPlugin.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">GCM-Docs</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">The General Computation Model (GCM)</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch01-Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch02-GettingStarted.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Getting Started</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch03-StochasticsPlugin.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch04-ReportsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reports Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch05-Properties.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Properties</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch06-GlobalPropertiesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Global Properties Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch07-PeoplePlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">People Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch08-RegionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Regions Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch09-PersonPropertiesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Person Properties Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch10-GroupsPlugins.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Groups Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch11-ResourcesPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Resources Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch12-MaterialsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Materials Plugin</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ch13-PartitionsPlugin.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Partitions Plugin</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#plugin-data-initialization" id="toc-plugin-data-initialization" class="nav-link active" data-scroll-target="#plugin-data-initialization"><span class="header-section-number">3.1</span> Plugin Data Initialization</a></li>
+  <li><a href="#plugin-behavior" id="toc-plugin-behavior" class="nav-link" data-scroll-target="#plugin-behavior"><span class="header-section-number">3.2</span> Plugin Behavior</a></li>
+  <li><a href="#data-manager" id="toc-data-manager" class="nav-link" data-scroll-target="#data-manager"><span class="header-section-number">3.3</span> Data Manager</a></li>
+  <li><a href="#lesson-11-example-11a" id="toc-lesson-11-example-11a" class="nav-link" data-scroll-target="#lesson-11-example-11a"><span class="header-section-number">3.4</span> (Lesson 11) Example 11A</a></li>
+  <li><a href="#example-11b" id="toc-example-11b" class="nav-link" data-scroll-target="#example-11b"><span class="header-section-number">3.5</span> Example 11B</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Stochastics Plugin</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The stochastics plugin provides for the management of random number generators. It contains a default random number generator (RNG) as well as any number of RNGs associated with identifiers.</p>
+<section id="plugin-data-initialization" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="plugin-data-initialization"><span class="header-section-number">3.1</span> Plugin Data Initialization</h2>
+<p>The plugin is initialized using a StochasticsPluginData object that collects starting seed values for the default RNG as well as any number of RNG identifiers. These identifiers are implemented via the RandomGeneratorId interface which only specifies that such an identifier have a non-null, non-empty and stable implementation of the Object.toString() method.</p>
+<p>All RNGs in GCM are implemented using the org.apache.commons.math3.random.Well44497b random number generator. GCM introduces the class Well.java that extends the Well44497b to allow for the serialization of its internal state. The data that supports this serialization is contained in the WellState.java class that uses a standard builder pattern. Serialization concerns are beyond the scope of this chapter, so all WellState objects will be seeded with long values only.</p>
+</section>
+<section id="plugin-behavior" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="plugin-behavior"><span class="header-section-number">3.2</span> Plugin Behavior</h2>
+<p>The plugin adds a single data manager to the simulation as an instance of the StochasticsDataManager that is initialized with the StochasticsPluginData.</p>
+</section>
+<section id="data-manager" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data-manager"><span class="header-section-number">3.3</span> Data Manager</h2>
+<p>The data manager provides access to its RNGs via various getter methods.</p>
+</section>
+<section id="lesson-11-example-11a" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="lesson-11-example-11a"><span class="header-section-number">3.4</span> (Lesson 11) Example 11A</h2>
+<p>Our first example lesson uses the disease, model and policy plugins again. This time we will have the single ModelActor schedule three random times to set the R0 value to a random number between 1 and 2. Four scenarios will result from a policy based dimension that alters the school closing infection rates, which will not influence the ModelActor.</p>
+<div class="cell">
+<div id="lst-stochastics_plugin_policy_dimension" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-stochastics_plugin_policy_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;3.1: The policy dimension has four levels for the infection rates that trigger school closure.
+</figcaption>
+<div aria-describedby="lst-stochastics_plugin_policy_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-stochastics_plugin_policy_dimension"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-stochastics_plugin_policy_dimension-1"><a href="#lst-stochastics_plugin_policy_dimension-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="bu">Dimension</span> <span class="fu">getPolicyDimension</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-2"><a href="#lst-stochastics_plugin_policy_dimension-2" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> FunctionalDimensionData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-3"><a href="#lst-stochastics_plugin_policy_dimension-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-4"><a href="#lst-stochastics_plugin_policy_dimension-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Double</span><span class="op">&gt;</span> schoolClosingInfectionRates <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-5"><a href="#lst-stochastics_plugin_policy_dimension-5" aria-hidden="true" tabindex="-1"></a>    schoolClosingInfectionRates<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="fl">0.05</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-6"><a href="#lst-stochastics_plugin_policy_dimension-6" aria-hidden="true" tabindex="-1"></a>    schoolClosingInfectionRates<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="fl">0.10</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-7"><a href="#lst-stochastics_plugin_policy_dimension-7" aria-hidden="true" tabindex="-1"></a>    schoolClosingInfectionRates<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="fl">0.15</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-8"><a href="#lst-stochastics_plugin_policy_dimension-8" aria-hidden="true" tabindex="-1"></a>    schoolClosingInfectionRates<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="fl">0.20</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-9"><a href="#lst-stochastics_plugin_policy_dimension-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-10"><a href="#lst-stochastics_plugin_policy_dimension-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> schoolClosingInfectionRates<span class="op">.</span><span class="fu">size</span><span class="op">();</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-11"><a href="#lst-stochastics_plugin_policy_dimension-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Double</span> schoolClosingInfectionRate <span class="op">=</span> schoolClosingInfectionRates<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-12"><a href="#lst-stochastics_plugin_policy_dimension-12" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">addValue</span><span class="op">(</span><span class="st">"Level_"</span> <span class="op">+</span> i<span class="op">,</span> <span class="op">(</span>context<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-13"><a href="#lst-stochastics_plugin_policy_dimension-13" aria-hidden="true" tabindex="-1"></a>            PolicyPluginData<span class="op">.</span><span class="fu">Builder</span> pluginDataBuilder <span class="op">=</span> context</span>
+<span id="lst-stochastics_plugin_policy_dimension-14"><a href="#lst-stochastics_plugin_policy_dimension-14" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">getPluginDataBuilder</span><span class="op">(</span>PolicyPluginData<span class="op">.</span><span class="fu">Builder</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-15"><a href="#lst-stochastics_plugin_policy_dimension-15" aria-hidden="true" tabindex="-1"></a>            pluginDataBuilder<span class="op">.</span><span class="fu">setSchoolClosingInfectionRate</span><span class="op">(</span>schoolClosingInfectionRate<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-16"><a href="#lst-stochastics_plugin_policy_dimension-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-17"><a href="#lst-stochastics_plugin_policy_dimension-17" aria-hidden="true" tabindex="-1"></a>            <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-18"><a href="#lst-stochastics_plugin_policy_dimension-18" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Double</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>schoolClosingInfectionRate<span class="op">));</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-19"><a href="#lst-stochastics_plugin_policy_dimension-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-20"><a href="#lst-stochastics_plugin_policy_dimension-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-21"><a href="#lst-stochastics_plugin_policy_dimension-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-22"><a href="#lst-stochastics_plugin_policy_dimension-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-23"><a href="#lst-stochastics_plugin_policy_dimension-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-24"><a href="#lst-stochastics_plugin_policy_dimension-24" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"school_closing_infection_rate"</span><span class="op">);</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-25"><a href="#lst-stochastics_plugin_policy_dimension-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-26"><a href="#lst-stochastics_plugin_policy_dimension-26" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData functionalDimensionData <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-27"><a href="#lst-stochastics_plugin_policy_dimension-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">new</span> <span class="fu">FunctionalDimension</span><span class="op">(</span>functionalDimensionData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_policy_dimension-28"><a href="#lst-stochastics_plugin_policy_dimension-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_policy_dimension-29"><a href="#lst-stochastics_plugin_policy_dimension-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div id="lst-stochastics_plugin_example_11_A" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-stochastics_plugin_example_11_A-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;3.2: Example 11 introduces the stochastics plugin and executes four scenarios. The random seed for each scenario will be identical.
+</figcaption>
+<div aria-describedby="lst-stochastics_plugin_example_11_A-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-stochastics_plugin_example_11_A"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-stochastics_plugin_example_11_A-1"><a href="#lst-stochastics_plugin_example_11_A-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_example_11_A-2"><a href="#lst-stochastics_plugin_example_11_A-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-3"><a href="#lst-stochastics_plugin_example_11_A-3" aria-hidden="true" tabindex="-1"></a>    DiseasePluginData diseasePluginData <span class="op">=</span> <span class="fu">getDiseasePluginData</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-4"><a href="#lst-stochastics_plugin_example_11_A-4" aria-hidden="true" tabindex="-1"></a>    Plugin diseasePlugin <span class="op">=</span> DiseasePlugin<span class="op">.</span><span class="fu">getDiseasePlugin</span><span class="op">(</span>diseasePluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_A-5"><a href="#lst-stochastics_plugin_example_11_A-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-6"><a href="#lst-stochastics_plugin_example_11_A-6" aria-hidden="true" tabindex="-1"></a>    PolicyPluginData policyPluginData <span class="op">=</span> <span class="fu">getPolicyPluginData</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-7"><a href="#lst-stochastics_plugin_example_11_A-7" aria-hidden="true" tabindex="-1"></a>    Plugin policyPlugin <span class="op">=</span> PolicyPlugin<span class="op">.</span><span class="fu">getPolicyPlugin</span><span class="op">(</span>policyPluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_A-8"><a href="#lst-stochastics_plugin_example_11_A-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-9"><a href="#lst-stochastics_plugin_example_11_A-9" aria-hidden="true" tabindex="-1"></a>    Plugin modelPlugin <span class="op">=</span> ModelPlugin<span class="op">.</span><span class="fu">getModelPlugin</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-10"><a href="#lst-stochastics_plugin_example_11_A-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-11"><a href="#lst-stochastics_plugin_example_11_A-11" aria-hidden="true" tabindex="-1"></a>    WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-12"><a href="#lst-stochastics_plugin_example_11_A-12" aria-hidden="true" tabindex="-1"></a>    StochasticsPluginData stochasticsPluginData <span class="op">=</span> StochasticsPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">)</span></span>
+<span id="lst-stochastics_plugin_example_11_A-13"><a href="#lst-stochastics_plugin_example_11_A-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-14"><a href="#lst-stochastics_plugin_example_11_A-14" aria-hidden="true" tabindex="-1"></a>    Plugin stochasticsPlugin <span class="op">=</span> StochasticsPlugin<span class="op">.</span><span class="fu">getStochasticsPlugin</span><span class="op">(</span>stochasticsPluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_A-15"><a href="#lst-stochastics_plugin_example_11_A-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-16"><a href="#lst-stochastics_plugin_example_11_A-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Dimension</span> policyDimension <span class="op">=</span> <span class="fu">getPolicyDimension</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-17"><a href="#lst-stochastics_plugin_example_11_A-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-18"><a href="#lst-stochastics_plugin_example_11_A-18" aria-hidden="true" tabindex="-1"></a>    ExperimentParameterData experimentParameterData <span class="op">=</span> ExperimentParameterData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-19"><a href="#lst-stochastics_plugin_example_11_A-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setThreadCount</span><span class="op">(</span><span class="dv">4</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-20"><a href="#lst-stochastics_plugin_example_11_A-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setHaltOnException</span><span class="op">(</span><span class="kw">true</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-21"><a href="#lst-stochastics_plugin_example_11_A-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-22"><a href="#lst-stochastics_plugin_example_11_A-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_A-23"><a href="#lst-stochastics_plugin_example_11_A-23" aria-hidden="true" tabindex="-1"></a>    Experiment<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-24"><a href="#lst-stochastics_plugin_example_11_A-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>stochasticsPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-25"><a href="#lst-stochastics_plugin_example_11_A-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>diseasePlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-26"><a href="#lst-stochastics_plugin_example_11_A-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>modelPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-27"><a href="#lst-stochastics_plugin_example_11_A-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>policyPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-28"><a href="#lst-stochastics_plugin_example_11_A-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span>policyDimension<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-29"><a href="#lst-stochastics_plugin_example_11_A-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addExperimentContextConsumer</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SimpleOutputConsumer</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-30"><a href="#lst-stochastics_plugin_example_11_A-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setExperimentParameterData</span><span class="op">(</span>experimentParameterData<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-31"><a href="#lst-stochastics_plugin_example_11_A-31" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_A-32"><a href="#lst-stochastics_plugin_example_11_A-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">execute</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_A-33"><a href="#lst-stochastics_plugin_example_11_A-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The stochastics plugin is initialized with a seed value of zero and that seed will be used in each scenario as the initial seeding for the default random generator. Thus we expect that each scenario will have identical output.</p>
+<div class="cell">
+<div id="fig-stochastics_plugin_11_A_output" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-stochastics_plugin_11_A_output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: The output for example 11 shows the four scenarios each reporting three changes to R0 by the model actor.
+</figcaption>
+<div aria-describedby="fig-stochastics_plugin_11_A_output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
+<table class="table" style="font-family: monospace; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+school_closing_infection_rate
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+output
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.432233562051883 at time = 3.252869296309885
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.1828080336720215 at time = 4.115633147309184
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.432233562051883 at time = 3.252869296309885
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.432233562051883 at time = 3.252869296309885
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.895526664357549 at time = 8.614888683848772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.1828080336720215 at time = 4.115633147309184
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.432233562051883 at time = 3.252869296309885
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.1828080336720215 at time = 4.115633147309184
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.895526664357549 at time = 8.614888683848772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.1828080336720215 at time = 4.115633147309184
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.895526664357549 at time = 8.614888683848772
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.895526664357549 at time = 8.614888683848772
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+<section id="example-11b" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="example-11b"><span class="header-section-number">3.5</span> Example 11B</h2>
+<p>Our next example lesson adds a dimension used to alter the initial seed value of the stochastics plugin data to one of three values. Combined with the policy dimension, this will result in 12 scenarios.</p>
+<div class="cell">
+<div id="lst-stochastics_plugin_stochastics_dimension" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-stochastics_plugin_stochastics_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;3.3: The stochastics dimension introduces three random seeds that will be used in creating the scenarios. Note that seeds are generated outside of the levels within the dimension.
+</figcaption>
+<div aria-describedby="lst-stochastics_plugin_stochastics_dimension-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-stochastics_plugin_stochastics_dimension"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-stochastics_plugin_stochastics_dimension-1"><a href="#lst-stochastics_plugin_stochastics_dimension-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="bu">Dimension</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dt">long</span> seed<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-2"><a href="#lst-stochastics_plugin_stochastics_dimension-2" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData<span class="op">.</span><span class="fu">Builder</span> builder <span class="op">=</span> FunctionalDimensionData<span class="op">.</span><span class="fu">builder</span><span class="op">();</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-3"><a href="#lst-stochastics_plugin_stochastics_dimension-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-4"><a href="#lst-stochastics_plugin_stochastics_dimension-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Random</span> random <span class="op">=</span> <span class="kw">new</span> <span class="bu">Random</span><span class="op">(</span>seed<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-5"><a href="#lst-stochastics_plugin_stochastics_dimension-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-6"><a href="#lst-stochastics_plugin_stochastics_dimension-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">&gt;</span> seedValues <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-7"><a href="#lst-stochastics_plugin_stochastics_dimension-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-8"><a href="#lst-stochastics_plugin_stochastics_dimension-8" aria-hidden="true" tabindex="-1"></a>        seedValues<span class="op">.</span><span class="fu">add</span><span class="op">(</span>random<span class="op">.</span><span class="fu">nextLong</span><span class="op">());</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-9"><a href="#lst-stochastics_plugin_stochastics_dimension-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-10"><a href="#lst-stochastics_plugin_stochastics_dimension-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-11"><a href="#lst-stochastics_plugin_stochastics_dimension-11" aria-hidden="true" tabindex="-1"></a>    IntStream<span class="op">.</span><span class="fu">range</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> seedValues<span class="op">.</span><span class="fu">size</span><span class="op">()).</span><span class="fu">forEach</span><span class="op">((</span>i<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-12"><a href="#lst-stochastics_plugin_stochastics_dimension-12" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">addValue</span><span class="op">(</span><span class="st">"Level_"</span> <span class="op">+</span> i<span class="op">,</span> <span class="op">(</span>context<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-13"><a href="#lst-stochastics_plugin_stochastics_dimension-13" aria-hidden="true" tabindex="-1"></a>            StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span> stochasticsPluginDataBuilder <span class="op">=</span> context</span>
+<span id="lst-stochastics_plugin_stochastics_dimension-14"><a href="#lst-stochastics_plugin_stochastics_dimension-14" aria-hidden="true" tabindex="-1"></a>                    <span class="op">.</span><span class="fu">getPluginDataBuilder</span><span class="op">(</span>StochasticsPluginData<span class="op">.</span><span class="fu">Builder</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-15"><a href="#lst-stochastics_plugin_stochastics_dimension-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">long</span> seedValue <span class="op">=</span> seedValues<span class="op">.</span><span class="fu">get</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-16"><a href="#lst-stochastics_plugin_stochastics_dimension-16" aria-hidden="true" tabindex="-1"></a>            WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span>seedValue<span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-17"><a href="#lst-stochastics_plugin_stochastics_dimension-17" aria-hidden="true" tabindex="-1"></a>            stochasticsPluginDataBuilder<span class="op">.</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-18"><a href="#lst-stochastics_plugin_stochastics_dimension-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-19"><a href="#lst-stochastics_plugin_stochastics_dimension-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">ArrayList</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> result <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;();</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-20"><a href="#lst-stochastics_plugin_stochastics_dimension-20" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Integer</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>i<span class="op">));</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-21"><a href="#lst-stochastics_plugin_stochastics_dimension-21" aria-hidden="true" tabindex="-1"></a>            result<span class="op">.</span><span class="fu">add</span><span class="op">(</span><span class="bu">Long</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>seedValue<span class="op">)</span> <span class="op">+</span> <span class="st">"L"</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-22"><a href="#lst-stochastics_plugin_stochastics_dimension-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-23"><a href="#lst-stochastics_plugin_stochastics_dimension-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-24"><a href="#lst-stochastics_plugin_stochastics_dimension-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-25"><a href="#lst-stochastics_plugin_stochastics_dimension-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-26"><a href="#lst-stochastics_plugin_stochastics_dimension-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-27"><a href="#lst-stochastics_plugin_stochastics_dimension-27" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed index"</span><span class="op">);</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-28"><a href="#lst-stochastics_plugin_stochastics_dimension-28" aria-hidden="true" tabindex="-1"></a>    builder<span class="op">.</span><span class="fu">addMetaDatum</span><span class="op">(</span><span class="st">"seed value"</span><span class="op">);</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-29"><a href="#lst-stochastics_plugin_stochastics_dimension-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-30"><a href="#lst-stochastics_plugin_stochastics_dimension-30" aria-hidden="true" tabindex="-1"></a>    FunctionalDimensionData functionalDimensionData <span class="op">=</span> builder<span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-31"><a href="#lst-stochastics_plugin_stochastics_dimension-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">new</span> <span class="fu">FunctionalDimension</span><span class="op">(</span>functionalDimensionData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_stochastics_dimension-32"><a href="#lst-stochastics_plugin_stochastics_dimension-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div id="lst-stochastics_plugin_example_11_B" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
+<figure class="quarto-float quarto-float-lst figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-stochastics_plugin_example_11_B-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Code Block&nbsp;3.4: The experiment uses the stochastics dimension, resulting in twelve scenarios.
+</figcaption>
+<div aria-describedby="lst-stochastics_plugin_example_11_B-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="sourceCode cell-code" id="lst-stochastics_plugin_example_11_B"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-stochastics_plugin_example_11_B-1"><a href="#lst-stochastics_plugin_example_11_B-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-stochastics_plugin_example_11_B-2"><a href="#lst-stochastics_plugin_example_11_B-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-3"><a href="#lst-stochastics_plugin_example_11_B-3" aria-hidden="true" tabindex="-1"></a>    DiseasePluginData diseasePluginData <span class="op">=</span> <span class="fu">getDiseasePluginData</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-4"><a href="#lst-stochastics_plugin_example_11_B-4" aria-hidden="true" tabindex="-1"></a>    Plugin diseasePlugin <span class="op">=</span> DiseasePlugin<span class="op">.</span><span class="fu">getDiseasePlugin</span><span class="op">(</span>diseasePluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_B-5"><a href="#lst-stochastics_plugin_example_11_B-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-6"><a href="#lst-stochastics_plugin_example_11_B-6" aria-hidden="true" tabindex="-1"></a>    PolicyPluginData policyPluginData <span class="op">=</span> <span class="fu">getPolicyPluginData</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-7"><a href="#lst-stochastics_plugin_example_11_B-7" aria-hidden="true" tabindex="-1"></a>    Plugin policyPlugin <span class="op">=</span> PolicyPlugin<span class="op">.</span><span class="fu">getPolicyPlugin</span><span class="op">(</span>policyPluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_B-8"><a href="#lst-stochastics_plugin_example_11_B-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-9"><a href="#lst-stochastics_plugin_example_11_B-9" aria-hidden="true" tabindex="-1"></a>    Plugin modelPlugin <span class="op">=</span> ModelPlugin<span class="op">.</span><span class="fu">getModelPlugin</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-10"><a href="#lst-stochastics_plugin_example_11_B-10" aria-hidden="true" tabindex="-1"></a>    WellState wellState <span class="op">=</span> WellState<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setSeed</span><span class="op">(</span><span class="dv">0</span><span class="op">).</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-11"><a href="#lst-stochastics_plugin_example_11_B-11" aria-hidden="true" tabindex="-1"></a>    StochasticsPluginData stochasticsPluginData <span class="op">=</span> StochasticsPluginData<span class="op">.</span><span class="fu">builder</span><span class="op">().</span><span class="fu">setMainRNGState</span><span class="op">(</span>wellState<span class="op">)</span></span>
+<span id="lst-stochastics_plugin_example_11_B-12"><a href="#lst-stochastics_plugin_example_11_B-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-13"><a href="#lst-stochastics_plugin_example_11_B-13" aria-hidden="true" tabindex="-1"></a>    Plugin stochasticsPlugin <span class="op">=</span> StochasticsPlugin<span class="op">.</span><span class="fu">getStochasticsPlugin</span><span class="op">(</span>stochasticsPluginData<span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_B-14"><a href="#lst-stochastics_plugin_example_11_B-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-15"><a href="#lst-stochastics_plugin_example_11_B-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Dimension</span> policyDimension <span class="op">=</span> <span class="fu">getPolicyDimension</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-16"><a href="#lst-stochastics_plugin_example_11_B-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Dimension</span> stochasticsDimension <span class="op">=</span> <span class="fu">getStochasticsDimension</span><span class="op">(</span><span class="dv">539847398756272L</span><span class="op">);</span></span>
+<span id="lst-stochastics_plugin_example_11_B-17"><a href="#lst-stochastics_plugin_example_11_B-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-18"><a href="#lst-stochastics_plugin_example_11_B-18" aria-hidden="true" tabindex="-1"></a>    ExperimentParameterData experimentParameterData <span class="op">=</span> ExperimentParameterData<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-19"><a href="#lst-stochastics_plugin_example_11_B-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setThreadCount</span><span class="op">(</span><span class="dv">4</span><span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-20"><a href="#lst-stochastics_plugin_example_11_B-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-21"><a href="#lst-stochastics_plugin_example_11_B-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-stochastics_plugin_example_11_B-22"><a href="#lst-stochastics_plugin_example_11_B-22" aria-hidden="true" tabindex="-1"></a>    Experiment<span class="op">.</span><span class="fu">builder</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-23"><a href="#lst-stochastics_plugin_example_11_B-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>stochasticsPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-24"><a href="#lst-stochastics_plugin_example_11_B-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>diseasePlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-25"><a href="#lst-stochastics_plugin_example_11_B-25" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>modelPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-26"><a href="#lst-stochastics_plugin_example_11_B-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPlugin</span><span class="op">(</span>policyPlugin<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-27"><a href="#lst-stochastics_plugin_example_11_B-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span>policyDimension<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-28"><a href="#lst-stochastics_plugin_example_11_B-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addDimension</span><span class="op">(</span>stochasticsDimension<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-29"><a href="#lst-stochastics_plugin_example_11_B-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addExperimentContextConsumer</span><span class="op">(</span><span class="kw">new</span> <span class="fu">SimpleOutputConsumer</span><span class="op">())</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-30"><a href="#lst-stochastics_plugin_example_11_B-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">setExperimentParameterData</span><span class="op">(</span>experimentParameterData<span class="op">)</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-31"><a href="#lst-stochastics_plugin_example_11_B-31" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">build</span><span class="op">()</span><span class="co">//</span></span>
+<span id="lst-stochastics_plugin_example_11_B-32"><a href="#lst-stochastics_plugin_example_11_B-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">execute</span><span class="op">();</span></span>
+<span id="lst-stochastics_plugin_example_11_B-33"><a href="#lst-stochastics_plugin_example_11_B-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</figure>
+</div>
+</div>
+<p>The resulting output shows the varying random number generation:</p>
+<div class="cell">
+<div id="fig-stochastics_plugin_11_B_output" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-stochastics_plugin_11_B_output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: The output show that twelve scearnios result in 36 output lines since the model actor update R0 three times per scenario.
+</figcaption>
+<div aria-describedby="fig-stochastics_plugin_11_B_output-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
+<table class="table" style="font-family: monospace; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+scenario
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+school_closing_infection_rate
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+seed_index
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+seed_value
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+output
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4595120508977955 at time = 5.672294645832067
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4595120508977955 at time = 5.672294645832067
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.672857576347001 at time = 9.396161237311702
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4595120508977955 at time = 5.672294645832067
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4595120508977955 at time = 5.672294645832067
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4552243930124602 at time = 9.545450999459224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.672857576347001 at time = 9.396161237311702
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.672857576347001 at time = 9.396161237311702
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.672857576347001 at time = 9.396161237311702
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4552243930124602 at time = 9.545450999459224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4552243930124602 at time = 9.545450999459224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+1768604912325913878L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4552243930124602 at time = 9.545450999459224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.7124977513361193 at time = 1.878219018807409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4297609713254456 at time = 2.4215934269433106
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.5167619787625548 at time = 5.992476899450338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.7124977513361193 at time = 1.878219018807409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4297609713254456 at time = 2.4215934269433106
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.5167619787625548 at time = 5.992476899450338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.7124977513361193 at time = 1.878219018807409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4297609713254456 at time = 2.4215934269433106
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.5167619787625548 at time = 5.992476899450338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.7124977513361193 at time = 1.878219018807409
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.4297609713254456 at time = 2.4215934269433106
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+2407662077113051075L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.5167619787625548 at time = 5.992476899450338
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9665140789775497 at time = 4.990978097055602
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9525439902956225 at time = 6.227836574620975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+0.1
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.8972135699711736 at time = 7.764180353240558
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9665140789775497 at time = 4.990978097055602
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9525439902956225 at time = 6.227836574620975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+0.05
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.8972135699711736 at time = 7.764180353240558
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9665140789775497 at time = 4.990978097055602
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9525439902956225 at time = 6.227836574620975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+0.15
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.8972135699711736 at time = 7.764180353240558
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9665140789775497 at time = 4.990978097055602
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.9525439902956225 at time = 6.227836574620975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+0.2
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+-2698580492431892402L
+</td>
+<td style="text-align:left;min-width: 600px; ">
+setting R0 to 1.8972135699711736 at time = 7.764180353240558
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./ch02-GettingStarted.html" class="pagination-link" aria-label="Getting Started">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Getting Started</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./ch04-ReportsPlugin.html" class="pagination-link" aria-label="Reports Plugin">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reports Plugin</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

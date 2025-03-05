@@ -1,6 +1,0 @@
-/* start code_ref=actors_lesson_3_output|code_cap=Output from the single actor as it initializes.*/
-plugin being initialized -- we will add one actor
-actor being initialized
-my id = ActorId [id=0]
-time = 0.0
-/* end */
