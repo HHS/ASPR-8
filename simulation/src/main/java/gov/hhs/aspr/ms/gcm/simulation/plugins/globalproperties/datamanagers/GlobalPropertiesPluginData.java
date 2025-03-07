@@ -231,6 +231,9 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -240,10 +243,13 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			result = prime * result + ((globalPropertyDefinitions == null) ? 0 : globalPropertyDefinitions.hashCode());
 			result = prime * result + ((globalPropertyTimes == null) ? 0 : globalPropertyTimes.hashCode());
 			result = prime * result + ((globalPropertyValues == null) ? 0 : globalPropertyValues.hashCode());
-			result = prime * result + (locked ? 1231 : 1237);
 			return result;
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if
+		 * their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -281,12 +287,8 @@ public final class GlobalPropertiesPluginData implements PluginData {
 			} else if (!globalPropertyValues.equals(other.globalPropertyValues)) {
 				return false;
 			}
-			if (locked != other.locked) {
-				return false;
-			}
 			return true;
 		}
-
 	}
 
 	/**
@@ -430,6 +432,9 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -438,6 +443,10 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		return result;
 	}
 
+	/**
+	 * Two {@link GlobalPropertiesPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
