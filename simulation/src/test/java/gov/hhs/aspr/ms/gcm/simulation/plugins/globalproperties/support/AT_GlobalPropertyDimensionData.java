@@ -272,7 +272,7 @@ public class AT_GlobalPropertyDimensionData {
 			hashCodes.add(globalPropertyDimensionData.hashCode());
 		}
 		
-		assertEquals(100,hashCodes.size());
+		assertEquals(100, hashCodes.size());
     }
 
     @Test

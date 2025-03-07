@@ -87,7 +87,7 @@ public class AT_SimpleGlobalPropertyId {
 			}
 		}
 
-		// different inputs yield unequal plugin SimpleGlobalPropertyIds
+		// different inputs yield unequal SimpleGlobalPropertyIds
 		Set<SimpleGlobalPropertyId> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			SimpleGlobalPropertyId simpleGlobalPropertyId = getRandomSimpleGlobalPropertyId(randomGenerator.nextLong());
