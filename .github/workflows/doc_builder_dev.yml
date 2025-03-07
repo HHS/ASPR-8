@@ -21,8 +21,18 @@ jobs:
           sudo add-apt-repository 'deb http://mirrors.kernel.org/ubuntu focal-updates main'
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
+          libssl-dev \
           libcurl4-openssl-dev \
-          libfontconfig1-dev
+          unixodbc-dev \
+          libxml2-dev \
+          libmariadb-dev \
+          libfontconfig1-dev \
+          libharfbuzz-dev \
+          libfribidi-dev \
+          libfreetype6-dev \
+          libpng-dev \
+          libtiff5-dev \
+          libjpeg-dev
 
       - name: Install R
         uses: r-lib/actions/setup-r@v2
