@@ -43,6 +43,11 @@ jobs:
           cache-version: 1
           working-directory: docgen
 
+      - name: Install renv dependencies
+        run: renv::install()
+        shell: Rscript {0}
+        working-directory: docgen
+        
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
