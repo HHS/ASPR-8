@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
@@ -180,27 +179,52 @@ public final class GlobalPropertyDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+        /**
+         * Standard implementation consistent with the {@link #equals(Object)} method
+         */
         @Override
         public int hashCode() {
-            return Objects.hash(levelNames, values, globalPropertyId, assignmentTime);
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((levelNames == null) ? 0 : levelNames.hashCode());
+            result = prime * result + ((values == null) ? 0 : values.hashCode());
+            result = prime * result + ((globalPropertyId == null) ? 0 : globalPropertyId.hashCode());
+            long temp;
+            temp = Double.doubleToLongBits(assignmentTime);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            return result;
         }
 
+        /**
+         * Two {@link Data} instances are equal if and only if their inputs are equal.
+         */
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null) {
+            if (obj == null)
                 return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (getClass() != obj.getClass())
                 return false;
-            }
             Data other = (Data) obj;
-            return Objects.equals(levelNames, other.levelNames)
-                    && Objects.equals(values, other.values)
-                    && Objects.equals(globalPropertyId, other.globalPropertyId)
-                    && assignmentTime == other.assignmentTime;
+            if (levelNames == null) {
+                if (other.levelNames != null)
+                    return false;
+            } else if (!levelNames.equals(other.levelNames))
+                return false;
+            if (values == null) {
+                if (other.values != null)
+                    return false;
+            } else if (!values.equals(other.values))
+                return false;
+            if (globalPropertyId == null) {
+                if (other.globalPropertyId != null)
+                    return false;
+            } else if (!globalPropertyId.equals(other.globalPropertyId))
+                return false;
+            if (Double.doubleToLongBits(assignmentTime) != Double.doubleToLongBits(other.assignmentTime))
+                return false;
+            return true;
         }
 
         @Override
@@ -280,24 +304,36 @@ public final class GlobalPropertyDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(data);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((data == null) ? 0 : data.hashCode());
+        return result;
     }
 
+    /**
+     * Two {@link GlobalPropertyDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         GlobalPropertyDimensionData other = (GlobalPropertyDimensionData) obj;
-        return Objects.equals(data, other.data);
+        if (data == null) {
+            if (other.data != null)
+                return false;
+        } else if (!data.equals(other.data))
+            return false;
+        return true;
     }
 
     @Override
