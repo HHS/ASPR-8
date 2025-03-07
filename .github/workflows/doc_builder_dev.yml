@@ -53,5 +53,5 @@ jobs:
         with:
           target: gh-pages
           path: docgen
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
