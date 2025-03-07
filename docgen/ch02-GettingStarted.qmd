@@ -1,0 +1,868 @@
+# Getting Started
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'svg') # set output device to svg
+```
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+We start with a set of practical lessons that will help clarify the core concepts of GCM. The lessons generally build on one another and should be taken in order. You are encouraged to code along with the lessons. The full set of lessons are included in the main code repository as maven-based, standalone Java projects.
+
+## Hello World Lesson (Lesson 1)
+
+Our first lesson is a very reduced "Hello World" example where we will execute the simulation with one line of code.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$hello_world_short$code_cap
+#| code: !expr fig$hello_world_short$code
+#| echo: true
+```
+
+With this one line we have created and executed a simulation.  Since the simulation had no actors or data managers there was nothing to do and so it terminated immediately. Let's analyze the line in a more drawn out form:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$hello_world_long$code_cap
+#| code: !expr fig$hello_world_long$code
+#| echo: true
+```
+
+The simulation does not have a constructor.  Instead it uses a static builder class that creates the simulation from various arguments.  The builder is immediately capable of building a simulation instance so we will skip giving it any more information.  The simulation is only capable of executing, so we execute it.
+
+## Plugins Lesson (Lesson 2)
+
+Models are made of plugins. In this lesson(Example2) we will add a single plugin to the simulation and execute it.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugins_intro_to_plugins$code_cap
+#| code: !expr fig$plugins_intro_to_plugins$code
+#| echo: true
+```
+
+The first thing we will need to do to build a plugin is to identify it. The PluginId is a marker interface -- it has no methods and serves to help differentiate between plugin id values and other identifiers. The SimplePluginId is a convenience implementor of PluginId and will wrap any object as an identifier. In this case we use the string "example plugin", but you are free to implement them however best fits your needs.
+
+Next we build the plugin. The Plugin class implements all plugins and you can provide several arguments to its builder to specify the contents and behavior of your plugin. A plugin is composed of four items:
+
+1.  An id
+2.  Dependencies on other plugins
+3.  Data objects used to initialize data managers, actors and reports
+4.  An initializer to load the data into the simulation
+
+For now, we will only need to add the plugin id and build the plugin.
+
+Finally, we build the simulation by adding the plugin and then executing as usual. The result is the same as the previous lesson: nothing happens. However, internally, the simulation did add the plugin and found it had no information other than its id.
+
+## Actors Lesson (Lesson 3)
+
+### Contexts {.unnumbered}
+
+In all that follows(Example3), we will encounter various context objects. Contexts are interfaces into the simulation that are tailored to the thing using the context. For example, an ActorContext provides everything that an actor will need to interact with the simulation. Similarly, a DataManager context provides the capabilities needed by data managers.
+
+The first context we encounter is the PluginContext. It provides the plugin with the following abilities:
+
+1.  Add an actor to the simulation
+2.  Add a data manager to the simulation
+3.  Add a report to the simulation
+4.  Get plugin data
+
+The PluginContext is passed to the plugin's initializer and is used to add all data managers, all initial data and any actors or reports that need to exist at the beginning of the simulation run.
+
+The next context will be the ActorContext. It provides actors with a wide array of capabilities that we demonstrate later. For now, the important takeaway is that being granted a context implicitly identifies the recipient as having a particular role in the simulation.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$actors_intro_to_plugin_context$code_cap
+#| code: !expr fig$actors_intro_to_plugin_context$code
+#| echo: true
+```
+
+We are setting the plugin's initializer. The initializer is a method that consumes a PluginContext and returns void. For this example, we use a static local method for our initializer:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$actors_plugin_initializer$code_cap
+#| code: !expr fig$actors_plugin_initializer$code
+#| echo: true
+```
+
+When the simulation starts up its execution, one of the first things it will do is to execute each plugin's initializer to give the plugin an opportunity to add actors, reports and data managers to the simulation before time and events begin to flow. Adding an actor is done with another consumer, but this time it is a consumer of ActorContext.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$actors_actor_init$code_cap
+#| code: !expr fig$actors_actor_init$code
+#| echo: true
+```
+
+After the plugins are initialized, the actors and data managers are next. For this example, the actor is initialized and it prints a few statements and ceases activity. Here is the resulting console output:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$actors_lesson_3_output$code_cap
+#| label: fig-actors_lesson_3_output
+metadata$actors_lesson_3_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+We can replace the local method references above with lamdas to be more succinct.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$actors_actor_context_using_lambdas$code_cap
+#| code: !expr fig$actors_actor_context_using_lambdas$code
+#| echo: true
+```
+
+## Data Managers Lesson (Lesson 4)
+
+We extend the previous lesson by slightly altering the actor and adding a data manager. But first let's list some of the attributes of data managers, actors and reports to better understand the roles they play in the simulation. Reports are presented in detail in a later chapter.
+
+-   Data Managers
+    -   Exist for the full duration of the simulation
+    -   Contain and maintain the entire state of the world.
+    -   Are highly stateful
+    -   Produce events in reaction to state changes
+    -   Interact with other data managers via events
+    -   Do not have a set of objectives. They are not trying to achieve some particular state of the world
+    -   Are narrowly focused on some particular aspect of the world, but are concerned with all instances of that aspect
+    -   Are added as instances and are limited to a single instance per class type
+-   Actors
+    -   May be added and removed over time
+    -   Are not considered to be part of the world
+    -   Are generally stateless
+    -   React to but do not produce events
+    -   May access any data manager
+    -   Have objectives. They contain the business logic of the model and are trying to achieve some particular state of the world
+    -   Are concerned with many aspects of the world, but often focused on a particular subset of world
+    -   Are added as consumers of ActorContext and may be composed of any such consumers
+
+<!-- -->
+
+-   Reports
+
+    -   Exist for the full duration of the simulation
+    -   Are not considered to be part of the world
+    -   React to but do not produce events
+    -   May access any data manager
+    -   Do not have a set of objectives
+    -   Cannot mutate data and have no effect on the outcome of the simulation
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$data_managers_intro_to_data_managers$code_cap
+#| code: !expr fig$data_managers_intro_to_data_managers$code
+#| echo: true
+```
+
+We add an instance of ExampleDataManager to the simulation. Unlike the actor, where we pass a consumer of context, we need to provide an actual instance of a data manager. Note that the ExampleDataManager extends the base class DataManager. The base class provides only the init() method to override and you must include the super.init(dataManagerContext) call as its first line. This is done to ensure that each data manager is initialized exactly once by the simulation.
+
+The ExampleDataManager has two (completely arbitrary) data fields alpha and beta and provides both getters and setters for each.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$data_managers_example_data_manager$code_cap
+#| code: !expr fig$data_managers_example_data_manager$code
+#| echo: true
+```
+
+The actor is now specified via the ExampleActor class, @lst-data_managers_example_actor. Most actors contain enough code that we usually put that code into a separate class rather than a lambda statement as we did in the previous lesson. Note that the init() method has the correct method signature of being a consumer of ActorContext.
+
+### Plans {.unnumbered}
+
+In GCM, an actor can do three things:
+
+1.  **Observe**: Observation can be done directly by gaining access to a data manager and then getting a value from that data manager. Observation can be done indirectly by subscribing to events. We will cover that option later.
+2.  **Act**: A mutation to some data manager's managed data.
+3.  **Plan**: At some time in the future, the actor will take some particular action
+
+Actions in GCM are always executed in the current moment in the simulation. Unlike many future event simulations where events are queued for future execution, GCM allows an actor to plan for an action or observation in the future. The plan is a consumer of ActorContext and can be a static method, member method or a lambda. The plan is registered with the simulation and is executed only when time has moved forward to the plan's scheduled time. There is no requirement that the plan do anything at all. This allows the flexibility to re-evaluate the circumstances of the planned action and choose to take appropriate action at that time. Plans are queued in GCM by their associated planning times and it is this queue that dictates the flow of time. For example, suppose the simulation finds the first plan is scheduled for time= 2.4 days. The current time = 0 days and the simulation progresses time to 2.4 days and then invokes the plan. Plans are always privately managed by the actor that owns the plan and no other actor or data manager has any insight into those plans.
+
+In this example, the actor is initialized at time= 0 and generates 10 plans to increment the value of the alpha in the ExampleManager. Each time the ExampleManager changes the value of alpha, it outputs to the console a description of the change.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$data_managers_example_actor$code_cap
+#| code: !expr fig$data_managers_example_actor$code
+#| echo: true
+```
+
+The output from the simulation is:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$data_managers_lesson_4_output$code_cap
+#| label: fig-data_managers_lesson_4_output
+metadata$data_managers_lesson_4_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+## Events Lesson (Lesson 5)
+
+An event in GCM is a notification of a data change to the state of a data manager. In this example we will introduce two events corresponding to the two changes to the ExampleDataManager. Both events document the previous value and current value (at the time when the event was generated) and are immutable data classes.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_alpha_change_event$code_cap
+#| code: !expr fig$events_alpha_change_event$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_beta_change_event$code_cap
+#| code: !expr fig$events_beta_change_event$code
+#| echo: true
+```
+
+Each is generated by the ExampleDataManager, @lst-events_intro_to_event_generation, when the alpha or beta values are mutated by releasing the events through the DataManagerContext to the simulation:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_intro_to_event_generation$code_cap
+#| code: !expr fig$events_intro_to_event_generation$code
+#| echo: true
+```
+
+There are three actors in this example:
+
+1.  Actor1 makes changes to both the alpha and beta values at 1 and 3.5 day intervals respectively.
+
+2.  Actor2 subscribes to AlphaChangeEvent events and reports to console what it receives.
+
+3.  Actor3 does the same for BetaChangeEvent events
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_actor_1_mutates_values$code_cap
+#| code: !expr fig$events_actor_1_mutates_values$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_actor_2_reacts_to_AlphaChangeEvent$code_cap
+#| code: !expr fig$events_actor_2_reacts_to_AlphaChangeEvent$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$events_actor_3_reacts_to_BetaChangeEvent$code_cap
+#| code: !expr fig$events_actor_3_reacts_to_BetaChangeEvent$code
+#| echo: true
+```
+
+The resulting console output shows Actor2 and Actor3 observing the expected events at the expected times:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$events_lesson_5_output$code_cap
+#| label: fig-events_lesson_5_output
+metadata$events_lesson_5_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace", font_size = "14")
+```
+
+### Event Filters {.unnumbered}
+
+Subscription to events for data managers and actors differ a bit. Data managers subscribe directly to the event type since they are generally interested in all events of some given type. Actors are often more selective and would like a predicate (in Java, the predicate is a function that returns a Boolean) to return true before they handle an event. For example, an actor wants to subscribe for person property change events, but is only interested in those events indicate a change to a particular person property. Since there will likely be dozens of person properties, the actor would get stimulated many times over, only to ignore the event most of the time. Unfortunately, a simple predicate added during the subscription process will not suffice since that predicate would have to be executed for each event and we will have gained little efficiency. Instead, GCM uses the EventFilter class that is essentially a predicate grouping mechanism that allows the subscription engine to group subscribers into a tree structure so that a single predicate execution might suffice to allow an event to be passed to multiple subscribers.
+
+The event filter is logically composed of functions and target values as pairs. Each function takes in an event and releases a value. If that value is equal to the target value, then the event passes that function. An event passes the event filter if it passes all the functions that compose the filter. The construction of the builder for event filters requires the event class reference. The addition of function-value pairs requires that the functions take in only events of the given class reference, but may return any non-null object value. The simple examples given so far have only specified the event class and thus every event of that type will pass the event filter.
+
+The functions that compose the event filter are often non-meaningfully comparable. For example, two functions that return the same values for every event may be separate instances of lambda code that are logically equal, but are not equal from the point of view of Java. To get around this, each function is associated with an id value and the id and function pair are called an IdentifiableFunction. Two such functions will be equal if and only if their ids are equal without regard to what their functions actually do. Thus is it very important that the mapping of id to actual logical function be stable and the usual best practice is to manage that mapping in a curated manner via the data manager that is associated with the plugin that defines the event. As we examine plugins that define events, we will encounter event filters that are managed by data managers and we will generally not generate event filters directly in the actor code.
+
+## Plugin Dependencies Lesson (Lesson 6)
+
+So far we have covered what actors and data managers do and that they are introduced into the simulation via plugins. Over the next lessons we take a closer look at the plugins. This lesson starts with creating a more realistic set of plugins arranged into separate java packages.
+
+-   People plugin
+    -   Defines a person id
+    -   Adds the PersonDataManager for tracking people
+    -   Adds events for the the addition and removal of people
+-   Family Plugin
+    -   Defines a family id
+    -   Adds the FamilyDataManager for grouping people into families
+-   Vaccine Plugin
+    -   Adds the VaccineDataManager for tracking which people have been vaccinated
+-   Model Plugin
+    -   Contains the ModelActor class to add people organized into family structures and vaccinate some of those people
+
+Here are the classes that implement this example:
+
+### People Plugin: {.unnumbered}
+
+The people plugin defines a PersonId as a simple, immutable wrapper to an int value. The PersonDataManager tracks people via PersonId values and allows for the addition and removal of people. PersonId values are generated in order and never reused. Events are generated when people are added or removed.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_defining_a_person_id$code_cap
+#| code: !expr fig$plugin_dependencies_defining_a_person_id$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_defining_a_person_data_manager$code_cap
+#| code: !expr fig$plugin_dependencies_defining_a_person_data_manager$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_person_removal_event$code_cap
+#| code: !expr fig$plugin_dependencies_person_removal_event$code
+#| echo: true
+```
+
+### Family Plugin {.unnumbered}
+
+The family plugin defines a FamilyId as a simple, immutable wrapper to an int value. The FamilyDataManager tracks family membership via two-way mappings of PersonId to FamilyId. In this example, families can only be added and people can only be added to families. However, people can be removed via the PeoplePlugin so the FamilyDataManager subscribes to PersonRemovalEvent(s) and thus removes the people from families.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_defining_a_family_id$code_cap
+#| code: !expr fig$plugin_dependencies_defining_a_family_id$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_family_data_manager$code_cap
+#| code: !expr fig$plugin_dependencies_family_data_manager$code
+#| echo: true
+```
+
+### Vaccine Plugin {.unnumbered}
+
+The vaccine plugin contains only the VaccineDataManager which tracks by PersonId which people have been vaccinated. Like the FamilyDataManager, it too subscribes to PersonRemovalEvent(s) and adjusts its data accordingly.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_vaccine_data_manager$code_cap
+#| code: !expr fig$plugin_dependencies_vaccine_data_manager$code
+#| echo: true
+```
+
+### Model Plugin {.unnumbered}
+
+The model plugin contains a single actor, the ModelActor, that serves to:
+
+-   Add people to the simulation
+-   Group them into families
+-   Vaccinate some people
+-   Demonstrate that events cascade
+
+### Connecting the Plugins {.unnumbered}
+
+Both the family and vaccine plugins depend on the concept of a person as implemented by the PersonId class. They also need to respond when a person is removed from the simulation and do so by handling the corresponding PersonRemovalEvent generated by the person plugin. We build these dependencies via the Plugin.Builder class in the example code below.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_dependencies_connecting_the_plugins$code_cap
+#| code: !expr fig$plugin_dependencies_connecting_the_plugins$code
+#| echo: true
+```
+
+Note the addition of the dependency on the people plugin via its id when adding both the vaccine and family plugins. The order of addition of the plugins to the simulation is relatively unimportant as is ordering in general in any of the builder patterns used in GCM.
+
+The resulting output:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$plugin_dependencies_output$code_cap
+#| label: fig-plugin_dependencies_output
+metadata$plugin_dependencies_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+## Plugin Dependency Graph Lesson (Lesson 7)
+
+We extend the previous lesson by adding an additional dependency of the vaccine plugin on the family plugin. This will allow the VaccineDataManager to answer queries about which members of a family have yet to be vaccinated.
+
+From the VaccineDataManager:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$dag_dependent_query$code_cap
+#| code: !expr fig$dag_dependent_query$code
+#| echo: true
+```
+
+The plugins in this example form a dependency pattern:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$dag_simple_diagram
+#| label: fig-dag_simple_diagram
+#| out-width: 80%
+knitr::include_graphics("inputimages/dag_simple_diagram.svg")
+```
+
+All plugin dependencies in GCM form similar directed, acyclic graphs (DAGs). There can be no loops in the dependency graph, but the graph does not have to be fully connected. The dependencies reflect the requirements of the data managers within a plugin to access data managers in other plugins. This pattern drives the order in which events are presented to data managers. This way, a data manager is guaranteed that any event that it is processing has already been fully processed by all the data managers it depends on.
+
+In this lesson, the VaccineDataManager and the FamilyDataManager have both subscribed to the PersonRemovalEvent generated by the PersonDataManager. Since the VaccineDataManager also has a dependency on the FamilyDataManager, the VaccineDataManager should receive the event after the FamilyDataManager. Events cascade through the subscribed data managers in an order that is consistent with the plugin dependency DAG.
+
+## Plugin Data Lesson (Lesson 8)
+
+The Example code in the last lesson was a bit verbose and can be improved. Identifying and generating the plugins can be included in the plugin packages by introducing classes for each id and classes for each plugin's contents. In the disease package we add a unique plugin identifier with a final static id field:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_plugin_id$code_cap
+#| code: !expr fig$plugin_data_plugin_id$code
+#| echo: true
+```
+
+We also add a static class (DiseasePlugin) that implements the construction of the plugin from the required plugin data.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_plugin$code_cap
+#| code: !expr fig$plugin_data_plugin$code
+#| echo: true
+```
+
+The plugin is initialized with a DiseasePluginData object that contains the initial values for r0, asymptomatic days and symptomatic days. Most plugins will have a single plugin data object, but some may not need any and some may be designed with multiple such classes. All such classes must implement the PluginData interface:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_interface$code_cap
+#| code: !expr fig$plugin_data_interface$code
+#| echo: true
+```
+
+Plugin data classes must be threadsafe since they will be shared between multiple simulations running on separate threads. This stands in contrast to the actors and data managers which are created and managed in the thread of a single simulation. The best practice is to make plugin data classes immutable since immutable classes in Java are guaranteed to be threadsafe. For a class to be immutable in Java it must meet three conditions:
+
+1.  It cannot be mutated, i.e. it has no setters and no public fields.
+2.  All its fields are marked final.
+3.  Its constructor(s) do not pass reference to self. No reference to the newly created object leaks out before construction is complete.
+
+Besides carrying whatever data is needed by the plugin, the PluginData implementor must provide a PluginDataBuilder:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_plugin_builder$code_cap
+#| code: !expr fig$plugin_data_plugin_builder$code
+#| echo: true
+```
+
+The role of the plugin data builder will be explored in the next lesson where it will be used to make alterable copies of plugin data to drive the experiment. For now, let's examine the DiseasePluginData class. It is composed several sections:
+
+-   A data class
+-   A static builder class
+-   A single data field and private constructor
+-   Getter methods for the data
+-   A clone builder method
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_internal_data$code_cap
+#| code: !expr fig$plugin_data_internal_data$code
+#| echo: true
+```
+
+The Data class is private and just contains the fields needed by the plugin. Note that it is a mutable class and that its fields are not final. It will be used by the builder class later to store values. Its constructors are private and allow one Data object to be copied from another.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_builder_class$code_cap
+#| code: !expr fig$plugin_data_builder_class$code
+#| echo: true
+```
+
+The static builder class is used instead of a constructor. The use of builder classes for plugin data objects is key to the creation of experiments covered in the next lesson. For now, let's concentrate on what the builder does. First, it has setter methods for each of the data fields and each such method returns the builder instance to support method chaining. Next, the build() method returns the DiseasePluginData. Finally, the builder's own constructor is private and is accessed via a static method. This is done to grant a syntax that is more compatible with the method chaining.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_private_constructor$code_cap
+#| code: !expr fig$plugin_data_private_constructor$code
+#| echo: true
+```
+
+After the builder collects the data, it passes that data to the instance of the DiseasePluginData which is stored as a final field. Recall that the field must be final in an immutable class.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_accessor_methods$code_cap
+#| code: !expr fig$plugin_data_accessor_methods$code
+#| echo: true
+```
+
+The getter methods for each field value in the data are added. There are no corresponding setter methods.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_clone_builder$code_cap
+#| code: !expr fig$plugin_data_clone_builder$code
+#| echo: true
+```
+
+We end the class with the getCloneBuilder method.
+
+::: callout-note
+## Terminology Note
+
+Our use of the term clone is intuitive but may cause some confusion. What we are doing is copying the data in the DiseasePluginData and placing into a builder so that it can be further mutated later in the experiment. Java formally defines the term clone as a part of the Object class definition and implements it with a protected method clone(). Use of the Object.clone() method has generally fallen out of favor in Java but still has some proponents/use cases.
+:::
+
+The method returns a new Builder that has reference to the current data object. The resulting example class is easier to read and more succinct:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$plugin_data_example_runner$code_cap
+#| code: !expr fig$plugin_data_example_runner$code
+#| echo: true
+```
+
+## Experiments Lesson (Lesson 9)
+
+So far we have mentioned that the plugin data classes play a role in executing an experiment via the **getCloneBuilder** method. Let's start with the simple experiment. We will update the last example class by replacing the Simulation execution with an Experiment execution:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiments_example_9_A$code_cap
+#| code: !expr fig$experiments_example_9_A$code
+#| echo: true
+```
+
+The experiment class has a very similar builder to the Simulation class so we only have to swap out the Simulation reference for an Experiment reference. The resulting execution created an experiment containing exactly one simulation that runs in the main thread. However, the output contains information about the status of the experiment.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$experiments_example_9_A_output$code_cap
+#| label: fig-experiments_example_9_A_output
+metadata$experiments_example_9_A_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+What happens when the experiment executes?
+
+You have contributed several plugins to the experiment and on execution the experiment generates multiple simulation runs on multiple threads. Let's examine how this is accomplished as a way to motivate this lesson's code examples.
+
+The experiment is composed of several plugins, each with zero to many plugin data objects. For purposes of the diagrams we will assume that each plugin has a single plugin data object.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_plugins_and_data
+#| label: fig-experiments_diagram_plugins_and_data
+#| out-width: 80%
+knitr::include_graphics("inputimages/experiments_diagram_plugins_and_data.svg")
+```
+
+The experiment gathers the plugin data objects and gets the plugin data builder for each. These plugin data builders will come pre-filled with the data from the original data objects.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_prefilled_data
+#| label: fig-experiments_diagram_prefilled_data
+#| out-width: 80%
+knitr::include_graphics("inputimages/experiments_diagram_prefilled_data.svg")
+```
+
+By altering the data in these builders, we generate new scenarios for the simulations to execute. GCM manages the instructions to alter the plugin data via Dimensions. Each dimension contains one to many levels.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_dimension_levels
+#| label: fig-experiments_diagram_dimension_levels
+#| out-width: 70%
+knitr::include_graphics("inputimages/experiments_diagram_dimension_levels.svg")
+```
+
+For example, we may have a dimension that alters the value of alpha from plugin data A and the value of beta from plugin data B. Each level in the dimension will set specific values for alpha and beta via the builders.
+
+::: {#fig-experiments_diagram_dimension_levels_example2 fig-cap="Example levels in a dimension"}
+| level | alpha | beta  |
+|-------|-------|-------|
+| 0     | 2.3   | FALSE |
+| 1     | 3.6   | TRUE  |
+| 2     | 4.8   | FALSE |
+:::
+
+Each level in a dimension is actually a function that takes in the builders and manipulates the content of each plugin as needed.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_level_functions
+#| label: fig-experiments_diagram_level_functions
+#| out-width: 70%
+knitr::include_graphics("inputimages/experiments_diagram_level_functions.svg")
+```
+
+Consider an experiment with two dimensions having 3 and 5 levels respectively. The number of level permutations is 3x5 = 15. Each such permutation is referred to as a scenario and the scenarios are numbered from 0 to 14. As the experiment executes, it works with each scenario id and determines for that id which levels are active for each dimension.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_scenarios_and_levels
+#| label: fig-experiments_diagram_scenarios_and_levels
+#| out-width: 80%
+knitr::include_graphics("inputimages/experiments_diagram_scenarios_and_levels.svg")
+```
+
+Each level (via its function) alters the contents of the builders in turn, resulting in a unique set of content for that scenario.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_gathering_builders
+#| label: fig-experiments_diagram_gathering_builders
+#| out-width: 80%
+knitr::include_graphics("inputimages/experiments_diagram_gathering_builders.svg")
+```
+
+The builders are then instructed by the experiment to build the plugin data objects. The resulting data objects are inserted into copies of the original plugins to produce a unique set of altered plugins that are specific to the scenario id and executed via a single simulation instance.
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr graphic$experiments_diagram_scenario_plugins
+#| label: fig-experiments_diagram_scenario_plugins
+#| out-width: 80%
+knitr::include_graphics("inputimages/experiments_diagram_scenario_plugins.svg")
+```
+
+You may have noticed that the initializer code above acquires the DiseasePluginData via the context rather than the instance passed to the getDiseasePlugin() method. This is a necessity due to experiment design and will be covered in the lessons that follow. **In general, the initializer code should always retrieve plugin data from the plugin context.**
+
+We expand the example by adding a single dimension that sets r0 to two values, generating two simulations.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiments_example_9_B$code_cap
+#| code: !expr fig$experiments_example_9_B$code
+#| echo: true
+```
+
+In the dimension we see that there are two levels and the addition of some meta data in the addMetaDatum("r0") invocation. The meta data here represents the information that each level is altering in the experiment. The main purpose of each level is to alter the state of a builder(s) but must also return meta data values to match the meta data for the dimension. The meta data of the dimension acts as a header to a table while the meta data for each level are the values in that table.
+
+The building of the dimension can be streamlined without typing out each level:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiments_example_steamlined_dimension$code_cap
+#| code: !expr fig$experiments_example_steamlined_dimension$code
+#| echo: true
+```
+
+The resulting experiment execution is more streamlined:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiments_example_9_C$code_cap
+#| code: !expr fig$experiments_example_9_C$code
+#| echo: true
+```
+
+We have turned off the experiment report progress to console in the code above. We have chosen six values for r0 in our dimension and thus we have 6 simulation executions, each having the model actor print out the contents of the DiseaseDataManager:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$experiments_output$code_cap
+#| label: fig-experiments_output
+metadata$experiments_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+We are extending the example again, reducing the r0 dimension to just three levels and introducing a dimension over the policy data. This new dimension has four levels controlling local vaccine distribution and school closing infection rates:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiements_policy_dimension$code_cap
+#| code: !expr fig$experiements_policy_dimension$code
+#| echo: true
+```
+
+We add the new dimension to the experiment:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiements_example_9_D$code_cap
+#| code: !expr fig$experiements_example_9_D$code
+#| echo: true
+```
+
+The result is now 12 executed scenarios:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$experiements_example_9_D_output_1$code_cap
+#| label: fig-experiements_example_9_D_output_1
+metadata$experiements_example_9_D_output_1$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+...
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$experiements_example_9_D_output_2$code_cap
+#| label: fig-experiements_example_9_D_output_2
+metadata$experiements_example_9_D_output_2$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+So far, the experiment has run in a single thread. We now run it in four threads by adding an ExperimentParameterData.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$experiments_example_9_E$code_cap
+#| code: !expr fig$experiments_example_9_E$code
+#| echo: true
+```
+
+The experiment runs in the main thread and the scenarios now run the four additional threads. The resulting console output a bit jumbled since the writes to the console are now coming from four simultaneous simulation runs:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$experiements_example_9_E_output$code_cap
+#| label: fig-experiements_example_9_E_output
+metadata$experiements_example_9_E_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+We will alleviate this problem as we explore how the simulation and experiment manage output.
+
+## Output Lesson (Lesson 10)
+
+So far we have only produced output by writing directly to the console in the various actors and data managers. The simulation contexts (ActorContext / ReportContext / DataManagerContext) provide for the release of output objects to an external handler (outside the simulation). In this lesson, the ModelActor class has been altered to use this mechanism:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_model_actor_init$code_cap
+#| code: !expr fig$output_model_actor_init$code
+#| echo: true
+```
+
+Data managers can release output in a completely similar way. The output objects are handled by an external handler presented during the build of the simulation:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_example_10_A$code_cap
+#| code: !expr fig$output_example_10_A$code
+#| echo: true
+```
+
+Released output objects are sent to the output consumer. In the current example, that consumer is an instance of the class OutputConsumer_A and it simply prints the object to the console:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_consumer_A$code_cap
+#| code: !expr fig$output_consumer_A$code
+#| echo: true
+```
+
+At first glance this mechanism seems simple and not particularly useful. In practice, one rarely uses the simulation directly and instead favors the experiment which has a somewhat more sophisticated handling of output. With experiments, GCM is potentially using multiple threads to execute each simulation, so output handling must be threadsafe.
+
+### Experiment Context
+
+Just as the simulation supplies contexts, the experiment uses the ExperimentContext to give output consumers a view into the ongoing experiment. It gives each output consumer several capabilities:
+
+-   Subscription to output by output class type
+-   Subscription to the opening and closing of the experiment
+-   Subscription to the opening and closing of each simulation
+-   Scenario status information
+-   Experiment and Scenario meta data
+
+In Example_10_B, we bring back the dimensions from previous lessons and will excerpt just the main method:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_example_10_B$code_cap
+#| code: !expr fig$output_example_10_B$code
+#| echo: true
+```
+
+Like the simulation, the experiment is adding a consumer for output, but this time that consumer is "consuming" an experiment context. Once the consumer receives that context, it will use it to further subscribe to output and various experiment level events.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_consumer_B$code_cap
+#| code: !expr fig$output_consumer_B$code
+#| echo: true
+```
+
+The experiment can have any number of ExperimentContext consumers and initializes each at the beginning of its execution via the accept() method. In OuputConsumer_B, the only action the consumer takes is to subscribe to all output and have that output handled by the handleOutput() method. The resulting output shows the scenario id for each line:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$output_consumer_B_output$code_cap
+#| label: fig-output_consumer_B_output
+metadata$output_consumer_B_output$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+Example_10_C switches the experiment context consumer to an instance of OuputConsumer_C which subscribes to all output types as well as the opening and closing of the experiment and all simulations (scenarios):
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_consumer_C$code_cap
+#| code: !expr fig$output_consumer_C$code
+#| echo: true
+```
+
+The resulting output shows the usual released output along with the opening and closing of each simulation:
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$output_consumer_C_output_1$code_cap
+#| label: fig-output_consumer_C_output_1
+metadata$output_consumer_C_output_1$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: !expr metadata$output_consumer_C_output_2$code_cap
+#| label: fig-output_consumer_C_output_2
+metadata$output_consumer_C_output_2$code_out %>% stringr::str_replace_all("\\n", "<br>") %>% 
+  knitr::kable(escape=FALSE, col.names = NULL, booktabs=TRUE) %>% kableExtra::kable_styling(html_font="monospace")
+```
+
+In the final example, OuputConsumer_D, we drop the output handling and demonstrate that the meta data used to build the dimensions of the experiment can be retrieved from the experiment context and used for reporting:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$output_consumer_D$code_cap
+#| code: !expr fig$output_consumer_D$code
+#| echo: true
+```
+
+The resulting output shows for each scenario the meta-data that defines that scenario:
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$output_consumer_D_output$code_cap
+#| label: fig-output_consumer_D_output
+options(knitr.kable.NA = '')
+metadata$output_consumer_D_output$code_out %>% read_table() %>% 
+  knitr::kable(format = "html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>% 
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+Recall that as the experiment executes, it utilizes multiple threads to execute the individual scenarios. Thus every experiment context consumer must be threadsafe. We have accomplished this by making each such consumer stateless. In practice, it is often necessary for experiment context consumers to be stateful and this can involve careful consideration of the use of synchronization and other concurrency issues. Fortunately, GCM provides a reporting plugin that deals with these issues and provides a general method for producing tabular reports.

@@ -1,0 +1,93 @@
+# Stochastics Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The stochastics plugin provides for the management of random number generators. It contains a default random number generator (RNG) as well as any number of RNGs associated with identifiers.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a StochasticsPluginData object that collects starting seed values for the default RNG as well as any number of RNG identifiers. These identifiers are implemented via the RandomGeneratorId interface which only specifies that such an identifier have a non-null, non-empty and stable implementation of the Object.toString() method.
+
+All RNGs in GCM are implemented using the org.apache.commons.math3.random.Well44497b random number generator. GCM introduces the class Well.java that extends the Well44497b to allow for the serialization of its internal state. The data that supports this serialization is contained in the WellState.java class that uses a standard builder pattern. Serialization concerns are beyond the scope of this chapter, so all WellState objects will be seeded with long values only.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the StochasticsDataManager that is initialized with the StochasticsPluginData.
+
+## Data Manager
+
+The data manager provides access to its RNGs via various getter methods.
+
+## (Lesson 11) Example 11A
+
+Our first example lesson uses the disease, model and policy plugins again. This time we will have the single ModelActor schedule three random times to set the R0 value to a random number between 1 and 2. Four scenarios will result from a policy based dimension that alters the school closing infection rates, which will not influence the ModelActor.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$stochastics_plugin_policy_dimension$code_cap
+#| code: !expr fig$stochastics_plugin_policy_dimension$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$stochastics_plugin_example_11_A$code_cap
+#| code: !expr fig$stochastics_plugin_example_11_A$code
+#| echo: true
+```
+
+The stochastics plugin is initialized with a seed value of zero and that seed will be used in each scenario as the initial seeding for the default random generator. Thus we expect that each scenario will have identical output.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$stochastics_plugin_11_A_output$code_cap
+#| label: fig-stochastics_plugin_11_A_output
+options(knitr.kable.NA = '')
+metadata$stochastics_plugin_11_A_output$code_out %>% read_tsv(col_types="c") %>% 
+    knitr::kable(foramt="html") %>% 
+    kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+    kableExtra::column_spec(3, width_min="600px") %>% 
+    kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+## Example 11B
+
+Our next example lesson adds a dimension used to alter the initial seed value of the stochastics plugin data to one of three values. Combined with the policy dimension, this will result in 12 scenarios.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$stochastics_plugin_stochastics_dimension$code_cap
+#| code: !expr fig$stochastics_plugin_stochastics_dimension$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$stochastics_plugin_example_11_B$code_cap
+#| code: !expr fig$stochastics_plugin_example_11_B$code
+#| echo: true
+```
+
+The resulting output shows the varying random number generation:
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$stochastics_plugin_11_B_output$code_cap
+#| label: fig-stochastics_plugin_11_B_output
+options(knitr.kable.NA = '')
+metadata$stochastics_plugin_11_B_output$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+    knitr::kable(foramt="html") %>% 
+    kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+    kableExtra::column_spec(5, width_min="600px") %>% 
+    kableExtra::scroll_box(width = "100%", height = "500px")
+```
