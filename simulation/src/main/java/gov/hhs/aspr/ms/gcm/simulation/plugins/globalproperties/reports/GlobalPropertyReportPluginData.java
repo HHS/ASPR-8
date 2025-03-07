@@ -58,6 +58,9 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -69,6 +72,9 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 			return result;
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -261,6 +267,9 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		return data.defaultInclusionPolicy;
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -269,6 +278,10 @@ public final class GlobalPropertyReportPluginData implements PluginData {
 		return result;
 	}
 
+	/**
+	 * Two {@link GlobalPropertyReportPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
