@@ -9,11 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -299,7 +301,7 @@ public class AT_GlobalPropertiesPluginData {
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyDefinition", args = {
 			GlobalPropertyId.class })
 	public void testGetGlobalPropertyDefinition() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5427251266091264753L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5427251266191264753L);
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -350,7 +352,7 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyDefinitions", args = {})
 	public void testGetGlobalPropertyDefinitions() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5427251266091264753L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5428251266091264753L);
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -437,7 +439,7 @@ public class AT_GlobalPropertiesPluginData {
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyValue", args = {
 			GlobalPropertyId.class })
 	public void testGetGlobalPropertyValue() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082794761L);
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -499,7 +501,7 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyValues", args = {})
 	public void testGetGlobalPropertyValues() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4260048639082754761L);
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -624,7 +626,7 @@ public class AT_GlobalPropertiesPluginData {
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "getGlobalPropertyTime", args = {
 			GlobalPropertyId.class })
 	public void testGetGlobalPropertyTime() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250048639082754761L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4250058639082754761L);
 
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
@@ -753,180 +755,70 @@ public class AT_GlobalPropertiesPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		// we first set up a few items that will clarify the production of
-		// plugin datas
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821418377306870L);
 
-		Object v_5 = 5;
-		Object v_12 = 12;
-		Object v_25 = 15;
-		Object v_a = "a";
-		Object v_b = "b";
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertiesPluginData pluginData = getRandomGlobalPropertiesPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
+		}
 
-		GlobalPropertyId p1 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
-		GlobalPropertyId p2 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
-
-		PropertyDefinition d1 = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(v_5)//
-				.build();
-
-		PropertyDefinition d2 = PropertyDefinition.builder()//
-				.setType(String.class)//
-				.setDefaultValue(v_a)//
-				.build();
-
-		Double t_0 = 0.0;
-		Double t_1 = 1.0;
-		Double t_2 = 2.0;
-
-		// just a single definition -- this will act as our base case
-		GlobalPropertiesPluginData g1 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.build();
-
-		// set the property value that has the same time and value as the
-		// property definition
-		GlobalPropertiesPluginData g2 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.setGlobalPropertyValue(p1, v_5, t_0)//
-				.build();
-
-		GlobalPropertiesPluginData g3 = GlobalPropertiesPluginData.builder()//
-				.setGlobalPropertyValue(p1, v_5, t_0)//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.build();
-
-		// change the value of the property
-		GlobalPropertiesPluginData g4 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.setGlobalPropertyValue(p1, v_25, t_0)//
-				.build();
-
-		// change the time of the property
-		GlobalPropertiesPluginData g5 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.setGlobalPropertyValue(p1, v_5, t_1)//
-				.build();
-
-		// introduce a new property definition
-		GlobalPropertiesPluginData g6 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.defineGlobalProperty(p2, d2, t_1)//
-				.build();
-
-		// add several values and definitions
-		GlobalPropertiesPluginData g7 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.defineGlobalProperty(p2, d2, t_1)//
-				.setGlobalPropertyValue(p1, v_25, t_2)//
-				.setGlobalPropertyValue(p2, v_b, t_2)//
-				.setGlobalPropertyValue(p1, v_12, t_1)//
-				.build();
-
-		// add the same details, but in a different order, preserving the last
-		// assignments
-		GlobalPropertiesPluginData g8 = GlobalPropertiesPluginData.builder()//
-				.setGlobalPropertyValue(p1, v_25, t_2)//
-				.defineGlobalProperty(p2, d2, t_1)//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.setGlobalPropertyValue(p1, v_12, t_1)//
-				.setGlobalPropertyValue(p2, v_b, t_2)//
-				.build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertiesPluginData pluginData = getRandomGlobalPropertiesPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
 
 		// reflexive
-		assertEquals(g1, g1);
-		assertEquals(g2, g2);
-		assertEquals(g4, g4);
-		assertEquals(g5, g5);
-		assertEquals(g6, g6);
-		assertEquals(g7, g7);
-		assertEquals(g8, g8);
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertiesPluginData pluginData = getRandomGlobalPropertiesPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
 
-		// symmetric and transitive
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertiesPluginData pluginData1 = getRandomGlobalPropertiesPluginData(seed);
+			GlobalPropertiesPluginData pluginData2 = getRandomGlobalPropertiesPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
 
-		assertEquals(g2, g3);
-		assertEquals(g3, g2);
-
-		// non-equality from small changes
-		assertNotEquals(g1, g2);
-		assertNotEquals(g1, g3);
-		assertNotEquals(g1, g4);
-		assertNotEquals(g1, g5);
-		assertNotEquals(g1, g6);
-
-		// ordering of action should have no effect
-		assertEquals(g7, g8);
-
+		// different inputs yield unequal plugin datas
+		Set<GlobalPropertiesPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertiesPluginData pluginData = getRandomGlobalPropertiesPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = GlobalPropertiesPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491508465183354L);
-		Object v_5 = 5;
-		Object v_12 = 12;
-		Object v_25 = 15;
-		Object v_a = "a";
-		Object v_b = "b";
-
-		GlobalPropertyId p1 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
-		GlobalPropertyId p2 = TestGlobalPropertyId.getUnknownGlobalPropertyId();
-
-		PropertyDefinition d1 = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(v_5)//
-				.build();
-
-		PropertyDefinition d2 = PropertyDefinition.builder()//
-				.setType(String.class)//
-				.setDefaultValue(v_a)//
-				.build();
-
-		Double t_0 = 0.0;
-		Double t_1 = 1.0;
-		Double t_2 = 2.0;
 
 		// equal objects have equal hash codes
-		// add several values and definitions
-		GlobalPropertiesPluginData g7 = GlobalPropertiesPluginData.builder()//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.defineGlobalProperty(p2, d2, t_1)//
-				.setGlobalPropertyValue(p1, v_25, t_2).setGlobalPropertyValue(p2, v_b, t_2)
-				.setGlobalPropertyValue(p1, v_12, t_1).build();
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertiesPluginData pluginData1 = getRandomGlobalPropertiesPluginData(seed);
+			GlobalPropertiesPluginData pluginData2 = getRandomGlobalPropertiesPluginData(seed);
 
-		// add the same details, but in a different order, preserving the last
-		// assignments
-		GlobalPropertiesPluginData g8 = GlobalPropertiesPluginData.builder()//
-				.setGlobalPropertyValue(p1, v_25, t_2).defineGlobalProperty(p2, d2, t_1)//
-				.defineGlobalProperty(p1, d1, t_0)//
-				.setGlobalPropertyValue(p1, v_12, t_1).setGlobalPropertyValue(p2, v_b, t_2).build();
-
-		assertEquals(g7, g8);
-		assertEquals(g7.hashCode(), g8.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
+		}
 
 		// hash codes are reasonably distributed
-
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
-			for (TestGlobalPropertyId testGlobalPropertyId : TestGlobalPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
-					double time = randomGenerator.nextDouble();
-					builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(),
-							time);
-
-					if (randomGenerator.nextBoolean()
-							|| testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
-						time += 0.1;
-						builder.setGlobalPropertyValue(testGlobalPropertyId,
-								testGlobalPropertyId.getRandomPropertyValue(randomGenerator), time);
-					}
-				}
-			}
-			GlobalPropertiesPluginData globalPropertiesPluginData = builder.build();
-			hashCodes.add(globalPropertiesPluginData.hashCode());
+			GlobalPropertiesPluginData pluginData = getRandomGlobalPropertiesPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
 		}
-		assertTrue(hashCodes.size() > 90);
+
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -989,4 +881,29 @@ public class AT_GlobalPropertiesPluginData {
 		assertEquals(expectedValue, actualValue);
 	}
 
+	private GlobalPropertiesPluginData getRandomGlobalPropertiesPluginData(Long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
+
+		List<TestGlobalPropertyId> testGlobalPropertyIds = Arrays.asList(TestGlobalPropertyId.values());
+		Random rnd = new Random(seed);
+		Collections.shuffle(testGlobalPropertyIds, rnd);
+
+		int n = randomGenerator.nextInt(6) + 1;
+		for (int i = 0; i < n; i++) {
+			TestGlobalPropertyId testGlobalPropertyId = testGlobalPropertyIds.get(i);
+			Double assignmentTime = randomGenerator.nextDouble();
+			builder.defineGlobalProperty(testGlobalPropertyId, testGlobalPropertyId.getPropertyDefinition(),
+					assignmentTime);
+
+			if (randomGenerator.nextBoolean()
+					|| testGlobalPropertyId.getPropertyDefinition().getDefaultValue().isEmpty()) {
+				Object randomPropertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+				assignmentTime += randomGenerator.nextDouble() + 1.0;
+				builder.setGlobalPropertyValue(testGlobalPropertyId, randomPropertyValue, assignmentTime);
+			}
+		}
+
+		return builder.build();
+	}
 }

@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -353,7 +355,7 @@ public class AT_GlobalPropertyReportPluginData {
 	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "toBuilder", args = {})
 	public void testToBuilder() {
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255448669162L);
 
 		// build a GlobalPropertyReportPluginData from random inputs
 		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
@@ -415,7 +417,8 @@ public class AT_GlobalPropertyReportPluginData {
 	}
 
 	@Test
-	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "checkVersionSupported", args = { String.class })
+	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "checkVersionSupported", args = {
+			String.class })
 	public void testCheckVersionSupported() {
 		List<String> versions = Arrays.asList(StandardVersioning.VERSION);
 
@@ -431,79 +434,49 @@ public class AT_GlobalPropertyReportPluginData {
 	@Test
 	@UnitTestMethod(target = GlobalPropertyReportPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8927105493557306870L);
 
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7376599865331451959L);
-		for (int i = 0; i < 10; i++) {
-			// build a GlobalPropertyReportPluginData from the same random
-			// inputs
-			GlobalPropertyReportPluginData.Builder builder1 = GlobalPropertyReportPluginData.builder();
-			GlobalPropertyReportPluginData.Builder builder2 = GlobalPropertyReportPluginData.builder();
-
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			for (int j = 0; j < 10; j++) {
-				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId
-						.getRandomGlobalPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeGlobalProperty(testGlobalPropertyId);
-					builder2.includeGlobalProperty(testGlobalPropertyId);
-				} else {
-					builder1.excludeGlobalProperty(testGlobalPropertyId);
-					builder2.excludeGlobalProperty(testGlobalPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			GlobalPropertyReportPluginData globalPropertyReportPluginData1 = builder1.build();
-			GlobalPropertyReportPluginData globalPropertyReportPluginData2 = builder2.build();
-
-			assertEquals(globalPropertyReportPluginData1, globalPropertyReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the default inclusion
-			globalPropertyReportPluginData2 = //
-					globalPropertyReportPluginData1.toBuilder()//
-							.setDefaultInclusion(!defaultInclusion)//
-							.build();
-			assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			globalPropertyReportPluginData2 = //
-					globalPropertyReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
-
-			// change an included property id
-			if (!globalPropertyReportPluginData1.getIncludedProperties().isEmpty()) {
-				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getIncludedProperties().iterator()
-						.next();
-				globalPropertyReportPluginData2 = //
-						globalPropertyReportPluginData1.toBuilder()//
-								.excludeGlobalProperty(globalPropertyId)//
-								.build();
-				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
-			}
-			// change an excluded property id
-			if (!globalPropertyReportPluginData1.getExcludedProperties().isEmpty()) {
-				GlobalPropertyId globalPropertyId = globalPropertyReportPluginData1.getExcludedProperties().iterator()
-						.next();
-				globalPropertyReportPluginData2 = //
-						globalPropertyReportPluginData1.toBuilder()//
-								.includeGlobalProperty(globalPropertyId)//
-								.build();
-				assertNotEquals(globalPropertyReportPluginData2, globalPropertyReportPluginData1);
-			}
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertyReportPluginData reportPluginData = getRandomGlobalPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(reportPluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertyReportPluginData reportPluginData = getRandomGlobalPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(reportPluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GlobalPropertyReportPluginData reportPluginData = getRandomGlobalPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertTrue(reportPluginData.equals(reportPluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertyReportPluginData reportPluginData1 = getRandomGlobalPropertyReportPluginData(seed);
+			GlobalPropertyReportPluginData reportPluginData2 = getRandomGlobalPropertyReportPluginData(seed);
+			assertFalse(reportPluginData1 == reportPluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(reportPluginData1.equals(reportPluginData2));
+				assertTrue(reportPluginData2.equals(reportPluginData1));
+			}
+		}
+
+		// different inputs yield unequal GlobalPropertyReportPluginDatas
+		Set<GlobalPropertyReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertyReportPluginData reportPluginData = getRandomGlobalPropertyReportPluginData(
+					randomGenerator.nextLong());
+			set.add(reportPluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -511,56 +484,25 @@ public class AT_GlobalPropertyReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8483458328908100435L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a GlobalPropertyReportPluginData from the same random
-			// inputs
-			GlobalPropertyReportPluginData.Builder builder1 = GlobalPropertyReportPluginData.builder();
-			GlobalPropertyReportPluginData.Builder builder2 = GlobalPropertyReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertyReportPluginData reportPluginData1 = getRandomGlobalPropertyReportPluginData(seed);
+			GlobalPropertyReportPluginData reportPluginData2 = getRandomGlobalPropertyReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			for (int j = 0; j < 10; j++) {
-				TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId
-						.getRandomGlobalPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeGlobalProperty(testGlobalPropertyId);
-					builder2.includeGlobalProperty(testGlobalPropertyId);
-				} else {
-					builder1.excludeGlobalProperty(testGlobalPropertyId);
-					builder2.excludeGlobalProperty(testGlobalPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			GlobalPropertyReportPluginData globalPropertyReportPluginData1 = builder1.build();
-			GlobalPropertyReportPluginData globalPropertyReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = globalPropertyReportPluginData1.hashCode();
-			assertEquals(hashCode, globalPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, globalPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, globalPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, globalPropertyReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(globalPropertyReportPluginData1.hashCode(), globalPropertyReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(globalPropertyReportPluginData1.hashCode());
+			assertEquals(reportPluginData1, reportPluginData2);
+			assertEquals(reportPluginData1.hashCode(), reportPluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertEquals(50, observedHashCodes.size());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertyReportPluginData reportPluginData = getRandomGlobalPropertyReportPluginData(
+					randomGenerator.nextLong());
+			hashCodes.add(reportPluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -610,5 +552,32 @@ public class AT_GlobalPropertyReportPluginData {
 			assertEquals(sb.toString(), globalPropertyReportPluginData.toString());
 
 		}
+	}
+
+	private GlobalPropertyReportPluginData getRandomGlobalPropertyReportPluginData(Long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		GlobalPropertyReportPluginData.Builder builder = GlobalPropertyReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
+		builder.setReportLabel(reportLabel);
+
+		List<TestGlobalPropertyId> testGlobalPropertyIds = Arrays.asList(TestGlobalPropertyId.values());
+		Random rnd = new Random(seed);
+		Collections.shuffle(testGlobalPropertyIds, rnd);
+
+		int n = randomGenerator.nextInt(6) + 1;
+		for (int i = 0; i < n; i++) {
+			TestGlobalPropertyId testGlobalPropertyId = testGlobalPropertyIds.get(i);
+
+			if (randomGenerator.nextBoolean()) {
+				builder.includeGlobalProperty(testGlobalPropertyId);
+			} else {
+				builder.excludeGlobalProperty(testGlobalPropertyId);
+			}
+		}
+
+		builder.setDefaultInclusion(randomGenerator.nextBoolean());
+
+		return builder.build();
 	}
 }
