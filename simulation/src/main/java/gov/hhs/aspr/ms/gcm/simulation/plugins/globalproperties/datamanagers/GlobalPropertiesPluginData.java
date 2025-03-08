@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.datamanagers;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -232,62 +233,31 @@ public final class GlobalPropertiesPluginData implements PluginData {
 		}
 
 		/**
-		 * Standard implementation consistent with the {@link #equals(Object)} method
-		 */
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((globalPropertyDefinitionTimes == null) ? 0 : globalPropertyDefinitionTimes.hashCode());
-			result = prime * result + ((globalPropertyDefinitions == null) ? 0 : globalPropertyDefinitions.hashCode());
-			result = prime * result + ((globalPropertyTimes == null) ? 0 : globalPropertyTimes.hashCode());
-			result = prime * result + ((globalPropertyValues == null) ? 0 : globalPropertyValues.hashCode());
-			return result;
+			return Objects.hash(globalPropertyDefinitions, globalPropertyDefinitionTimes, globalPropertyValues,
+					globalPropertyTimes);
 		}
 
 		/**
-		 * Two {@link Data} instances are equal if and only if
-		 * their inputs are equal.
-		 */
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj) {
+			if (this == obj)
 				return true;
-			}
-			if (!(obj instanceof Data)) {
+			if (obj == null)
 				return false;
-			}
+			if (getClass() != obj.getClass())
+				return false;
 			Data other = (Data) obj;
-			if (globalPropertyDefinitionTimes == null) {
-				if (other.globalPropertyDefinitionTimes != null) {
-					return false;
-				}
-			} else if (!globalPropertyDefinitionTimes.equals(other.globalPropertyDefinitionTimes)) {
-				return false;
-			}
-			if (globalPropertyDefinitions == null) {
-				if (other.globalPropertyDefinitions != null) {
-					return false;
-				}
-			} else if (!globalPropertyDefinitions.equals(other.globalPropertyDefinitions)) {
-				return false;
-			}
-			if (globalPropertyTimes == null) {
-				if (other.globalPropertyTimes != null) {
-					return false;
-				}
-			} else if (!globalPropertyTimes.equals(other.globalPropertyTimes)) {
-				return false;
-			}
-			if (globalPropertyValues == null) {
-				if (other.globalPropertyValues != null) {
-					return false;
-				}
-			} else if (!globalPropertyValues.equals(other.globalPropertyValues)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(globalPropertyDefinitions, other.globalPropertyDefinitions)
+					&& Objects.equals(globalPropertyDefinitionTimes, other.globalPropertyDefinitionTimes)
+					&& Objects.equals(globalPropertyValues, other.globalPropertyValues)
+					&& Objects.equals(globalPropertyTimes, other.globalPropertyTimes);
 		}
 	}
 
@@ -433,33 +403,27 @@ public final class GlobalPropertiesPluginData implements PluginData {
 	}
 
 	/**
-	 * Standard implementation consistent with the {@link #equals(Object)} method
-	 */
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
 	/**
-	 * Two {@link GlobalPropertiesPluginData} instances are equal if and only if
-	 * their inputs are equal.
-	 */
+     * Two {@link GlobalPropertiesPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof GlobalPropertiesPluginData)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		GlobalPropertiesPluginData other = (GlobalPropertiesPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	public Map<GlobalPropertyId, PropertyDefinition> getGlobalPropertyDefinitions() {

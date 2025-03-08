@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
@@ -184,19 +185,12 @@ public final class GlobalPropertyDimensionData extends DimensionData {
          */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((levelNames == null) ? 0 : levelNames.hashCode());
-            result = prime * result + ((values == null) ? 0 : values.hashCode());
-            result = prime * result + ((globalPropertyId == null) ? 0 : globalPropertyId.hashCode());
-            long temp;
-            temp = Double.doubleToLongBits(assignmentTime);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
-            return result;
+            return Objects.hash(levelNames, values, globalPropertyId, assignmentTime);
         }
 
         /**
-         * Two {@link Data} instances are equal if and only if their inputs are equal.
+         * Two {@link Data} instances are equal if and only if
+         * their inputs are equal.
          */
         @Override
         public boolean equals(Object obj) {
@@ -207,24 +201,9 @@ public final class GlobalPropertyDimensionData extends DimensionData {
             if (getClass() != obj.getClass())
                 return false;
             Data other = (Data) obj;
-            if (levelNames == null) {
-                if (other.levelNames != null)
-                    return false;
-            } else if (!levelNames.equals(other.levelNames))
-                return false;
-            if (values == null) {
-                if (other.values != null)
-                    return false;
-            } else if (!values.equals(other.values))
-                return false;
-            if (globalPropertyId == null) {
-                if (other.globalPropertyId != null)
-                    return false;
-            } else if (!globalPropertyId.equals(other.globalPropertyId))
-                return false;
-            if (Double.doubleToLongBits(assignmentTime) != Double.doubleToLongBits(other.assignmentTime))
-                return false;
-            return true;
+            return Objects.equals(levelNames, other.levelNames) && Objects.equals(values, other.values)
+                    && Objects.equals(globalPropertyId, other.globalPropertyId)
+                    && Double.doubleToLongBits(assignmentTime) == Double.doubleToLongBits(other.assignmentTime);
         }
 
         @Override
@@ -309,10 +288,7 @@ public final class GlobalPropertyDimensionData extends DimensionData {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+        return Objects.hash(data);
     }
 
     /**
@@ -328,12 +304,7 @@ public final class GlobalPropertyDimensionData extends DimensionData {
         if (getClass() != obj.getClass())
             return false;
         GlobalPropertyDimensionData other = (GlobalPropertyDimensionData) obj;
-        if (data == null) {
-            if (other.data != null)
-                return false;
-        } else if (!data.equals(other.data))
-            return false;
-        return true;
+        return Objects.equals(data, other.data);
     }
 
     @Override

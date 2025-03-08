@@ -9,13 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -885,9 +883,7 @@ public class AT_GlobalPropertiesPluginData {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		GlobalPropertiesPluginData.Builder builder = GlobalPropertiesPluginData.builder();
 
-		List<TestGlobalPropertyId> testGlobalPropertyIds = Arrays.asList(TestGlobalPropertyId.values());
-		Random rnd = new Random(seed);
-		Collections.shuffle(testGlobalPropertyIds, rnd);
+		List<TestGlobalPropertyId> testGlobalPropertyIds = TestGlobalPropertyId.getShuffledGlobalPropertyIds(randomGenerator);
 
 		int n = randomGenerator.nextInt(6) + 1;
 		for (int i = 0; i < n; i++) {
