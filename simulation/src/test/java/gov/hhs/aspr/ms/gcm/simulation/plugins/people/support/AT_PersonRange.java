@@ -89,7 +89,7 @@ public class AT_PersonRange {
 	@Test
 	@UnitTestMethod(target = PersonRange.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8720935725310593369L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8720835725310593369L);
 		// show that equal person ranges have equal hashcodes
 		for (int i = 0; i < 10; i++) {
 			long seed = randomGenerator.nextLong();			
