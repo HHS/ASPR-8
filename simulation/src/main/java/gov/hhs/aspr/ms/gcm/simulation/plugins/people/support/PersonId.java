@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 
@@ -32,24 +34,28 @@ public final class PersonId implements Comparable<PersonId> {
 		return Integer.compare(id, personId.id);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		return id;
+		return Objects.hash(id);
 	}
 
+	/**
+     * Two {@link PersonId} instances are equal if and only if
+     * their {@link #id} is equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof PersonId)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		PersonId other = (PersonId) obj;
-		if (id != other.id) {
-			return false;
-		}
-		return true;
+		return id == other.id;
 	}
 
 	@Override
