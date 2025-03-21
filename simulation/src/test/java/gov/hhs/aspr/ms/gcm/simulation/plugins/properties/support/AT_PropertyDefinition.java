@@ -2,17 +2,17 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition.Builder;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -35,16 +35,28 @@ public class AT_PropertyDefinition {
 	private static final int TEST_COUNT = 1000;
 
 	/*
-	 * Generates a random property definition from the given Random instance
+	 * Generates a random property definition from the given long seed.
+	 * We reduce the odds of returning a boolean property definition
+	 * because boolean property definitions only have four unique 
+	 * combinations.
 	 */
-	private PropertyDefinition generateRandomPropertyDefinition(RandomGenerator randomGenerator) {
+	private PropertyDefinition generateRandomPropertyDefinition(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 		Class<?> type;
-		final int typeCase = randomGenerator.nextInt(5);
+		int randomInt = randomGenerator.nextInt(100);
 		Object defaultValue;
+
+		int typeCase;
+		if (randomInt < 24) typeCase = 0;
+		else if (randomInt < 48) typeCase = 1;
+		else if (randomInt < 73) typeCase = 2;
+		else if (randomInt < 98) typeCase = 3;
+		else typeCase = -1;
+
 		switch (typeCase) {
 		case 0:
-			type = Boolean.class;
-			defaultValue = randomGenerator.nextBoolean();
+			type = Long.class;
+			defaultValue = randomGenerator.nextLong();
 			break;
 		case 1:
 			type = Integer.class;
@@ -59,8 +71,8 @@ public class AT_PropertyDefinition {
 			defaultValue = randomGenerator.nextDouble();
 			break;
 		default:
-			type = Long.class;
-			defaultValue = randomGenerator.nextLong();
+			type = Boolean.class;
+			defaultValue = randomGenerator.nextBoolean();
 			break;
 		}
 
@@ -74,43 +86,6 @@ public class AT_PropertyDefinition {
 
 	}
 
-	/*
-	 * Generates a random property definition from the given Random instance
-	 * that has at least one field value that does not match the given property
-	 * definition.
-	 */
-	private PropertyDefinition generateNonMatchingRandomPropertyDefinition(PropertyDefinition propertyDefinition, RandomGenerator randomGenerator) {
-		while (true) {
-			PropertyDefinition result = generateRandomPropertyDefinition(randomGenerator);
-			boolean different = result.propertyValuesAreMutable() != propertyDefinition.propertyValuesAreMutable();
-
-			different |= propertyDefinition.getDefaultValue().isPresent() != result.getDefaultValue().isPresent();
-			if (propertyDefinition.getDefaultValue().isPresent() && result.getDefaultValue().isPresent()) {
-				different |= !result.getDefaultValue().get().equals(propertyDefinition.getDefaultValue().get());
-			}
-			
-			different |= !result.getType().equals(propertyDefinition.getType());
-			if (different) {
-				return result;
-			}
-		}
-	}
-
-	/*
-	 * Generates a matching property definition created from the given property
-	 * definition's field values
-	 */
-	private PropertyDefinition generateMatchingPropertyDefinition(PropertyDefinition propertyDefinition) {
-		Builder builder = PropertyDefinition.builder();//
-		if (propertyDefinition.getDefaultValue().isPresent()) {
-			builder.setDefaultValue(propertyDefinition.getDefaultValue().get());//
-		}
-
-		return builder	.setType(propertyDefinition.getType())//
-						.setPropertyValueMutability(propertyDefinition.propertyValuesAreMutable())//						
-						.build();//
-	}
-
 	@Test
 	@UnitTestMethod(target = PropertyDefinition.class, name = "toString", args = {})
 	public void testToString() {
@@ -121,7 +96,7 @@ public class AT_PropertyDefinition {
 		 * otherwise boiler-plate implementation.
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator);
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
 			String toString = propertyDefinition.toString();
 			assertNotNull(toString);
 			assertTrue(toString.length() > 0);
@@ -275,117 +250,71 @@ public class AT_PropertyDefinition {
 	@Test
 	@UnitTestMethod(target = PropertyDefinition.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6457927419499025913L);
 
-		PropertyDefinition propertyDefinition2 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
-
-		PropertyDefinition propertyDefinition3 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("xxx")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
-
-		PropertyDefinition propertyDefinition4 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(false)//																	
-																	.build();//
-
-		PropertyDefinition propertyDefinition5 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
-
-		PropertyDefinition propertyDefinition6 = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//
-																	.setDefaultValue(45)//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
-
-		assertEquals(propertyDefinition1, propertyDefinition1);
-		assertEquals(propertyDefinition1, propertyDefinition2);
-		assertEquals(propertyDefinition2, propertyDefinition1);
-
-		assertNotEquals(propertyDefinition1, propertyDefinition3);
-		assertNotEquals(propertyDefinition1, propertyDefinition4);
-		assertEquals(propertyDefinition1, propertyDefinition5);
-		assertNotEquals(propertyDefinition1, propertyDefinition6);
-
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3951851825163960855L);
-
-		/*
-		 * Show that two Property Definitions are equal if and only if their
-		 * fields are equal
-		 */
-		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def1 = generateRandomPropertyDefinition(randomGenerator);
-			PropertyDefinition def2 = generateMatchingPropertyDefinition(def1);
-			assertEquals(def1, def2);
-			PropertyDefinition def3 = generateNonMatchingRandomPropertyDefinition(def1, randomGenerator);
-			assertNotEquals(def1, def3);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
+			assertFalse(propertyDefinition.equals(new Object()));
 		}
 
-		/*
-		 * Show that a property definition is not equal to null
-		 */
-		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
-			assertFalse(def.equals(null));
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
+			assertFalse(propertyDefinition.equals(null));
 		}
 
-		/*
-		 * Show that a property definition is equal to itself
-		 */
-		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
-			assertTrue(def.equals(def));
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
+			assertTrue(propertyDefinition.equals(propertyDefinition));
 		}
 
-		/*
-		 * Show that a property definition is not equal to an instance of
-		 * another class
-		 */
-		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
-			assertFalse(def.equals(new Object()));
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PropertyDefinition propertyDefinition1 = generateRandomPropertyDefinition(seed);
+			PropertyDefinition propertyDefinition2 = generateRandomPropertyDefinition(seed);
+			assertFalse(propertyDefinition1 == propertyDefinition2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(propertyDefinition1.equals(propertyDefinition2));
+				assertTrue(propertyDefinition2.equals(propertyDefinition1));
+			}
 		}
 
-		/*
-		 * Show that equal objects have equal hash codes
-		 */
-		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def1 = generateRandomPropertyDefinition(randomGenerator);
-			PropertyDefinition def2 = generateMatchingPropertyDefinition(def1);
-			assertEquals(def1.hashCode(), def2.hashCode());
+		// different inputs yield unequal PropertyDefinitions
+		Set<PropertyDefinition> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
+			set.add(propertyDefinition);
 		}
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = PropertyDefinition.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6456927419491275913L);
+	
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PropertyDefinition propertyDefinition1 = generateRandomPropertyDefinition(seed);
+			PropertyDefinition propertyDefinition2 = generateRandomPropertyDefinition(seed);
 
-		PropertyDefinition propertyDefinition2 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//																	
-																	.build();//
+			assertEquals(propertyDefinition1, propertyDefinition2);
+			assertEquals(propertyDefinition1.hashCode(), propertyDefinition2.hashCode());
 
-		assertEquals(propertyDefinition1.hashCode(), propertyDefinition2.hashCode());
+		}
+
+		// hash codes are reasonable distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator.nextLong());
+			hashCodes.add(propertyDefinition.hashCode());
+		}
+		
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
