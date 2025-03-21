@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 
@@ -38,31 +40,28 @@ public final class SimpleReportLabel implements ReportLabel {
 		return builder.toString();
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+		return Objects.hash(value);
 	}
 
+	/**
+     * Two {@link SimpleReportLabel} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof SimpleReportLabel)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		SimpleReportLabel other = (SimpleReportLabel) obj;
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(value, other.value);
 	}
 
 }
