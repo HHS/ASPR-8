@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support;
 
-import gov.hhs.aspr.ms.gcm.simulation.plugins.globalproperties.support.SimpleGlobalPropertyId;
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
@@ -22,37 +23,27 @@ public class SimpleRandomNumberGeneratorId implements RandomNumberGeneratorId {
     }
 
     /**
-     * Standard implementation
+     * Standard implementation consistent with the {@link #equals(Object)} method
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(value);
     }
 
     /**
-     * Two {@link SimpleGlobalPropertyId} instances are equal if and only if their
-     * inputs are equal.
+     * Two {@link SimpleRandomNumberGeneratorId} instances are equal if and only if
+     * their inputs are equal.
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (!(obj instanceof SimpleRandomNumberGeneratorId)) {
+        if (obj == null)
             return false;
-        }
+        if (getClass() != obj.getClass())
+            return false;
         SimpleRandomNumberGeneratorId other = (SimpleRandomNumberGeneratorId) obj;
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(value, other.value);
     }
 
     /**
