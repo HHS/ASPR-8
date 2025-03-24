@@ -2,18 +2,19 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_SimpleRandomNumberGeneratorId {
 	@Test
@@ -29,31 +30,45 @@ public class AT_SimpleRandomNumberGeneratorId {
 	@Test
 	@UnitTestMethod(target = SimpleRandomNumberGeneratorId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		// not equal to null
-		assertFalse(new SimpleRandomNumberGeneratorId("A").equals(null));
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980253793557306870L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			SimpleRandomNumberGeneratorId randomId = getRandomSimpleRandomNumberGeneratorId(randomGenerator.nextLong());
+			assertFalse(randomId.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			SimpleRandomNumberGeneratorId randomId = getRandomSimpleRandomNumberGeneratorId(randomGenerator.nextLong());
+			assertFalse(randomId.equals(null));
+		}
 
 		// reflexive
 		for (int i = 0; i < 30; i++) {
-			SimpleRandomNumberGeneratorId simpleRandomNumberGeneratorId = new SimpleRandomNumberGeneratorId(i);
-			assertTrue(simpleRandomNumberGeneratorId.equals(simpleRandomNumberGeneratorId));
+			SimpleRandomNumberGeneratorId randomId = getRandomSimpleRandomNumberGeneratorId(randomGenerator.nextLong());
+			assertTrue(randomId.equals(randomId));
 		}
 
-		// symmetric, transitive and consistent
+		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
-			SimpleRandomNumberGeneratorId a = new SimpleRandomNumberGeneratorId(i);
-			SimpleRandomNumberGeneratorId b = new SimpleRandomNumberGeneratorId(i);
-			for (int j = 0; j < 10; j++) {
-				assertTrue(a.equals(b));
-				assertTrue(b.equals(a));
+			long seed = randomGenerator.nextLong();
+			SimpleRandomNumberGeneratorId randomId1 = getRandomSimpleRandomNumberGeneratorId(seed);
+			SimpleRandomNumberGeneratorId randomId2 = getRandomSimpleRandomNumberGeneratorId(seed);
+			assertFalse(randomId1 == randomId2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(randomId1.equals(randomId2));
+				assertTrue(randomId2.equals(randomId1));
 			}
 		}
 
-		// different inputs yield unequal SimpleRandomNumberGeneratorIds
-		for (int i = 0; i < 30; i++) {
-			SimpleRandomNumberGeneratorId a = new SimpleRandomNumberGeneratorId(i);
-			SimpleRandomNumberGeneratorId b = new SimpleRandomNumberGeneratorId(i + 1);
-			assertNotEquals(a, b);
+		// different inputs yield unequal ids
+		Set<SimpleRandomNumberGeneratorId> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			SimpleRandomNumberGeneratorId randomId = getRandomSimpleRandomNumberGeneratorId(randomGenerator.nextLong());
+			set.add(randomId);
 		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -69,23 +84,26 @@ public class AT_SimpleRandomNumberGeneratorId {
 	@Test
 	@UnitTestMethod(target = SimpleRandomNumberGeneratorId.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6496930909591275913L);
+
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
-			SimpleRandomNumberGeneratorId a = new SimpleRandomNumberGeneratorId(i);
-			SimpleRandomNumberGeneratorId b = new SimpleRandomNumberGeneratorId(i);
-			assertEquals(a, b);
-			assertEquals(a.hashCode(), b.hashCode());
+			long seed = randomGenerator.nextLong();
+			SimpleRandomNumberGeneratorId randomId1 = getRandomSimpleRandomNumberGeneratorId(seed);
+			SimpleRandomNumberGeneratorId randomId2 = getRandomSimpleRandomNumberGeneratorId(seed);
+
+			assertEquals(randomId1, randomId2);
+			assertEquals(randomId1.hashCode(), randomId2.hashCode());
 		}
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			SimpleRandomNumberGeneratorId a = new SimpleRandomNumberGeneratorId(i);
-			hashCodes.add(a.hashCode());
+			SimpleRandomNumberGeneratorId randomId = getRandomSimpleRandomNumberGeneratorId(randomGenerator.nextLong());
+			hashCodes.add(randomId.hashCode());
 		}
-		assertEquals(100, hashCodes.size());
 		
-
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -97,5 +115,10 @@ public class AT_SimpleRandomNumberGeneratorId {
 		String expectedValue = "Value";
 		
 		assertEquals(expectedValue, actualValue);
+	}
+
+	private SimpleRandomNumberGeneratorId getRandomSimpleRandomNumberGeneratorId(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new SimpleRandomNumberGeneratorId(randomGenerator.nextInt());
 	}
 }
