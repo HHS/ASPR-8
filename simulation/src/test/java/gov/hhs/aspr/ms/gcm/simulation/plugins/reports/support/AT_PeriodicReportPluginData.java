@@ -1,11 +1,18 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_PeriodicReportPluginData {
 
@@ -148,4 +155,92 @@ public class AT_PeriodicReportPluginData {
 		}
 	}
 
+	@Test
+	@UnitTestMethod(target = PeriodicReportPluginData.class, name = "hashCode", args = {})
+	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2142811459970946523L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			LocalPeriodicReportPluginData pluginData1 = getRandomLocalPeriodicReportPluginData(seed);
+			LocalPeriodicReportPluginData pluginData2 = getRandomLocalPeriodicReportPluginData(seed);
+
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
+
+		}
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			LocalPeriodicReportPluginData pluginData = getRandomLocalPeriodicReportPluginData(
+					randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
+	}
+
+	@Test
+	@UnitTestMethod(target = PeriodicReportPluginData.class, name = "equals", args = { Object.class })
+	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8984499250224306870L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			LocalPeriodicReportPluginData pluginData = getRandomLocalPeriodicReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			LocalPeriodicReportPluginData pluginData = getRandomLocalPeriodicReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			LocalPeriodicReportPluginData pluginData = getRandomLocalPeriodicReportPluginData(
+					randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			LocalPeriodicReportPluginData pluginData1 = getRandomLocalPeriodicReportPluginData(seed);
+			LocalPeriodicReportPluginData pluginData2 = getRandomLocalPeriodicReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<LocalPeriodicReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			LocalPeriodicReportPluginData pluginData = getRandomLocalPeriodicReportPluginData(
+					randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
+	}
+
+	private LocalPeriodicReportPluginData getRandomLocalPeriodicReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		LocalPeriodicReportPluginData.Builder builder = LocalPeriodicReportPluginData.builder();
+
+		builder.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt()));
+
+		ReportPeriod[] reportPeriodValues = ReportPeriod.values();
+		int randomIndex = randomGenerator.nextInt(reportPeriodValues.length);
+		ReportPeriod randomReportPeriod = reportPeriodValues[randomIndex];
+		builder.setReportPeriod(randomReportPeriod);
+
+		return builder.build();
+	}
 }
