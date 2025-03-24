@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
@@ -28,39 +29,28 @@ public final class ReportHeader {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			result = prime * result + ((headerStrings == null) ? 0 : headerStrings.hashCode());
-			return result;
+			return Objects.hash(reportLabel, headerStrings);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj) {
+			if (this == obj)
 				return true;
-			}
-			if (!(obj instanceof Data)) {
+			if (obj == null)
 				return false;
-			}
+			if (getClass() != obj.getClass())
+				return false;
 			Data other = (Data) obj;
-			if (reportLabel == null) {
-				if (other.reportLabel != null) {
-					return false;
-				}
-			} else if (!reportLabel.equals(other.reportLabel)) {
-				return false;
-			}
-			if (headerStrings == null) {
-				if (other.headerStrings != null) {
-					return false;
-				}
-			} else if (!headerStrings.equals(other.headerStrings)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(reportLabel, other.reportLabel) && Objects.equals(headerStrings, other.headerStrings);
 		}
 	}
 
@@ -184,36 +174,27 @@ public final class ReportHeader {
 	}
 
 	/**
-	 * Returns a standard hash code from the header strings
-	 */
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
 	/**
-	 * Report headers are equal if and only if their header strings are equal
-	 */
+     * Two {@link ReportHeader} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof ReportHeader)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		ReportHeader other = (ReportHeader) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	/**
