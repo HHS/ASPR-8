@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
@@ -49,42 +50,29 @@ public final class StochasticsPluginData implements PluginData {
 		private Map<RandomNumberGeneratorId, WellState> randomNumberGeneratorIds = new LinkedHashMap<>();
 		private boolean locked;
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + randomNumberGeneratorIds.hashCode();
-			result = prime * result + wellState.hashCode();
-			return result;
+			return Objects.hash(wellState, randomNumberGeneratorIds);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj) {
+			if (this == obj)
 				return true;
-			}
-			if (!(obj instanceof Data)) {
+			if (obj == null)
 				return false;
-			}
+			if (getClass() != obj.getClass())
+				return false;
 			Data other = (Data) obj;
-			/*
-			 * We exclude: locked -- both should be locked when equals is invoked
-			 */
-			if (randomNumberGeneratorIds == null) {
-				if (other.randomNumberGeneratorIds != null) {
-					return false;
-				}
-			} else if (!randomNumberGeneratorIds.equals(other.randomNumberGeneratorIds)) {
-				return false;
-			}
-			if (wellState == null) {
-				if (other.wellState != null) {
-					return false;
-				}
-			} else if (!wellState.equals(other.wellState)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(wellState, other.wellState)
+					&& Objects.equals(randomNumberGeneratorIds, other.randomNumberGeneratorIds);
 		}
 
 		@Override
@@ -256,31 +244,28 @@ public final class StochasticsPluginData implements PluginData {
 		return StandardVersioning.checkVersionSupported(version);
 	}
 	
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link StochasticsPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (!(obj instanceof StochasticsPluginData)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		StochasticsPluginData other = (StochasticsPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
