@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -16,6 +17,88 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class IntSetPeopleContainer2 implements PeopleContainer {
 
+	/*
+	 * A container for a set of int values that wraps an array, supports add, remove
+	 * and containment operations at a much lower memory cost compared to a
+	 * List<Integer>.
+	 */
+	private static class Bucket {
+		private int size;
+		private int[] values;
+
+		/*
+		 * Precondition: The value must not already be a member of this bucket.
+		 * 
+		 * Adds the given value WITHOUT checking for the existence of the value in the
+		 * contained array.
+		 */
+		public void unsafeAdd(int value) {
+			if (values == null) {
+				values = new int[1];
+			} else {
+				if (size == values.length) {
+					int newLength;
+					if (size == 1) {
+						newLength = 2;
+					} else {
+						newLength = (values.length * 3) / 2;
+					}
+					values = Arrays.copyOf(values, newLength);
+				}
+			}
+			values[size++] = value;
+		}
+
+		/*
+		 * Removes the value from the contained array if it can be found. Returns true
+		 * if and only if the value was found.
+		 */
+		public boolean remove(int value) {
+			int index = indexOf(value);
+			if (index >= 0) {
+				size--;
+				if (size > index) {
+					System.arraycopy(values, index + 1, values, index, size - index);
+				}
+				if (size * 2 < values.length) {
+					values = Arrays.copyOf(values, size);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		/*
+		 * Returns true if and only if the value is contained.
+		 */
+		public boolean contains(int value) {
+			return indexOf(value) >= 0;
+		}
+
+		private int indexOf(int value) {
+			for (int i = 0; i < size; i++) {
+				if (values[i] == value) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		/*
+		 * Returns the value at the given index.
+		 */
+		public int get(int index) {
+			return values[index];
+		}
+
+		/*
+		 * Returns the number of values in this bucket.
+		 */
+		public int size() {
+			return size;
+		}
+	}
+
 	/**
 	 * The general best practice bucket depth for ArrayIntSets containing millions
 	 * of entries.
@@ -30,110 +113,6 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 	private int[] tree;
 
 	private final PeopleDataManager peopleDataManager;
-
-	/*
-	 * An array that is the same length as the values array that tracks the maximum
-	 * size each ArrayList instance in values has reached during its life-span. This
-	 * value is used to trigger an occasional rebuild of these ArrayLists to reduce
-	 * instance size.
-	 */
-	// private int[] maxSizes;
-	private static enum MaxMode {
-		BYTE, SHORT, INT
-	}
-
-	private static class MaxSizeManager {
-
-		private MaxMode maxMode = MaxMode.BYTE;
-
-		private int[] iMaxSizes;
-		private short[] sMaxSizes;
-		private byte[] bMaxSizes;
-
-		public MaxSizeManager(int capacity) {
-			bMaxSizes = new byte[capacity];
-		}
-
-		public void setMaxSize(int index, int size) {
-
-			switch (maxMode) {
-			case BYTE:
-				if (size > Byte.MAX_VALUE) {
-					if (size > Short.MAX_VALUE) {
-						int bLength = bMaxSizes.length;
-						iMaxSizes = new int[bLength];
-						for (int i = 0; i < bLength; i++) {
-							iMaxSizes[i] = bMaxSizes[i];
-						}
-						bMaxSizes = null;
-						maxMode = MaxMode.INT;
-
-					} else {
-						int bLength = bMaxSizes.length;
-						sMaxSizes = new short[bLength];
-						for (int i = 0; i < bLength; i++) {
-							sMaxSizes[i] = bMaxSizes[i];
-						}
-						bMaxSizes = null;
-						maxMode = MaxMode.SHORT;
-
-					}
-				}
-
-				break;
-			case INT:
-				// do nothing
-				break;
-			case SHORT:
-				if (size > Short.MAX_VALUE) {
-					int bLength = bMaxSizes.length;
-					iMaxSizes = new int[bLength];
-					for (int i = 0; i < bLength; i++) {
-						iMaxSizes[i] = bMaxSizes[i];
-					}
-					sMaxSizes = null;
-					maxMode = MaxMode.INT;
-				}
-				break;
-			default:
-
-				throw new RuntimeException("unhandled case " + maxMode);
-			}
-
-			switch (maxMode) {
-			case BYTE:
-				bMaxSizes[index] = (byte) size;
-				break;
-			case INT:
-				iMaxSizes[index] = size;
-				break;
-			case SHORT:
-				sMaxSizes[index] = (short) size;
-				break;
-			default:
-
-				throw new RuntimeException("unhandled case " + maxMode);
-			}
-		}
-
-		public int getMaxSize(int index) {
-			switch (maxMode) {
-			case BYTE:
-				return bMaxSizes[index];
-
-			case INT:
-				return iMaxSizes[index];
-
-			case SHORT:
-				return sMaxSizes[index];
-			default:
-
-				throw new RuntimeException("unhandled case " + maxMode);
-			}
-		}
-	}
-
-	private MaxSizeManager maxSizeManager;
 
 	/*
 	 * The number of Integers stored in this set
@@ -164,14 +143,11 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 	/*
 	 * Grows the values and maxSizes arrays to achieve an average bucket depth that
 	 * closer to the target bucket depth.
-	 */	
+	 */
 	private void grow() {
 		if (buckets == null) {
 			// establish a single bucket
 			buckets = new Bucket[1];
-			// maxSizes = new int[1];
-			maxSizeManager = new MaxSizeManager(1);
-
 			tree = new int[2];
 		} else {
 			// double the number of buckets
@@ -193,17 +169,12 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 	/*
 	 * Rebuilds the buckets to the new size for the values and maxSizes arrays.
 	 */
-	private void rebuild(int newSize) {		
+	private void rebuild(int newSize) {
 		/*
 		 * create a new values array to the new size
 		 */
 		Bucket[] newBuckets = new Bucket[newSize];
-		/*
-		 * Rebuild the maxSizes array to the correct length. The old values in the
-		 * maxSizes array can be forgotten.
-		 */
-		// maxSizes = new int[newValues.length];
-		maxSizeManager = new MaxSizeManager(newBuckets.length);
+
 		/*
 		 * Place the values from the old values array into the new values array.
 		 */
@@ -254,15 +225,6 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 		 * array.
 		 */
 		buckets = newBuckets;
-		/*
-		 * Finally, we establish the maxSizes array values.
-		 */
-		for (int i = 0; i < buckets.length; i++) {
-			Bucket bucket = buckets[i];
-			if (bucket != null) {
-				maxSizeManager.setMaxSize(i, bucket.size());
-			}
-		}
 	}
 
 	@Override
@@ -311,13 +273,6 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 		}
 
 		/*
-		 * Update the maxSizes
-		 */
-		if (maxSizeManager.getMaxSize(index) < bucket.size()) {
-			maxSizeManager.setMaxSize(index, bucket.size());
-		}
-
-		/*
 		 * If the averageDepth exceeds the target depth then we should grow.
 		 * (size/values.length)>targetDepth
 		 * 
@@ -361,15 +316,6 @@ public final class IntSetPeopleContainer2 implements PeopleContainer {
 				treeIndex /= 2;
 			}
 
-			if (bucket.size() * 2 < maxSizeManager.getMaxSize(index)) {
-				if (bucket.size() > 0) {
-					buckets[index] = new Bucket(bucket);
-					maxSizeManager.setMaxSize(index, bucket.size());
-				} else {
-					buckets[index] = null;
-					maxSizeManager.setMaxSize(index, 0);
-				}
-			}
 			/*
 			 * If the averageDepth is less than half the target depth then we should shrink.
 			 * (size/values.length)*2<targetDepth
