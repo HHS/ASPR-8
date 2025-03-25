@@ -1,16 +1,18 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestField;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.errors.ContractException;
 
 public class AT_IntSetPeopleContainer {
 
@@ -21,13 +23,14 @@ public class AT_IntSetPeopleContainer {
 	}
 
 	private PeopleContainer getPeopleContainer(PeopleDataManager peopleDataManager) {
-		return new IntSetPeopleContainer();
+		return new IntSetPeopleContainer(peopleDataManager);
 	}
 
 	@Test
 	@UnitTestConstructor(target = IntSetPeopleContainer.class, args = {})
 	public void testConstructor() {
-		assertNotNull(new IntSetPeopleContainer());
+		ContractException contractException = assertThrows(ContractException.class,()->new IntSetPeopleContainer(null));
+		assertEquals(PersonError.NULL_PEOPLE_DATA_MANAGER, contractException.getErrorType());
 	}
 
 	@Test

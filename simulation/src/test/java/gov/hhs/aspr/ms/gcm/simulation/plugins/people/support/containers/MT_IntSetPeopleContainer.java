@@ -17,7 +17,7 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonConstructionD
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.testsupport.PeopleTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
-import gov.hhs.aspr.ms.util.integersets.MemorySizer;
+import gov.hhs.aspr.ms.util.meta.memory.MemorySizer;
 import gov.hhs.aspr.ms.util.time.TimeElapser;
 
 public final class MT_IntSetPeopleContainer {
@@ -33,14 +33,13 @@ public final class MT_IntSetPeopleContainer {
 		TREE_BIT_SET_PEOPLE_CONTAINER,
 
 		/*
-		 * Fairly fast and uses 85 bits per person, but does not either addition order
+		 * Fairly fast and uses 45 bits per person, but does not either addition order
 		 * nor numerical order retrieval. Appropriate for use cases that do not require
 		 * run continuity. Use for small cells -- i.e. when then number of cells gets
 		 * large. We may be able to reduce this to 40-50 bits per person
-		 */
-		INT_SET_PEOPLE_CONTAINER,
+		 */		
 		
-		INT_SET_PEOPLE_CONTAINER2,
+		INT_SET_PEOPLE_CONTAINER,
 
 		/*
 		 * Fairly slow and high mem use 450 bits per person. Simple, but not good for
@@ -111,13 +110,11 @@ public final class MT_IntSetPeopleContainer {
 
 			TimeElapser timeElapser = new TimeElapser();
 			
-			Alogorithm alogorithm = Alogorithm.INT_SET_PEOPLE_CONTAINER2;
+			Alogorithm alogorithm = Alogorithm.INT_SET_PEOPLE_CONTAINER;
 			double averageInstanceByteCount = MemorySizer.getAverageInstanceByteCount(() -> {
 				switch (alogorithm) {
-
+				
 				case INT_SET_PEOPLE_CONTAINER:
-					return getIntSetPeopleContainerSolution(members);
-				case INT_SET_PEOPLE_CONTAINER2:
 					return getIntSetPeopleContainer2Solution(members,peopleDataManager);
 				case LINKED_HASH_SET:
 					getLinkedHashSetSolution(members);
@@ -206,17 +203,10 @@ public final class MT_IntSetPeopleContainer {
 		return treeSet;
 	}
 
-	private PeopleContainer getIntSetPeopleContainerSolution(List<PersonId> members) {
-		PeopleContainer peopleContainer = new IntSetPeopleContainer();
-
-		for (PersonId personId : members) {
-			peopleContainer.unsafeAdd(personId);
-		}
-		return peopleContainer;
-	}
+	
 	
 	private PeopleContainer getIntSetPeopleContainer2Solution(List<PersonId> members,PeopleDataManager peopleDataManager) {
-		PeopleContainer peopleContainer = new IntSetPeopleContainer2(peopleDataManager);
+		PeopleContainer peopleContainer = new IntSetPeopleContainer(peopleDataManager);
 
 		for (PersonId personId : members) {
 			peopleContainer.unsafeAdd(personId);
