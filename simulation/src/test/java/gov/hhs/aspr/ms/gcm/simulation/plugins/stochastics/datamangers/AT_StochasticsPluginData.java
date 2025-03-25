@@ -259,6 +259,7 @@ public class AT_StochasticsPluginData {
 			long seed = randomGenerator.nextLong();
 			StochasticsPluginData stochasticsPluginData1 = getRandomStochasticsPluginData(seed);
 			StochasticsPluginData stochasticsPluginData2 = getRandomStochasticsPluginData(seed);
+			assertFalse(stochasticsPluginData1 == stochasticsPluginData2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(stochasticsPluginData1.equals(stochasticsPluginData2));
 				assertTrue(stochasticsPluginData2.equals(stochasticsPluginData1));
