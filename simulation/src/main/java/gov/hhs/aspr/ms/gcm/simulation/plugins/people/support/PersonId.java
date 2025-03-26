@@ -35,25 +35,28 @@ public final class PersonId implements Comparable<PersonId> {
 	}
 
 	/**
-     * Standard implementation consistent with the {@link #equals(Object)} method
-     */
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
 	}
 
 	/**
-     * Two {@link PersonId} instances are equal if and only if
-     * their {@link #id} is equal.
-     */
+	 * Two {@link PersonId} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		PersonId other = (PersonId) obj;
 		return id == other.id;
 	}
