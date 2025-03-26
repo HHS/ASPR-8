@@ -41,25 +41,28 @@ public final class SimpleReportLabel implements ReportLabel {
 	}
 
 	/**
-     * Standard implementation consistent with the {@link #equals(Object)} method
-     */
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(value);
 	}
 
 	/**
-     * Two {@link SimpleReportLabel} instances are equal if and only if
-     * their inputs are equal.
-     */
+	 * Two {@link SimpleReportLabel} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		SimpleReportLabel other = (SimpleReportLabel) obj;
 		return Objects.equals(value, other.value);
 	}
