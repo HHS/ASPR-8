@@ -51,8 +51,8 @@ public final class StochasticsPluginData implements PluginData {
 		private boolean locked;
 
 		/**
-    	 * Standard implementation consistent with the {@link #equals(Object)} method
-    	 */
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
 			return Objects.hash(wellState, randomNumberGeneratorIds);
@@ -64,12 +64,15 @@ public final class StochasticsPluginData implements PluginData {
     	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			Data other = (Data) obj;
 			return Objects.equals(wellState, other.wellState)
 					&& Objects.equals(randomNumberGeneratorIds, other.randomNumberGeneratorIds);
@@ -258,12 +261,15 @@ public final class StochasticsPluginData implements PluginData {
      */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		StochasticsPluginData other = (StochasticsPluginData) obj;
 		return Objects.equals(data, other.data);
 	}

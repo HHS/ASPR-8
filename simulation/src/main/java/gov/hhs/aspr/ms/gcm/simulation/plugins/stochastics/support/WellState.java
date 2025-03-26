@@ -26,8 +26,8 @@ public class WellState {
 		}
 
 		/**
-		 * Standard implementation consistent with the {@link #equals(Object)} method
-		 */
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -38,17 +38,20 @@ public class WellState {
 		}
 
 		/**
-		 * Two {@link Data} instances are equal if and only if
-		 * their inputs are equal.
-		 */
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			Data other = (Data) obj;
 			return seed == other.seed && index == other.index && Arrays.equals(vArray, other.vArray);
 		}
@@ -150,9 +153,9 @@ public class WellState {
 		return Arrays.copyOf(data.vArray, data.vArray.length);
 	}
 
-    /**
-     * Standard implementation consistent with the {@link #equals(Object)} method
-     */
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(data);
@@ -164,12 +167,15 @@ public class WellState {
      */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		WellState other = (WellState) obj;
 		return Objects.equals(data, other.data);
 	}

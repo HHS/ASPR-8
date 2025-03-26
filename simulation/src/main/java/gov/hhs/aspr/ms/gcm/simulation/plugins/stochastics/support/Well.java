@@ -32,7 +32,8 @@ public class Well extends Well44497b {
 	}
 
 	/**
-     * Standard implementation consistent with the {@link #equals(Object)} method
+     * Standard implementation consistent with the {@link #equals(Object)} method.
+	 * Forwards to the respective WellState.
      */
 	@Override
 	public int hashCode() {
@@ -41,16 +42,19 @@ public class Well extends Well44497b {
 
 	/**
      * Two {@link Well} instances are equal if and only if
-     * their inputs are equal.
+     * their inputs are equal. Forwards to the respective WellState.
      */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Well other = (Well) obj;
 		return getWellState().equals(other.getWellState());
 	}
