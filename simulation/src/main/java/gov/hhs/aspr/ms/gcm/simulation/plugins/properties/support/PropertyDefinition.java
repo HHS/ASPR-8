@@ -51,12 +51,15 @@ public final class PropertyDefinition {
     	 */
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			Data other = (Data) obj;
 			return Objects.equals(type, other.type) && propertyValuesAreMutable == other.propertyValuesAreMutable
 					&& Objects.equals(defaultValue, other.defaultValue);
@@ -215,25 +218,28 @@ public final class PropertyDefinition {
 	}
 
 	/**
-     * Standard implementation consistent with the {@link #equals(Object)} method
-     */
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(data);
 	}
 
 	/**
-     * Two {@link PropertyDefinition} instances are equal if and only if
-     * their inputs are equal.
-     */
+	 * Two {@link PropertyDefinition} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		PropertyDefinition other = (PropertyDefinition) obj;
 		return Objects.equals(data, other.data);
 	}
