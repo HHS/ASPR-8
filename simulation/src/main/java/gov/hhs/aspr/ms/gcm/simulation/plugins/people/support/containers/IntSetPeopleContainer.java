@@ -25,7 +25,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	 */
 	private static class Bucket {
 		private int size;
-		private int[] values;
+		private int[] values = new int[0];
 
 		/*
 		 * Precondition: The value must not already be a member of this bucket.
@@ -34,7 +34,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 		 * contained array.
 		 */
 		public void unsafeAdd(int value) {
-			if (values == null) {
+			if (size == 0) {
 				values = new int[1];
 			} else {
 				if (size == values.length) {
@@ -153,7 +153,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 		} else {
 			// double the number of buckets
 			rebuild(buckets.length << 1);
-		}
+		}		
 	}
 
 	/*
@@ -163,7 +163,7 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	private void shrink() {
 		if (buckets.length > 1) {
 			// halve the number of buckets
-			rebuild(buckets.length >> 1);
+			rebuild(buckets.length >> 1);			
 		}
 	}
 
