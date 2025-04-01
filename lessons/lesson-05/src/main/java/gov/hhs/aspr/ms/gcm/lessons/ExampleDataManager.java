@@ -10,13 +10,7 @@ public final class ExampleDataManager extends DataManager {
 	private double beta = 1.2345;
 	private DataManagerContext dataManagerContext;
 
-	@Override
-	public void init(DataManagerContext dataManagerContext) {
-		super.init(dataManagerContext);
-		this.dataManagerContext = dataManagerContext;
-		dataManagerContext.subscribe(AlphaChangeMutationEvent.class, this::handleAlphaChangeMutationEvent);
-		dataManagerContext.subscribe(BetaChangeMutationEvent.class, this::handleBetaChangeMutationEvent);
-	}
+	
 
 	public int getAlpha() {
 		return alpha;
@@ -27,6 +21,15 @@ public final class ExampleDataManager extends DataManager {
 	}
 
 	/* start code_ref=events_intro_to_event_generation|code_cap=The alpha and beta updates are managed via private mutation events.*/
+	
+	@Override
+	public void init(DataManagerContext dataManagerContext) {
+		super.init(dataManagerContext);
+		this.dataManagerContext = dataManagerContext;
+		dataManagerContext.subscribe(AlphaChangeMutationEvent.class, this::handleAlphaChangeMutationEvent);
+		dataManagerContext.subscribe(BetaChangeMutationEvent.class, this::handleBetaChangeMutationEvent);
+	}
+	
 	private static record AlphaChangeMutationEvent(int alpha) implements Event {
 	}
 
