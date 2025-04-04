@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.regions.reports;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
@@ -41,51 +42,34 @@ public final class RegionPropertyReportPluginData implements PluginData {
             locked = data.locked;
         }
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
-            result = prime * result + ((excludedProperties == null) ? 0 : excludedProperties.hashCode());
-            result = prime * result + ((includedProperties == null) ? 0 : includedProperties.hashCode());
-            result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-            return result;
+            return Objects.hash(reportLabel, includedProperties, excludedProperties, defaultInclusionPolicy);
         }
 
+        /**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof Data)) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             Data other = (Data) obj;
-            if (defaultInclusionPolicy != other.defaultInclusionPolicy) {
-                return false;
-            }
-            if (excludedProperties == null) {
-                if (other.excludedProperties != null) {
-                    return false;
-                }
-            } else if (!excludedProperties.equals(other.excludedProperties)) {
-                return false;
-            }
-            if (includedProperties == null) {
-                if (other.includedProperties != null) {
-                    return false;
-                }
-            } else if (!includedProperties.equals(other.includedProperties)) {
-                return false;
-            }
-            if (reportLabel == null) {
-                if (other.reportLabel != null) {
-                    return false;
-                }
-            } else if (!reportLabel.equals(other.reportLabel)) {
-                return false;
-            }
-            return true;
+            return Objects.equals(reportLabel, other.reportLabel)
+                    && Objects.equals(includedProperties, other.includedProperties)
+                    && Objects.equals(excludedProperties, other.excludedProperties)
+                    && defaultInclusionPolicy == other.defaultInclusionPolicy;
         }
 
         @Override
@@ -264,31 +248,31 @@ public final class RegionPropertyReportPluginData implements PluginData {
         return data.defaultInclusionPolicy;
     }
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+        return Objects.hash(data);
     }
 
+    /**
+     * Two {@link RegionPropertyReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof RegionPropertyReportPluginData)) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         RegionPropertyReportPluginData other = (RegionPropertyReportPluginData) obj;
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(data, other.data);
     }
 
     @Override
