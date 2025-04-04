@@ -3,16 +3,11 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -202,14 +197,15 @@ public class AT_RegionFilter {
 
 	private RegionFilter getRandomRegionFilter(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		Random random = new Random(randomGenerator.nextLong());
-		List<TestRegionId> list = Arrays.asList(TestRegionId.values());
-		Collections.shuffle(list, random);
-		int count = randomGenerator.nextInt(list.size()) + 1;
+
+		int count = randomGenerator.nextInt(10) + 1;
 		Set<RegionId> selectedRegions = new LinkedHashSet<>();
-		for (int i = 0; i < count; i++) {
-			selectedRegions.add(list.get(i));
+
+		while (selectedRegions.size() < count) {
+			SimpleRegionId simpleRegionId = new SimpleRegionId(randomGenerator.nextInt());
+			selectedRegions.add(simpleRegionId);
 		}
+
 		return new RegionFilter(selectedRegions);
 	}
 
@@ -218,6 +214,12 @@ public class AT_RegionFilter {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8665861319201143941L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
+			assertFalse(regionFilter.equals(new Object()));
+		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
@@ -236,22 +238,20 @@ public class AT_RegionFilter {
 			long seed = randomGenerator.nextLong();
 			RegionFilter regionFilter1 = getRandomRegionFilter(seed);
 			RegionFilter regionFilter2 = getRandomRegionFilter(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(regionFilter1 == regionFilter2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(regionFilter1.equals(regionFilter2));
 				assertTrue(regionFilter2.equals(regionFilter1));
 			}
 		}
 
 		// different inputs yield non-equal objects
+		Set<RegionFilter> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			RegionFilter regionFilter1 = getRandomRegionFilter(randomGenerator.nextLong());
-			RegionFilter regionFilter2 = getRandomRegionFilter(randomGenerator.nextLong());
-
-			if (!regionFilter1.getRegionIds().equals(regionFilter2.getRegionIds())) {
-				assertNotEquals(regionFilter1, regionFilter2);
-			}
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
+			set.add(regionFilter);
 		}
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -270,21 +270,14 @@ public class AT_RegionFilter {
 
 		}
 
-		// hash codes are reasonably distributed -- there are only 64 possible values
-		// returned by the random function, so our approach is to eliminate collisions.
-		Set<RegionFilter> regionFilters = new LinkedHashSet<>();
-		for (int i = 0; i < 300; i++) {
-			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
-			regionFilters.add(regionFilter);
-		}
-		
-		assertTrue(regionFilters.size()>50);
-		
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for(RegionFilter regionFilter : regionFilters) {
+		for (int i = 0; i < 100; i++) {
+			RegionFilter regionFilter = getRandomRegionFilter(randomGenerator.nextLong());
 			hashCodes.add(regionFilter.hashCode());
 		}
-		assertEquals(hashCodes.size(), regionFilters.size());
+
+		assertEquals(100, hashCodes.size());
 		
 	}
 
