@@ -277,7 +277,7 @@ metadata$events_lesson_5_output$code_out %>% stringr::str_replace_all("\\n", "<b
 
 ### Event Filters {.unnumbered}
 
-Subscription to events for data managers and actors differ a bit. Data managers subscribe directly to the event type since they are generally interested in all events of some given type. Actors are often more selective and would like a predicate (in Java, the predicate is a function that returns a Boolean) to return true before they handle an event. For example, an actor wants to subscribe for person property change events, but is only interested in those events indicate a change to a particular person property. Since there will likely be dozens of person properties, the actor would get stimulated many times over, only to ignore the event most of the time. Unfortunately, a simple predicate added during the subscription process will not suffice since that predicate would have to be executed for each event and we will have gained little efficiency. Instead, GCM uses the EventFilter class that is essentially a predicate grouping mechanism that allows the subscription engine to group subscribers into a tree structure so that a single predicate execution might suffice to allow an event to be passed to multiple subscribers.
+Subscription to events for data managers and actors differ a bit. Data managers subscribe directly to the event type since they are generally interested in all events of some given type. Actors are often more selective and would like a predicate (in Java, the predicate is a function that returns a Boolean) to return true before they handle an event. For example, an actor wants to subscribe for person property change events, but is only interested in those events that indicate a change to a particular person property. Since there will likely be dozens of person properties, the actor would get stimulated many times over, only to ignore most of theses events. Unfortunately, a simple predicate added during the subscription process will not suffice since that predicate would have to be executed for each event and we will have gained little efficiency. Instead, GCM uses the EventFilter class that is essentially a predicate grouping mechanism that allows the subscription engine to group subscribers into a tree structure so that a single predicate execution might suffice to allow an event to be passed to multiple subscribers.
 
 The event filter is logically composed of functions and target values as pairs. Each function takes in an event and releases a value. If that value is equal to the target value, then the event passes that function. An event passes the event filter if it passes all the functions that compose the filter. The construction of the builder for event filters requires the event class reference. The addition of function-value pairs requires that the functions take in only events of the given class reference, but may return any non-null object value. The simple examples given so far have only specified the event class and thus every event of that type will pass the event filter.
 
@@ -346,7 +346,7 @@ The family plugin defines a FamilyId as a simple, immutable wrapper to an int va
 
 ### Vaccine Plugin {.unnumbered}
 
-The vaccine plugin contains only the VaccineDataManager which tracks by PersonId which people have been vaccinated. Like the FamilyDataManager, it too subscribes to PersonRemovalEvent(s) and adjusts its data accordingly.
+The vaccine plugin contains only the VaccineDataManager which tracks, by PersonId, the people who have been vaccinated. Like the FamilyDataManager, it too subscribes to PersonRemovalEvent(s) and adjusts its data accordingly.
 
 ```{java}
 #| eval: false
@@ -466,7 +466,7 @@ The role of the plugin data builder will be explored in the next lesson where it
 -   A static builder class
 -   A single data field and private constructor
 -   Getter methods for the data
--   A clone builder method
+-   A toBuilder() method that creates a new builder instance that is pre-filled with the current values
 
 ```{java}
 #| eval: false
@@ -511,12 +511,12 @@ The getter methods for each field value in the data are added. There are no corr
 #| echo: true
 ```
 
-We end the class with the getCloneBuilder method.
+We end the class with the toBuilder method.
 
 ::: callout-note
-## Terminology Note
+## Copy on write
 
-Our use of the term clone is intuitive but may cause some confusion. What we are doing is copying the data in the DiseasePluginData and placing into a builder so that it can be further mutated later in the experiment. Java formally defines the term clone as a part of the Object class definition and implements it with a protected method clone(). Use of the Object.clone() method has generally fallen out of favor in Java but still has some proponents/use cases.
+Plugin data objects can get quite large. During an experiment (in the next lesson) we will need to make copies of this data that are very often identical to the original. To reduce run time and memory costs, we usually choose to use a copy-on-write policy that only merely duplicates the pointer to the inner static Data class when we copy a plugin data and surrender a new builder instance. Only when the new builder is actually commanded to alter its data does the internal data instance get copied. To support this mechanism we employee the locked variable and the ensureDataMutability() and ensureImmutability() methods.
 :::
 
 The method returns a new Builder that has reference to the current data object. The resulting example class is easier to read and more succinct:
@@ -530,7 +530,7 @@ The method returns a new Builder that has reference to the current data object. 
 
 ## Experiments Lesson (Lesson 9)
 
-So far we have mentioned that the plugin data classes play a role in executing an experiment via the **getCloneBuilder** method. Let's start with the simple experiment. We will update the last example class by replacing the Simulation execution with an Experiment execution:
+So far we have mentioned that the plugin data classes play a role in executing an experiment via the **toBuilder** method. Let's start with the simple experiment. We will update the last example class by replacing the Simulation execution with an Experiment execution:
 
 ```{java}
 #| eval: false
@@ -672,7 +672,7 @@ The resulting experiment execution is more streamlined:
 #| echo: true
 ```
 
-We have turned off the experiment report progress to console in the code above. We have chosen six values for r0 in our dimension and thus we have 6 simulation executions, each having the model actor print out the contents of the DiseaseDataManager:
+We have turned off the experiment report progress to the console in the code above. We have chosen six values for r0 in our dimension and thus we have 6 simulation executions, each having the model actor print out the contents of the DiseaseDataManager:
 
 ```{r}
 #| eval: true
