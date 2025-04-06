@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.util.annotations.UnitTag;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
-import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_SimpleReportLabel {
 
@@ -44,87 +44,72 @@ public class AT_SimpleReportLabel {
 	@Test
 	@UnitTestMethod(target = SimpleReportLabel.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6496930019639555913L);
+
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
-			SimpleReportLabel s1 = new SimpleReportLabel(i);
-			SimpleReportLabel s2 = new SimpleReportLabel(i);
-			assertEquals(s1.hashCode(), s2.hashCode());
+			long seed = randomGenerator.nextLong();
+			SimpleReportLabel simpleReportLabel1 = getRandomSimpleReportLabel(seed);
+			SimpleReportLabel simpleReportLabel2 = getRandomSimpleReportLabel(seed);
+
+			assertEquals(simpleReportLabel1, simpleReportLabel2);
+			assertEquals(simpleReportLabel1.hashCode(), simpleReportLabel2.hashCode());
+
 		}
 
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 30; i++) {
-			boolean unique = hashCodes.add(new SimpleReportLabel(i).hashCode());
-			assertTrue(unique);
+		for (int i = 0; i < 100; i++) {
+			SimpleReportLabel simpleReportLabel = getRandomSimpleReportLabel(randomGenerator.nextLong());
+			hashCodes.add(simpleReportLabel.hashCode());
 		}
+		
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
-	@UnitTestMethod(target = SimpleReportLabel.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
+	@UnitTestMethod(target = SimpleReportLabel.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		
-		SimpleReportLabel id_1 = new SimpleReportLabel(2);
-		SimpleReportLabel id_2 = new SimpleReportLabel(5);
-		SimpleReportLabel id_3 = new SimpleReportLabel(2);
-		SimpleReportLabel id_4 = new SimpleReportLabel("A");
-		SimpleReportLabel id_5 = new SimpleReportLabel("A");
-		SimpleReportLabel id_6 = new SimpleReportLabel("B");
-		SimpleReportLabel id_7 = new SimpleReportLabel("A");
-		MutableInteger simpleGlobalPropertyId = new MutableInteger(2);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6623921493557306870L);
 
-		// should return false if the object is not a SimpleReportLabel
-		assertNotEquals(id_1, simpleGlobalPropertyId);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			SimpleReportLabel simpleReportLabel = getRandomSimpleReportLabel(randomGenerator.nextLong());
+			assertFalse(simpleReportLabel.equals(new Object()));
+		}
 
-		assertEquals(id_1, id_1); // testing reflexive property
-		assertNotEquals(id_1, id_2);
-		assertEquals(id_1, id_3); // part of reflective property test
-		assertNotEquals(id_1, id_4);
-		assertNotEquals(id_1, id_5);
-		assertNotEquals(id_1, id_6);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			SimpleReportLabel simpleReportLabel = getRandomSimpleReportLabel(randomGenerator.nextLong());
+			assertFalse(simpleReportLabel.equals(null));
+		}
 
-		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			SimpleReportLabel simpleReportLabel = getRandomSimpleReportLabel(randomGenerator.nextLong());
+			assertTrue(simpleReportLabel.equals(simpleReportLabel));
+		}
 
-		assertEquals(id_3, id_1); // part of reflective property test
-		assertNotEquals(id_3, id_2);
-		assertEquals(id_3, id_3);
-		assertNotEquals(id_3, id_4);
-		assertNotEquals(id_3, id_5);
-		assertNotEquals(id_3, id_6);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			SimpleReportLabel simpleReportLabel1 = getRandomSimpleReportLabel(seed);
+			SimpleReportLabel simpleReportLabel2 = getRandomSimpleReportLabel(seed);
+			assertFalse(simpleReportLabel1 == simpleReportLabel2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(simpleReportLabel1.equals(simpleReportLabel2));
+				assertTrue(simpleReportLabel2.equals(simpleReportLabel1));
+			}
+		}
 
-		assertNotEquals(id_4, id_1);
-		assertNotEquals(id_4, id_2);
-		assertNotEquals(id_4, id_3);
-		assertEquals(id_4, id_4);
-		assertEquals(id_4, id_5); // part of transitive property test
-		assertNotEquals(id_4, id_6);
-		assertEquals(id_4, id_7); // part of transitive property test
+		// different inputs yield unequal simpleReportLabels
+		Set<SimpleReportLabel> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			SimpleReportLabel simpleReportLabel = getRandomSimpleReportLabel(randomGenerator.nextLong());
+			set.add(simpleReportLabel);
+		}
+		assertEquals(100, set.size());
 
-		assertNotEquals(id_5, id_1);
-		assertNotEquals(id_5, id_2);
-		assertNotEquals(id_5, id_3);
-		assertEquals(id_5, id_4);
-		assertEquals(id_5, id_5);
-		assertNotEquals(id_5, id_6);
-		assertEquals(id_5, id_7); // part of transitive property test
-
-		assertNotEquals(id_6, id_1);
-		assertNotEquals(id_6, id_2);
-		assertNotEquals(id_6, id_3);
-		assertNotEquals(id_6, id_4);
-		assertNotEquals(id_6, id_5);
-		assertEquals(id_6, id_6);
-
-		// null tests
-		assertNotEquals(id_1, null);
-		assertNotEquals(id_2, null);
-		assertNotEquals(id_3, null);
-		assertNotEquals(id_4, null);
-		assertNotEquals(id_5, null);
-		assertNotEquals(id_6, null);
 	}
 	
 	@Test
@@ -149,4 +134,8 @@ public class AT_SimpleReportLabel {
 
 	}
 
+	private SimpleReportLabel getRandomSimpleReportLabel(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new SimpleReportLabel(randomGenerator.nextInt());
+	}
 }

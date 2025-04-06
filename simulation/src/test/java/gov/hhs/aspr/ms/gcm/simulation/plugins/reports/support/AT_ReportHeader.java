@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -189,98 +189,90 @@ public class AT_ReportHeader {
 		return sb.toString();
 	}
 
+	private ReportHeader getRandomReportHeader(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		ReportHeader.Builder builder = ReportHeader.builder();
+
+		builder.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt()));
+
+		int fieldCount = randomGenerator.nextInt(5) + 1;
+		for (int i = 0; i < fieldCount; i++) {
+			int stringLength = randomGenerator.nextInt(5) + 1;
+			String fieldValue = generateRandomString(randomGenerator, stringLength);
+			builder.add(fieldValue);
+		}
+
+		return builder.build();
+	}
+
 	@Test
 	@UnitTestMethod(target = ReportHeader.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2142808365770946523L);
 
-		// show that hash codes are reasonably dispersed
-		Set<Integer> hashCodeValues = new LinkedHashSet<>();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ReportHeader reportHeader1 = getRandomReportHeader(seed);
+			ReportHeader reportHeader2 = getRandomReportHeader(seed);
 
-		int sampleCount = 1000;
-
-		for (int i = 0; i < sampleCount; i++) {
-			ReportHeader.Builder builder = ReportHeader.builder();
-			int fieldCount = randomGenerator.nextInt(3) + 1;
-			for (int j = 0; j < fieldCount; j++) {
-				int length = randomGenerator.nextInt(8) + 3;
-				String randomHeaderString = generateRandomString(randomGenerator, length);
-				builder.add(randomHeaderString);
-			}
-			ReportHeader reportHeader = builder.setReportLabel(new SimpleReportLabel("test")).build();
-			hashCodeValues.add(reportHeader.hashCode());
-		}
-
-		assertTrue(hashCodeValues.size() > 0.8 * sampleCount);
-
-		// show that equal report headers have equal hash codes
-
-		for (int i = 0; i < sampleCount; i++) {
-			ReportHeader.Builder builder = ReportHeader.builder();
-			ReportHeader.Builder builder2 = ReportHeader.builder();
-			int fieldCount = randomGenerator.nextInt(3) + 1;
-			for (int j = 0; j < fieldCount; j++) {
-				int length = randomGenerator.nextInt(8) + 3;
-				String randomHeaderString = generateRandomString(randomGenerator, length);
-				builder.add(randomHeaderString);
-				builder2.add(new String(randomHeaderString));
-			}
-			ReportHeader reportHeader = builder.setReportLabel(new SimpleReportLabel("test")).build();
-			ReportHeader reportHeader2 = builder2.setReportLabel(new SimpleReportLabel("test")).build();
-
-			assertEquals(reportHeader.hashCode(), reportHeader2.hashCode());
+			assertEquals(reportHeader1, reportHeader2);
+			assertEquals(reportHeader1.hashCode(), reportHeader2.hashCode());
 
 		}
 
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ReportHeader reportHeader = getRandomReportHeader(randomGenerator.nextLong());
+			hashCodes.add(reportHeader.hashCode());
+		}
+		
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = ReportHeader.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		
-		ReportHeader AB1 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").build();
-		ReportHeader BA = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("B").add("A").build();
-		ReportHeader ABC1 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
-		ReportHeader AB2 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").build();
-		ReportHeader ABC2 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
-		ReportHeader ABC3 = ReportHeader.builder().setReportLabel(new SimpleReportLabel("test")).add("A").add("B").add("C").build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821400224306870L);
 
-		// Reflexive
-		assertEquals(AB1, AB1);
-		assertEquals(BA, BA);
-		assertEquals(ABC1, ABC1);
-		assertEquals(AB2, AB2);
-		assertEquals(ABC2, ABC2);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ReportHeader reportHeader = getRandomReportHeader(randomGenerator.nextLong());
+			assertFalse(reportHeader.equals(new Object()));
+		}
 
-		// Symmetric
-		assertEquals(AB1, AB2);
-		assertEquals(AB2, AB1);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			ReportHeader reportHeader = getRandomReportHeader(randomGenerator.nextLong());
+			assertFalse(reportHeader.equals(null));
+		}
 
-		// Transitive
-		assertEquals(ABC1, ABC2);
-		assertEquals(ABC2, ABC1);
-		assertEquals(ABC1, ABC3);
-		assertEquals(ABC3, ABC1);
-		assertEquals(ABC3, ABC2);
-		assertEquals(ABC2, ABC3);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ReportHeader reportHeader = getRandomReportHeader(randomGenerator.nextLong());
+			assertTrue(reportHeader.equals(reportHeader));
+		}
 
-		// show that it cannot be equal to null
-		assertNotEquals(AB1, null);
-		assertNotEquals(BA, null);
-		assertNotEquals(ABC1, null);
-		assertNotEquals(AB2, null);
-		assertNotEquals(ABC2, null);
-		assertNotEquals(ABC3, null);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ReportHeader reportHeader1 = getRandomReportHeader(seed);
+			ReportHeader reportHeader2 = getRandomReportHeader(seed);
+			assertFalse(reportHeader1 == reportHeader2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(reportHeader1.equals(reportHeader2));
+				assertTrue(reportHeader2.equals(reportHeader1));
+			}
+		}
 
-		// show that report headers with different inputs are not equal
-		assertNotEquals(AB1, BA);
-		assertNotEquals(AB1, ABC1);
-		assertNotEquals(AB1, ABC2);
-		assertNotEquals(AB1, ABC3);
-		assertNotEquals(BA, ABC1);
-		assertNotEquals(BA, ABC2);
-		assertNotEquals(BA, ABC3);
-
+		// different inputs yield unequal report headers
+		Set<ReportHeader> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ReportHeader reportHeader = getRandomReportHeader(randomGenerator.nextLong());
+			set.add(reportHeader);
+		}
+		assertEquals(100, set.size());
 	}
 
 }
