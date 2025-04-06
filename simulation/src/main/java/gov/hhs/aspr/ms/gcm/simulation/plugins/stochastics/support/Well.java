@@ -31,23 +31,32 @@ public class Well extends Well44497b {
 		return WellState.builder().setSeed(seed).setInternals(index, v).build();
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method.
+	 * Forwards to the respective WellState.
+     */
 	@Override
 	public int hashCode() {
 		return getWellState().hashCode();
 	}
 
+	/**
+     * Two {@link Well} instances are equal if and only if
+     * their inputs are equal. Forwards to the respective WellState.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Well)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		Well other = (Well) obj;
-
 		return getWellState().equals(other.getWellState());
-
 	}
 
 	@Override

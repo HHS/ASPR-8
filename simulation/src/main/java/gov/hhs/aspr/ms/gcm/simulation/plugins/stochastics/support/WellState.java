@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
@@ -24,35 +25,35 @@ public class WellState {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + index;
-			result = prime * result + (int) (seed ^ (seed >>> 32));
 			result = prime * result + Arrays.hashCode(vArray);
+			result = prime * result + Objects.hash(seed, index);
 			return result;
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (index != other.index) {
-				return false;
-			}
-			if (seed != other.seed) {
-				return false;
-			}
-			if (!Arrays.equals(vArray, other.vArray)) {
-				return false;
-			}
-			return true;
+			return seed == other.seed && index == other.index && Arrays.equals(vArray, other.vArray);
 		}
 
 		@Override
@@ -152,31 +153,31 @@ public class WellState {
 		return Arrays.copyOf(data.vArray, data.vArray.length);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link WellState} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof WellState)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		WellState other = (WellState) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -107,7 +106,7 @@ public class AT_WellState {
 		for (int i = 0; i < 100; i++) {
 			hashCodes.add(createWellState(randomGenerator.nextLong()).hashCode());
 		}
-		assertTrue(hashCodes.size() >= 90);
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -152,65 +151,47 @@ public class AT_WellState {
 	}
 
 	@Test
-	@UnitTestMethod(target = WellState.class, name = "equals", args = { Object.class }, tags = UnitTag.INCOMPLETE)
+	@UnitTestMethod(target = WellState.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7242512295369848202L);
 
-		// no object equals null
+		// never equal to another type
 		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			WellState wellState = createWellState(seed);
+			WellState wellState = createWellState(randomGenerator.nextLong());
+			assertFalse(wellState.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			WellState wellState = createWellState(randomGenerator.nextLong());
 			assertFalse(wellState.equals(null));
 		}
 
-		// stability
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			WellState wellState = createWellState(randomGenerator.nextLong());
+			assertTrue(wellState.equals(wellState));
+		}
+
+		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			WellState wellState1 = createWellState(seed);
 			WellState wellState2 = createWellState(seed);
-			for (int j = 0; j < 10; j++) {
+			assertFalse(wellState1 == wellState2);
+			for (int j = 0; j < 10; j++) {				
 				assertTrue(wellState1.equals(wellState2));
 				assertTrue(wellState2.equals(wellState1));
 			}
 		}
 
-		// reflexive
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			WellState wellState = createWellState(seed);
-			assertTrue(wellState.equals(wellState));
+		// different inputs yield unequal well states
+		Set<WellState> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			WellState wellState = createWellState(randomGenerator.nextLong());
+			set.add(wellState);
 		}
-
-		// symmetric
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			WellState wellState1 = createWellState(seed);
-			WellState wellState2 = createWellState(seed);
-			assertTrue(wellState1.equals(wellState2));
-			assertTrue(wellState2.equals(wellState1));
-		}
-
-		// transitive
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			WellState wellState1 = createWellState(seed);
-			WellState wellState2 = createWellState(seed);
-			WellState wellState3 = createWellState(seed);
-			assertTrue(wellState1.equals(wellState2));
-			assertTrue(wellState2.equals(wellState3));
-			assertTrue(wellState1.equals(wellState3));
-		}
-
-		// show that different inputs lead to non-equality -- assumed
-		for (int i = 0; i < 30; i++) {
-			long seed1 = randomGenerator.nextLong();
-			long seed2 = randomGenerator.nextLong();
-			if (seed1 != seed2) {
-				WellState wellState1 = createWellState(seed1);
-				WellState wellState2 = createWellState(seed2);
-				assertNotEquals(wellState1, wellState2);
-			}
-		}
+		assertEquals(100, set.size());
 	}
 
 	private WellState createWellState(Long seed) {
