@@ -20,7 +20,13 @@ Partitions are built dynamically by actors and data managers. While serializatio
 
 ## Plugin Behavior
 
-The plugin adds a single data manager to the simulation as an instance of the PartitionsDataManager that is initialized with the PartitionsPluginData. The plugin has fixed dependencies on the People plugin and the Stochastic plugin. Unlike other plugins, its dependencies are dynamic and provided by the modeler. This topic will be covered later in the example code.
+The plugin adds a single data manager to the simulation as an instance of the PartitionsDataManager that is initialized with the PartitionsPluginData. The plugin has fixed dependencies on the People plugin and the Stochastic plugin. Unlike other plugins, its dependencies are dynamic and provided by the modeler.
+
+Plugins form a directed, acyclic graph (**DAG**) via their plugin dependencies and these are usually defined the by the plugins themselves and don't require more inputs from the modeler. We can think of the plugins as being arranged in the downward facing tree with the GCM-defined plugins at the top and modeler defined plugins toward the bottom. Although it is the plugins that are arranged in a DAG, it is really the data managers that require this DAG pattern. As models grow complex, the issue of staleness becomes a source of hidden error and can be difficult to address without some amount of formalism. Consider two data managers, A and B with B having logic that depends on the information contained in A. Now suppose we add a person to the simulation and B processes the addition **before** A. The dependent logic will likely not work and might throw an exception. That would be bad enough, but worse yet it might not throw an exception and instead just not work correctly. GCM uses the DAG to ensure that events (recall that all mutations are treated as events) are resolved in the correct order so that no staleness occurs.
+
+The partitions data manager is responsible for passing events to the partitions so that the partitions can properly reflect the current state of the model. Thus if a partition depends on a data manager in plugin X and X is further down in the DAG than the partitions data manger, then the state of X may not be fresh when the partition is updating. This forces us to move the partitions data manager downward in the DAG to a point below the various data managers used by its partitions.
+
+We accomplish this by adding plugin dependencies to the partitions plugin: we are pushing the plugin downward in the DAG. If we fail to do this, GCM will notice when a partition is accessing (via the partition data managers context) a data manager that is downward in the DAG and will throw a DATA_MANAGER_ACCESS_VIOLATION contract exception.
 
 ## Data Manager
 
@@ -303,7 +309,7 @@ The first step in this process is to create the filter that will pass only eligi
 
 All these filters are based on person properties, so we use the PersonPropertyFilter class provided by the person properties plugin. We combine the filters using the AND operator native to all filters.
 
-We need to select people not only on their membership in the partition, but also on their personal properties, preferring older people and those who have had fewer vaccinations. Thus we will be using weighted selection and will use labelers assign weight to the cells in the partition. The nine cells are formed from the combinations of :
+We need to select people not only on their membership in the partition, but also on their personal properties, preferring older people and those who have had fewer vaccinations. Thus we will be using weighted selection and will use labelers to assign weight to the cells in the partition. The nine cells are formed from the combinations of :
 
 -   ADULT_18_44, ADULT_45_64, SENIOR
 
@@ -320,6 +326,8 @@ The vaccination process, @lst-partitions_plugin_partition_vaccinate, greatly sim
 -   Selecting a specific random number generator for the sampling process
 
 The resulting code is easier to refactor, less error prone and executes much faster with far less memory than the previous implementations. Cells in the partition are dynamically allocated to multiple implementations that can approach 1.3 bits per person in the population while maintaining O(ln(n) ) performance for sampling.
+
+The weight function used in the sampler now takes in a label set for each cell in the partition. It gets the labels (AgeGroup and vaccine count) from the label set and proceeds to calculate a weight for that cell similar to the other vaccinator implementations.
 
 ```{java}
 #| eval: false

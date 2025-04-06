@@ -28,7 +28,7 @@ public class PersonMover {
 		}
 		PersonId personId = people.get(randomGenerator.nextInt(people.size()));
 
-		// pick a new random new region for that person
+		// pick a new random region for that person
 		List<RegionId> regionIds = new ArrayList<>(regionsDataManager.getRegionIds());
 		RegionId personRegion = regionsDataManager.getPersonRegion(personId);
 		regionIds.remove(personRegion);
