@@ -40,7 +40,7 @@ public class BasePeopleContainer implements PeopleContainer {
 			mode = PeopleContainerMode.TREE_BIT_SET;
 		} else {
 			mode = PeopleContainerMode.INTSET;
-			internalPeopleContainer = new IntSetPeopleContainer();
+			internalPeopleContainer = new IntSetPeopleContainer(peopleDataManager);
 		}
 
 	}
@@ -67,7 +67,7 @@ public class BasePeopleContainer implements PeopleContainer {
 			if (size <= peopleDataManager.getPersonIdLimit() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
-				internalPeopleContainer = new IntSetPeopleContainer();
+				internalPeopleContainer = new IntSetPeopleContainer(peopleDataManager);
 				for (PersonId personId : people) {
 					/*
 					 * We use unsafe add as it faster and we know that the person id cannot already

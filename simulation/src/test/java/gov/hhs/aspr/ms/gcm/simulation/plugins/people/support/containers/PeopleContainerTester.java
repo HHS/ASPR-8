@@ -100,7 +100,7 @@ public class PeopleContainerTester {
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -148,7 +148,7 @@ public class PeopleContainerTester {
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -190,7 +190,7 @@ public class PeopleContainerTester {
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -203,22 +203,27 @@ public class PeopleContainerTester {
 				}
 			}
 
-			// add the people to the people container
-			for (PersonId personId : expectedPeople) {
-				peopleContainer.safeAdd(personId);
-			}
+			// loop through fully adding and removing all the people to show that emptying
+			// out the container does not cause a problem
+			for (int i = 0; i < 2; i++) {
 
-			// show that the people container has the correct people with
-			// no duplications
-			List<PersonId> peopleList = peopleContainer.getPeople();
-			assertEquals(expectedPeople.size(), peopleList.size());
-			assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
+				// add the people to the people container
+				for (PersonId personId : expectedPeople) {
+					peopleContainer.safeAdd(personId);
+				}
 
-			// remove the people from the people container, showing that the
-			// person is removed
-			for (PersonId personId : expectedPeople) {
-				peopleContainer.remove(personId);
-				assertFalse(peopleContainer.contains(personId));
+				// show that the people container has the correct people with
+				// no duplications
+				List<PersonId> peopleList = peopleContainer.getPeople();
+				assertEquals(expectedPeople.size(), peopleList.size());
+				assertEquals(new LinkedHashSet<>(expectedPeople), new LinkedHashSet<>(peopleList));
+
+				// remove the people from the people container, showing that the
+				// person is removed
+				for (PersonId personId : expectedPeople) {
+					peopleContainer.remove(personId);
+					assertFalse(peopleContainer.contains(personId));
+				}
 			}
 
 		});
@@ -239,7 +244,7 @@ public class PeopleContainerTester {
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -287,7 +292,7 @@ public class PeopleContainerTester {
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
@@ -334,15 +339,13 @@ public class PeopleContainerTester {
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			
 			// get the people container to test
 			PeopleContainer peopleContainer = provider.apply(peopleDataManager);
 
 			for (int i = 0; i < 100; i++) {
 				peopleDataManager.addPerson(PersonConstructionData.builder().build());
 			}
-			
-			
+
 			// show that the simulation contains the correct number of people
 			assertEquals(100, peopleDataManager.getPopulationCount());
 
