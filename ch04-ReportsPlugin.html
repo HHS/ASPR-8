@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -277,7 +277,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Report Header – the header content for the report</li>
 <li>Report Item – the data content(strings) for each line in the report</li>
 </ol>
-<p>The report label is a unique identifier used to mark every report item that the plugin processes and helps associate those items to the specific files where they will be recorded. Report items are a flexible list of values that have an associated report label as well as a report header used to build the header of the file. A report file is built from the report items that are associated with a specific report label in the order received. The first report item is used to build the header of the report file. All other lines of the file are an ordered, delimited listing of the string values contained in each report item. No attempt is made to ensure that the header matches the report lines or that all report lines have equal field lengths.</p>
+<p>The report label is a unique identifier used to mark every report item that the plugin processes and helps associate those items to the specific files where they will be recorded. Report items are a flexible list of values that have an associated report label. Report headers are used to build the headers of the files and also have an associated report label. A report file is built from the report items that are associated with a specific report label in the order received. The report header is used to build the header of the report file and must be the first thing received by the report. All other lines of the file are an ordered, delimited listing of the string values contained in each report item. No attempt is made to ensure that the header matches the report lines or that all report lines have equal field lengths.</p>
 <p>While any data manager or actor can release report items, in practice most reports are managed solely by special purpose, passive reports that simply observe events and do not act on any data manager. These reports often subscribe to multiple event types and aggregate several events into a single report item. This reduces the amount of information recorded in output files and thus output files are often more complex than simple event trace files.</p>
 <p>Reports enjoy most of the privileges of actors and use a ReportContext to work with the simulation. They can get information directly from data managers, subscribe to events and plan. However, they cannot mutate data and thus their presence should have little to no impact on the state of the simulation. Like actors, reports are confined to simulation instances and there will often be multiple report instances contributing to the same output file from simultaneously running scenarios.</p>
 <section id="plugin-data-initialization" class="level2" data-number="4.1">
@@ -371,7 +371,7 @@ Code Block&nbsp;4.2: The three reports in this experiment each produce report it
 </figure>
 </div>
 </div>
-<p>Each report label is now associated with a particular file path. Although each file is a tab-delimited text file, we use the .xls file extension so that they can be automatically opened as a spreadsheet. Had we skipped adding these last specifications, the report items would flow out of the simulation and into the experiment but would not find an associated file and thus be ignored.</p>
+<p>Each report label is now associated with a particular file path. Had we skipped adding these last specifications, the report items would flow out of the simulation and into the experiment but would not find an associated file and thus be ignored.</p>
 <p>Finally, in <a href="#lst-reports_plugin_example_12_execution" class="quarto-xref">Code Block&nbsp;<span>4.3</span></a> and <a href="#lst-reports_plugin_family_dimension" class="quarto-xref">Code Block&nbsp;<span>4.4</span></a>, we create a single experiment dimension that will override the maximum family size with four values and thus create four scenarios for the experiment.</p>
 <div class="cell">
 <div id="lst-reports_plugin_example_12_execution" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
@@ -496,9 +496,9 @@ Code Block&nbsp;4.5: The family vaccine report defines two enums for the vaccina
 </div>
 <p><a href="#lst-reports_plugin_family_vaccine_report_fields" class="quarto-xref">Code Block&nbsp;<span>4.6</span></a> shows the remaining private fields.</p>
 <ul>
-<li>report id – remains fixed from construction and is used to mark every report item</li>
-<li>reportHeader – is constructed once and used in the construction of every report item</li>
-<li>actorContext – a convenience reference kept by the actor to retrieve the simulation time</li>
+<li>reportLabel – remains fixed from construction and is used to mark every report item and the report header</li>
+<li>reportHeader – is constructed and released once before any report items</li>
+<li>reportContext – a convenience reference kept by the report to retrieve the simulation time</li>
 <li>vaccinationDataManager – a convenience reference to retrieve the vaccination status of each person</li>
 <li>familyDataManager – a convenience reference to retrieve the family members associated with a given person who has just been vaccinated</li>
 <li>statusToFamiliesMap – a map from family vaccine status to a mutable counter</li>
@@ -560,7 +560,7 @@ Code Block&nbsp;4.7: The report initializes its data structures.
 </figure>
 </div>
 </div>
-<p>Next is the initialization method that was passed to the simulation. This is invoked by the simulation just once at the begining of time flow and gives the report a chance to register for events and to initialize the private fields from <a href="#lst-reports_plugin_family_vaccine_report_fields" class="quarto-xref">Code Block&nbsp;<span>4.6</span></a>. The report records the actor context and subscribes to the four events of interest in <a href="#lst-reports_plugin_family_vaccine_report_init_subscriptions" class="quarto-xref">Code Block&nbsp;<span>4.8</span></a>. These subscriptions reference local private methods that will be discussed later.</p>
+<p>Next is the initialization method that was passed to the simulation. This is invoked by the simulation just once at the begining of time flow and gives the report a chance to register for events and to initialize the private fields from <a href="#lst-reports_plugin_family_vaccine_report_fields" class="quarto-xref">Code Block&nbsp;<span>4.6</span></a>. The report records the report context and subscribes to the four events of interest in <a href="#lst-reports_plugin_family_vaccine_report_init_subscriptions" class="quarto-xref">Code Block&nbsp;<span>4.8</span></a>. These subscriptions reference local private methods that will be discussed later.</p>
 <div class="cell">
 <div id="lst-reports_plugin_family_vaccine_report_init_subscriptions" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -664,7 +664,7 @@ Code Block&nbsp;4.11: Capturing individuals who have no family association.
 </figure>
 </div>
 </div>
-<p>Initialization finishes with the release of a single report item that summarizes the state of family vaccination at time zero.</p>
+<p>Initialization finishes with the release of the header and a single report item that summarizes the state of family vaccination at time zero.</p>
 <div class="cell">
 <div id="lst-reports_plugin_family_vaccine_report_init_releasing_output" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -800,7 +800,7 @@ Code Block&nbsp;4.15: Events that effect the status of an individual are process
 </figure>
 </div>
 </div>
-<p>Releasing the report items that summarizes the family vaccination counts requires building a new report item with the fixed report label and report header values determined in the constructor. We then go on to add the time and count values in the order dictated by the helper enumerations so that they follow the header values established in the report header. Once the report item is complete it is released as output via the report context. The simulation will in turn release the report item to the experiment where it will be distributed to the NIOReportItemHandler and then on the specific file manager(s) that record the items.</p>
+<p>Releasing the report items that summarize the family vaccination counts requires building a new report item with the fixed report label value determined in the constructor. We then go on to add the time and count values in the order dictated by the helper enumerations so that they follow the header values established in the report header. Once the report item is complete it is released as output via the report context. The simulation will in turn release the report item to the experiment where it will be distributed to the NIOReportItemHandler and then on the specific file manager(s) that record the items.</p>
 <div class="cell">
 <div id="lst-reports_plugin_family_vaccine_report_init_releasing_report_item" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -1461,7 +1461,7 @@ vaccinated_individuals
 <li><strong><em>getReportLabel</em></strong> and <strong><em>getReportPeriod</em></strong> retrieve the label and report period passed in construction</li>
 <li><strong><em>addTimeFieldHeaders</em></strong> is used to help create the report header</li>
 <li><strong><em>fillTimeFields</em></strong> is used to help create report items</li>
-<li><strong><em>flush</em></strong> is an abstract method for flushing the content of the report actor that must be implemented by the descendant report class</li>
+<li><strong><em>flush</em></strong> is an abstract method for flushing the content of the report and must be implemented by the descendant report class</li>
 </ul>
 <p>Our next example report is the HourlyVaccineReport that descends from the PeriodicReport. It produces the same output as the FamilyVaccineReport, but does so on an hourly basis. This outputs a report item every hour whether or not there were stimulating events. The implementation of this report is nearly identical to the previous report and we will concentrate on highlighting the differences between the two approaches.</p>
 <p>In <a href="#lst-reports_plugin_hourly_vaccine_constructor" class="quarto-xref">Code Block&nbsp;<span>4.17</span></a> we see that the constructor invokes the super constructor. The construction of the report header is aided by the protected method addTimeFieldHeaders() which should be invoked as the first inputs to the report header builder. Note as well that we do not store the report label locally.</p>

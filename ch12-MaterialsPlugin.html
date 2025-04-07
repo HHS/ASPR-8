@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -336,7 +336,7 @@ Figure&nbsp;12.2: The materials life cycle has materials gathered in the invento
 <li>Defines materials producer properties</li>
 <li>Sets materials producer property values</li>
 <li>Sets materials producer initial resource levels</li>
-<li>Initializes stage and batches in initial inventory</li>
+<li>Initializes stages and batches in initial inventory</li>
 <li>Defines batch property properties</li>
 <li>Sets initial batch property values</li>
 </ul>
@@ -349,7 +349,7 @@ Figure&nbsp;12.2: The materials life cycle has materials gathered in the invento
 <h2 data-number="12.3" class="anchored" data-anchor-id="data-manager"><span class="header-section-number">12.3</span> Data Manager</h2>
 <p>The data manager manages the batch and stage inventories of the materials producers as well as managing the relevant property values and material transformations to resources. The data manager provides public methods that:</p>
 <ul>
-<li>Defined a new material type</li>
+<li>Define a new material type</li>
 <li>Add and remove batches</li>
 <li>Add and remove stages</li>
 <li>Move batches to and from stages</li>
@@ -704,7 +704,7 @@ Code Block&nbsp;12.8: The person properties plugin includes person property defi
 <li>VaccineReport – Shows a daily summary of the number of people who have been scheduled for or have received vaccination</li>
 <li>VaccineProductionReport – Shows a daily summary of the internal inventory of the antigen and vaccine producers</li>
 </ul>
-<p>The stochastic plugin is initialized with a random seed and all simulations will start in the same stochastic state. The Regions plugin has one region and the people plugin is loaded in an empty state. People are added by an actor in the model plugin. The groups plugin is initialized with the three group types: HOME, SCHOOL, and WORK.</p>
+<p>The stochastics plugin is initialized with a random seed and all simulations will start in the same stochastic state. The Regions plugin has one region and the people plugin is loaded in an empty state. People are added by an actor in the model plugin. The groups plugin is initialized with the three group types: HOME, SCHOOL, and WORK.</p>
 <p>The model plugin adds three actors:</p>
 <ul>
 <li>PopulationLoader – Adds people to the simulation and initializes immunity</li>
@@ -1031,7 +1031,7 @@ Code Block&nbsp;12.16: When a materials producer updates its resource level, the
 </figure>
 </div>
 </div>
-<p>Once vaccine doses are available, the Vaccinator schedules vaccinations (<a href="#lst-materials_plugin_vaccinator_producer_schedule_vaccinations" class="quarto-xref">Code Block&nbsp;<span>12.17</span></a>) at a fixed rate of 100 per day. The vaccines doses are distributed evenly amongst the regions and people are scheduled for vaccination throughout the day(s) following the receipt of vaccines from the VaccineProducer. Finally, the Vaccinator determines if enough vaccine has been received and to vaccinate the entire population and thus the manufacture of resource and materials can be halted.</p>
+<p>Once vaccine doses are available, the Vaccinator schedules vaccinations (<a href="#lst-materials_plugin_vaccinator_producer_schedule_vaccinations" class="quarto-xref">Code Block&nbsp;<span>12.17</span></a>) at a fixed rate of 100 per day. The vaccines doses are distributed evenly amongst the regions and people are scheduled for vaccination throughout the day(s) following the receipt of vaccines from the VaccineProducer. Finally, the Vaccinator determines if enough vaccine has been received to vaccinate the entire population and thus the manufacture of resource and materials can be halted.</p>
 <div class="cell">
 <div id="lst-materials_plugin_vaccinator_producer_schedule_vaccinations" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">

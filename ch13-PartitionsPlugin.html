@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -70,7 +70,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -295,7 +295,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plugin-behavior" class="level2" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="plugin-behavior"><span class="header-section-number">13.2</span> Plugin Behavior</h2>
-<p>The plugin adds a single data manager to the simulation as an instance of the PartitionsDataManager that is initialized with the PartitionsPluginData. The plugin has fixed dependencies on the People plugin and the Stochastic plugin. Unlike other plugins, its dependencies are dynamic and provided by the modeler. This topic will be covered later in the example code.</p>
+<p>The plugin adds a single data manager to the simulation as an instance of the PartitionsDataManager that is initialized with the PartitionsPluginData. The plugin has fixed dependencies on the People plugin and the Stochastic plugin. Unlike other plugins, its dependencies are dynamic and provided by the modeler.</p>
+<p>Plugins form a directed, acyclic graph (<strong>DAG</strong>) via their plugin dependencies and these are usually defined the by the plugins themselves and don’t require more inputs from the modeler. We can think of the plugins as being arranged in the downward facing tree with the GCM-defined plugins at the top and modeler defined plugins toward the bottom. Although it is the plugins that are arranged in a DAG, it is really the data managers that require this DAG pattern. As models grow complex, the issue of staleness becomes a source of hidden error and can be difficult to address without some amount of formalism. Consider two data managers, A and B with B having logic that depends on the information contained in A. Now suppose we add a person to the simulation and B processes the addition <strong>before</strong> A. The dependent logic will likely not work and might throw an exception. That would be bad enough, but worse yet it might not throw an exception and instead just not work correctly. GCM uses the DAG to ensure that events (recall that all mutations are treated as events) are resolved in the correct order so that no staleness occurs.</p>
+<p>The partitions data manager is responsible for passing events to the partitions so that the partitions can properly reflect the current state of the model. Thus if a partition depends on a data manager in plugin X and X is further down in the DAG than the partitions data manger, then the state of X may not be fresh when the partition is updating. This forces us to move the partitions data manager downward in the DAG to a point below the various data managers used by its partitions.</p>
+<p>We accomplish this by adding plugin dependencies to the partitions plugin: we are pushing the plugin downward in the DAG. If we fail to do this, GCM will notice when a partition is accessing (via the partition data managers context) a data manager that is downward in the DAG and will throw a DATA_MANAGER_ACCESS_VIOLATION contract exception.</p>
 </section>
 <section id="data-manager" class="level2" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="data-manager"><span class="header-section-number">13.3</span> Data Manager</h2>
@@ -1178,7 +1181,7 @@ Code Block&nbsp;13.18: The partition-vaccinator creates two partitions to help w
 <li>People who have not been recently vaccinated</li>
 </ul>
 <p>All these filters are based on person properties, so we use the PersonPropertyFilter class provided by the person properties plugin. We combine the filters using the AND operator native to all filters.</p>
-<p>We need to select people not only on their membership in the partition, but also on their personal properties, preferring older people and those who have had fewer vaccinations. Thus we will be using weighted selection and will use labelers assign weight to the cells in the partition. The nine cells are formed from the combinations of :</p>
+<p>We need to select people not only on their membership in the partition, but also on their personal properties, preferring older people and those who have had fewer vaccinations. Thus we will be using weighted selection and will use labelers to assign weight to the cells in the partition. The nine cells are formed from the combinations of :</p>
 <ul>
 <li><p>ADULT_18_44, ADULT_45_64, SENIOR</p></li>
 <li><p>VACCINATION_COUNT = 0, 1, 2</p></li>
@@ -1192,6 +1195,7 @@ Code Block&nbsp;13.18: The partition-vaccinator creates two partitions to help w
 <li>Selecting a specific random number generator for the sampling process</li>
 </ul>
 <p>The resulting code is easier to refactor, less error prone and executes much faster with far less memory than the previous implementations. Cells in the partition are dynamically allocated to multiple implementations that can approach 1.3 bits per person in the population while maintaining O(ln(n) ) performance for sampling.</p>
+<p>The weight function used in the sampler now takes in a label set for each cell in the partition. It gets the labels (AgeGroup and vaccine count) from the label set and proceeds to calculate a weight for that cell similar to the other vaccinator implementations.</p>
 <div class="cell">
 <div id="lst-partitions_plugin_partition_vaccinate" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -1229,7 +1233,50 @@ Code Block&nbsp;13.19: The partition-vaccinator schedules and executes vaccinati
 <span id="lst-partitions_plugin_partition_vaccinate-28"><a href="#lst-partitions_plugin_partition_vaccinate-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="lst-partitions_plugin_partition_vaccinate-29"><a href="#lst-partitions_plugin_partition_vaccinate-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="lst-partitions_plugin_partition_vaccinate-30"><a href="#lst-partitions_plugin_partition_vaccinate-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">planNextVaccination</span><span class="op">();</span></span>
-<span id="lst-partitions_plugin_partition_vaccinate-31"><a href="#lst-partitions_plugin_partition_vaccinate-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="lst-partitions_plugin_partition_vaccinate-31"><a href="#lst-partitions_plugin_partition_vaccinate-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-32"><a href="#lst-partitions_plugin_partition_vaccinate-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-33"><a href="#lst-partitions_plugin_partition_vaccinate-33" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">double</span> <span class="fu">getWeight</span><span class="op">(</span>PartitionsContext partitionsContext<span class="op">,</span> LabelSet labelSet<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-34"><a href="#lst-partitions_plugin_partition_vaccinate-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-35"><a href="#lst-partitions_plugin_partition_vaccinate-35" aria-hidden="true" tabindex="-1"></a>    AgeGroup ageGroup <span class="op">=</span> <span class="op">(</span>AgeGroup<span class="op">)</span> labelSet<span class="op">.</span><span class="fu">getLabel</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">AGE</span><span class="op">).</span><span class="fu">get</span><span class="op">();</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-36"><a href="#lst-partitions_plugin_partition_vaccinate-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-37"><a href="#lst-partitions_plugin_partition_vaccinate-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> vaccineCount <span class="op">=</span> <span class="op">(</span><span class="bu">Integer</span><span class="op">)</span> labelSet<span class="op">.</span><span class="fu">getLabel</span><span class="op">(</span>PersonProperty<span class="op">.</span><span class="fu">VACCINATION_COUNT</span><span class="op">).</span><span class="fu">get</span><span class="op">();</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-38"><a href="#lst-partitions_plugin_partition_vaccinate-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-39"><a href="#lst-partitions_plugin_partition_vaccinate-39" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> result <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-40"><a href="#lst-partitions_plugin_partition_vaccinate-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-41"><a href="#lst-partitions_plugin_partition_vaccinate-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>ageGroup<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-42"><a href="#lst-partitions_plugin_partition_vaccinate-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> ADULT_18_44<span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-43"><a href="#lst-partitions_plugin_partition_vaccinate-43" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-44"><a href="#lst-partitions_plugin_partition_vaccinate-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-45"><a href="#lst-partitions_plugin_partition_vaccinate-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> ADULT_45_64<span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-46"><a href="#lst-partitions_plugin_partition_vaccinate-46" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-47"><a href="#lst-partitions_plugin_partition_vaccinate-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-48"><a href="#lst-partitions_plugin_partition_vaccinate-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> CHILD<span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-49"><a href="#lst-partitions_plugin_partition_vaccinate-49" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-50"><a href="#lst-partitions_plugin_partition_vaccinate-50" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-51"><a href="#lst-partitions_plugin_partition_vaccinate-51" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> SENIOR<span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-52"><a href="#lst-partitions_plugin_partition_vaccinate-52" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-53"><a href="#lst-partitions_plugin_partition_vaccinate-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-54"><a href="#lst-partitions_plugin_partition_vaccinate-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span><span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-55"><a href="#lst-partitions_plugin_partition_vaccinate-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-56"><a href="#lst-partitions_plugin_partition_vaccinate-56" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-57"><a href="#lst-partitions_plugin_partition_vaccinate-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-58"><a href="#lst-partitions_plugin_partition_vaccinate-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>vaccineCount<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-59"><a href="#lst-partitions_plugin_partition_vaccinate-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">0</span><span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-60"><a href="#lst-partitions_plugin_partition_vaccinate-60" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-61"><a href="#lst-partitions_plugin_partition_vaccinate-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-62"><a href="#lst-partitions_plugin_partition_vaccinate-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">1</span><span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-63"><a href="#lst-partitions_plugin_partition_vaccinate-63" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">3</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-64"><a href="#lst-partitions_plugin_partition_vaccinate-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-65"><a href="#lst-partitions_plugin_partition_vaccinate-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="dv">2</span><span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-66"><a href="#lst-partitions_plugin_partition_vaccinate-66" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">2</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-67"><a href="#lst-partitions_plugin_partition_vaccinate-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-68"><a href="#lst-partitions_plugin_partition_vaccinate-68" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span><span class="op">:</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-69"><a href="#lst-partitions_plugin_partition_vaccinate-69" aria-hidden="true" tabindex="-1"></a>        result <span class="op">+=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-70"><a href="#lst-partitions_plugin_partition_vaccinate-70" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-71"><a href="#lst-partitions_plugin_partition_vaccinate-71" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-72"><a href="#lst-partitions_plugin_partition_vaccinate-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-partitions_plugin_partition_vaccinate-73"><a href="#lst-partitions_plugin_partition_vaccinate-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result<span class="op">;</span></span>
+<span id="lst-partitions_plugin_partition_vaccinate-74"><a href="#lst-partitions_plugin_partition_vaccinate-74" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </figure>
 </div>

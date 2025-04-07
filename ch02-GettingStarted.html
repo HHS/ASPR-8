@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.42">
+<meta name="generator" content="quarto-1.6.43">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-d4d76bf8491c20bad77d141916dc28e1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-8da5b4427184b79ecddefad3d342027e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -524,8 +524,8 @@ Code Block&nbsp;2.7: A single actor writes output to the console during its init
 <li>React to but do not produce events</li>
 <li>May access any data manager</li>
 <li>Have objectives. They contain the business logic of the model and are trying to achieve some particular state of the world</li>
-<li>Are concerned with many aspects of the world, but often focused on a particular subset of world</li>
-<li>Are added as consumers of ActorContext and may be composed of any such consumers</li>
+<li>Are concerned with many aspects of the world, but often focused on a particular subset of the world</li>
+<li>Are added as consumers of ActorContext and may be composed of many such consumers</li>
 </ul></li>
 </ul>
 <!-- -->
@@ -624,8 +624,8 @@ Code Block&nbsp;2.9: The example data manager manages the state of two propertie
 <li><strong>Act</strong>: A mutation to some data manager’s managed data.</li>
 <li><strong>Plan</strong>: At some time in the future, the actor will take some particular action</li>
 </ol>
-<p>Actions in GCM are always executed in the current moment in the simulation. Unlike many future event simulations where events are queued for future execution, GCM allows an actor to plan for an action or observation in the future. The plan is a consumer of ActorContext and can be a static method, member method or a lambda. The plan is registered with the simulation and is executed only when time has moved forward to the plan’s scheduled time. There is no requirement that the plan do anything at all. This allows the flexibility to re-evaluate the circumstances of the planned action and choose to take appropriate action at that time. Plans are queued in GCM by their associated planning times and it is this queue that dictates the flow of time. For example, suppose the simulation finds the first plan is scheduled for time= 2.4 days. The current time = 0 days and the simulation progresses time to 2.4 days and then invokes the plan. Plans are always privately managed by the actor that owns the plan and no other actor or data manager has any insight into those plans.</p>
-<p>In this example, the actor is initialized at time= 0 and generates 10 plans to increment the value of the alpha in the ExampleManager. Each time the ExampleManager changes the value of alpha, it outputs to the console a description of the change.</p>
+<p>Actions in GCM are always executed in the current moment in the simulation. Unlike many future event simulations where events are queued for future execution, GCM allows an actor to plan for an action or observation in the future. The plan is a consumer of ActorContext and can be a static method, member method or a lambda. The plan is registered with the simulation and is executed only when time has moved forward to the plan’s scheduled time. There is no requirement that the plan do anything at all. This allows the flexibility to re-evaluate the circumstances of the planned action and choose to take appropriate action at that time. Plans are queued in GCM by their associated planning times and it is this queue that dictates the flow of time. For example, suppose the simulation finds the first plan is scheduled for time = 2.4 days. The current time = 0 days and the simulation progresses time to 2.4 days and then invokes the plan. Plans are always privately managed by the actor that owns the plan and no other actor or data manager has any insight or access into those plans.</p>
+<p>In this example, the actor is initialized at time = 0 and generates 10 plans to increment the value of the alpha in the ExampleManager. Each time the ExampleManager changes the value of alpha, it outputs to the console a description of the change.</p>
 <div class="cell">
 <div id="lst-data_managers_example_actor" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -678,7 +678,7 @@ ExampleDataManager is initialized <br>Example Actor is initialized and will plan
 </section>
 <section id="events-lesson-lesson-5" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="events-lesson-lesson-5"><span class="header-section-number">2.5</span> Events Lesson (Lesson 5)</h2>
-<p>An event in GCM is a notification of a data change to the state of a data manager. In this example we will introduce two events corresponding to the two changes to the ExampleDataManager. Both events document the previous value and current value (at the time when the event was generated) and are immutable data classes.</p>
+<p>An obervation event in GCM is a notification of a data change to the state of a data manager. In this example we will introduce two observation events corresponding to the two changes to the ExampleDataManager. Both events document the previous value and current value (at the time when the event was generated) and are immutable record classes.</p>
 <div class="cell">
 <div id="lst-events_alpha_change_event" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -686,38 +686,7 @@ ExampleDataManager is initialized <br>Example Actor is initialized and will plan
 Code Block&nbsp;2.11: An event to notify that the alpha property has been updated.
 </figcaption>
 <div aria-describedby="lst-events_alpha_change_event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode cell-code" id="lst-events_alpha_change_event"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_alpha_change_event-1"><a href="#lst-events_alpha_change_event-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">final</span> <span class="kw">class</span> AlphaChangeEvent <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
-<span id="lst-events_alpha_change_event-2"><a href="#lst-events_alpha_change_event-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-3"><a href="#lst-events_alpha_change_event-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span> previousAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-4"><a href="#lst-events_alpha_change_event-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-5"><a href="#lst-events_alpha_change_event-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">int</span> currentAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-6"><a href="#lst-events_alpha_change_event-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-7"><a href="#lst-events_alpha_change_event-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">AlphaChangeEvent</span><span class="op">(</span><span class="dt">int</span> previousAlpha<span class="op">,</span> <span class="dt">int</span> currentAlpha<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_alpha_change_event-8"><a href="#lst-events_alpha_change_event-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">super</span><span class="op">();</span></span>
-<span id="lst-events_alpha_change_event-9"><a href="#lst-events_alpha_change_event-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">previousAlpha</span> <span class="op">=</span> previousAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-10"><a href="#lst-events_alpha_change_event-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">currentAlpha</span> <span class="op">=</span> currentAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-11"><a href="#lst-events_alpha_change_event-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_alpha_change_event-12"><a href="#lst-events_alpha_change_event-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-13"><a href="#lst-events_alpha_change_event-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getPreviousAlpha</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_alpha_change_event-14"><a href="#lst-events_alpha_change_event-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> previousAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-15"><a href="#lst-events_alpha_change_event-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_alpha_change_event-16"><a href="#lst-events_alpha_change_event-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-17"><a href="#lst-events_alpha_change_event-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">getCurrentAlpha</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_alpha_change_event-18"><a href="#lst-events_alpha_change_event-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> currentAlpha<span class="op">;</span></span>
-<span id="lst-events_alpha_change_event-19"><a href="#lst-events_alpha_change_event-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_alpha_change_event-20"><a href="#lst-events_alpha_change_event-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-21"><a href="#lst-events_alpha_change_event-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
-<span id="lst-events_alpha_change_event-22"><a href="#lst-events_alpha_change_event-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">toString</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_alpha_change_event-23"><a href="#lst-events_alpha_change_event-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">StringBuilder</span> builder <span class="op">=</span> <span class="kw">new</span> <span class="bu">StringBuilder</span><span class="op">();</span></span>
-<span id="lst-events_alpha_change_event-24"><a href="#lst-events_alpha_change_event-24" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">"AlphaChangeEvent [previousAlpha="</span><span class="op">);</span></span>
-<span id="lst-events_alpha_change_event-25"><a href="#lst-events_alpha_change_event-25" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span>previousAlpha<span class="op">);</span></span>
-<span id="lst-events_alpha_change_event-26"><a href="#lst-events_alpha_change_event-26" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">", currentAlpha="</span><span class="op">);</span></span>
-<span id="lst-events_alpha_change_event-27"><a href="#lst-events_alpha_change_event-27" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span>currentAlpha<span class="op">);</span></span>
-<span id="lst-events_alpha_change_event-28"><a href="#lst-events_alpha_change_event-28" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">"]"</span><span class="op">);</span></span>
-<span id="lst-events_alpha_change_event-29"><a href="#lst-events_alpha_change_event-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> builder<span class="op">.</span><span class="fu">toString</span><span class="op">();</span></span>
-<span id="lst-events_alpha_change_event-30"><a href="#lst-events_alpha_change_event-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_alpha_change_event-31"><a href="#lst-events_alpha_change_event-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_alpha_change_event-32"><a href="#lst-events_alpha_change_event-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="lst-events_alpha_change_event"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_alpha_change_event-1"><a href="#lst-events_alpha_change_event-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">record</span> <span class="fu">AlphaChangeEvent</span><span class="op">(</span><span class="dt">int</span> previousAlpha<span class="op">,</span><span class="dt">int</span> currentAlpha<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </figure>
 </div>
@@ -729,43 +698,15 @@ Code Block&nbsp;2.11: An event to notify that the alpha property has been update
 Code Block&nbsp;2.12: An event to notify that the beta property has been updated.
 </figcaption>
 <div aria-describedby="lst-events_beta_change_event-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode cell-code" id="lst-events_beta_change_event"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_beta_change_event-1"><a href="#lst-events_beta_change_event-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">final</span> <span class="kw">class</span> BetaChangeEvent <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
-<span id="lst-events_beta_change_event-2"><a href="#lst-events_beta_change_event-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-3"><a href="#lst-events_beta_change_event-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">double</span> previousBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-4"><a href="#lst-events_beta_change_event-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-5"><a href="#lst-events_beta_change_event-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> <span class="dt">double</span> currentBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-6"><a href="#lst-events_beta_change_event-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-7"><a href="#lst-events_beta_change_event-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">BetaChangeEvent</span><span class="op">(</span><span class="dt">double</span> previousBeta<span class="op">,</span> <span class="dt">double</span> currentBeta<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_beta_change_event-8"><a href="#lst-events_beta_change_event-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">super</span><span class="op">();</span></span>
-<span id="lst-events_beta_change_event-9"><a href="#lst-events_beta_change_event-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">previousBeta</span> <span class="op">=</span> previousBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-10"><a href="#lst-events_beta_change_event-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">currentBeta</span> <span class="op">=</span> currentBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-11"><a href="#lst-events_beta_change_event-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_beta_change_event-12"><a href="#lst-events_beta_change_event-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-13"><a href="#lst-events_beta_change_event-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">getPreviousBeta</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_beta_change_event-14"><a href="#lst-events_beta_change_event-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> previousBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-15"><a href="#lst-events_beta_change_event-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_beta_change_event-16"><a href="#lst-events_beta_change_event-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-17"><a href="#lst-events_beta_change_event-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">double</span> <span class="fu">getCurrentBeta</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_beta_change_event-18"><a href="#lst-events_beta_change_event-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> currentBeta<span class="op">;</span></span>
-<span id="lst-events_beta_change_event-19"><a href="#lst-events_beta_change_event-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_beta_change_event-20"><a href="#lst-events_beta_change_event-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-21"><a href="#lst-events_beta_change_event-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
-<span id="lst-events_beta_change_event-22"><a href="#lst-events_beta_change_event-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">toString</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="lst-events_beta_change_event-23"><a href="#lst-events_beta_change_event-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">StringBuilder</span> builder <span class="op">=</span> <span class="kw">new</span> <span class="bu">StringBuilder</span><span class="op">();</span></span>
-<span id="lst-events_beta_change_event-24"><a href="#lst-events_beta_change_event-24" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">"BetaChangeEvent [previousBeta="</span><span class="op">);</span></span>
-<span id="lst-events_beta_change_event-25"><a href="#lst-events_beta_change_event-25" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span>previousBeta<span class="op">);</span></span>
-<span id="lst-events_beta_change_event-26"><a href="#lst-events_beta_change_event-26" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">", currentBeta="</span><span class="op">);</span></span>
-<span id="lst-events_beta_change_event-27"><a href="#lst-events_beta_change_event-27" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span>currentBeta<span class="op">);</span></span>
-<span id="lst-events_beta_change_event-28"><a href="#lst-events_beta_change_event-28" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">"]"</span><span class="op">);</span></span>
-<span id="lst-events_beta_change_event-29"><a href="#lst-events_beta_change_event-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> builder<span class="op">.</span><span class="fu">toString</span><span class="op">();</span></span>
-<span id="lst-events_beta_change_event-30"><a href="#lst-events_beta_change_event-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="lst-events_beta_change_event-31"><a href="#lst-events_beta_change_event-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_beta_change_event-32"><a href="#lst-events_beta_change_event-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="lst-events_beta_change_event"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_beta_change_event-1"><a href="#lst-events_beta_change_event-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">record</span> <span class="fu">BetaChangeEvent</span><span class="op">(</span><span class="dt">double</span> previousBeta<span class="op">,</span><span class="dt">double</span> currentBeta<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
+<span id="lst-events_beta_change_event-2"><a href="#lst-events_beta_change_event-2" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </figure>
 </div>
 </div>
-<p>Each is generated by the ExampleDataManager, <a href="#lst-events_intro_to_event_generation" class="quarto-xref">Code Block&nbsp;<span>2.13</span></a>, when the alpha or beta values are mutated by releasing the events through the DataManagerContext to the simulation:</p>
+<p>Each is generated by the ExampleDataManager, <a href="#lst-events_intro_to_event_generation" class="quarto-xref">Code Block&nbsp;<span>2.13</span></a>, when the alpha or beta values are mutated by releasing the events through the DataManagerContext to the simulation. We have had to make a somewhat unintuitive change to the data manager’s code to do this. In both cases, the data manager has declared an internal event record that it releases to the engine as a <strong>mutation</strong> event. It then registers with the simulation to handle this mutation event in its init() code. The handling of the mutation event then does the actual work and releases an <strong>observation</strong> event. From the perspective of the actor requesting the change, this all happens before flow of control returns and so works as expected.</p>
+<p>In a more formal approach to modeling all events – even requests for mutation – go through the engine using a queue-based approach to modeling that prevents some of the staleness and order reversal problems that can occur in stack-based programming. A more common approach would be to have the actors generate events and send them into the engine instead of directly call mutation methods on the data managers. That approach, while technically correct, robs the modeler of code completion and burdens them with having to know the mutation event types while they are coding up an actor.</p>
+<p>GCM instead has the data manager send the mutation event to the engine <strong>for the actor</strong>. That way, the agent code is a bit easier and the events all still flow through the engine and thus maintain the proper ordering that prevents the issues that come with stack-based event resolution.</p>
 <div class="cell">
 <div id="lst-events_intro_to_event_generation" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -773,35 +714,43 @@ Code Block&nbsp;2.12: An event to notify that the beta property has been updated
 Code Block&nbsp;2.13: The alpha and beta updates are managed via private mutation events.
 </figcaption>
 <div aria-describedby="lst-events_intro_to_event_generation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="sourceCode cell-code" id="lst-events_intro_to_event_generation"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_intro_to_event_generation-1"><a href="#lst-events_intro_to_event_generation-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="kw">record</span> <span class="fu">AlphaChangeMutationEvent</span><span class="op">(</span><span class="dt">int</span> alpha<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-2"><a href="#lst-events_intro_to_event_generation-2" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="lst-events_intro_to_event_generation-3"><a href="#lst-events_intro_to_event_generation-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_intro_to_event_generation-4"><a href="#lst-events_intro_to_event_generation-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">setAlpha</span><span class="op">(</span><span class="dt">int</span> alpha<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-5"><a href="#lst-events_intro_to_event_generation-5" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseMutationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AlphaChangeMutationEvent</span><span class="op">(</span>alpha<span class="op">));</span></span>
-<span id="lst-events_intro_to_event_generation-6"><a href="#lst-events_intro_to_event_generation-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="lst-events_intro_to_event_generation-7"><a href="#lst-events_intro_to_event_generation-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_intro_to_event_generation-8"><a href="#lst-events_intro_to_event_generation-8" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleAlphaChangeMutationEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
-<span id="lst-events_intro_to_event_generation-9"><a href="#lst-events_intro_to_event_generation-9" aria-hidden="true" tabindex="-1"></a>        AlphaChangeMutationEvent alphaChangeMutationEvent<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-10"><a href="#lst-events_intro_to_event_generation-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> alpha <span class="op">=</span> alphaChangeMutationEvent<span class="op">.</span><span class="fu">alpha</span><span class="op">();</span></span>
-<span id="lst-events_intro_to_event_generation-11"><a href="#lst-events_intro_to_event_generation-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> previousValue <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span><span class="op">;</span></span>
-<span id="lst-events_intro_to_event_generation-12"><a href="#lst-events_intro_to_event_generation-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span> <span class="op">=</span> alpha<span class="op">;</span></span>
-<span id="lst-events_intro_to_event_generation-13"><a href="#lst-events_intro_to_event_generation-13" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseObservationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AlphaChangeEvent</span><span class="op">(</span>previousValue<span class="op">,</span> <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span><span class="op">));</span></span>
+<div class="sourceCode cell-code" id="lst-events_intro_to_event_generation"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-events_intro_to_event_generation-1"><a href="#lst-events_intro_to_event_generation-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="lst-events_intro_to_event_generation-2"><a href="#lst-events_intro_to_event_generation-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">init</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-3"><a href="#lst-events_intro_to_event_generation-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">super</span><span class="op">.</span><span class="fu">init</span><span class="op">(</span>dataManagerContext<span class="op">);</span></span>
+<span id="lst-events_intro_to_event_generation-4"><a href="#lst-events_intro_to_event_generation-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">dataManagerContext</span> <span class="op">=</span> dataManagerContext<span class="op">;</span></span>
+<span id="lst-events_intro_to_event_generation-5"><a href="#lst-events_intro_to_event_generation-5" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>AlphaChangeMutationEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handleAlphaChangeMutationEvent<span class="op">);</span></span>
+<span id="lst-events_intro_to_event_generation-6"><a href="#lst-events_intro_to_event_generation-6" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">subscribe</span><span class="op">(</span>BetaChangeMutationEvent<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">this</span><span class="op">::</span>handleBetaChangeMutationEvent<span class="op">);</span></span>
+<span id="lst-events_intro_to_event_generation-7"><a href="#lst-events_intro_to_event_generation-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-events_intro_to_event_generation-8"><a href="#lst-events_intro_to_event_generation-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-events_intro_to_event_generation-9"><a href="#lst-events_intro_to_event_generation-9" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="kw">record</span> <span class="fu">AlphaChangeMutationEvent</span><span class="op">(</span><span class="dt">int</span> alpha<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-10"><a href="#lst-events_intro_to_event_generation-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-events_intro_to_event_generation-11"><a href="#lst-events_intro_to_event_generation-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-events_intro_to_event_generation-12"><a href="#lst-events_intro_to_event_generation-12" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">setAlpha</span><span class="op">(</span><span class="dt">int</span> alpha<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-13"><a href="#lst-events_intro_to_event_generation-13" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseMutationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AlphaChangeMutationEvent</span><span class="op">(</span>alpha<span class="op">));</span></span>
 <span id="lst-events_intro_to_event_generation-14"><a href="#lst-events_intro_to_event_generation-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="lst-events_intro_to_event_generation-15"><a href="#lst-events_intro_to_event_generation-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_intro_to_event_generation-16"><a href="#lst-events_intro_to_event_generation-16" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="kw">record</span> <span class="fu">BetaChangeMutationEvent</span><span class="op">(</span><span class="dt">double</span> beta<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-17"><a href="#lst-events_intro_to_event_generation-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="lst-events_intro_to_event_generation-18"><a href="#lst-events_intro_to_event_generation-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_intro_to_event_generation-19"><a href="#lst-events_intro_to_event_generation-19" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">setBeta</span><span class="op">(</span><span class="dt">double</span> beta<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-20"><a href="#lst-events_intro_to_event_generation-20" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseMutationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">BetaChangeMutationEvent</span><span class="op">(</span>beta<span class="op">));</span></span>
-<span id="lst-events_intro_to_event_generation-21"><a href="#lst-events_intro_to_event_generation-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="lst-events_intro_to_event_generation-22"><a href="#lst-events_intro_to_event_generation-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="lst-events_intro_to_event_generation-23"><a href="#lst-events_intro_to_event_generation-23" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleBetaChangeMutationEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
-<span id="lst-events_intro_to_event_generation-24"><a href="#lst-events_intro_to_event_generation-24" aria-hidden="true" tabindex="-1"></a>        BetaChangeMutationEvent betaChangeMutationEvent<span class="op">)</span> <span class="op">{</span></span>
-<span id="lst-events_intro_to_event_generation-25"><a href="#lst-events_intro_to_event_generation-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> beta <span class="op">=</span> betaChangeMutationEvent<span class="op">.</span><span class="fu">beta</span><span class="op">();</span></span>
-<span id="lst-events_intro_to_event_generation-26"><a href="#lst-events_intro_to_event_generation-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> previousValue <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span><span class="op">;</span></span>
-<span id="lst-events_intro_to_event_generation-27"><a href="#lst-events_intro_to_event_generation-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span> <span class="op">=</span> beta<span class="op">;</span></span>
-<span id="lst-events_intro_to_event_generation-28"><a href="#lst-events_intro_to_event_generation-28" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseObservationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">BetaChangeEvent</span><span class="op">(</span>previousValue<span class="op">,</span> <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span><span class="op">));</span></span>
-<span id="lst-events_intro_to_event_generation-29"><a href="#lst-events_intro_to_event_generation-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="lst-events_intro_to_event_generation-16"><a href="#lst-events_intro_to_event_generation-16" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleAlphaChangeMutationEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
+<span id="lst-events_intro_to_event_generation-17"><a href="#lst-events_intro_to_event_generation-17" aria-hidden="true" tabindex="-1"></a>        AlphaChangeMutationEvent alphaChangeMutationEvent<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-18"><a href="#lst-events_intro_to_event_generation-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> alpha <span class="op">=</span> alphaChangeMutationEvent<span class="op">.</span><span class="fu">alpha</span><span class="op">();</span></span>
+<span id="lst-events_intro_to_event_generation-19"><a href="#lst-events_intro_to_event_generation-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> previousValue <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span><span class="op">;</span></span>
+<span id="lst-events_intro_to_event_generation-20"><a href="#lst-events_intro_to_event_generation-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span> <span class="op">=</span> alpha<span class="op">;</span></span>
+<span id="lst-events_intro_to_event_generation-21"><a href="#lst-events_intro_to_event_generation-21" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseObservationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AlphaChangeEvent</span><span class="op">(</span>previousValue<span class="op">,</span> <span class="kw">this</span><span class="op">.</span><span class="fu">alpha</span><span class="op">));</span></span>
+<span id="lst-events_intro_to_event_generation-22"><a href="#lst-events_intro_to_event_generation-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-events_intro_to_event_generation-23"><a href="#lst-events_intro_to_event_generation-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-events_intro_to_event_generation-24"><a href="#lst-events_intro_to_event_generation-24" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="kw">record</span> <span class="fu">BetaChangeMutationEvent</span><span class="op">(</span><span class="dt">double</span> beta<span class="op">)</span> <span class="kw">implements</span> <span class="bu">Event</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-25"><a href="#lst-events_intro_to_event_generation-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-events_intro_to_event_generation-26"><a href="#lst-events_intro_to_event_generation-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-events_intro_to_event_generation-27"><a href="#lst-events_intro_to_event_generation-27" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">setBeta</span><span class="op">(</span><span class="dt">double</span> beta<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-28"><a href="#lst-events_intro_to_event_generation-28" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseMutationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">BetaChangeMutationEvent</span><span class="op">(</span>beta<span class="op">));</span></span>
+<span id="lst-events_intro_to_event_generation-29"><a href="#lst-events_intro_to_event_generation-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="lst-events_intro_to_event_generation-30"><a href="#lst-events_intro_to_event_generation-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="lst-events_intro_to_event_generation-31"><a href="#lst-events_intro_to_event_generation-31" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">void</span> <span class="fu">handleBetaChangeMutationEvent</span><span class="op">(</span>DataManagerContext dataManagerContext<span class="op">,</span></span>
+<span id="lst-events_intro_to_event_generation-32"><a href="#lst-events_intro_to_event_generation-32" aria-hidden="true" tabindex="-1"></a>        BetaChangeMutationEvent betaChangeMutationEvent<span class="op">)</span> <span class="op">{</span></span>
+<span id="lst-events_intro_to_event_generation-33"><a href="#lst-events_intro_to_event_generation-33" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> beta <span class="op">=</span> betaChangeMutationEvent<span class="op">.</span><span class="fu">beta</span><span class="op">();</span></span>
+<span id="lst-events_intro_to_event_generation-34"><a href="#lst-events_intro_to_event_generation-34" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> previousValue <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span><span class="op">;</span></span>
+<span id="lst-events_intro_to_event_generation-35"><a href="#lst-events_intro_to_event_generation-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span> <span class="op">=</span> beta<span class="op">;</span></span>
+<span id="lst-events_intro_to_event_generation-36"><a href="#lst-events_intro_to_event_generation-36" aria-hidden="true" tabindex="-1"></a>    dataManagerContext<span class="op">.</span><span class="fu">releaseObservationEvent</span><span class="op">(</span><span class="kw">new</span> <span class="fu">BetaChangeEvent</span><span class="op">(</span>previousValue<span class="op">,</span> <span class="kw">this</span><span class="op">.</span><span class="fu">beta</span><span class="op">));</span></span>
+<span id="lst-events_intro_to_event_generation-37"><a href="#lst-events_intro_to_event_generation-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </figure>
 </div>
@@ -910,7 +859,7 @@ Actor2 observes event AlphaChangeEvent [previousAlpha=7, currentAlpha=8] at time
 </div>
 <section id="event-filters" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="event-filters">Event Filters</h3>
-<p>Subscription to events for data managers and actors differ a bit. Data managers subscribe directly to the event type since they are generally interested in all events of some given type. Actors are often more selective and would like a predicate (in Java, the predicate is a function that returns a Boolean) to return true before they handle an event. For example, an actor wants to subscribe for person property change events, but is only interested in those events indicate a change to a particular person property. Since there will likely be dozens of person properties, the actor would get stimulated many times over, only to ignore the event most of the time. Unfortunately, a simple predicate added during the subscription process will not suffice since that predicate would have to be executed for each event and we will have gained little efficiency. Instead, GCM uses the EventFilter class that is essentially a predicate grouping mechanism that allows the subscription engine to group subscribers into a tree structure so that a single predicate execution might suffice to allow an event to be passed to multiple subscribers.</p>
+<p>Subscription to events for data managers and actors differ a bit. Data managers subscribe directly to the event type since they are generally interested in all events of some given type. Actors are often more selective and would like a predicate (in Java, the predicate is a function that returns a Boolean) to return true before they handle an event. For example, an actor wants to subscribe for person property change events, but is only interested in those events that indicate a change to a particular person property. Since there will likely be dozens of person properties, the actor would get stimulated many times over, only to ignore most of theses events. Unfortunately, a simple predicate added during the subscription process will not suffice since that predicate would have to be executed for each event and we will have gained little efficiency. Instead, GCM uses the EventFilter class that is essentially a predicate grouping mechanism that allows the subscription engine to group subscribers into a tree structure so that a single predicate execution might suffice to allow an event to be passed to multiple subscribers.</p>
 <p>The event filter is logically composed of functions and target values as pairs. Each function takes in an event and releases a value. If that value is equal to the target value, then the event passes that function. An event passes the event filter if it passes all the functions that compose the filter. The construction of the builder for event filters requires the event class reference. The addition of function-value pairs requires that the functions take in only events of the given class reference, but may return any non-null object value. The simple examples given so far have only specified the event class and thus every event of that type will pass the event filter.</p>
 <p>The functions that compose the event filter are often non-meaningfully comparable. For example, two functions that return the same values for every event may be separate instances of lambda code that are logically equal, but are not equal from the point of view of Java. To get around this, each function is associated with an id value and the id and function pair are called an IdentifiableFunction. Two such functions will be equal if and only if their ids are equal without regard to what their functions actually do. Thus is it very important that the mapping of id to actual logical function be stable and the usual best practice is to manage that mapping in a curated manner via the data manager that is associated with the plugin that defines the event. As we examine plugins that define events, we will encounter event filters that are managed by data managers and we will generally not generate event filters directly in the actor code.</p>
 </section>
@@ -1214,7 +1163,7 @@ Code Block&nbsp;2.21: The family data manager manages families, their person mem
 </section>
 <section id="vaccine-plugin" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="vaccine-plugin">Vaccine Plugin</h3>
-<p>The vaccine plugin contains only the VaccineDataManager which tracks by PersonId which people have been vaccinated. Like the FamilyDataManager, it too subscribes to PersonRemovalEvent(s) and adjusts its data accordingly.</p>
+<p>The vaccine plugin contains only the VaccineDataManager which tracks, by PersonId, the people who have been vaccinated. Like the FamilyDataManager, it too subscribes to PersonRemovalEvent(s) and adjusts its data accordingly.</p>
 <div class="cell">
 <div id="lst-plugin_dependencies_vaccine_data_manager" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -1374,7 +1323,7 @@ Person 7 was vaccinated at time = 1.0 <br>Person 2 was vaccinated at time = 2.0 
 <div id="lst-dag_dependent_query" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-dag_dependent_query-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Code Block&nbsp;2.24: By adding a plugin dependencies on the people and family plugins, the vaccine data manager can now answer questions about the vaccine status of family members
+Code Block&nbsp;2.24: By adding plugin dependencies on the people and family plugins, the vaccine data manager can now answer questions about the vaccine status of family members
 </figcaption>
 <div aria-describedby="lst-dag_dependent_query-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="sourceCode cell-code" id="lst-dag_dependent_query"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="lst-dag_dependent_query-1"><a href="#lst-dag_dependent_query-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>PersonId<span class="op">&gt;</span> <span class="fu">getUnvaccinatedFamilyMembers</span><span class="op">(</span>PersonId personId<span class="op">)</span> <span class="op">{</span></span>
@@ -1487,7 +1436,7 @@ Code Block&nbsp;2.26: The DiseasePlugin class is a static class for creating the
 <li>A static builder class</li>
 <li>A single data field and private constructor</li>
 <li>Getter methods for the data</li>
-<li>A clone builder method</li>
+<li>A toBuilder() method that creates a new builder instance that is pre-filled with the current values</li>
 </ul>
 <div class="cell">
 <div id="lst-plugin_data_internal_data" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
@@ -1642,18 +1591,18 @@ Code Block&nbsp;2.31: The disease plugin data creates a copy of its data and pla
 </figure>
 </div>
 </div>
-<p>We end the class with the getCloneBuilder method.</p>
+<p>We end the class with the toBuilder method.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Terminology Note
+Copy on write
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Our use of the term clone is intuitive but may cause some confusion. What we are doing is copying the data in the DiseasePluginData and placing into a builder so that it can be further mutated later in the experiment. Java formally defines the term clone as a part of the Object class definition and implements it with a protected method clone(). Use of the Object.clone() method has generally fallen out of favor in Java but still has some proponents/use cases.</p>
+<p>Plugin data objects can get quite large. During an experiment (in the next lesson) we will need to make copies of this data that are very often identical to the original. To reduce run time and memory costs, we usually choose to use a copy-on-write policy that only merely duplicates the pointer to the inner static Data class when we copy a plugin data and surrender a new builder instance. Only when the new builder is actually commanded to alter its data does the internal data instance get copied. To support this mechanism we employee the locked variable and the ensureDataMutability() and ensureImmutability() methods.</p>
 </div>
 </div>
 <p>The method returns a new Builder that has reference to the current data object. The resulting example class is easier to read and more succinct:</p>
@@ -1709,7 +1658,7 @@ Code Block&nbsp;2.32: Example 8 executes more succinctly by use of static plugin
 </section>
 <section id="experiments-lesson-lesson-9" class="level2" data-number="2.9">
 <h2 data-number="2.9" class="anchored" data-anchor-id="experiments-lesson-lesson-9"><span class="header-section-number">2.9</span> Experiments Lesson (Lesson 9)</h2>
-<p>So far we have mentioned that the plugin data classes play a role in executing an experiment via the <strong>getCloneBuilder</strong> method. Let’s start with the simple experiment. We will update the last example class by replacing the Simulation execution with an Experiment execution:</p>
+<p>So far we have mentioned that the plugin data classes play a role in executing an experiment via the <strong>toBuilder</strong> method. Let’s start with the simple experiment. We will update the last example class by replacing the Simulation execution with an Experiment execution:</p>
 <div class="cell">
 <div id="lst-experiments_example_9_A" class="java cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
@@ -1885,7 +1834,7 @@ Figure&nbsp;2.11: Dimension levels act as a function to change plugin data build
 <div id="fig-experiments_diagram_scenarios_and_levels" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-fig" id="fig-experiments_diagram_scenarios_and_levels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.12: The scenario id is a numberical composite of the level ids in each of the dimensions.
+Figure&nbsp;2.12: The scenario id is a numerical composite of the level ids in each of the dimensions.
 </figcaption>
 <div aria-describedby="fig-experiments_diagram_scenarios_and_levels-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="inputimages/experiments_diagram_scenarios_and_levels.svg" class="img-fluid figure-img" style="width:80.0%">
@@ -2071,7 +2020,7 @@ Code Block&nbsp;2.36: Execution of the experiment is cleaner.
 </figure>
 </div>
 </div>
-<p>We have turned off the experiment report progress to console in the code above. We have chosen six values for r0 in our dimension and thus we have 6 simulation executions, each having the model actor print out the contents of the DiseaseDataManager:</p>
+<p>We have turned off the experiment report progress to the console in the code above. We have chosen six values for r0 in our dimension and thus we have 6 simulation executions, each having the model actor print out the contents of the DiseaseDataManager:</p>
 <div class="cell">
 <div id="fig-experiments_output" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
