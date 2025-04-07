@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.regions.reports;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.PeriodicReportPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support.ReportError;
@@ -151,31 +153,34 @@ public final class RegionTransferReportPluginData extends PeriodicReportPluginDa
 		return new Builder(data);
 	}
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(data);
 		return result;
 	}
 
+	 /**
+     * Two {@link RegionTransferReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof RegionTransferReportPluginData)) {
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		RegionTransferReportPluginData other = (RegionTransferReportPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

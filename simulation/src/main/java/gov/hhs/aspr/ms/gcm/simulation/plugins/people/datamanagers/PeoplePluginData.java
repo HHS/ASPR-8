@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginDataBuilder;
@@ -44,44 +45,34 @@ public final class PeoplePluginData implements PluginData {
 			this.assignmentTime = data.assignmentTime;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			/*
-			 * See notes in equals()
-			 */
-			final int prime = 31;
-			int result = 1;
-			long temp = Double.doubleToLongBits(assignmentTime);
-			result = prime * result + (int) (temp ^ (temp >>> 32));
-			result = prime * result + personCount;
-			result = prime * result + personRanges.hashCode();
-			return result;
+			return Objects.hash(personCount, personRanges, assignmentTime);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal. Person ranges are sorted and
+		 * joined during the build process, leaving the person
+		 * ranges unambiguously ordered.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-			/*
-			 * This boilerplate implementation works since the person ranges are sorted and
-			 * joined during the build process, leaving the person ranges unambiguously
-			 * ordered.
-			 */
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (Double.doubleToLongBits(assignmentTime) != Double.doubleToLongBits(other.assignmentTime)) {
-				return false;
-			}
-			if (personCount != other.personCount) {
-				return false;
-			}
-			if (!personRanges.equals(other.personRanges)) {
-				return false;
-			}
-			return true;
+			return personCount == other.personCount && Objects.equals(personRanges, other.personRanges)
+					&& Double.doubleToLongBits(assignmentTime) == Double.doubleToLongBits(other.assignmentTime);
 		}
 
 		@Override
@@ -346,27 +337,31 @@ public final class PeoplePluginData implements PluginData {
 		return StandardVersioning.checkVersionSupported(version);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link PeoplePluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PeoplePluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PeoplePluginData other = (PeoplePluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	/**

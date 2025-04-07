@@ -975,6 +975,12 @@ public class AT_RegionsPluginData {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(685858669518256073L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			RegionsPluginData regionsPluginData = getRandomRegionsPluginData(randomGenerator.nextLong());
+			assertFalse(regionsPluginData.equals(new Object()));
+		}
+
 		// is never equal to null
 		for (int i = 0; i < 30; i++) {
 			RegionsPluginData regionsPluginData = getRandomRegionsPluginData(randomGenerator.nextLong());
@@ -992,8 +998,8 @@ public class AT_RegionsPluginData {
 			long seed = randomGenerator.nextLong();
 			RegionsPluginData regionsPluginData1 = getRandomRegionsPluginData(seed);
 			RegionsPluginData regionsPluginData2 = getRandomRegionsPluginData(seed);
-
-			for (int j = 0; j < 5; j++) {
+			assertFalse(regionsPluginData1 == regionsPluginData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(regionsPluginData1.equals(regionsPluginData2));
 				assertTrue(regionsPluginData2.equals(regionsPluginData1));
 			}

@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 
@@ -66,37 +68,30 @@ public class PersonRange implements Comparable<PersonRange> {
 	}
 
 	/**
-	 * Boiler plate implementation of hash code
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + highPersonId;
-		result = prime * result + lowPersonId;
-		return result;
+		return Objects.hash(lowPersonId, highPersonId);
 	}
 
 	/**
-	 * Two person ranges are equal if and only if they have the same upper and lower
-	 * bounds.
+	 * Two {@link PersonRange} instances are equal if and only if
+	 * their inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonRange)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PersonRange other = (PersonRange) obj;
-		if (highPersonId != other.highPersonId) {
-			return false;
-		}
-		if (lowPersonId != other.lowPersonId) {
-			return false;
-		}
-		return true;
+		return lowPersonId == other.lowPersonId && highPersonId == other.highPersonId;
 	}
 
 	/**

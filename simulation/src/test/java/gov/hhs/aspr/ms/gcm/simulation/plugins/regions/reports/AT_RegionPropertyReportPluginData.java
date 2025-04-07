@@ -440,77 +440,48 @@ public class AT_RegionPropertyReportPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7376599865331451959L);
-		for (int i = 0; i < 10; i++) {
-			// build a RegionPropertyReportPluginData from the same random
-			// inputs
-			RegionPropertyReportPluginData.Builder builder1 = RegionPropertyReportPluginData.builder();
-			RegionPropertyReportPluginData.Builder builder2 = RegionPropertyReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			for (int j = 0; j < 10; j++) {
-				TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId
-						.getRandomRegionPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeRegionProperty(testRegionPropertyId);
-					builder2.includeRegionProperty(testRegionPropertyId);
-				} else {
-					builder1.excludeRegionProperty(testRegionPropertyId);
-					builder2.excludeRegionProperty(testRegionPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			RegionPropertyReportPluginData regionPropertyReportPluginData1 = builder1.build();
-			RegionPropertyReportPluginData regionPropertyReportPluginData2 = builder2.build();
-
-			assertEquals(regionPropertyReportPluginData1, regionPropertyReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the default inclusion
-			regionPropertyReportPluginData2 = //
-					regionPropertyReportPluginData1.toBuilder()//
-							.setDefaultInclusion(!defaultInclusion)//
-							.build();
-			assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			regionPropertyReportPluginData2 = //
-					regionPropertyReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
-
-			// change an included property id
-			if (!regionPropertyReportPluginData1.getIncludedProperties().isEmpty()) {
-				RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getIncludedProperties().iterator()
-						.next();
-				regionPropertyReportPluginData2 = //
-						regionPropertyReportPluginData1.toBuilder()//
-								.excludeRegionProperty(regionPropertyId)//
-								.build();
-				assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
-			}
-			// change an excluded property id
-			if (!regionPropertyReportPluginData1.getExcludedProperties().isEmpty()) {
-				RegionPropertyId regionPropertyId = regionPropertyReportPluginData1.getExcludedProperties().iterator()
-						.next();
-				regionPropertyReportPluginData2 = //
-						regionPropertyReportPluginData1.toBuilder()//
-								.includeRegionProperty(regionPropertyId)//
-								.build();
-				assertNotEquals(regionPropertyReportPluginData2, regionPropertyReportPluginData1);
-			}
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			RegionPropertyReportPluginData reportPluginData = getRandomRegionPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(reportPluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			RegionPropertyReportPluginData reportPluginData = getRandomRegionPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(reportPluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			RegionPropertyReportPluginData reportPluginData = getRandomRegionPropertyReportPluginData(
+					randomGenerator.nextLong());
+			assertTrue(reportPluginData.equals(reportPluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionPropertyReportPluginData reportPluginData1 = getRandomRegionPropertyReportPluginData(seed);
+			RegionPropertyReportPluginData reportPluginData2 = getRandomRegionPropertyReportPluginData(seed);
+			assertFalse(reportPluginData1 == reportPluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(reportPluginData1.equals(reportPluginData2));
+				assertTrue(reportPluginData2.equals(reportPluginData1));
+			}
+		}
+
+		// different inputs yield unequal RegionPropertyReportPluginDatas
+		Set<RegionPropertyReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			RegionPropertyReportPluginData reportPluginData = getRandomRegionPropertyReportPluginData(
+					randomGenerator.nextLong());
+			set.add(reportPluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -518,55 +489,25 @@ public class AT_RegionPropertyReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8483458328908100435L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a RegionPropertyReportPluginData from the same random
-			// inputs
-			RegionPropertyReportPluginData.Builder builder1 = RegionPropertyReportPluginData.builder();
-			RegionPropertyReportPluginData.Builder builder2 = RegionPropertyReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionPropertyReportPluginData reportPluginData1 = getRandomRegionPropertyReportPluginData(seed);
+			RegionPropertyReportPluginData reportPluginData2 = getRandomRegionPropertyReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			for (int j = 0; j < 10; j++) {
-				TestRegionPropertyId testRegionPropertyId = TestRegionPropertyId
-						.getRandomRegionPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeRegionProperty(testRegionPropertyId);
-					builder2.includeRegionProperty(testRegionPropertyId);
-				} else {
-					builder1.excludeRegionProperty(testRegionPropertyId);
-					builder2.excludeRegionProperty(testRegionPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			RegionPropertyReportPluginData regionPropertyReportPluginData1 = builder1.build();
-			RegionPropertyReportPluginData regionPropertyReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = regionPropertyReportPluginData1.hashCode();
-			assertEquals(hashCode, regionPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, regionPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, regionPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, regionPropertyReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(regionPropertyReportPluginData1.hashCode(), regionPropertyReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(regionPropertyReportPluginData1.hashCode());
+			assertEquals(reportPluginData1, reportPluginData2);
+			assertEquals(reportPluginData1.hashCode(), reportPluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertEquals(50, observedHashCodes.size());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			RegionPropertyReportPluginData reportPluginData = getRandomRegionPropertyReportPluginData(
+					randomGenerator.nextLong());
+			hashCodes.add(reportPluginData.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 
 	}
 
@@ -594,5 +535,30 @@ public class AT_RegionPropertyReportPluginData {
 
 		assertEquals(expectedValue, actualValue);
 
+	}
+
+	private RegionPropertyReportPluginData getRandomRegionPropertyReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		RegionPropertyReportPluginData.Builder builder = RegionPropertyReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
+		builder.setReportLabel(reportLabel);
+
+		List<TestRegionPropertyId> testRegionPropertyIds = TestRegionPropertyId.getTestShuffledRegionPropertyIds(randomGenerator);
+
+		int n = randomGenerator.nextInt(6) + 1;
+		for (int i = 0; i < n; i++) {
+			TestRegionPropertyId testRegionPropertyId = testRegionPropertyIds.get(i);
+
+			if (randomGenerator.nextBoolean()) {
+				builder.includeRegionProperty(testRegionPropertyId);
+			} else {
+				builder.excludeRegionProperty(testRegionPropertyId);
+			}
+		}
+
+		builder.setDefaultInclusion(randomGenerator.nextBoolean());
+
+		return builder.build();
 	}
 }

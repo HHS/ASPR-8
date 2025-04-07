@@ -89,7 +89,7 @@ public class AT_PersonRange {
 	@Test
 	@UnitTestMethod(target = PersonRange.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8720935725310593369L);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8720835725310593369L);
 		// show that equal person ranges have equal hashcodes
 		for (int i = 0; i < 10; i++) {
 			long seed = randomGenerator.nextLong();			
@@ -105,7 +105,7 @@ public class AT_PersonRange {
 			PersonRange personRange = getRandomPersonRange(randomGenerator.nextLong());
 			hashCodes.add(personRange.hashCode());
 		}
-		assertTrue(hashCodes.size() >= 90);
+		assertEquals(100, hashCodes.size());
 	}
 
 	private PersonRange getRandomPersonRange(long seed) {
@@ -119,13 +119,13 @@ public class AT_PersonRange {
 	@UnitTestMethod(target = PersonRange.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4375612914105986895L);
-		// show that not equal null
+		// show that not equal to null
 		for (int i = 0; i < 30; i++) {
 			PersonRange personRange = getRandomPersonRange(randomGenerator.nextLong());
 			assertFalse(personRange.equals(null));
 		}
 
-		// show that not equal another type
+		// show that not equal to another type
 		for (int i = 0; i < 30; i++) {
 			PersonRange personRange = getRandomPersonRange(randomGenerator.nextLong());
 			assertFalse(personRange.equals(new Object()));
@@ -137,35 +137,25 @@ public class AT_PersonRange {
 			assertTrue(personRange.equals(personRange));
 		}
 
-		// symmetric, transitive
+		// symmetric, transitive, consistent
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			PersonRange personRange = getRandomPersonRange(seed);
 			PersonRange duplicatePersonRange = getRandomPersonRange(seed);
-			assertTrue(personRange.equals(duplicatePersonRange));
-			assertTrue(duplicatePersonRange.equals(personRange));
-		}
-
-		// consistent
-		for (int i = 0; i < 30; i++) {
-			long seed = randomGenerator.nextLong();
-			PersonRange personRange = getRandomPersonRange(seed);
-			PersonRange duplicatePersonRange = getRandomPersonRange(seed);
-			for (int j = 0; j < 30; j++) {
+			assertFalse(personRange == duplicatePersonRange);
+			for (int j = 0; j < 10; j++) {		
 				assertTrue(personRange.equals(duplicatePersonRange));
-				assertTrue(personRange.equals(duplicatePersonRange));
-				assertTrue(personRange.equals(duplicatePersonRange));
-				assertTrue(personRange.equals(duplicatePersonRange));
+				assertTrue(duplicatePersonRange.equals(personRange));
 			}
 		}
 
-		// different inputs yield unequal plugin datas
+		// different inputs yield unequal person ranges
 		Set<PersonRange> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			PersonRange personRange = getRandomPersonRange(randomGenerator.nextLong());
 			set.add(personRange);
 		}
-		assertEquals(100,set.size());
+		assertEquals(100, set.size());
 	}
 
 	@Test
