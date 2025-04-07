@@ -107,6 +107,43 @@ public class PartitionVaccinator {
 		personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE, false);
 	}
 
+	
+	/*
+	 * start code_ref=partitions_plugin_partition_vaccinate|code_cap= The
+	 * partition-vaccinator schedules and executes vaccinations using partitions.
+	 */
+	private void planNextVaccination() {
+		if (partitionsDataManager.getPersonCount(potentiallyEligibleKey) == 0) {
+			return;
+		}
+		actorContext.addPlan(this::vaccinatePerson, vaccinatorDelay + actorContext.getTime());
+	}
+
+	private void vaccinatePerson(ActorContext actorContext) {
+
+		PartitionSampler partitionSampler = PartitionSampler.builder()//
+				.setLabelSetWeightingFunction(this::getWeight)//
+				.build();
+
+		Optional<PersonId> optionalPersonId = partitionsDataManager.samplePartition(currentlyEligibleKey,
+				partitionSampler);
+		if (optionalPersonId.isPresent()) {
+			PersonId personId = optionalPersonId.get();
+			int vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(personId,
+					PersonProperty.VACCINATION_COUNT);
+			vaccinationCount++;
+			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATION_COUNT,
+					vaccinationCount);
+			if (vaccinationCount < 3) {
+				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE,
+						true);
+				planWaitTermination(personId);
+			}
+
+		}
+		planNextVaccination();
+	}
+	
 	private double getWeight(PartitionsContext partitionsContext, LabelSet labelSet) {
 
 		AgeGroup ageGroup = (AgeGroup) labelSet.getLabel(PersonProperty.AGE).get();
@@ -150,41 +187,6 @@ public class PartitionVaccinator {
 		return result;
 	}
 
-	/*
-	 * start code_ref=partitions_plugin_partition_vaccinate|code_cap= The
-	 * partition-vaccinator schedules and executes vaccinations using partitions.
-	 */
-	private void planNextVaccination() {
-		if (partitionsDataManager.getPersonCount(potentiallyEligibleKey) == 0) {
-			return;
-		}
-		actorContext.addPlan(this::vaccinatePerson, vaccinatorDelay + actorContext.getTime());
-	}
-
-	private void vaccinatePerson(ActorContext actorContext) {
-
-		PartitionSampler partitionSampler = PartitionSampler.builder()//
-				.setLabelSetWeightingFunction(this::getWeight)//
-				.build();
-
-		Optional<PersonId> optionalPersonId = partitionsDataManager.samplePartition(currentlyEligibleKey,
-				partitionSampler);
-		if (optionalPersonId.isPresent()) {
-			PersonId personId = optionalPersonId.get();
-			int vaccinationCount = personPropertiesDataManager.getPersonPropertyValue(personId,
-					PersonProperty.VACCINATION_COUNT);
-			vaccinationCount++;
-			personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.VACCINATION_COUNT,
-					vaccinationCount);
-			if (vaccinationCount < 3) {
-				personPropertiesDataManager.setPersonPropertyValue(personId, PersonProperty.WAITING_FOR_NEXT_DOSE,
-						true);
-				planWaitTermination(personId);
-			}
-
-		}
-		planNextVaccination();
-	}
 	/* end */
 
 }

@@ -61,7 +61,7 @@ The plugin is initialized using a MaterialsPluginData object that:
 -   Defines materials producer properties
 -   Sets materials producer property values
 -   Sets materials producer initial resource levels
--   Initializes stage and batches in initial inventory
+-   Initializes stages and batches in initial inventory
 -   Defines batch property properties
 -   Sets initial batch property values
 
@@ -73,7 +73,7 @@ The plugin adds a single data manager to the simulation as an instance of the Ma
 
 The data manager manages the batch and stage inventories of the materials producers as well as managing the relevant property values and material transformations to resources. The data manager provides public methods that:
 
--   Defined a new material type
+-   Define a new material type
 -   Add and remove batches
 -   Add and remove stages
 -   Move batches to and from stages
@@ -234,7 +234,7 @@ There are four reports:
 -   VaccineReport -- Shows a daily summary of the number of people who have been scheduled for or have received vaccination
 -   VaccineProductionReport -- Shows a daily summary of the internal inventory of the antigen and vaccine producers
 
-The stochastic plugin is initialized with a random seed and all simulations will start in the same stochastic state. The Regions plugin has one region and the people plugin is loaded in an empty state. People are added by an actor in the model plugin. The groups plugin is initialized with the three group types: HOME, SCHOOL, and WORK.
+The stochastics plugin is initialized with a random seed and all simulations will start in the same stochastic state. The Regions plugin has one region and the people plugin is loaded in an empty state. People are added by an actor in the model plugin. The groups plugin is initialized with the three group types: HOME, SCHOOL, and WORK.
 
 The model plugin adds three actors:
 
@@ -344,7 +344,7 @@ Whenever resources (vaccines in this case) are accumulated on a materials produc
 #| echo: true
 ```
 
-Once vaccine doses are available, the Vaccinator schedules vaccinations (@lst-materials_plugin_vaccinator_producer_schedule_vaccinations) at a fixed rate of 100 per day. The vaccines doses are distributed evenly amongst the regions and people are scheduled for vaccination throughout the day(s) following the receipt of vaccines from the VaccineProducer. Finally, the Vaccinator determines if enough vaccine has been received and to vaccinate the entire population and thus the manufacture of resource and materials can be halted.
+Once vaccine doses are available, the Vaccinator schedules vaccinations (@lst-materials_plugin_vaccinator_producer_schedule_vaccinations) at a fixed rate of 100 per day. The vaccines doses are distributed evenly amongst the regions and people are scheduled for vaccination throughout the day(s) following the receipt of vaccines from the VaccineProducer. Finally, the Vaccinator determines if enough vaccine has been received to vaccinate the entire population and thus the manufacture of resource and materials can be halted.
 
 ```{java}
 #| eval: false

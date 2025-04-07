@@ -12,7 +12,7 @@ The reports plugin implements an experiment context consumer that records output
 2.  Report Header -- the header content for the report
 3.  Report Item -- the data content(strings) for each line in the report
 
-The report label is a unique identifier used to mark every report item that the plugin processes and helps associate those items to the specific files where they will be recorded. Report items are a flexible list of values that have an associated report label as well as a report header used to build the header of the file. A report file is built from the report items that are associated with a specific report label in the order received. The first report item is used to build the header of the report file. All other lines of the file are an ordered, delimited listing of the string values contained in each report item. No attempt is made to ensure that the header matches the report lines or that all report lines have equal field lengths.
+The report label is a unique identifier used to mark every report item that the plugin processes and helps associate those items to the specific files where they will be recorded. Report items are a flexible list of values that have an associated report label. Report headers are used to build the headers of the files and also have an associated report label. A report file is built from the report items that are associated with a specific report label in the order received. The report header is used to build the header of the report file and must be the first thing received by the report. All other lines of the file are an ordered, delimited listing of the string values contained in each report item. No attempt is made to ensure that the header matches the report lines or that all report lines have equal field lengths.
 
 While any data manager or actor can release report items, in practice most reports are managed solely by special purpose, passive reports that simply observe events and do not act on any data manager. These reports often subscribe to multiple event types and aggregate several events into a single report item. This reduces the amount of information recorded in output files and thus output files are often more complex than simple event trace files.
 
@@ -69,7 +69,7 @@ Let's examine Example_12. In @lst-reports_plugin_example_12_plugins we see that 
 #| echo: true
 ```
 
-Each report label is now associated with a particular file path. Although each file is a tab-delimited text file, we use the .xls file extension so that they can be automatically opened as a spreadsheet. Had we skipped adding these last specifications, the report items would flow out of the simulation and into the experiment but would not find an associated file and thus be ignored.
+Each report label is now associated with a particular file path. Had we skipped adding these last specifications, the report items would flow out of the simulation and into the experiment but would not find an associated file and thus be ignored.
 
 Finally, in @lst-reports_plugin_example_12_execution and @lst-reports_plugin_family_dimension, we create a single experiment dimension that will override the maximum family size with four values and thus create four scenarios for the experiment.
 
@@ -122,9 +122,9 @@ The FamilyVaccineReport has several private fields and classes for maintaining t
 
 @lst-reports_plugin_family_vaccine_report_fields shows the remaining private fields.
 
--   report id -- remains fixed from construction and is used to mark every report item
--   reportHeader -- is constructed once and used in the construction of every report item
--   actorContext -- a convenience reference kept by the actor to retrieve the simulation time
+-   reportLabel -- remains fixed from construction and is used to mark every report item and the report header
+-   reportHeader -- is constructed and released once before any report items
+-   reportContext -- a convenience reference kept by the report to retrieve the simulation time
 -   vaccinationDataManager -- a convenience reference to retrieve the vaccination status of each person
 -   familyDataManager -- a convenience reference to retrieve the family members associated with a given person who has just been vaccinated
 -   statusToFamiliesMap -- a map from family vaccine status to a mutable counter
@@ -148,7 +148,7 @@ The report's methods start with its constructor in @lst-reports_plugin_family_va
 #| echo: true
 ```
 
-Next is the initialization method that was passed to the simulation. This is invoked by the simulation just once at the begining of time flow and gives the report a chance to register for events and to initialize the private fields from @lst-reports_plugin_family_vaccine_report_fields. The report records the actor context and subscribes to the four events of interest in @lst-reports_plugin_family_vaccine_report_init_subscriptions. These subscriptions reference local private methods that will be discussed later.
+Next is the initialization method that was passed to the simulation. This is invoked by the simulation just once at the begining of time flow and gives the report a chance to register for events and to initialize the private fields from @lst-reports_plugin_family_vaccine_report_fields. The report records the report context and subscribes to the four events of interest in @lst-reports_plugin_family_vaccine_report_init_subscriptions. These subscriptions reference local private methods that will be discussed later.
 
 ```{java}
 #| eval: false
@@ -182,7 +182,7 @@ In @lst-reports_plugin_family_vaccine_report_init_setup we continue with the ret
 #| echo: true
 ```
 
-Initialization finishes with the release of a single report item that summarizes the state of family vaccination at time zero.
+Initialization finishes with the release of the header and a single report item that summarizes the state of family vaccination at time zero.
 
 ```{java}
 #| eval: false
@@ -216,7 +216,7 @@ The refresh methods in @lst-reports_plugin_family_vaccine_report_refreshing_fami
 #| echo: true
 ```
 
-Releasing the report items that summarizes the family vaccination counts requires building a new report item with the fixed report label and report header values determined in the constructor. We then go on to add the time and count values in the order dictated by the helper enumerations so that they follow the header values established in the report header. Once the report item is complete it is released as output via the report context. The simulation will in turn release the report item to the experiment where it will be distributed to the NIOReportItemHandler and then on the specific file manager(s) that record the items.
+Releasing the report items that summarize the family vaccination counts requires building a new report item with the fixed report label value determined in the constructor. We then go on to add the time and count values in the order dictated by the helper enumerations so that they follow the header values established in the report header. Once the report item is complete it is released as output via the report context. The simulation will in turn release the report item to the experiment where it will be distributed to the NIOReportItemHandler and then on the specific file manager(s) that record the items.
 
 ```{java}
 #| eval: false
@@ -251,7 +251,7 @@ The PeriodicReport defines a constructor that requires both a report label and a
 -   ***getReportLabel*** and ***getReportPeriod*** retrieve the label and report period passed in construction
 -   ***addTimeFieldHeaders*** is used to help create the report header
 -   ***fillTimeFields*** is used to help create report items
--   ***flush*** is an abstract method for flushing the content of the report actor that must be implemented by the descendant report class
+-   ***flush*** is an abstract method for flushing the content of the report and must be implemented by the descendant report class
 
 Our next example report is the HourlyVaccineReport that descends from the PeriodicReport. It produces the same output as the FamilyVaccineReport, but does so on an hourly basis. This outputs a report item every hour whether or not there were stimulating events. The implementation of this report is nearly identical to the previous report and we will concentrate on highlighting the differences between the two approaches.
 

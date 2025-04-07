@@ -145,8 +145,7 @@ The PopulationLoader actor, in @lst-person_properties_population_loader_init, ad
 #| echo: true
 ```
 
-The actor finishes its initialization by scheduling a time to halt the simulation based on the global property, SIMULATION_DURATION. It also schedules the addition of the person property, IS_IMMUNE, based on the global property, IMMUNITY_START_TIME. @lst-person_properties_population_loader_add_immunity_property 
-shows the details of this dynamic definition.
+The actor finishes its initialization by scheduling a time to halt the simulation based on the global property, SIMULATION_DURATION. It also schedules the addition of the person property, IS_IMMUNE, based on the global property, IMMUNITY_START_TIME. @lst-person_properties_population_loader_add_immunity_property shows the details of this dynamic definition.
 
 ```{java}
 #| eval: false
