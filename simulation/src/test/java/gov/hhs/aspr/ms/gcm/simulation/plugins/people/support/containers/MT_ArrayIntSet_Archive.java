@@ -1,35 +1,44 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.containers;
 
+//import java.util.ArrayList;
+//import java.util.Comparator;
+//import java.util.LinkedHashSet;
+//import java.util.List;
+//import java.util.Set;
+//
+//import gov.hhs.aspr.ms.util.integersets.MemorySizer;
+//import gov.hhs.aspr.ms.util.time.TimeElapser;
+
 /*
  * Manual performance tuning test turned off until adoption of JOL or another memory assessment tool for post-8 java
  */
 
 
-//import java.util.ArrayList;
-//import java.util.Comparator;
-//import java.util.LinkedHashSet;
-//import java.util.List;
-//import java.util.Random;
-//import java.util.Set;
+////import java.util.ArrayList;
+////import java.util.Comparator;
+////import java.util.LinkedHashSet;
+////import java.util.List;
+////import java.util.Random;
+////import java.util.Set;
+////
+////import gov.hhs.aspr.ms.util.time.TimeElapser;
 //
-//import gov.hhs.aspr.ms.util.time.TimeElapser;
-
-/**
- * Test class for {@link ArrayIntSet}
- * 
- * A manual performance test for comparing the runtime and memory measures for a
- * baseline LinkedHashSet and an ArrayIntSet for modeling a large population
- * that transitions through a data container. This test is also designed to aid
- * in the selection of a fitting factor (target depth) used in the ArrayIntSet.
- * The test models 10,000,000 people moving through a compartment with a rolling
- * time averaged concurrent population in the compartment of approximately
- * 2,500,000 people.
- * 
- * 
- *
- */
-public class MT_ArrayIntSet {
-
+///**
+// * Test class for {@link ArrayIntSet}
+// * 
+// * A manual performance test for comparing the runtime and memory measures for a
+// * baseline LinkedHashSet and an ArrayIntSet for modeling a large population
+// * that transitions through a data container. This test is also designed to aid
+// * in the selection of a fitting factor (target depth) used in the ArrayIntSet.
+// * The test models 10,000,000 people moving through a compartment with a rolling
+// * time averaged concurrent population in the compartment of approximately
+// * 2,500,000 people.
+// * 
+// * 
+// *
+// */
+public class MT_ArrayIntSet_Archive {
+//
 //	private static class Event {
 //		private IdValued id;
 //		private boolean arriving;
@@ -116,7 +125,7 @@ public class MT_ArrayIntSet {
 //				sizeAtPeak = memSizer.getByteCount(set);
 //			}
 //		}
-//		MemSizer memSizer = new MemSizer(false);
+//		MemorySizer memSizer = new MemSizer(false);
 //		memSizer.excludeClass(Class.class);
 //		long sizeAtEnd = memSizer.getByteCount(set);
 //		return new Performance(sizeAtPeak, sizeAtEnd, timeElapser.getElapsedMilliSeconds());
@@ -229,5 +238,5 @@ public class MT_ArrayIntSet {
 //	public static void main(String[] args) {
 //		new MT_ArrayIntSet().test();
 //	}
-
 }
+

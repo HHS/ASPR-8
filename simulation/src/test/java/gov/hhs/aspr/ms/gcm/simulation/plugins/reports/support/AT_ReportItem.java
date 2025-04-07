@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -149,43 +149,27 @@ public final class AT_ReportItem {
 	@Test
 	@UnitTestMethod(target = ReportItem.class, name = "hashCode", args = {})
 	public void testHashCode() {
-
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7481311225319288863L);
-		/*
-		 * Show equal report items have equal hash codes. We will focus on the values
-		 * part since other tests should cover the report label and header.
-		 */
 
-		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ReportItem reportItem1 = getRandomReportItem(seed);
+			ReportItem reportItem2 = getRandomReportItem(seed);
 
-		ReportItem reportItem1 = ReportItem.builder().setReportLabel(reportLabel).build();
-		ReportItem reportItem2 = ReportItem.builder().setReportLabel(reportLabel).build();
-		assertEquals(reportItem1.hashCode(), reportItem2.hashCode());
+			assertEquals(reportItem1, reportItem2);
+			assertEquals(reportItem1.hashCode(), reportItem2.hashCode());
 
-		reportItem1 = ReportItem.builder().setReportLabel(reportLabel).addValue("A").addValue("B").build();
-		reportItem2 = ReportItem.builder().setReportLabel(reportLabel).addValue("A").addValue("B").build();
-		assertEquals(reportItem1.hashCode(), reportItem2.hashCode());
+		}
 
-		/*
-		 * Show that the hash codes are reasonable dispersed
-		 * 
-		 */
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		ReportItem.Builder builder = ReportItem.builder();
-
-		int sampleCount = 1000;
-		for (int i = 0; i < sampleCount; i++) {
-			builder.setReportLabel(reportLabel);
-			int fieldCount = randomGenerator.nextInt(3) + 1;
-			for (int j = 0; j < fieldCount; j++) {
-				int stringLength = randomGenerator.nextInt(5) + 1;
-				builder.addValue(generateRandomString(randomGenerator, stringLength));
-			}
-			ReportItem reportItem = builder.build();
+		for (int i = 0; i < 100; i++) {
+			ReportItem reportItem = getRandomReportItem(randomGenerator.nextLong());
 			hashCodes.add(reportItem.hashCode());
 		}
-		assertTrue(hashCodes.size() > 4 * sampleCount / 5);
-
+		
+		assertEquals(100, hashCodes.size());
 	}
 
 	private static Character generateRandomCharacter(RandomGenerator randomGenerator) {
@@ -201,57 +185,64 @@ public final class AT_ReportItem {
 		return sb.toString();
 	}
 
+	private ReportItem getRandomReportItem(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		ReportItem.Builder builder = ReportItem.builder();
+
+		builder.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt()));
+
+		int fieldCount = randomGenerator.nextInt(5) + 1;
+		for (int i = 0; i < fieldCount; i++) {
+			int stringLength = randomGenerator.nextInt(5) + 1;
+			String fieldValue = generateRandomString(randomGenerator, stringLength);
+			builder.addValue(fieldValue);
+		}
+
+		return builder.build();
+	}
+
 	@Test
 	@UnitTestMethod(target = ReportItem.class, name = "equals", args = { Object.class })
-
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7530977954336798039L);
 
-		SimpleReportLabel reportLabel = new SimpleReportLabel("report");
-
-		/*
-		 * Show that equal objects are equal
-		 * 
-		 */
-		ReportItem.Builder builder1 = ReportItem.builder();
-		ReportItem.Builder builder2 = ReportItem.builder();
-
-		int sampleCount = 100;
-		for (int i = 0; i < sampleCount; i++) {
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-			int fieldCount = randomGenerator.nextInt(3) + 1;
-			for (int j = 0; j < fieldCount; j++) {
-				int stringLength = randomGenerator.nextInt(5) + 1;
-				String value1 = generateRandomString(randomGenerator, stringLength);
-				builder1.addValue(value1);
-				String value2 = new String(value1);
-				builder2.addValue(value2);
-			}
-			ReportItem reportItem1 = builder1.build();
-			ReportItem reportItem2 = builder2.build();
-			assertEquals(reportItem1, reportItem2);
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ReportItem reportItem = getRandomReportItem(randomGenerator.nextLong());
+			assertFalse(reportItem.equals(new Object()));
 		}
 
-		// show that non-equal report items are not equal
-		for (int i = 0; i < sampleCount; i++) {
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-			int fieldCount = randomGenerator.nextInt(3) + 1;
-			for (int j = 0; j < fieldCount; j++) {
-				int stringLength = randomGenerator.nextInt(5) + 1;
-				String value1 = generateRandomString(randomGenerator, stringLength);
-				builder1.addValue(value1);
-				String value2 = new String(value1) + "x";
-				builder2.addValue(value2);
-			}
-			ReportItem reportItem1 = builder1.build();
-			ReportItem reportItem2 = builder2.build();
-			assertNotEquals(reportItem1, reportItem2);
-
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			ReportItem reportItem = getRandomReportItem(randomGenerator.nextLong());
+			assertFalse(reportItem.equals(null));
 		}
 
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ReportItem reportItem = getRandomReportItem(randomGenerator.nextLong());
+			assertTrue(reportItem.equals(reportItem));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ReportItem reportItem1 = getRandomReportItem(seed);
+			ReportItem reportItem2 = getRandomReportItem(seed);
+			assertFalse(reportItem1 == reportItem2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(reportItem1.equals(reportItem2));
+				assertTrue(reportItem2.equals(reportItem1));
+			}
+		}
+
+		// different inputs yield unequal report items
+		Set<ReportItem> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ReportItem reportItem = getRandomReportItem(randomGenerator.nextLong());
+			set.add(reportItem);
+		}
+		assertEquals(100, set.size());
 	}
 
 }

@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -36,39 +37,32 @@ public final class PropertyDefinition {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-			result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
-			result = prime * result + type.hashCode();
-			return result;
+			return Objects.hash(type, propertyValuesAreMutable, defaultValue);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (defaultValue == null) {
-				if (other.defaultValue != null) {
-					return false;
-				}
-			} else if (!defaultValue.equals(other.defaultValue)) {
-				return false;
-			}
-			if (propertyValuesAreMutable != other.propertyValuesAreMutable) {
-				return false;
-			}
-			if (!type.equals(other.type)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(type, other.type) && propertyValuesAreMutable == other.propertyValuesAreMutable
+					&& Objects.equals(defaultValue, other.defaultValue);
 		}
 
 	}
@@ -223,28 +217,31 @@ public final class PropertyDefinition {
 		return builder2.toString();
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link PropertyDefinition} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PropertyDefinition)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PropertyDefinition other = (PropertyDefinition) obj;
-
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	public Builder toBuilder() {
