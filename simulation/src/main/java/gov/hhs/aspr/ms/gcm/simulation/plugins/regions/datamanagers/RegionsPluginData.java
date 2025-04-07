@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -83,66 +84,45 @@ public class RegionsPluginData implements PluginData {
 			locked = data.locked;			
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (locked ? 1231 : 1237);
-			result = prime * result + personRegions.hashCode();
-			result = prime * result + personArrivalTimes.hashCode();
-
-			result = prime * result + regionIds.hashCode();
-			result = prime * result + regionPropertyDefinitions.hashCode();
-			result = prime * result + regionPropertyValues.hashCode();
-
-			return result;
+			return Objects.hash(regionPropertyDefinitions, regionIds, trackRegionArrivalTimes, regionPropertyValues,
+					personRegions, personArrivalTimes);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal. We exclude the following fields:
+		 * 
+		 * locked -- two Datas are only compared when they are both locked -- there are
+		 * no equality comparisons in this class.
+		 * 
+		 * personAdditionMode -- is a function of the existing data or is in the
+		 * UNDETERMINED state
+		 * 
+		 * emptyRegionPropertyMap -- just an empty map
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			/*
-			 * We exclude the following fields:
-			 * 
-			 * locked -- two Datas are only compared when they are both locked -- there are
-			 * no equality comparisons in this class.
-			 * 
-			 * personAdditionMode -- is a function of the existing data or is in the
-			 * UNDETERMINED state
-			 * 
-			 * emptyRegionPropertyMap -- just an empty map
-			 */
-			if (trackRegionArrivalTimes != other.trackRegionArrivalTimes) {
-				return false;
-			}
-			if (!personRegions.equals(other.personRegions)) {
-				return false;
-			}
-			if (!personRegions.equals(other.personRegions)) {
-				return false;
-			}
-			if (!personArrivalTimes.equals(other.personArrivalTimes)) {
-				return false;
-			}
-			if (!regionIds.equals(other.regionIds)) {
-				return false;
-			}
-			if (!regionPropertyDefinitions.equals(other.regionPropertyDefinitions)) {
-				return false;
-			}
-
-			if (!regionPropertyValues.equals(other.regionPropertyValues)) {
-				return false;
-			}
-
-			return true;
+			return Objects.equals(regionPropertyDefinitions, other.regionPropertyDefinitions)
+					&& Objects.equals(regionIds, other.regionIds)
+					&& trackRegionArrivalTimes == other.trackRegionArrivalTimes
+					&& Objects.equals(regionPropertyValues, other.regionPropertyValues)
+					&& Objects.equals(personRegions, other.personRegions)
+					&& Objects.equals(personArrivalTimes, other.personArrivalTimes);
 		}
 
 		@Override
@@ -644,27 +624,31 @@ public class RegionsPluginData implements PluginData {
 		return Optional.empty();
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link RegionsPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof RegionsPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		RegionsPluginData other = (RegionsPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
