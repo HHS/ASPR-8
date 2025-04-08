@@ -101,6 +101,14 @@ public final class ActorContext {
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		simulation.subscribeActorToEventByFilter(eventFilter, eventConsumer);
 	}
+	
+	/**
+	 * Returns true if and only if there are actor or data managers subscribed to
+	 * the given event type.
+	 */
+	public boolean subscribersExist(Class<? extends Event> eventClass) {
+		return simulation.subscribersExistForEvent(eventClass);
+	}
 
 	/**
 	 * Unsubscribes the current actor from the given event filter.
