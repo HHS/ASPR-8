@@ -392,12 +392,9 @@ public class AT_ActorContext {
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
 	}
-	
-	
-	
-	
+
 	private void executeGetDataManagerTest(Consumer<ActorContext> consumer) {
-		
+
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -408,7 +405,7 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,  consumer));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -421,9 +418,9 @@ public class AT_ActorContext {
 	@UnitTestMethod(target = ActorContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 
-		//postcondition test: 
-		executeGetDataManagerTest((c)->{
-			assertNotNull(c.getDataManager(TestDataManager1.class));			 
+		// postcondition test:
+		executeGetDataManagerTest((c) -> {
+			assertNotNull(c.getDataManager(TestDataManager1.class));
 			assertNotNull(c.getDataManager(TestDataManager3A.class));
 			assertNotNull(c.getDataManager(TestDataManager3B.class));
 			assertNotNull(c.getDataManager(TestDataManager4A.class));
@@ -431,24 +428,24 @@ public class AT_ActorContext {
 		});
 
 		// precondition test: if the class reference is null
-		ContractException contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(null);
 			});
 		});
 		assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
-		
+
 		// precondition test: if the class reference is null
-		contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(TestDataManager3.class);
 			});
 		});
 		assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
-		
+
 		// precondition test: if the class reference is unknown
-		contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(TestDataManager4B.class);
 			});
 		});
@@ -1070,4 +1067,76 @@ public class AT_ActorContext {
 		assertEquals(expectedPlans.size(), plans.size());
 		assertEquals(expectedPlans, plans);
 	}
+
+	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "subscribersExist", args = { Class.class })
+	public void testSubscribersExist() {
+
+		/*
+		 * create a simple event filter as a place holder -- all test events will be
+		 * matched
+		 */
+		EventFilter<TestEvent> eventFilter = EventFilter.builder(TestEvent.class)//
+				.build();//
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		// add the first data actor
+
+		/*
+		 * Have the test resolver show that there are initially no subscribers to test
+		 * events.
+		 */
+
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+		}));
+
+		// create an agent and have it subscribe to test events at time 1
+		pluginDataBuilder.addTestActorPlan("subscriber1", new TestActorPlan(1, (c) -> {
+			// subscribe to the event label
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+		}));
+
+		// create an agent and have it subscribe to test events at time 1
+		pluginDataBuilder.addTestActorPlan("subscriber2", new TestActorPlan(1, (c) -> {
+			// subscribe to the event label
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+		}));
+
+		// show that actor1 now sees that there are subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+
+		// have the subscriber unsubscribe
+		pluginDataBuilder.addTestActorPlan("subscriber1", new TestActorPlan(3, (c) -> {
+			c.unsubscribe(eventFilter);
+		}));
+
+		// show that the observer still sees that there are subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+		
+		// have the subscriber2 unsubscribe
+		pluginDataBuilder.addTestActorPlan("subscriber2", new TestActorPlan(3, (c) -> {
+			c.unsubscribe(eventFilter);
+		}));
+
+		// show that the observer sees no subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		// build and execute the engine
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
+	}
+
 }
