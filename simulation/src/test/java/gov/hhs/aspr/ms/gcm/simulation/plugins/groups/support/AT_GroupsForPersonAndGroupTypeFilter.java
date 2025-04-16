@@ -2,9 +2,10 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -253,129 +254,70 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
     @Test
     @UnitTestMethod(target = GroupsForPersonAndGroupTypeFilter.class, name = "hashCode", args = {})
     public void testHashCode() {
-        GroupsForPersonAndGroupTypeFilter filter1 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter2 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter3 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.NOT_EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter4 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter5 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.NOT_EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter6 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.NOT_EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter7 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter8 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.NOT_EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter9 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 1);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(386194196580028301L);
 
-        assertEquals(filter1.hashCode(), filter1.hashCode());
+        // equal objects have equal hash codes
+        for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupsForPersonAndGroupTypeFilter filter1 = getRandomGroupsForPersonAndGroupTypeFilter(seed);
+			GroupsForPersonAndGroupTypeFilter filter2 = getRandomGroupsForPersonAndGroupTypeFilter(seed);
 
-        assertNotEquals(filter1.hashCode(), filter2.hashCode());
-        assertNotEquals(filter1.hashCode(), filter3.hashCode());
-        assertNotEquals(filter1.hashCode(), filter4.hashCode());
-        assertNotEquals(filter1.hashCode(), filter5.hashCode());
-        assertNotEquals(filter1.hashCode(), filter6.hashCode());
-        assertNotEquals(filter1.hashCode(), filter7.hashCode());
-        assertNotEquals(filter1.hashCode(), filter8.hashCode());
+			assertEquals(filter1, filter2);
+			assertEquals(filter1.hashCode(), filter2.hashCode());
+        }
 
-        assertNotEquals(filter2.hashCode(), filter3.hashCode());
-        assertNotEquals(filter2.hashCode(), filter4.hashCode());
-        assertNotEquals(filter2.hashCode(), filter5.hashCode());
-        assertNotEquals(filter2.hashCode(), filter6.hashCode());
-        assertNotEquals(filter2.hashCode(), filter7.hashCode());
-        assertNotEquals(filter2.hashCode(), filter8.hashCode());
+        // hash codes are reasonably distributed
+        Set<Integer> hashCodes = new LinkedHashSet<>();
+        for (int i = 0; i < 100; i++) {
+			GroupsForPersonAndGroupTypeFilter filter = getRandomGroupsForPersonAndGroupTypeFilter(randomGenerator.nextLong());
+			hashCodes.add(filter.hashCode());
+        }
 
-        assertNotEquals(filter3.hashCode(), filter4.hashCode());
-        assertNotEquals(filter3.hashCode(), filter5.hashCode());
-        assertNotEquals(filter3.hashCode(), filter6.hashCode());
-        assertNotEquals(filter3.hashCode(), filter7.hashCode());
-        assertNotEquals(filter3.hashCode(), filter8.hashCode());
-
-        assertNotEquals(filter4.hashCode(), filter5.hashCode());
-        assertNotEquals(filter4.hashCode(), filter6.hashCode());
-        assertNotEquals(filter4.hashCode(), filter7.hashCode());
-        assertNotEquals(filter4.hashCode(), filter8.hashCode());
-
-        assertNotEquals(filter5.hashCode(), filter6.hashCode());
-        assertNotEquals(filter5.hashCode(), filter7.hashCode());
-        assertNotEquals(filter5.hashCode(), filter8.hashCode());
-
-        assertNotEquals(filter6.hashCode(), filter7.hashCode());
-        assertNotEquals(filter6.hashCode(), filter8.hashCode());
-
-        assertNotEquals(filter7.hashCode(), filter8.hashCode());
-
-        assertEquals(filter1.hashCode(), filter9.hashCode());
+        assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = GroupsForPersonAndGroupTypeFilter.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        GroupsForPersonAndGroupTypeFilter filter1 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter2 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter3 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.NOT_EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter4 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter5 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.NOT_EQUAL, 1);
-        GroupsForPersonAndGroupTypeFilter filter6 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.NOT_EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter7 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter8 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_2,
-                Equality.NOT_EQUAL, 0);
-        GroupsForPersonAndGroupTypeFilter filter9 = new GroupsForPersonAndGroupTypeFilter(TestGroupTypeId.GROUP_TYPE_1,
-                Equality.EQUAL, 1);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1974335207275712576L);
 
-        assertEquals(filter1, filter1);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupsForPersonAndGroupTypeFilter filter = getRandomGroupsForPersonAndGroupTypeFilter(randomGenerator.nextLong());
+			assertFalse(filter.equals(new Object()));
+		}
 
-        assertNotEquals(filter1, null);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupsForPersonAndGroupTypeFilter filter = getRandomGroupsForPersonAndGroupTypeFilter(randomGenerator.nextLong());
+			assertFalse(filter.equals(null));
+		}
 
-        assertNotEquals(filter1, new Object());
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupsForPersonAndGroupTypeFilter filter = getRandomGroupsForPersonAndGroupTypeFilter(randomGenerator.nextLong());
+			assertTrue(filter.equals(filter));
+		}
 
-        assertNotEquals(filter1, filter2);
-        assertNotEquals(filter1, filter3);
-        assertNotEquals(filter1, filter4);
-        assertNotEquals(filter1, filter5);
-        assertNotEquals(filter1, filter6);
-        assertNotEquals(filter1, filter7);
-        assertNotEquals(filter1, filter8);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupsForPersonAndGroupTypeFilter filter1 = getRandomGroupsForPersonAndGroupTypeFilter(seed);
+			GroupsForPersonAndGroupTypeFilter filter2 = getRandomGroupsForPersonAndGroupTypeFilter(seed);
+			assertFalse(filter1 == filter2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(filter1.equals(filter2));
+				assertTrue(filter2.equals(filter1));
+			}
+		}
 
-        assertNotEquals(filter2, filter3);
-        assertNotEquals(filter2, filter4);
-        assertNotEquals(filter2, filter5);
-        assertNotEquals(filter2, filter6);
-        assertNotEquals(filter2, filter7);
-        assertNotEquals(filter2, filter8);
-
-        assertNotEquals(filter3, filter4);
-        assertNotEquals(filter3, filter5);
-        assertNotEquals(filter3, filter6);
-        assertNotEquals(filter3, filter7);
-        assertNotEquals(filter3, filter8);
-
-        assertNotEquals(filter4, filter5);
-        assertNotEquals(filter4, filter6);
-        assertNotEquals(filter4, filter7);
-        assertNotEquals(filter4, filter8);
-
-        assertNotEquals(filter5, filter6);
-        assertNotEquals(filter5, filter7);
-        assertNotEquals(filter5, filter8);
-
-        assertNotEquals(filter6, filter7);
-        assertNotEquals(filter6, filter8);
-
-        assertNotEquals(filter7, filter8);
-
-        assertEquals(filter1, filter9);
+		// different inputs yield unequal filters
+		Set<GroupsForPersonAndGroupTypeFilter> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupsForPersonAndGroupTypeFilter filter = getRandomGroupsForPersonAndGroupTypeFilter(randomGenerator.nextLong());
+			set.add(filter);
+		}
+		assertEquals(100, set.size());
     }
 
     @Test
@@ -400,5 +342,18 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
 
             assertEquals(builder.toString(), filter.toString());
         }
+    }
+
+    private GroupsForPersonAndGroupTypeFilter getRandomGroupsForPersonAndGroupTypeFilter(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+        TestGroupTypeId randomGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
+
+        Equality[] equalityValues = Equality.values();
+        Equality randomEquality = equalityValues[randomGenerator.nextInt(equalityValues.length)];
+
+        int groupCount = randomGenerator.nextInt(Integer.MAX_VALUE);
+
+        return new GroupsForPersonAndGroupTypeFilter(randomGroupTypeId, randomEquality, groupCount);
     }
 }
