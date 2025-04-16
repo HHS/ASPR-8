@@ -187,11 +187,18 @@ public final class GroupPropertyDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
         @Override
         public int hashCode() {
             return Objects.hash(levelNames, values, groupId, groupPropertyId);
         }
 
+        /**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -204,10 +211,8 @@ public final class GroupPropertyDimensionData extends DimensionData {
                 return false;
             }
             Data other = (Data) obj;
-            return Objects.equals(levelNames, other.levelNames)
-                    && Objects.equals(values, other.values)
-                    && Objects.equals(groupId, other.groupId)
-                    && Objects.equals(groupPropertyId, other.groupPropertyId);
+            return Objects.equals(levelNames, other.levelNames) && Objects.equals(values, other.values)
+                    && Objects.equals(groupId, other.groupId) && Objects.equals(groupPropertyId, other.groupPropertyId);
         }
 
         @Override
@@ -286,11 +291,18 @@ public final class GroupPropertyDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
         return Objects.hash(data);
     }
 
+    /**
+     * Two {@link GroupPropertyDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

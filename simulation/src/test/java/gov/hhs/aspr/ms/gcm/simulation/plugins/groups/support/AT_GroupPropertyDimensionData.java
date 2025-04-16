@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -271,118 +273,70 @@ public class AT_GroupPropertyDimensionData {
 	@Test
 	@UnitTestMethod(target = GroupPropertyDimensionData.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		GroupPropertyDimensionData dimensionData1 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8224330019491275913L);
 
-		GroupPropertyDimensionData dimensionData2 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPropertyDimensionData dimData1 = getRandomGroupPropertyDimensionData(seed);
+			GroupPropertyDimensionData dimData2 = getRandomGroupPropertyDimensionData(seed);
 
-		GroupPropertyDimensionData dimensionData3 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
+			assertEquals(dimData1, dimData2);
+			assertEquals(dimData1.hashCode(), dimData2.hashCode());
+		}
 
-		GroupPropertyDimensionData dimensionData4 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
-
-		GroupPropertyDimensionData dimensionData5 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
-
-		GroupPropertyDimensionData dimensionData6 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
-
-		assertEquals(dimensionData1.hashCode(), dimensionData1.hashCode());
-
-		assertNotEquals(dimensionData1.hashCode(), dimensionData2.hashCode());
-		assertNotEquals(dimensionData1.hashCode(), dimensionData3.hashCode());
-		assertNotEquals(dimensionData1.hashCode(), dimensionData4.hashCode());
-		assertNotEquals(dimensionData1.hashCode(), dimensionData5.hashCode());
-
-		assertNotEquals(dimensionData2.hashCode(), dimensionData3.hashCode());
-		assertNotEquals(dimensionData2.hashCode(), dimensionData4.hashCode());
-		assertNotEquals(dimensionData2.hashCode(), dimensionData5.hashCode());
-		assertNotEquals(dimensionData2.hashCode(), dimensionData6.hashCode());
-
-		assertNotEquals(dimensionData3.hashCode(), dimensionData4.hashCode());
-		assertNotEquals(dimensionData3.hashCode(), dimensionData5.hashCode());
-		assertNotEquals(dimensionData3.hashCode(), dimensionData6.hashCode());
-
-		assertNotEquals(dimensionData4.hashCode(), dimensionData5.hashCode());
-		assertNotEquals(dimensionData4.hashCode(), dimensionData6.hashCode());
-
-		assertNotEquals(dimensionData5.hashCode(), dimensionData6.hashCode());
-
-		assertEquals(dimensionData1.hashCode(), dimensionData6.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPropertyDimensionData dimData = getRandomGroupPropertyDimensionData(randomGenerator.nextLong());
+			hashCodes.add(dimData.hashCode());
+		}
+		
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = GroupPropertyDimensionData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		GroupPropertyDimensionData dimensionData1 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980205493557306870L);
 
-		GroupPropertyDimensionData dimensionData2 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+            GroupPropertyDimensionData dimData = getRandomGroupPropertyDimensionData(randomGenerator.nextLong());
+            assertFalse(dimData.equals(new Object()));
+		}
 
-		GroupPropertyDimensionData dimensionData3 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_2_INTEGER_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+            GroupPropertyDimensionData dimData = getRandomGroupPropertyDimensionData(randomGenerator.nextLong());
+            assertFalse(dimData.equals(null));
+		}
 
-		GroupPropertyDimensionData dimensionData4 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_3_DOUBLE_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+            GroupPropertyDimensionData dimData = getRandomGroupPropertyDimensionData(randomGenerator.nextLong());
+            assertTrue(dimData.equals(dimData));
+		}
 
-		GroupPropertyDimensionData dimensionData5 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_1_1_BOOLEAN_MUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(1))//
-				.build();
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPropertyDimensionData dimData1 = getRandomGroupPropertyDimensionData(seed);
+			GroupPropertyDimensionData dimData2 = getRandomGroupPropertyDimensionData(seed);
+			assertFalse(dimData1 == dimData2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(dimData1.equals(dimData2));
+				assertTrue(dimData2.equals(dimData1));
+			}
+		}
 
-		GroupPropertyDimensionData dimensionData6 = GroupPropertyDimensionData.builder()//
-				.setGroupPropertyId(TestGroupPropertyId.GROUP_PROPERTY_3_3_DOUBLE_IMMUTABLE_NO_TRACK)//
-				.setGroupId(new GroupId(0))//
-				.build();
-
-		assertEquals(dimensionData1, dimensionData1);
-
-		assertNotEquals(dimensionData1, null);
-		assertNotEquals(dimensionData1, new Object());
-
-		assertNotEquals(dimensionData1, dimensionData2);
-		assertNotEquals(dimensionData1, dimensionData3);
-		assertNotEquals(dimensionData1, dimensionData4);
-		assertNotEquals(dimensionData1, dimensionData5);
-
-		assertNotEquals(dimensionData2, dimensionData3);
-		assertNotEquals(dimensionData2, dimensionData4);
-		assertNotEquals(dimensionData2, dimensionData5);
-		assertNotEquals(dimensionData2, dimensionData6);
-
-		assertNotEquals(dimensionData3, dimensionData4);
-		assertNotEquals(dimensionData3, dimensionData5);
-		assertNotEquals(dimensionData3, dimensionData6);
-
-		assertNotEquals(dimensionData4, dimensionData5);
-		assertNotEquals(dimensionData4, dimensionData6);
-
-		assertNotEquals(dimensionData5, dimensionData6);
-
-		assertEquals(dimensionData1, dimensionData6);
+		// different inputs yield unequal groupPropertyDimensionDatas
+		Set<GroupPropertyDimensionData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPropertyDimensionData dimData = getRandomGroupPropertyDimensionData(randomGenerator.nextLong());
+			set.add(dimData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -463,5 +417,25 @@ public class AT_GroupPropertyDimensionData {
 		cloneBuilder = dimensionData.toBuilder();
 		cloneBuilder.addValue("Level_2", "newValue");
 		assertNotEquals(dimensionData, cloneBuilder.build());
+	}
+
+	private GroupPropertyDimensionData getRandomGroupPropertyDimensionData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		GroupPropertyDimensionData.Builder builder = GroupPropertyDimensionData.builder();
+
+		TestGroupPropertyId randomGroupPropertyId = TestGroupPropertyId.getRandomTestGroupPropertyId(randomGenerator);
+		builder.setGroupPropertyId(randomGroupPropertyId);
+
+		GroupId randomGroupId = new GroupId(randomGenerator.nextInt(Integer.MAX_VALUE));
+		builder.setGroupId(randomGroupId);
+
+		int n = randomGenerator.nextInt(10) + 1;
+        for (int i = 0; i < n; i++) {
+			Object randomPropertyValue = randomGroupPropertyId.getRandomPropertyValue(randomGenerator);
+			builder.addValue("Level_" + i, randomPropertyValue);
+		}
+
+		return builder.build();
 	}
 }
