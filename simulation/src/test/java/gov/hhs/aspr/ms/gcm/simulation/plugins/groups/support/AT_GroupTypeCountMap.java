@@ -1,12 +1,14 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,47 +33,45 @@ public class AT_GroupTypeCountMap {
 	@Test
 	@UnitTestMethod(target = GroupTypeCountMap.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		// 4832988525233013426L
-		/*
-		 * Show various cases demonstrating that build order and implied zero
-		 * values do not influence the equals contract
-		 */
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980720418377306870L);
 
-		// order should not matter
-		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		GroupTypeCountMap groupTypeCountMap1 = builder.build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupTypeCountMap groupTypeCountMap = getRandomGroupTypeCountMap(randomGenerator.nextLong());
+			assertFalse(groupTypeCountMap.equals(new Object()));
+		}
 
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		GroupTypeCountMap groupTypeCountMap2 = builder.build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupTypeCountMap groupTypeCountMap = getRandomGroupTypeCountMap(randomGenerator.nextLong());
+			assertFalse(groupTypeCountMap.equals(null));
+		}
 
-		assertEquals(groupTypeCountMap1, groupTypeCountMap2);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupTypeCountMap groupTypeCountMap = getRandomGroupTypeCountMap(randomGenerator.nextLong());
+			assertTrue(groupTypeCountMap.equals(groupTypeCountMap));
+		}
 
-		// implied zero values should not matter
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_3, 0);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		groupTypeCountMap1 = builder.build();
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupTypeCountMap groupTypeCountMap1 = getRandomGroupTypeCountMap(seed);
+			GroupTypeCountMap groupTypeCountMap2 = getRandomGroupTypeCountMap(seed);
+			assertFalse(groupTypeCountMap1 == groupTypeCountMap2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(groupTypeCountMap1.equals(groupTypeCountMap2));
+				assertTrue(groupTypeCountMap2.equals(groupTypeCountMap1));
+			}
+		}
 
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		groupTypeCountMap2 = builder.build();
-
-		assertEquals(groupTypeCountMap1, groupTypeCountMap2);
-
-		// differences in positive counts matter
-
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		groupTypeCountMap1 = builder.build();
-
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 3);
-		groupTypeCountMap2 = builder.build();
-
-		assertNotEquals(groupTypeCountMap1, groupTypeCountMap2);
+		// different inputs yield unequal groupTypeCountMaps
+		Set<GroupTypeCountMap> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupTypeCountMap groupTypeCountMap = getRandomGroupTypeCountMap(randomGenerator.nextLong());
+			set.add(groupTypeCountMap);
+		}
+		assertEquals(100, set.size());
 	}
 
 	/**
@@ -80,34 +80,26 @@ public class AT_GroupTypeCountMap {
 	@Test
 	@UnitTestMethod(target = GroupTypeCountMap.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		/*
-		 * Equal objects have equal hash codes
-		 */
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653435608465183354L);
 
-		// order should not matter
-		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		GroupTypeCountMap groupTypeCountMap1 = builder.build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupTypeCountMap groupTypeCountMap1 = getRandomGroupTypeCountMap(seed);
+			GroupTypeCountMap groupTypeCountMap2 = getRandomGroupTypeCountMap(seed);
 
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		GroupTypeCountMap groupTypeCountMap2 = builder.build();
+			assertEquals(groupTypeCountMap1, groupTypeCountMap2);
+			assertEquals(groupTypeCountMap1.hashCode(), groupTypeCountMap2.hashCode());
+		}
 
-		assertEquals(groupTypeCountMap1.hashCode(), groupTypeCountMap2.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupTypeCountMap groupTypeCountMap = getRandomGroupTypeCountMap(randomGenerator.nextLong());
+			hashCodes.add(groupTypeCountMap.hashCode());
+		}
 
-		// implied zero values should not matter
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_3, 0);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		groupTypeCountMap1 = builder.build();
-
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_2, 7);
-		builder.setCount(TestGroupTypeId.GROUP_TYPE_1, 5);
-		groupTypeCountMap2 = builder.build();
-
-		assertEquals(groupTypeCountMap1.hashCode(), groupTypeCountMap2.hashCode());
-
+		assertEquals(100, hashCodes.size());
 	}
 
 	/**
@@ -266,5 +258,22 @@ public class AT_GroupTypeCountMap {
 			}
 		}
 
+	}
+
+	private GroupTypeCountMap getRandomGroupTypeCountMap(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
+
+		List<TestGroupTypeId> testGroupTypeIds = TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator);
+
+		int n = randomGenerator.nextInt(testGroupTypeIds.size()) + 1;
+		for (int i = 0; i < n; i++) {
+			TestGroupTypeId testGroupTypeId = testGroupTypeIds.get(i);
+			int randomGroupCount = randomGenerator.nextInt(Integer.MAX_VALUE);
+			builder.setCount(testGroupTypeId, randomGroupCount);
+		}
+
+		return builder.build();
 	}
 }
