@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.resources.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -103,39 +104,32 @@ public final class ResourceFilter extends Filter {
 		return result;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
-		result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-		result = prime * result + (int) (resourceValue ^ (resourceValue >>> 32));
-		return result;
+		return Objects.hash(resourceId, resourceValue, equality);
 	}
 
+	/**
+     * Two {@link ResourceFilter} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ResourceFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ResourceFilter other = (ResourceFilter) obj;
-		if (equality != other.equality) {
-			return false;
-		}
-		if (resourceId == null) {
-			if (other.resourceId != null) {
-				return false;
-			}
-		} else if (!resourceId.equals(other.resourceId)) {
-			return false;
-		}
-		if (resourceValue != other.resourceValue) {
-			return false;
-		}
-		return true;
+		return Objects.equals(resourceId, other.resourceId) && resourceValue == other.resourceValue
+				&& equality == other.equality;
 	}
 
 	@Override
