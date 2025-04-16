@@ -273,9 +273,7 @@ public class AT_GroupsForPersonFilter {
     private GroupsForPersonFilter getRandomGroupsForPersonFilter(long seed) {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-        Equality[] equalityValues = Equality.values();
-        Equality randomEquality = equalityValues[randomGenerator.nextInt(equalityValues.length)];
-
+        Equality randomEquality = Equality.getRandomEquality(randomGenerator);
         int randomGroupCount = randomGenerator.nextInt(Integer.MAX_VALUE);
 
         return new GroupsForPersonFilter(randomEquality, randomGroupCount);

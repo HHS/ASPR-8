@@ -348,10 +348,7 @@ public class AT_GroupsForPersonAndGroupTypeFilter {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
         TestGroupTypeId randomGroupTypeId = TestGroupTypeId.getRandomGroupTypeId(randomGenerator);
-
-        Equality[] equalityValues = Equality.values();
-        Equality randomEquality = equalityValues[randomGenerator.nextInt(equalityValues.length)];
-
+        Equality randomEquality = Equality.getRandomEquality(randomGenerator);
         int groupCount = randomGenerator.nextInt(Integer.MAX_VALUE);
 
         return new GroupsForPersonAndGroupTypeFilter(randomGroupTypeId, randomEquality, groupCount);
