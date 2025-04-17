@@ -264,8 +264,7 @@ public class AT_PersonPropertyDimensionData {
             assertEquals(dimensionData1.hashCode(), dimensionData2.hashCode());
         }
 
-        // hash codes are reasonably distributed. There are 2790 possible generated
-        // values, so the collision probability is very low
+        // hash codes are reasonably distributed
         Set<Integer> hashCodes = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {
             PersonPropertyDimensionData dimensionData = getRandomPersonPropertyDimensionData(
@@ -273,13 +272,20 @@ public class AT_PersonPropertyDimensionData {
             hashCodes.add(dimensionData.hashCode());
         }
 
-        assertTrue(hashCodes.size() > 90);
+        assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = PersonPropertyDimensionData.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5592194423075711575L);
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5592394423075711575L);
+
+        // never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyDimensionData dimensionData = getRandomPersonPropertyDimensionData(
+                    randomGenerator.nextLong());
+			assertFalse(dimensionData.equals(new Object()));
+		}
 
         // is never equal to null;
         for (int i = 0; i < 30; i++) {
@@ -300,15 +306,14 @@ public class AT_PersonPropertyDimensionData {
             long seed = randomGenerator.nextLong();
             PersonPropertyDimensionData dimensionData1 = getRandomPersonPropertyDimensionData(seed);
             PersonPropertyDimensionData dimensionData2 = getRandomPersonPropertyDimensionData(seed);
-
-            for (int j = 0; j < 5; j++) {
+            assertFalse(dimensionData1 == dimensionData2);
+            for (int j = 0; j < 10; j++) {
                 assertTrue(dimensionData1.equals(dimensionData2));
                 assertTrue(dimensionData2.equals(dimensionData1));
             }
         }
 
-        // different inputs yield non-equal objects. There are 2790 possible generated
-        // values, so the collision probability is very low
+        // different inputs yield non-equal objects. 
         Set<PersonPropertyDimensionData> personPropertyDimensionData = new LinkedHashSet<>();
 
         for (int i = 0; i < 100; i++) {
@@ -317,7 +322,7 @@ public class AT_PersonPropertyDimensionData {
             personPropertyDimensionData.add(dimensionData);
         }
 
-        assertTrue(personPropertyDimensionData.size() > 90);
+        assertEquals(100, personPropertyDimensionData.size());
     }
 
     @Test
@@ -401,9 +406,6 @@ public class AT_PersonPropertyDimensionData {
         assertNotEquals(dimensionData, cloneBuilder.build());
     }
 
-    /*
-     * Generates a random PersonPropertyDimensionData with 2790 possible outcomes
-     */
     private PersonPropertyDimensionData getRandomPersonPropertyDimensionData(long seed) {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
         TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
@@ -412,7 +414,7 @@ public class AT_PersonPropertyDimensionData {
                 .setPersonPropertyId(testPersonPropertyId)//
                 .setTrackTimes(randomGenerator.nextBoolean());
 
-        int count = randomGenerator.nextInt(3) + 1;
+        int count = randomGenerator.nextInt(10) + 1;
         for (int i = 0; i < count; i++) {
             builder.addValue("Level_" + i, testPersonPropertyId.getRandomPropertyValue(randomGenerator));
         }
