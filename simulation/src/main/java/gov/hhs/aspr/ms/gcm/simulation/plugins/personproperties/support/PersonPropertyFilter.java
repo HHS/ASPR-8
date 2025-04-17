@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -175,43 +176,32 @@ public final class PersonPropertyFilter extends Filter {
 		return result;
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
-		result = prime * result + ((personPropertyId == null) ? 0 : personPropertyId.hashCode());
-		result = prime * result + ((personPropertyValue == null) ? 0 : personPropertyValue.hashCode());
-		return result;
+		return Objects.hash(personPropertyId, personPropertyValue, equality);
 	}
 
+	/**
+	 * Two {@link PersonPropertyFilter} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PersonPropertyFilter other = (PersonPropertyFilter) obj;
-		if (equality != other.equality) {
-			return false;
-		}
-		if (personPropertyId == null) {
-			if (other.personPropertyId != null) {
-				return false;
-			}
-		} else if (!personPropertyId.equals(other.personPropertyId)) {
-			return false;
-		}
-		if (personPropertyValue == null) {
-			if (other.personPropertyValue != null) {
-				return false;
-			}
-		} else if (!personPropertyValue.equals(other.personPropertyValue)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(personPropertyId, other.personPropertyId)
+				&& Objects.equals(personPropertyValue, other.personPropertyValue) && equality == other.equality;
 	}
 
 }
