@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,10 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_SimpleAttributeId {
 
@@ -41,88 +43,74 @@ public class AT_SimpleAttributeId {
 	@Test
 	@UnitTestMethod(target = SimpleAttributeId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		SimpleAttributeId id_1 = new SimpleAttributeId(2);
-		SimpleAttributeId id_2 = new SimpleAttributeId(5);
-		SimpleAttributeId id_3 = new SimpleAttributeId(2);
-		SimpleAttributeId id_4 = new SimpleAttributeId("A");
-		SimpleAttributeId id_5 = new SimpleAttributeId("A");
-		SimpleAttributeId id_6 = new SimpleAttributeId("B");
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8985521418377306870L);
 
-		assertEquals(id_1, id_1);
-		assertNotEquals(id_1, id_2);
-		assertEquals(id_1, id_3);
-		assertNotEquals(id_1, id_4);
-		assertNotEquals(id_1, id_5);
-		assertNotEquals(id_1, id_6);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
+			assertFalse(simpleAttributeId.equals(new Object()));
+		}
 
-		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
+			assertFalse(simpleAttributeId.equals(null));
+		}
 
-		assertNotEquals(id_2, id_1);
-		assertEquals(id_2, id_2);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
+			assertTrue(simpleAttributeId.equals(simpleAttributeId));
+		}
 
-		assertEquals(id_3, id_1);
-		assertNotEquals(id_3, id_2);
-		assertEquals(id_3, id_3);
-		assertNotEquals(id_3, id_4);
-		assertNotEquals(id_3, id_5);
-		assertNotEquals(id_3, id_6);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			SimpleAttributeId simpleAttributeId1 = getRandomSimpleAttributeId(seed);
+			SimpleAttributeId simpleAttributeId2 = getRandomSimpleAttributeId(seed);
+			assertFalse(simpleAttributeId1 == simpleAttributeId2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(simpleAttributeId1.equals(simpleAttributeId2));
+				assertTrue(simpleAttributeId2.equals(simpleAttributeId1));
+			}
+		}
 
-		assertNotEquals(id_4, id_1);
-		assertNotEquals(id_4, id_2);
-		assertNotEquals(id_4, id_3);
-		assertEquals(id_4, id_4);
-		assertEquals(id_4, id_5);
-		assertNotEquals(id_4, id_6);
-
-		assertNotEquals(id_5, id_1);
-		assertNotEquals(id_5, id_2);
-		assertNotEquals(id_5, id_3);
-		assertEquals(id_5, id_4);
-		assertEquals(id_5, id_5);
-		assertNotEquals(id_5, id_6);
-
-		assertNotEquals(id_6, id_1);
-		assertNotEquals(id_6, id_2);
-		assertNotEquals(id_6, id_3);
-		assertNotEquals(id_6, id_4);
-		assertNotEquals(id_6, id_5);
-		assertEquals(id_6, id_6);
-
-		assertNotEquals(id_1, null);
-		assertNotEquals(id_2, null);
-		assertNotEquals(id_3, null);
-		assertNotEquals(id_4, null);
-		assertNotEquals(id_5, null);
-		assertNotEquals(id_6, null);
-
+		// different inputs yield unequal plugin datas
+		Set<SimpleAttributeId> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
+			set.add(simpleAttributeId);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = SimpleAttributeId.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491502365183354L);
 
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
-			SimpleAttributeId s1 = new SimpleAttributeId(i);
-			SimpleAttributeId s2 = new SimpleAttributeId(i);
-			assertEquals(s1.hashCode(), s2.hashCode());
+			long seed = randomGenerator.nextLong();
+			SimpleAttributeId simpleAttributeId1 = getRandomSimpleAttributeId(seed);
+			SimpleAttributeId simpleAttributeId2 = getRandomSimpleAttributeId(seed);
+
+			assertEquals(simpleAttributeId1, simpleAttributeId2);
+			assertEquals(simpleAttributeId1.hashCode(), simpleAttributeId2.hashCode());
 		}
 
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 30; i++) {
-			boolean unique = hashCodes.add(new SimpleAttributeId(i).hashCode());
-			assertTrue(unique);
+		for (int i = 0; i < 100; i++) {
+			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
+			hashCodes.add(simpleAttributeId.hashCode());
 		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
+	private SimpleAttributeId getRandomSimpleAttributeId(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new SimpleAttributeId(randomGenerator.nextInt());
+	}
 }
