@@ -523,91 +523,44 @@ public class AT_PersonPropertyReportPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a PersonPropertyReportPluginData from the same random
-			// inputs
-			PersonPropertyReportPluginData.Builder builder1 = PersonPropertyReportPluginData.builder();
-			PersonPropertyReportPluginData.Builder builder2 = PersonPropertyReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			for (int j = 0; j < 10; j++) {
-				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId
-						.getRandomPersonPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includePersonProperty(testPersonPropertyId);
-					builder2.includePersonProperty(testPersonPropertyId);
-				} else {
-					builder1.excludePersonProperty(testPersonPropertyId);
-					builder2.excludePersonProperty(testPersonPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			PersonPropertyReportPluginData personPropertyReportPluginData1 = builder1.build();
-			PersonPropertyReportPluginData personPropertyReportPluginData2 = builder2.build();
-
-			assertEquals(personPropertyReportPluginData1, personPropertyReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the default inclusion
-			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.toBuilder()//
-							.setDefaultInclusion(!defaultInclusion)//
-							.build();
-			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
-
-			// change the report period
-			int ord = reportPeriod.ordinal() + 1;
-			ord = ord % ReportPeriod.values().length;
-			reportPeriod = ReportPeriod.values()[ord];
-			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.toBuilder()//
-							.setReportPeriod(reportPeriod)//
-							.build();
-			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			personPropertyReportPluginData2 = //
-					personPropertyReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
-
-			// change an included property id
-			if (!personPropertyReportPluginData1.getIncludedProperties().isEmpty()) {
-				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getIncludedProperties().iterator()
-						.next();
-				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1.toBuilder()//
-								.excludePersonProperty(personPropertyId)//
-								.build();
-				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
-			}
-			// change an excluded property id
-			if (!personPropertyReportPluginData1.getExcludedProperties().isEmpty()) {
-				PersonPropertyId personPropertyId = personPropertyReportPluginData1.getExcludedProperties().iterator()
-						.next();
-				personPropertyReportPluginData2 = //
-						personPropertyReportPluginData1.toBuilder()//
-								.includePersonProperty(personPropertyId)//
-								.build();
-				assertNotEquals(personPropertyReportPluginData2, personPropertyReportPluginData1);
-			}
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyReportPluginData pluginData = getRandomPersonPropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyReportPluginData pluginData = getRandomPersonPropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyReportPluginData pluginData = getRandomPersonPropertyReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertyReportPluginData pluginData1 = getRandomPersonPropertyReportPluginData(seed);
+			PersonPropertyReportPluginData pluginData2 = getRandomPersonPropertyReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<PersonPropertyReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertyReportPluginData pluginData = getRandomPersonPropertyReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -615,60 +568,24 @@ public class AT_PersonPropertyReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a PersonPropertyReportPluginData from the same random
-			// inputs
-			PersonPropertyReportPluginData.Builder builder1 = PersonPropertyReportPluginData.builder();
-			PersonPropertyReportPluginData.Builder builder2 = PersonPropertyReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertyReportPluginData pluginData1 = getRandomPersonPropertyReportPluginData(seed);
+			PersonPropertyReportPluginData pluginData2 = getRandomPersonPropertyReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			for (int j = 0; j < 10; j++) {
-				TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId
-						.getRandomPersonPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includePersonProperty(testPersonPropertyId);
-					builder2.includePersonProperty(testPersonPropertyId);
-				} else {
-					builder1.excludePersonProperty(testPersonPropertyId);
-					builder2.excludePersonProperty(testPersonPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			PersonPropertyReportPluginData personPropertyReportPluginData1 = builder1.build();
-			PersonPropertyReportPluginData personPropertyReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = personPropertyReportPluginData1.hashCode();
-			assertEquals(hashCode, personPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, personPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, personPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, personPropertyReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(personPropertyReportPluginData1.hashCode(), personPropertyReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(personPropertyReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertEquals(50, observedHashCodes.size());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertyReportPluginData pluginData = getRandomPersonPropertyReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -695,5 +612,32 @@ public class AT_PersonPropertyReportPluginData {
 
 		assertEquals(expectedValue, actualValue);
 
+	}
+
+	private PersonPropertyReportPluginData getRandomPersonPropertyReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		PersonPropertyReportPluginData.Builder builder = PersonPropertyReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
+		builder.setReportLabel(reportLabel);
+
+		ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+		builder.setReportPeriod(reportPeriod);
+
+		builder.setDefaultInclusion(randomGenerator.nextBoolean());
+
+		List<TestPersonPropertyId> testPersonPropertyIds = TestPersonPropertyId.getShuffledPersonPropertyIds(randomGenerator);
+		int n = randomGenerator.nextInt(testPersonPropertyIds.size()) + 1;
+		for (int i = 0; i < n; i++) {
+			TestPersonPropertyId testPersonPropertyId = testPersonPropertyIds.get(i);
+
+			if (randomGenerator.nextBoolean()) {
+				builder.includePersonProperty(testPersonPropertyId);
+			} else {
+				builder.excludePersonProperty(testPersonPropertyId);
+			}
+		}
+
+		return builder.build();
 	}
 }
