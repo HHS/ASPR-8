@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.ThreadSafe;
 
@@ -32,39 +34,31 @@ public final class AttributeDefinition {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-			result = prime * result + ((type == null) ? 0 : type.hashCode());
-			return result;
+			return Objects.hash(type, defaultValue);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (defaultValue == null) {
-				if (other.defaultValue != null) {
-					return false;
-				}
-			} else if (!defaultValue.equals(other.defaultValue)) {
-				return false;
-			}
-			if (type == null) {
-				if (other.type != null) {
-					return false;
-				}
-			} else if (!type.equals(other.type)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(type, other.type) && Objects.equals(defaultValue, other.defaultValue);
 		}
 
 		@Override
@@ -183,29 +177,31 @@ public final class AttributeDefinition {
 		return data.type;
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link AttributeDefinition} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		AttributeDefinition other = (AttributeDefinition) obj;
-		if (data == null) {
-			if (other.data != null)
-				return false;
-		} else if (!data.equals(other.data))
-			return false;
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
