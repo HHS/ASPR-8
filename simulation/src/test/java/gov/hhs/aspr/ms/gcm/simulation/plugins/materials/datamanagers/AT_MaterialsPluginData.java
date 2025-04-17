@@ -2812,6 +2812,7 @@ public class AT_MaterialsPluginData {
 			long seed = randomGenerator.nextLong();
 			MaterialsPluginData randomMaterialsPluginData1 = getRandomMaterialsPluginData(seed);
 			MaterialsPluginData randomMaterialsPluginData2 = getRandomMaterialsPluginData(seed);
+			assertFalse(randomMaterialsPluginData1 == randomMaterialsPluginData2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(randomMaterialsPluginData1.equals(randomMaterialsPluginData2));
 				assertTrue(randomMaterialsPluginData2.equals(randomMaterialsPluginData1));
