@@ -341,7 +341,7 @@ public class AT_AttributesPluginData {
 			AttributeDefinition attributeDefinition = testAttributeId.getAttributeDefinition();
 			builder.defineAttribute(testAttributeId, attributeDefinition);
 		}
-		count = randomGenerator.nextInt(5);
+		count = randomGenerator.nextInt(15);
 		int id = 0;
 		for (int i = 0; i < count; i++) {
 			id += randomGenerator.nextInt(3);
@@ -377,8 +377,7 @@ public class AT_AttributesPluginData {
 			set.add(attributesPluginData.hashCode());
 		}
 
-		assertTrue(set.size() > 95);
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -386,6 +385,12 @@ public class AT_AttributesPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8530033813336044717L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			AttributesPluginData attributesPluginData = getRandomAttributesPluginData(randomGenerator.nextLong());
+			assertFalse(attributesPluginData.equals(new Object()));
+		}
 
 		// never equals null
 		for (int i = 0; i < 30; i++) {
@@ -404,7 +409,8 @@ public class AT_AttributesPluginData {
 			long seed = randomGenerator.nextLong();
 			AttributesPluginData attributesPluginData1 = getRandomAttributesPluginData(seed);
 			AttributesPluginData attributesPluginData2 = getRandomAttributesPluginData(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(attributesPluginData1 == attributesPluginData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(attributesPluginData1.equals(attributesPluginData2));
 				assertTrue(attributesPluginData2.equals(attributesPluginData1));
 			}
@@ -417,8 +423,7 @@ public class AT_AttributesPluginData {
 			set.add(attributesPluginData);
 		}
 
-		assertTrue(set.size() > 95);
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
