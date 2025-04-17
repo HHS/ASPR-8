@@ -2789,37 +2789,42 @@ public class AT_MaterialsPluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(215284709954874816L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(randomGenerator.nextLong());
+			assertFalse(randomMaterialsPluginData.equals(new Object()));
+		}
+
 		// is never equal to null
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(randomGenerator.nextLong());
 			assertFalse(randomMaterialsPluginData.equals(null));
 		}
 
 		// reflexive
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(randomGenerator.nextLong());
 			assertTrue(randomMaterialsPluginData.equals(randomMaterialsPluginData));
 		}
 
 		// symmetric, transitive , consistent
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			MaterialsPluginData randomMaterialsPluginData1 = getRandomMaterialsPluginData(seed);
 			MaterialsPluginData randomMaterialsPluginData2 = getRandomMaterialsPluginData(seed);
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 10; j++) {
 				assertTrue(randomMaterialsPluginData1.equals(randomMaterialsPluginData2));
 				assertTrue(randomMaterialsPluginData2.equals(randomMaterialsPluginData1));
 			}
 		}
 
-		// changes to inputs yield unequal objects -- high probability that they are not
-		// equal
-		for (int i = 0; i < 10; i++) {
-			MaterialsPluginData randomMaterialsPluginData1 = getRandomMaterialsPluginData(randomGenerator.nextLong());
-			MaterialsPluginData randomMaterialsPluginData2 = getRandomMaterialsPluginData(randomGenerator.nextLong());
-			assertNotEquals(randomMaterialsPluginData1, randomMaterialsPluginData2);
+		// different inputs yield unequal plugin datas
+		Set<MaterialsPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(randomGenerator.nextLong());
+			set.add(randomMaterialsPluginData);
 		}
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -2827,7 +2832,7 @@ public class AT_MaterialsPluginData {
 	public void testHashCode() {
 		// equal objects have equal hash codes
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7949697829968462056L);
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			MaterialsPluginData randomMaterialsPluginData1 = getRandomMaterialsPluginData(seed);
 			MaterialsPluginData randomMaterialsPluginData2 = getRandomMaterialsPluginData(seed);
@@ -2841,7 +2846,7 @@ public class AT_MaterialsPluginData {
 			MaterialsPluginData randomMaterialsPluginData = getRandomMaterialsPluginData(randomGenerator.nextLong());
 			hashCodes.add(randomMaterialsPluginData.hashCode());
 		}
-		assertTrue(hashCodes.size() > 95);
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
