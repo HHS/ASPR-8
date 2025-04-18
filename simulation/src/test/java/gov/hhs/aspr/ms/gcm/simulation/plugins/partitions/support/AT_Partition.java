@@ -238,6 +238,7 @@ public class AT_Partition {
 			long seed = randomGenerator.nextLong();
 			Partition partition1 = getRandomPartition(seed);//
 			Partition partition2 = getRandomPartition(seed);//
+			assertFalse(partition1 == partition2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(partition1.equals(partition2));
 				assertTrue(partition2.equals(partition1));
