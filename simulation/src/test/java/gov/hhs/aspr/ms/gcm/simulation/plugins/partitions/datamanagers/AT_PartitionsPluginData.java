@@ -84,13 +84,25 @@ public class AT_PartitionsPluginData {
 		PartitionsPluginData p5 = PartitionsPluginData.builder().setRunContinuitySupport(false).build();
 
 		// equal objects have equal hash codes
+		assertEquals(p1, p4);
 		assertEquals(p1.hashCode(), p4.hashCode());
+
+		assertEquals(p1, p5);
 		assertEquals(p1.hashCode(), p5.hashCode());
+
+		assertEquals(p4, p5);
+		assertEquals(p4.hashCode(), p5.hashCode());
+		
+		assertEquals(p2, p3);
 		assertEquals(p2.hashCode(), p3.hashCode());
 
 		// hash codes are reasonably distributed
 		assertNotEquals(p1.hashCode(), p2.hashCode());
-
+		assertNotEquals(p1.hashCode(), p3.hashCode());
+		assertNotEquals(p4.hashCode(), p2.hashCode());
+		assertNotEquals(p4.hashCode(), p3.hashCode());
+		assertNotEquals(p5.hashCode(), p2.hashCode());
+		assertNotEquals(p5.hashCode(), p3.hashCode());
 	}
 
 	@Test
@@ -103,7 +115,14 @@ public class AT_PartitionsPluginData {
 		PartitionsPluginData p4 = PartitionsPluginData.builder().setRunContinuitySupport(false).build();
 		PartitionsPluginData p5 = PartitionsPluginData.builder().setRunContinuitySupport(false).build();
 
-		// null
+		// never equal to another type
+		assertFalse(p1.equals(new Object()));
+		assertFalse(p2.equals(new Object()));
+		assertFalse(p3.equals(new Object()));
+		assertFalse(p4.equals(new Object()));
+		assertFalse(p5.equals(new Object()));
+
+		// never equal to null
 		assertNotEquals(p1, null);
 		assertNotEquals(p2, null);
 		assertNotEquals(p3, null);
@@ -117,25 +136,28 @@ public class AT_PartitionsPluginData {
 		assertEquals(p4, p4);
 		assertEquals(p5, p5);
 
-		// symmetry and transitivity
-		assertEquals(p1, p4);
-		assertEquals(p4, p1);
+		// symmetric, transitive, consistent
+		for (int j = 0; j < 10; j++) {
+			assertEquals(p1, p4);
+			assertEquals(p4, p1);
+	
+			assertEquals(p1, p5);
+			assertEquals(p5, p1);
+	
+			assertEquals(p4, p5);
+			assertEquals(p5, p4);
+	
+			assertEquals(p2, p3);
+			assertEquals(p3, p2);
+		}
 
-		assertEquals(p1, p5);
-		assertEquals(p5, p1);
-
-		assertEquals(p4, p5);
-		assertEquals(p5, p4);
-
-		assertEquals(p2, p3);
-		assertEquals(p3, p2);
-
-		// non-equality
+		// different inputs yield unequal plugin datas
 		assertNotEquals(p1, p2);
 		assertNotEquals(p1, p3);
 		assertNotEquals(p4, p2);
 		assertNotEquals(p4, p3);
-
+		assertNotEquals(p5, p2);
+		assertNotEquals(p5, p3);
 	}
 
 	@Test
