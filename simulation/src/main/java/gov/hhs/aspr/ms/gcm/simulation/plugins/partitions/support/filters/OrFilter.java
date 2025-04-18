@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters;
 
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.FilterSensitivity;
@@ -57,21 +58,33 @@ public final class OrFilter extends Filter {
 		b.validate(partitionsContext);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		return a.hashCode() + b.hashCode();
+		return Objects.hash(a, b);
 	}
 
+	/**
+	 * Two {@link OrFilter} instances are equal if and only if
+	 * their inputs are equal. The order in which inputs are added 
+	 * does not matter.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof OrFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		OrFilter other = (OrFilter) obj;
-		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
+		return Objects.equals(a, other.a) && Objects.equals(b, other.b) ||
+				Objects.equals(a, other.b) && Objects.equals(b, other.a);
 	}
 
 	@Override
