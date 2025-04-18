@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -124,7 +126,18 @@ public class AT_PersonPropertyInitialization {
 	private PersonPropertyValueInitialization getRandomPersonPropertyValueInitialization(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		TestPersonPropertyId randomPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
-		return new PersonPropertyValueInitialization(randomPersonPropertyId, randomGenerator.nextInt());
+		// We remove boolean TestAttributeIds to increase randomness
+		List<TestPersonPropertyId> selectedValues = new ArrayList<>();
+		TestPersonPropertyId[] allValues = TestPersonPropertyId.values();
+		for (TestPersonPropertyId value : allValues) {
+			if (value.getPropertyDefinition().getType() != Boolean.class) {
+				selectedValues.add(value);
+			}
+		}
+
+		TestPersonPropertyId testPersonPropertyId = selectedValues.get(randomGenerator.nextInt(selectedValues.size()));
+		Object propertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+
+		return new PersonPropertyValueInitialization(testPersonPropertyId, propertyValue);
 	}
 }
