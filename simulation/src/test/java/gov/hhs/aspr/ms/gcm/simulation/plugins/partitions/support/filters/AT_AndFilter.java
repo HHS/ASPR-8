@@ -150,6 +150,11 @@ public class AT_AndFilter {
 		}
 		assertEquals(100, set.size());
 
+		// The order in which inputs are added does not matter
+		AndFilter f1 = new AndFilter(new TestFilter(3), new TestFilter(5));
+		AndFilter f2 = new AndFilter(new TestFilter(5), new TestFilter(3));
+		assertTrue(f1.equals(f2));
+		assertTrue(f2.equals(f1));
 	}
 
 	private final static class TestFilter extends Filter {
@@ -244,6 +249,11 @@ public class AT_AndFilter {
 
 		assertEquals(100, hashCodes.size());
 
+		// The order in which inputs are added does not matter
+		AndFilter f1 = new AndFilter(new TestFilter(3), new TestFilter(5));
+		AndFilter f2 = new AndFilter(new TestFilter(5), new TestFilter(3));
+		assertEquals(f1, f2);
+		assertEquals(f1.hashCode(), f2.hashCode());
 	}
 
 	private AndFilter getAndFilter(int a, int b) {
