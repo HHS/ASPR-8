@@ -38,19 +38,26 @@ public final class TrueFilter extends Filter {
 
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		return 1;
 	}
 
+	/**
+     * All {@link TrueFilter} instances are considered equal
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TrueFilter)) {
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
 		return true;
 	}
 
