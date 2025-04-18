@@ -1,6 +1,5 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters;
 
-import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.FilterSensitivity;
@@ -63,7 +62,7 @@ public final class OrFilter extends Filter {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(a, b);
+		return a.hashCode() + b.hashCode();
 	}
 
 	/**
@@ -76,15 +75,11 @@ public final class OrFilter extends Filter {
 		if (this == obj) {
 			return true;
 		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (!(obj instanceof OrFilter)) {
 			return false;
 		}
 		OrFilter other = (OrFilter) obj;
-		return Objects.equals(a, other.a) && Objects.equals(b, other.b) ||
-				Objects.equals(a, other.b) && Objects.equals(b, other.a);
+		return a.equals(other.a) && b.equals(other.b) || a.equals(other.b) && b.equals(other.a);
 	}
 
 	@Override
