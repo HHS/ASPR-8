@@ -142,7 +142,7 @@ public class AT_OrFilter {
 			}
 		}
 
-		// different inputs yield unequal plugin datas
+		// different inputs yield unequal orFilters
 		Set<OrFilter> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			OrFilter orFilter = getRandomOrFilter(randomGenerator.nextLong());
