@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters;
 
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.FilterSensitivity;
@@ -54,27 +55,31 @@ public final class NotFilter extends Filter {
 		return a.getFilterSensitivities();
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + a.hashCode();
-		return result;
+		return Objects.hash(a);
 	}
 
+	/**
+	 * Two {@link NotFilter} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof NotFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		NotFilter other = (NotFilter) obj;
-		if (!a.equals(other.a)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(a, other.a);
 	}
 
 }
