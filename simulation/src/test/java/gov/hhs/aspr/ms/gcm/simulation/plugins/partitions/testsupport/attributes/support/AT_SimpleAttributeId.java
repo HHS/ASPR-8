@@ -75,7 +75,7 @@ public class AT_SimpleAttributeId {
 			}
 		}
 
-		// different inputs yield unequal plugin datas
+		// different inputs yield unequal simpleAttributeIds
 		Set<SimpleAttributeId> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			SimpleAttributeId simpleAttributeId = getRandomSimpleAttributeId(randomGenerator.nextLong());
