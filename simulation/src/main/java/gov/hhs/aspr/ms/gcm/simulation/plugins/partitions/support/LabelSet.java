@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,29 +29,31 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class LabelSet {
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data.labels == null) ? 0 : data.labels.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link LabelSet} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		LabelSet other = (LabelSet) obj;
-		if (data.labels == null) {
-			if (other.data.labels != null)
-				return false;
-		} else if (!data.labels.equals(other.data.labels))
-			return false;
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	/**
@@ -139,6 +142,33 @@ public final class LabelSet {
 			labels.putAll(data.labels);
 			dimensions = Collections.unmodifiableSet(new LinkedHashSet<>(data.labels.keySet()));
 			locked = data.locked;
+		}
+
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
+		@Override
+		public int hashCode() {
+			return Objects.hash(labels, dimensions);
+		}
+
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Data other = (Data) obj;
+			return Objects.equals(labels, other.labels) && Objects.equals(dimensions, other.dimensions);
 		}
 	}
 
