@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
@@ -62,42 +63,34 @@ public class TestDataManagerPlan {
 	}
 
 	/**
-	 * Boilerplate implementation of hashCode consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(scheduledTime);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
+		return Objects.hash(scheduledTime, executed);
 	}
 
 	/**
-	 * TestDataManagerPlans are equal if and only they return the same values for
-	 * 1)getKey(), 2)executed() and 3)getScheduledTime()This limited sense of
-	 * equality is present simply to provide some reasonable evidence that the
-	 * plugin data cloning method is working correctly for the test plugin data.
+	 * Two {@link TestDataManagerPlan} instances are equal if and only if
+	 * they return the same values for 1) executed() and 2) getScheduledTime(). 
+	 * This limited sense of equality is present simply to provide some reasonable 
+	 * evidence that the plugin data cloning method is working correctly for the 
+	 * test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TestDataManagerPlan)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		TestDataManagerPlan other = (TestDataManagerPlan) obj;
-		if (executed != other.executed) {
-			return false;
-		}
-
-		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
-			return false;
-		}
-		return true;
+		return Double.doubleToLongBits(scheduledTime) == Double.doubleToLongBits(other.scheduledTime)
+				&& executed == other.executed;
 	}
 
 	/**
