@@ -1,15 +1,18 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public final class AT_ActorId {
 
@@ -40,39 +43,74 @@ public final class AT_ActorId {
 	@UnitTestMethod(target = ActorId.class, name = "hashCode", args = {})
 	@Test
 	public void testHashCode() {
-		// show equal objects have equal hashcodes
-		for (int i = 0; i < 10; i++) {
-			ActorId a = new ActorId(i);
-			ActorId b = new ActorId(i);
-			assertEquals(a, b);
-			assertEquals(a.hashCode(), b.hashCode());
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653490908465183354L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ActorId actorId1 = getRandomActorId(seed);
+			ActorId actorId2 = getRandomActorId(seed);
+
+			assertEquals(actorId1, actorId2);
+			assertEquals(actorId1.hashCode(), actorId2.hashCode());
 		}
 
-		// show that hash codes are dispersed
-		Set<Integer> hashcodes = new LinkedHashSet<>();
-		for (int i = 0; i < 1000; i++) {
-			hashcodes.add(new ActorId(i).hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ActorId actorId = getRandomActorId(randomGenerator.nextLong());
+			hashCodes.add(actorId.hashCode());
 		}
-		assertEquals(1000, hashcodes.size());
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@UnitTestMethod(target = ActorId.class, name = "equals", args = { Object.class })
 	@Test
 	public void testEquals() {
-		// show actor ids are equal if and only if they have the same base int
-		// value
-		for (int i = 0; i < 10; i++) {
-			ActorId a = new ActorId(i);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821418373346870L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ActorId actorId = getRandomActorId(randomGenerator.nextLong());
+			assertFalse(actorId.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			ActorId actorId = getRandomActorId(randomGenerator.nextLong());
+			assertFalse(actorId.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ActorId actorId = getRandomActorId(randomGenerator.nextLong());
+			assertTrue(actorId.equals(actorId));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ActorId actorId1 = getRandomActorId(seed);
+			ActorId actorId2 = getRandomActorId(seed);
+			assertFalse(actorId1 == actorId2);
 			for (int j = 0; j < 10; j++) {
-				ActorId b = new ActorId(j);
-				if (i == j) {
-					assertEquals(a, b);
-				} else {
-					assertNotEquals(a, b);
-				}
+				assertTrue(actorId1.equals(actorId2));
+				assertTrue(actorId2.equals(actorId1));
 			}
 		}
+
+		// different inputs yield unequal actorIds
+		Set<ActorId> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ActorId actorId = getRandomActorId(randomGenerator.nextLong());
+			set.add(actorId);
+		}
+		assertEquals(100, set.size());
 	}
 
+	private ActorId getRandomActorId(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new ActorId(randomGenerator.nextInt(Integer.MAX_VALUE));
+	}
 }
