@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -73,18 +74,23 @@ public class AT_ActorContext {
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public int hashCode() {
+			return Objects.hash(datumType, value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof DataChangeEvent)) {
+			if (obj == null) {
 				return false;
 			}
-			final DataChangeEvent other = (DataChangeEvent) obj;
-			if ((datumType != other.datumType) || (value != other.value)) {
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			return true;
+			DataChangeEvent other = (DataChangeEvent) obj;
+			return datumType == other.datumType && value == other.value;
 		}
 
 		public DatumType getDatumType() {
@@ -93,15 +99,6 @@ public class AT_ActorContext {
 
 		public int getValue() {
 			return value;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = (prime * result) + ((datumType == null) ? 0 : datumType.hashCode());
-			result = (prime * result) + value;
-			return result;
 		}
 
 		@Override
