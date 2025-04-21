@@ -126,7 +126,7 @@ public class AT_PersonPropertyInitialization {
 	private PersonPropertyValueInitialization getRandomPersonPropertyValueInitialization(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		// We remove boolean TestAttributeIds to increase randomness
+		// We remove boolean TestPersonPropertyIds to increase randomness
 		List<TestPersonPropertyId> selectedValues = new ArrayList<>();
 		TestPersonPropertyId[] allValues = TestPersonPropertyId.values();
 		for (TestPersonPropertyId value : allValues) {

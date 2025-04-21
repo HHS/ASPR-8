@@ -190,7 +190,7 @@ public class AT_PersonPropertyFilter {
 	private PersonPropertyFilter getRandomPersonPropertyFilter(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		// We remove boolean TestAttributeIds to increase randomness
+		// We remove boolean TestPersonPropertyIds to increase randomness
 		List<TestPersonPropertyId> selectedValues = new ArrayList<>();
 		TestPersonPropertyId[] allValues = TestPersonPropertyId.values();
 		for (TestPersonPropertyId value : allValues) {
