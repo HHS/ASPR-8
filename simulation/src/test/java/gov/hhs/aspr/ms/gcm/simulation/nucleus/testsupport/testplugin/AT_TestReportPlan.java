@@ -2,15 +2,19 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -95,43 +99,99 @@ public class AT_TestReportPlan {
 	@Test
 	@UnitTestMethod(target = TestReportPlan.class, name = "equals", args = { Object.class })
 	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821418377306870L);
 
-		
-		TestReportPlan plan1 = new TestReportPlan(4.5, (c) -> {
-		});
-		TestReportPlan plan2 = new TestReportPlan(4.5, (c) -> {
-		});
-		assertEquals(plan1, plan2);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TestReportPlan testReportPlan = getRandomTestReportPlan(randomGenerator.nextLong());
+			assertFalse(testReportPlan.equals(new Object()));
+		}
 
-		
-		plan1 = new TestReportPlan(6.5, (c) -> {
-		});
-		plan2 = new TestReportPlan(4.5, (c) -> {
-		});
-		assertNotEquals(plan1, plan2);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TestReportPlan testReportPlan = getRandomTestReportPlan(randomGenerator.nextLong());
+			assertFalse(testReportPlan.equals(null));
+		}
 
-		
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TestReportPlan testReportPlan = getRandomTestReportPlan(randomGenerator.nextLong());
+			assertTrue(testReportPlan.equals(testReportPlan));
+		}
 
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestReportPlan testReportPlan1 = getRandomTestReportPlan(seed);
+			TestReportPlan testReportPlan2 = getRandomTestReportPlan(seed);
+			assertFalse(testReportPlan1 == testReportPlan2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testReportPlan1.equals(testReportPlan2));
+				assertTrue(testReportPlan2.equals(testReportPlan1));
+			}
+		}
+
+		// different inputs yield unequal testReportPlans
+		Set<TestReportPlan> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestReportPlan testReportPlan = getRandomTestReportPlan(randomGenerator.nextLong());
+			set.add(testReportPlan);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = TestReportPlan.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		/*
-		 * show that equal objects have equal hash codes
-		 */
-		TestReportPlan plan1 = new TestReportPlan(4.5, (c) -> {
-		});
-		TestReportPlan plan2 = new TestReportPlan(4.5, (c) -> {
-		});
-		assertEquals(plan1.hashCode(), plan2.hashCode());
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491533465183354L);
 
-		// via the copy constructor
-		plan1 = new TestReportPlan(4.5, (c) -> {
-		});
-		plan2 = new TestReportPlan(plan1);
-		assertEquals(plan1.hashCode(), plan2.hashCode());
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestReportPlan testReportPlan1 = getRandomTestReportPlan(seed);
+			TestReportPlan testReportPlan2 = getRandomTestReportPlan(seed);
 
+			assertEquals(testReportPlan1, testReportPlan2);
+			assertEquals(testReportPlan1.hashCode(), testReportPlan2.hashCode());
+		}
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestReportPlan testReportPlan = getRandomTestReportPlan(randomGenerator.nextLong());
+			hashCodes.add(testReportPlan.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 
+	private static List<Consumer<ReportContext>> staticConsumers = new ArrayList<>();
+
+	/*
+	 * Thread safe means of creating a list of 20 consumers. Comparing consumers for
+	 * equality is implemented via == comparison in Java, so we need to create a
+	 * static set of them. 
+	 */
+	private static List<Consumer<ReportContext>> getStaticConsumers() {
+		synchronized (staticConsumers) {
+			if (staticConsumers.isEmpty()) {
+				staticConsumers = new ArrayList<>();
+				for (int i = 0; i < 20; i++) {
+					staticConsumers.add((c) -> {
+					});
+				}
+			}
+		}
+		return staticConsumers;
+	}
+
+	private TestReportPlan getRandomTestReportPlan(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		List<Consumer<ReportContext>> staticConsumers = getStaticConsumers();
+		int randomIndex = randomGenerator.nextInt(staticConsumers.size());
+		Consumer<ReportContext> randomConsumer = staticConsumers.get(randomIndex);
+
+		return new TestReportPlan(randomGenerator.nextDouble(), randomConsumer);
+	}
 }
