@@ -37,6 +37,7 @@ public class AT_TrueFilter {
 		for (int i = 0; i < 30; i++) {
 			TrueFilter f1 = new TrueFilter();
 			TrueFilter f2 = new TrueFilter();
+			assertFalse(f1 == f2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(f1.equals(f2));
 				assertTrue(f2.equals(f1));

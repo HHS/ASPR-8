@@ -138,15 +138,19 @@ public class AT_PartitionsPluginData {
 
 		// symmetric, transitive, consistent
 		for (int j = 0; j < 10; j++) {
+			assertFalse(p1 == p4);
 			assertEquals(p1, p4);
 			assertEquals(p4, p1);
 	
+			assertFalse(p1 == p5);
 			assertEquals(p1, p5);
 			assertEquals(p5, p1);
 	
+			assertFalse(p4 == p5);
 			assertEquals(p4, p5);
 			assertEquals(p5, p4);
 	
+			assertFalse(p2 == p3);
 			assertEquals(p2, p3);
 			assertEquals(p3, p2);
 		}
