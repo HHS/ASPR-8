@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
+import java.util.Objects;
+
 /**
  * The unique identifier for data managers. DataManagerId values are constructed
  * dynamically and are distributed contiguously from 0.
@@ -22,32 +24,30 @@ public final class DataManagerId implements Comparable<DataManagerId> {
 	}
 
 	/**
-	 * Standard hash code implementation
-	 */
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
+		return Objects.hash(id);
 	}
 
 	/**
-	 * DataManagerId instances are equal if and only if their values are equal
-	 */
+     * Two {@link DataManagerId} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DataManagerId)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		DataManagerId other = (DataManagerId) obj;
-		if (id != other.id) {
-			return false;
-		}
-		return true;
+		return id == other.id;
 	}
 
 	/**
