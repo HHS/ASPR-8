@@ -7,8 +7,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Test Support class that describes an action for a data manager as a scheduled
- * plan with an optional key.
+ * Test Support class that describes an action for a data manager as a scheduled plan.
  */
 public class TestDataManagerPlan {
 
@@ -19,7 +18,7 @@ public class TestDataManagerPlan {
 	private final Consumer<DataManagerContext> plan;
 
 	/**
-	 * Constructs an test actor plan from another test actor plan.
+	 * Constructs an test data manager plan from another test data manager plan.
 	 */
 	public TestDataManagerPlan(TestDataManagerPlan testDataManagerPlan) {
 		scheduledTime = testDataManagerPlan.scheduledTime;
@@ -28,8 +27,7 @@ public class TestDataManagerPlan {
 	}
 
 	/**
-	 * Constructs an data manager action plan. If assignKey is false, then this
-	 * actor action plan will return an empty optional key.
+	 * Constructs an data manager action plan.
 	 * 
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null

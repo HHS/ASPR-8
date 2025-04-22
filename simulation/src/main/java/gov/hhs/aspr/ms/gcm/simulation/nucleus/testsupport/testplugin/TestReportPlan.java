@@ -7,8 +7,7 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Test Support class that describes an action for an actor as a scheduled plan
- * with an optional key.
+ * Test Support class that describes an action for a report as a scheduled plan.
  */
 public class TestReportPlan {
 
@@ -19,8 +18,7 @@ public class TestReportPlan {
 	private final Consumer<ReportContext> plan;
 
 	/**
-	 * Constructs an report action plan. If assignKey is false, then this report
-	 * action plan will return an empty optional key.
+	 * Constructs an report action plan.
 	 * 
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
@@ -68,7 +66,7 @@ public class TestReportPlan {
 	}
 
 	/**
-	 * Constructs an test actor plan from another test actor plan.
+	 * Constructs an test report plan from another test report plan.
 	 */
 	public TestReportPlan(TestReportPlan testReportPlan) {
 		scheduledTime = testReportPlan.scheduledTime;
@@ -77,7 +75,7 @@ public class TestReportPlan {
 	}
 
 	/**
-	 * Returns true if an only if this actor action plan was executed
+	 * Returns true if an only if this report action plan was executed
 	 */
 	public boolean executed() {
 		return executed;
@@ -87,9 +85,9 @@ public class TestReportPlan {
 	 * Package access. Executes the embedded action and marks this action plan as
 	 * executed.
 	 */
-	void executeAction(final ReportContext actorContext) {
+	void executeAction(final ReportContext reportContext) {
 		try {
-			plan.accept(actorContext);
+			plan.accept(reportContext);
 		} finally {
 			executed = true;
 		}

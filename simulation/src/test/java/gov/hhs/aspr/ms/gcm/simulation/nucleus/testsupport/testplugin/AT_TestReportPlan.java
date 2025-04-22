@@ -5,16 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -129,6 +126,14 @@ public class AT_TestReportPlan {
 				assertTrue(testReportPlan1.equals(testReportPlan2));
 				assertTrue(testReportPlan2.equals(testReportPlan1));
 			}
+
+			// execute both plans and show they are still equal
+			testReportPlan1.executeAction(null);
+			testReportPlan2.executeAction(null);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testReportPlan1.equals(testReportPlan2));
+				assertTrue(testReportPlan2.equals(testReportPlan1));
+			}
 		}
 
 		// different inputs yield unequal testReportPlans
@@ -153,6 +158,12 @@ public class AT_TestReportPlan {
 
 			assertEquals(testReportPlan1, testReportPlan2);
 			assertEquals(testReportPlan1.hashCode(), testReportPlan2.hashCode());
+
+			// execute both plans and show they are still equal with equal hash codes
+			testReportPlan1.executeAction(null);
+			testReportPlan2.executeAction(null);
+			assertEquals(testReportPlan1, testReportPlan2);
+			assertEquals(testReportPlan1.hashCode(), testReportPlan2.hashCode());
 		}
 
 		// hash codes are reasonably distributed
@@ -165,33 +176,8 @@ public class AT_TestReportPlan {
 		assertEquals(100, hashCodes.size());
 	}
 
-	private static List<Consumer<ReportContext>> staticConsumers = new ArrayList<>();
-
-	/*
-	 * Thread safe means of creating a list of 20 consumers. Comparing consumers for
-	 * equality is implemented via == comparison in Java, so we need to create a
-	 * static set of them. 
-	 */
-	private static List<Consumer<ReportContext>> getStaticConsumers() {
-		synchronized (staticConsumers) {
-			if (staticConsumers.isEmpty()) {
-				staticConsumers = new ArrayList<>();
-				for (int i = 0; i < 20; i++) {
-					staticConsumers.add((c) -> {
-					});
-				}
-			}
-		}
-		return staticConsumers;
-	}
-
 	private TestReportPlan getRandomTestReportPlan(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		List<Consumer<ReportContext>> staticConsumers = getStaticConsumers();
-		int randomIndex = randomGenerator.nextInt(staticConsumers.size());
-		Consumer<ReportContext> randomConsumer = staticConsumers.get(randomIndex);
-
-		return new TestReportPlan(randomGenerator.nextDouble(), randomConsumer);
+		return new TestReportPlan(randomGenerator.nextDouble(), (c) -> {});
 	}
 }

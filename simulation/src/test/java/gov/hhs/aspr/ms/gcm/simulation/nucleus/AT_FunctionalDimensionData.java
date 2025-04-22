@@ -421,7 +421,7 @@ public class AT_FunctionalDimensionData {
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
         FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();
 
-        List<Function<DimensionContext,List<String>>> staticFunctions =  new ArrayList<>(getStaticFunctions());
+        List<Function<DimensionContext, List<String>>> staticFunctions =  new ArrayList<>(getStaticFunctions());
         Random random = new Random(randomGenerator.nextLong());
         Collections.shuffle(staticFunctions, random);
        

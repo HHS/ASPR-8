@@ -5,16 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
-import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
@@ -124,13 +121,21 @@ public class AT_TestDataManagerPlan {
 				assertTrue(testDataManagerPlan1.equals(testDataManagerPlan2));
 				assertTrue(testDataManagerPlan2.equals(testDataManagerPlan1));
 			}
+
+			// execute both plans and show they are still equal
+			testDataManagerPlan1.executeAction(null);
+			testDataManagerPlan2.executeAction(null);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testDataManagerPlan1.equals(testDataManagerPlan2));
+				assertTrue(testDataManagerPlan2.equals(testDataManagerPlan1));
+			}
 		}
 
 		// different inputs yield unequal testDataManagerPlans
 		Set<TestDataManagerPlan> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestDataManagerPlan TestDataManagerPlan = getRandomTestDataManagerPlan(randomGenerator.nextLong());
-			set.add(TestDataManagerPlan);
+			TestDataManagerPlan testDataManagerPlan = getRandomTestDataManagerPlan(randomGenerator.nextLong());
+			set.add(testDataManagerPlan);
 		}
 		assertEquals(100, set.size());
 	}
@@ -148,46 +153,27 @@ public class AT_TestDataManagerPlan {
 
 			assertEquals(testDataManagerPlan1, testDataManagerPlan2);
 			assertEquals(testDataManagerPlan1.hashCode(), testDataManagerPlan2.hashCode());
+
+			// execute both plans and show they are still equal with equal hash codes
+			testDataManagerPlan1.executeAction(null);
+			testDataManagerPlan2.executeAction(null);
+			assertEquals(testDataManagerPlan1, testDataManagerPlan2);
+			assertEquals(testDataManagerPlan1.hashCode(), testDataManagerPlan2.hashCode());
 		}
 
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			TestDataManagerPlan TestDataManagerPlan = getRandomTestDataManagerPlan(randomGenerator.nextLong());
-			hashCodes.add(TestDataManagerPlan.hashCode());
+			TestDataManagerPlan testDataManagerPlan = getRandomTestDataManagerPlan(randomGenerator.nextLong());
+			hashCodes.add(testDataManagerPlan.hashCode());
 		}
 
 		assertEquals(100, hashCodes.size());
 	}
 
-	private static List<Consumer<DataManagerContext>> staticConsumers = new ArrayList<>();
-
-	/*
-	 * Thread safe means of creating a list of 20 consumers. Comparing consumers for
-	 * equality is implemented via == comparison in Java, so we need to create a
-	 * static set of them. 
-	 */
-	private static List<Consumer<DataManagerContext>> getStaticConsumers() {
-		synchronized (staticConsumers) {
-			if (staticConsumers.isEmpty()) {
-				staticConsumers = new ArrayList<>();
-				for (int i = 0; i < 20; i++) {
-					staticConsumers.add((c) -> {
-					});
-				}
-			}
-		}
-		return staticConsumers;
-	}
-
 	private TestDataManagerPlan getRandomTestDataManagerPlan(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-
-		List<Consumer<DataManagerContext>> staticConsumers = getStaticConsumers();
-		int randomIndex = randomGenerator.nextInt(staticConsumers.size());
-		Consumer<DataManagerContext> randomConsumer = staticConsumers.get(randomIndex);
-
-		return new TestDataManagerPlan(randomGenerator.nextDouble(), randomConsumer);
+		return new TestDataManagerPlan(randomGenerator.nextDouble(), (c) -> {});
 	}
 
 }

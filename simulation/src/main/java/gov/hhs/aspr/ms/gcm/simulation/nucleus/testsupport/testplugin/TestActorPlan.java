@@ -8,16 +8,14 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Test Support class that describes an action for an actor as a scheduled plan
- * with an optional key.
+ * Test Support class that describes an action for an actor as a scheduled plan.
  */
 public class TestActorPlan extends ActorPlan {
 	private boolean executed;
 	private Consumer<ActorContext> consumer;
 
 	/**
-	 * Constructs an actor action plan. If assignKey is false, then this actor
-	 * action plan will return an empty optional key.
+	 * Constructs an actor action plan.
 	 * 
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null

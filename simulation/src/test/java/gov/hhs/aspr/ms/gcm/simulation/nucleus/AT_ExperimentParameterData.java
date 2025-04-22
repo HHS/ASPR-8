@@ -421,7 +421,8 @@ public class AT_ExperimentParameterData {
 
 		// never equal to another type
 		for (int i = 0; i < 30; i++) {
-			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(randomGenerator.nextLong());
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
 			assertFalse(experimentParameterData.equals(new Object()));
 		}
 
