@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -77,66 +78,37 @@ public class TestPluginData implements PluginData {
 
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((pluginDependencies == null) ? 0 : pluginDependencies.hashCode());
-			result = prime * result + ((testActorPlanMap == null) ? 0 : testActorPlanMap.hashCode());
-			result = prime * result + ((testDataManagerPlanMap == null) ? 0 : testDataManagerPlanMap.hashCode());
-			result = prime * result + ((testDataManagerSuppliers == null) ? 0 : testDataManagerSuppliers.hashCode());
-			result = prime * result + ((testReportPlanMap == null) ? 0 : testReportPlanMap.hashCode());
-			return result;
+			return Objects.hash(testReportPlanMap, testActorPlanMap, testDataManagerSuppliers, testDataManagerPlanMap,
+					pluginDependencies);
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if
+		 * their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (pluginDependencies == null) {
-				if (other.pluginDependencies != null) {
-					return false;
-				}
-			} else if (!pluginDependencies.equals(other.pluginDependencies)) {
-				return false;
-			}
-			if (testActorPlanMap == null) {
-				if (other.testActorPlanMap != null) {
-					return false;
-				}
-			} else if (!testActorPlanMap.equals(other.testActorPlanMap)) {
-				return false;
-			}
-			if (testDataManagerPlanMap == null) {
-				if (other.testDataManagerPlanMap != null) {
-					return false;
-				}
-			} else if (!testDataManagerPlanMap.equals(other.testDataManagerPlanMap)) {
-				return false;
-			}
-			if (testDataManagerSuppliers == null) {
-				if (other.testDataManagerSuppliers != null) {
-					return false;
-				}
-			} else if (!testDataManagerSuppliers.equals(other.testDataManagerSuppliers)) {
-				return false;
-			}
-			if (testReportPlanMap == null) {
-				if (other.testReportPlanMap != null) {
-					return false;
-				}
-			} else if (!testReportPlanMap.equals(other.testReportPlanMap)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(testReportPlanMap, other.testReportPlanMap)
+					&& Objects.equals(testActorPlanMap, other.testActorPlanMap)
+					&& Objects.equals(testDataManagerSuppliers, other.testDataManagerSuppliers)
+					&& Objects.equals(testDataManagerPlanMap, other.testDataManagerPlanMap)
+					&& Objects.equals(pluginDependencies, other.pluginDependencies);
 		}
-
-
 	}
 
 	private TestPluginData(Data data) {
@@ -419,37 +391,29 @@ public class TestPluginData implements PluginData {
 	}
 
 	/**
-	 * Hash code implementation consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
 	/**
-	 * TestPluginData instances are equal if and only if they contain identical
-	 * plans and suppliers of test data managers.
+	 * Two {@link TestPluginData} instances are equal if and only if
+	 * their inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TestPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		TestPluginData other = (TestPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
-
 }
