@@ -42,13 +42,13 @@ public class AT_DimensionData {
                 if (this == obj) {
                     return true;
                 }
-
-                if (!(obj instanceof Data)) {
+                if (obj == null) {
                     return false;
                 }
-
+                if (getClass() != obj.getClass()) {
+                    return false;
+                }
                 Data other = (Data) obj;
-
                 return Objects.equals(levelNames, other.levelNames);
             }
 
@@ -126,7 +126,10 @@ public class AT_DimensionData {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof TestDimensionData)) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             TestDimensionData other = (TestDimensionData) obj;
