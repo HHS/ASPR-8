@@ -177,11 +177,18 @@ public final class PersonPropertyDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
         @Override
         public int hashCode() {
             return Objects.hash(levelNames, values, personPropertyId, trackTimes);
         }
 
+        /**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -194,10 +201,8 @@ public final class PersonPropertyDimensionData extends DimensionData {
                 return false;
             }
             Data other = (Data) obj;
-            return Objects.equals(levelNames, other.levelNames)
-                    && Objects.equals(values, other.values)
-                    && Objects.equals(personPropertyId, other.personPropertyId)
-                    && trackTimes == other.trackTimes;
+            return Objects.equals(levelNames, other.levelNames) && Objects.equals(values, other.values)
+                    && Objects.equals(personPropertyId, other.personPropertyId) && trackTimes == other.trackTimes;
         }
 
         @Override
@@ -277,11 +282,18 @@ public final class PersonPropertyDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
         return Objects.hash(data);
     }
 
+    /**
+     * Two {@link PersonPropertyDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

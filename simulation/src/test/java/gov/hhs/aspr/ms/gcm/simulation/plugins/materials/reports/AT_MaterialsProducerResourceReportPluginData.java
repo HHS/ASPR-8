@@ -141,34 +141,45 @@ public class AT_MaterialsProducerResourceReportPluginData {
 	@Test
 	@UnitTestMethod(target = MaterialsProducerResourceReportPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a MaterialsProducerResourceReportPluginData from the same random
-			// inputs
-			MaterialsProducerResourceReportPluginData.Builder builder1 = MaterialsProducerResourceReportPluginData.builder();
-			MaterialsProducerResourceReportPluginData.Builder builder2 = MaterialsProducerResourceReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData1 = builder1.build();
-			MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = builder2.build();
-
-			assertEquals(materialsProducerResourceReportPluginData1, materialsProducerResourceReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			materialsProducerResourceReportPluginData2 = //
-					materialsProducerResourceReportPluginData1	.toBuilder()//
-														.setReportLabel(reportLabel)//
-														.build();
-			assertNotEquals(materialsProducerResourceReportPluginData2, materialsProducerResourceReportPluginData1);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			MaterialsProducerResourceReportPluginData pluginData = getRandomMaterialsProducerResourceReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			MaterialsProducerResourceReportPluginData pluginData = getRandomMaterialsProducerResourceReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			MaterialsProducerResourceReportPluginData pluginData = getRandomMaterialsProducerResourceReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			MaterialsProducerResourceReportPluginData pluginData1 = getRandomMaterialsProducerResourceReportPluginData(seed);
+			MaterialsProducerResourceReportPluginData pluginData2 = getRandomMaterialsProducerResourceReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<MaterialsProducerResourceReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			MaterialsProducerResourceReportPluginData pluginData = getRandomMaterialsProducerResourceReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -176,41 +187,24 @@ public class AT_MaterialsProducerResourceReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a MaterialsProducerResourceReportPluginData from the same random
-			// inputs
-			MaterialsProducerResourceReportPluginData.Builder builder1 = MaterialsProducerResourceReportPluginData.builder();
-			MaterialsProducerResourceReportPluginData.Builder builder2 = MaterialsProducerResourceReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			MaterialsProducerResourceReportPluginData pluginData1 = getRandomMaterialsProducerResourceReportPluginData(seed);
+			MaterialsProducerResourceReportPluginData pluginData2 = getRandomMaterialsProducerResourceReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-
-			MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData1 = builder1.build();
-			MaterialsProducerResourceReportPluginData materialsProducerResourceReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = materialsProducerResourceReportPluginData1.hashCode();
-			assertEquals(hashCode, materialsProducerResourceReportPluginData1.hashCode());
-			assertEquals(hashCode, materialsProducerResourceReportPluginData1.hashCode());
-			assertEquals(hashCode, materialsProducerResourceReportPluginData1.hashCode());
-			assertEquals(hashCode, materialsProducerResourceReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(materialsProducerResourceReportPluginData1.hashCode(), materialsProducerResourceReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(materialsProducerResourceReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
-		 */
-		assertTrue(observedHashCodes.size()>40);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			MaterialsProducerResourceReportPluginData pluginData = getRandomMaterialsProducerResourceReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 	
 	@Test
@@ -225,5 +219,13 @@ public class AT_MaterialsProducerResourceReportPluginData {
 		assertEquals(expectedValue, actualValue);
 	}
 
+	private MaterialsProducerResourceReportPluginData getRandomMaterialsProducerResourceReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
+		MaterialsProducerResourceReportPluginData pluginData = MaterialsProducerResourceReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt(Integer.MAX_VALUE)))//
+				.build();
+
+		return pluginData;
+	}
 }

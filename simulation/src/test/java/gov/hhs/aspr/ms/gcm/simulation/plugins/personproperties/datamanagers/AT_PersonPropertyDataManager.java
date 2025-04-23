@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -1885,10 +1886,7 @@ public final class AT_PersonPropertyDataManager {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + id;
-			return result;
+			return Objects.hash(id);
 		}
 
 		@Override
@@ -1896,14 +1894,14 @@ public final class AT_PersonPropertyDataManager {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof LocalPersonPropertyId)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			LocalPersonPropertyId other = (LocalPersonPropertyId) obj;
-			if (id != other.id) {
-				return false;
-			}
-			return true;
+			return id == other.id;
 		}
 
 		@Override

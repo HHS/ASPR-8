@@ -207,7 +207,7 @@ public final class AT_ResourcesPluginData {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7567353570953948981L);
 
 		// equal objects have equal hash codes
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			ResourcesPluginData rpd1 = getRandomResourcesPluginData(seed);
 			ResourcesPluginData rpd2 = getRandomResourcesPluginData(seed);
@@ -215,15 +215,15 @@ public final class AT_ResourcesPluginData {
 			assertEquals(rpd1, rpd2);
 			assertEquals(rpd1.hashCode(), rpd2.hashCode());
 		}
-		int count = 100;
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < count; i++) {
-			long seed = randomGenerator.nextLong();
-			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
+		for (int i = 0; i < 100; i++) {
+			ResourcesPluginData rpd = getRandomResourcesPluginData(randomGenerator.nextLong());
 			hashCodes.add(rpd.hashCode());
 		}
-		int minimumCount = count * 9 / 10;
-		assertTrue(hashCodes.size() > minimumCount);
+
+		assertEquals(100, hashCodes.size());
 	}
 
 	/*
@@ -338,31 +338,45 @@ public final class AT_ResourcesPluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1110078478105073449L);
 
-		// null equality
-		for (int i = 0; i < 10; i++) {
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ResourcesPluginData rpd = getRandomResourcesPluginData(randomGenerator.nextLong());
+			assertFalse(rpd.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
 			assertFalse(rpd.equals(null));
 		}
 
 		// reflexivity
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			ResourcesPluginData rpd = getRandomResourcesPluginData(seed);
-			assertEquals(rpd, rpd);
+			assertTrue(rpd.equals(rpd));
 		}
 
-		// symmetry
-		for (int i = 0; i < 10; i++) {
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			ResourcesPluginData rpd1 = getRandomResourcesPluginData(seed);
 			ResourcesPluginData rpd2 = getRandomResourcesPluginData(seed);
-			assertEquals(rpd1, rpd2);
-			assertEquals(rpd2, rpd1);
+			assertFalse(rpd1 == rpd2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(rpd1.equals(rpd2));
+				assertTrue(rpd2.equals(rpd1));
+			}
 		}
 
-		// transitivity -- implied by symmetry
-
+		// different inputs yield unequal plugin datas
+		Set<ResourcesPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourcesPluginData rpd = getRandomResourcesPluginData(randomGenerator.nextLong());
+			set.add(rpd);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test

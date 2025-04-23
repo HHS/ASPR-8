@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.reports;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
@@ -36,31 +37,34 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = super.hashCode();
-			result = prime * result + ((personPropertyIds == null) ? 0 : personPropertyIds.hashCode());
+			result = prime * result + Objects.hash(personPropertyIds);
 			return result;
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (!super.equals(obj)) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (personPropertyIds == null) {
-				if (other.personPropertyIds != null) {
-					return false;
-				}
-			} else if (!personPropertyIds.equals(other.personPropertyIds)) {
-				return false;
-			}
-			return super.equals(other);
+			return Objects.equals(personPropertyIds, other.personPropertyIds);
 		}
 
 		@Override
@@ -169,31 +173,34 @@ public class PersonPropertyInteractionReportPluginData extends PeriodicReportPlu
 		return new LinkedHashSet<>(data.personPropertyIds);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(data);
 		return result;
 	}
 
+	/**
+     * Two {@link PersonPropertyInteractionReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyInteractionReportPluginData)) {
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PersonPropertyInteractionReportPluginData other = (PersonPropertyInteractionReportPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
