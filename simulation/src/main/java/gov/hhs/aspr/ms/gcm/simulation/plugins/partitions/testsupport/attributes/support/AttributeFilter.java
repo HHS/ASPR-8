@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -179,43 +180,32 @@ public final class AttributeFilter extends Filter {
 		return result;
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((attributeId == null) ? 0 : attributeId.hashCode());
-		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+		return Objects.hash(attributeId, value, equality);
 	}
 
+	/**
+	 * Two {@link AttributeFilter} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof AttributeFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		AttributeFilter other = (AttributeFilter) obj;
-		if (attributeId == null) {
-			if (other.attributeId != null) {
-				return false;
-			}
-		} else if (!attributeId.equals(other.attributeId)) {
-			return false;
-		}
-		if (equality != other.equality) {
-			return false;
-		}
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(attributeId, other.attributeId) && Objects.equals(value, other.value)
+				&& equality == other.equality;
 	}
 
 	@Override

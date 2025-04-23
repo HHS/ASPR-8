@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.reports;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
@@ -47,43 +48,36 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = super.hashCode();
-			result = prime * result + (defaultInclusionPolicy ? 1231 : 1237);
-			result = prime * result + ((excludedProperties == null) ? 0 : excludedProperties.hashCode());
-			result = prime * result + ((includedProperties == null) ? 0 : includedProperties.hashCode());
+			result = prime * result + Objects.hash(includedProperties, excludedProperties, defaultInclusionPolicy);
 			return result;
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (!super.equals(obj)) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (defaultInclusionPolicy != other.defaultInclusionPolicy) {
-				return false;
-			}
-			if (excludedProperties == null) {
-				if (other.excludedProperties != null) {
-					return false;
-				}
-			} else if (!excludedProperties.equals(other.excludedProperties)) {
-				return false;
-			}
-			if (includedProperties == null) {
-				if (other.includedProperties != null) {
-					return false;
-				}
-			} else if (!includedProperties.equals(other.includedProperties)) {
-				return false;
-			}
-			return super.equals(other);
+			return Objects.equals(includedProperties, other.includedProperties)
+					&& Objects.equals(excludedProperties, other.excludedProperties)
+					&& defaultInclusionPolicy == other.defaultInclusionPolicy;
 		}
 
 		@Override
@@ -261,31 +255,34 @@ public final class PersonPropertyReportPluginData extends PeriodicReportPluginDa
 		return data.defaultInclusionPolicy;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(data);
 		return result;
 	}
 
+	/**
+     * Two {@link PersonPropertyReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyReportPluginData)) {
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PersonPropertyReportPluginData other = (PersonPropertyReportPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

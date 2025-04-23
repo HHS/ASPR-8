@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support;
 
+import java.util.Objects;
+
 public class PersonPropertyValueInitialization {
 	private final PersonPropertyId personPropertyId;
 	private final Object value;
@@ -29,39 +31,30 @@ public class PersonPropertyValueInitialization {
 		return builder.toString();
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((personPropertyId == null) ? 0 : personPropertyId.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
+		return Objects.hash(personPropertyId, value);
 	}
 
+	/**
+     * Two {@link PersonPropertyValueInitialization} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PersonPropertyValueInitialization)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PersonPropertyValueInitialization other = (PersonPropertyValueInitialization) obj;
-		if (personPropertyId == null) {
-			if (other.personPropertyId != null) {
-				return false;
-			}
-		} else if (!personPropertyId.equals(other.personPropertyId)) {
-			return false;
-		}
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(personPropertyId, other.personPropertyId) && Objects.equals(value, other.value);
 	}
-
 }

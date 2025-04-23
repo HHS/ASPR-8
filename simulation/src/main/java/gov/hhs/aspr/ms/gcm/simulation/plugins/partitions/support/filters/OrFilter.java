@@ -57,11 +57,19 @@ public final class OrFilter extends Filter {
 		b.validate(partitionsContext);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return a.hashCode() + b.hashCode();
 	}
 
+	/**
+	 * Two {@link OrFilter} instances are equal if and only if
+	 * their inputs are equal. The order in which inputs are added 
+	 * does not matter.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

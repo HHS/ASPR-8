@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
@@ -69,49 +70,36 @@ public class PersonPropertiesPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + propertyDefinitions.hashCode();
-			result = prime * result + propertyDefinitionTimes.hashCode();
-			result = prime * result + propertyTrackingPolicies.hashCode();
-			result = prime * result + propertyValues.hashCode();
-			result = prime * result + propertyTimes.hashCode();
-			return result;
+			return Objects.hash(propertyDefinitions, propertyDefinitionTimes, propertyTrackingPolicies, propertyValues,
+					propertyTimes);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			if (!propertyDefinitions.equals(other.propertyDefinitions)) {
-				return false;
-			}
-
-			if (!propertyDefinitionTimes.equals(other.propertyDefinitionTimes)) {
-				return false;
-			}
-
-			if (!propertyTrackingPolicies.equals(other.propertyTrackingPolicies)) {
-				return false;
-			}
-
-			if (!propertyValues.equals(other.propertyValues)) {
-				return false;
-			}
-
-			if (!propertyTimes.equals(other.propertyTimes)) {
-				return false;
-			}
-
-			return true;
+			return Objects.equals(propertyDefinitions, other.propertyDefinitions)
+					&& Objects.equals(propertyDefinitionTimes, other.propertyDefinitionTimes)
+					&& Objects.equals(propertyTrackingPolicies, other.propertyTrackingPolicies)
+					&& Objects.equals(propertyValues, other.propertyValues)
+					&& Objects.equals(propertyTimes, other.propertyTimes);
 		}
 
 		@Override
@@ -538,30 +526,31 @@ public class PersonPropertiesPluginData implements PluginData {
 		return StandardVersioning.checkVersionSupported(version);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link PersonPropertiesPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-
-		if (!(obj instanceof PersonPropertiesPluginData)) {
+		if (obj == null) {
 			return false;
 		}
-
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
 		PersonPropertiesPluginData other = (PersonPropertiesPluginData) obj;
-
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

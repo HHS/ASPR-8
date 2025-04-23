@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -178,10 +179,7 @@ public class AT_Partition {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + value;
-			return result;
+			return Objects.hash(value);
 		}
 
 		@Override
@@ -189,14 +187,14 @@ public class AT_Partition {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof LocalLabeler)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			LocalLabeler other = (LocalLabeler) obj;
-			if (value != other.value) {
-				return false;
-			}
-			return true;
+			return value == other.value;
 		}
 
 	}
@@ -217,6 +215,12 @@ public class AT_Partition {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2832165952351188895L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			Partition partition = getRandomPartition(randomGenerator.nextLong());
+			assertFalse(partition.equals(new Object()));
+		}
+
 		// never equal null
 		for (int i = 0; i < 30; i++) {
 			Partition partition = getRandomPartition(randomGenerator.nextLong());//
@@ -234,7 +238,8 @@ public class AT_Partition {
 			long seed = randomGenerator.nextLong();
 			Partition partition1 = getRandomPartition(seed);//
 			Partition partition2 = getRandomPartition(seed);//
-			for (int j = 0; j < 5; j++) {
+			assertFalse(partition1 == partition2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(partition1.equals(partition2));
 				assertTrue(partition2.equals(partition1));
 			}

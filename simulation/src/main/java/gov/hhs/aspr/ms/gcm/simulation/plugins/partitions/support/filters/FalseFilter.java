@@ -38,17 +38,26 @@ public final class FalseFilter extends Filter {
 
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		return 0;
 	}
 
+	/**
+     * All {@link FalseFilter} instances are considered equal
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof FalseFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		return true;

@@ -3,9 +3,9 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,6 +32,7 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.Stochasti
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_GroupMemberFilter {
 
@@ -170,35 +171,70 @@ public class AT_GroupMemberFilter {
     @Test
     @UnitTestMethod(target = GroupMemberFilter.class, name = "hashCode", args = {})
     public void testHashCode() {
-        GroupMemberFilter groupMemberFilter1 = new GroupMemberFilter(new GroupId(0));
-        GroupMemberFilter groupMemberFilter2 = new GroupMemberFilter(new GroupId(1));
-        GroupMemberFilter groupMemberFilter3 = new GroupMemberFilter(new GroupId(0));
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(386190996593528301L);
 
-        assertEquals(groupMemberFilter1.hashCode(), groupMemberFilter1.hashCode());
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupMemberFilter groupMemberFilter1 = getRandomGroupMemberFilter(seed);
+			GroupMemberFilter groupMemberFilter2 = getRandomGroupMemberFilter(seed);
 
-        assertNotEquals(groupMemberFilter1.hashCode(), groupMemberFilter2.hashCode());
-        assertNotEquals(groupMemberFilter2.hashCode(), groupMemberFilter3.hashCode());
+			assertEquals(groupMemberFilter1, groupMemberFilter2);
+			assertEquals(groupMemberFilter1.hashCode(), groupMemberFilter2.hashCode());
+		}
 
-        assertEquals(groupMemberFilter1.hashCode(), groupMemberFilter3.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupMemberFilter pluginData = getRandomGroupMemberFilter(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = GroupMemberFilter.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        GroupMemberFilter groupMemberFilter1 = new GroupMemberFilter(new GroupId(0));
-        GroupMemberFilter groupMemberFilter2 = new GroupMemberFilter(new GroupId(1));
-        GroupMemberFilter groupMemberFilter3 = new GroupMemberFilter(new GroupId(0));
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1973382207275712576L);
 
-        assertEquals(groupMemberFilter1, groupMemberFilter1);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupMemberFilter groupMemberFilter = getRandomGroupMemberFilter(randomGenerator.nextLong());
+			assertFalse(groupMemberFilter.equals(new Object()));
+		}
 
-        assertNotEquals(groupMemberFilter1, null);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupMemberFilter groupMemberFilter = getRandomGroupMemberFilter(randomGenerator.nextLong());
+			assertFalse(groupMemberFilter.equals(null));
+		}
 
-        assertNotEquals(groupMemberFilter1, new Object());
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupMemberFilter groupMemberFilter = getRandomGroupMemberFilter(randomGenerator.nextLong());
+			assertTrue(groupMemberFilter.equals(groupMemberFilter));
+		}
 
-        assertNotEquals(groupMemberFilter1, groupMemberFilter2);
-        assertNotEquals(groupMemberFilter2, groupMemberFilter3);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupMemberFilter groupMemberFilter1 = getRandomGroupMemberFilter(seed);
+			GroupMemberFilter groupMemberFilter2 = getRandomGroupMemberFilter(seed);
+			assertFalse(groupMemberFilter1 == groupMemberFilter2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(groupMemberFilter1.equals(groupMemberFilter2));
+				assertTrue(groupMemberFilter2.equals(groupMemberFilter1));
+			}
+		}
 
-        assertEquals(groupMemberFilter1, groupMemberFilter3);
+		// different inputs yield unequal groupMemberFilters
+		Set<GroupMemberFilter> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupMemberFilter groupMemberFilter = getRandomGroupMemberFilter(randomGenerator.nextLong());
+			set.add(groupMemberFilter);
+		}
+		assertEquals(100, set.size());
     }
 
     @Test
@@ -213,5 +249,11 @@ public class AT_GroupMemberFilter {
 
             assertEquals(builder.toString(), groupMemberFilter.toString());
         }
+    }
+
+    private GroupMemberFilter getRandomGroupMemberFilter(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        GroupId randomGroupId = new GroupId(randomGenerator.nextInt(Integer.MAX_VALUE));
+        return new GroupMemberFilter(randomGroupId);
     }
 }

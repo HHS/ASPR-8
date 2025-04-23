@@ -225,7 +225,7 @@ public class AT_PersonPropertyInteractionReportPluginData {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
 		PersonPropertyInteractionReportPluginData.Builder builder = PersonPropertyInteractionReportPluginData.builder();
-		ReportLabel reportLabel = new SimpleReportLabel("report label" + randomGenerator.nextInt(5));
+		ReportLabel reportLabel = new SimpleReportLabel("report label" + randomGenerator.nextInt(100));
 		builder.setReportLabel(reportLabel);
 		int count = ReportPeriod.values().length;
 		int index = randomGenerator.nextInt(count);
@@ -276,6 +276,13 @@ public class AT_PersonPropertyInteractionReportPluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9157025935584862941L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyInteractionReportPluginData reportPluginData = getRandomPersonPropertyInteractionReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(reportPluginData.equals(new Object()));
+		}
+
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
 			PersonPropertyInteractionReportPluginData reportPluginData = getRandomPersonPropertyInteractionReportPluginData(
@@ -297,24 +304,22 @@ public class AT_PersonPropertyInteractionReportPluginData {
 					seed);
 			PersonPropertyInteractionReportPluginData reportPluginData2 = getRandomPersonPropertyInteractionReportPluginData(
 					seed);
-
-			for (int j = 0; j < 5; j++) {
+			assertFalse(reportPluginData1 == reportPluginData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(reportPluginData1.equals(reportPluginData2));
 				assertTrue(reportPluginData2.equals(reportPluginData1));
 			}
 		}
 
-		// different inputs yield unequal objects. There are 7680 possible random plugin
-		// datas and a low probability for collision
-		Set<PersonPropertyInteractionReportPluginData> peronInteractionReportPluginDatas = new LinkedHashSet<>();
+		// different inputs yield unequal objects.
+		Set<PersonPropertyInteractionReportPluginData> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			PersonPropertyInteractionReportPluginData pluginData = getRandomPersonPropertyInteractionReportPluginData(
 					randomGenerator.nextLong());
-			peronInteractionReportPluginDatas.add(pluginData);
+			set.add(pluginData);
 		}
 
-		assertTrue(peronInteractionReportPluginDatas.size() > 90);
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -340,7 +345,7 @@ public class AT_PersonPropertyInteractionReportPluginData {
 					randomGenerator.nextLong());
 			hashCodes.add(pluginData.hashCode());
 		}
-		assertTrue(hashCodes.size() > 90);
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -352,7 +357,7 @@ public class AT_PersonPropertyInteractionReportPluginData {
 		String actualValue = reportPluginData.toString();
 
 		String expectedValue = "PersonPropertyInteractionReportPluginData [data=Data ["
-				+ "reportLabel=SimpleReportLabel [value=report label0], "
+				+ "reportLabel=SimpleReportLabel [value=report label95], "
 				+ "reportPeriod=HOURLY, "
 				+ "personPropertyIds=["
 				+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, "

@@ -142,34 +142,45 @@ public class AT_ResourcePropertyReportPluginData {
 	@Test
 	@UnitTestMethod(target = ResourcePropertyReportPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a ResourcePropertyReportPluginData from the same random
-			// inputs
-			ResourcePropertyReportPluginData.Builder builder1 = ResourcePropertyReportPluginData.builder();
-			ResourcePropertyReportPluginData.Builder builder2 = ResourcePropertyReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ResourcePropertyReportPluginData resourcePropertyReportPluginData1 = builder1.build();
-			ResourcePropertyReportPluginData resourcePropertyReportPluginData2 = builder2.build();
-
-			assertEquals(resourcePropertyReportPluginData1, resourcePropertyReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			resourcePropertyReportPluginData2 = //
-					resourcePropertyReportPluginData1	.toBuilder()//
-														.setReportLabel(reportLabel)//
-														.build();
-			assertNotEquals(resourcePropertyReportPluginData2, resourcePropertyReportPluginData1);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ResourcePropertyReportPluginData pluginData = getRandomResourcePropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			ResourcePropertyReportPluginData pluginData = getRandomResourcePropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ResourcePropertyReportPluginData pluginData = getRandomResourcePropertyReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcePropertyReportPluginData pluginData1 = getRandomResourcePropertyReportPluginData(seed);
+			ResourcePropertyReportPluginData pluginData2 = getRandomResourcePropertyReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<ResourcePropertyReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourcePropertyReportPluginData pluginData = getRandomResourcePropertyReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -177,41 +188,24 @@ public class AT_ResourcePropertyReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a ResourcePropertyReportPluginData from the same random
-			// inputs
-			ResourcePropertyReportPluginData.Builder builder1 = ResourcePropertyReportPluginData.builder();
-			ResourcePropertyReportPluginData.Builder builder2 = ResourcePropertyReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourcePropertyReportPluginData pluginData1 = getRandomResourcePropertyReportPluginData(seed);
+			ResourcePropertyReportPluginData pluginData2 = getRandomResourcePropertyReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-
-			ResourcePropertyReportPluginData resourcePropertyReportPluginData1 = builder1.build();
-			ResourcePropertyReportPluginData resourcePropertyReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = resourcePropertyReportPluginData1.hashCode();
-			assertEquals(hashCode, resourcePropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, resourcePropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, resourcePropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, resourcePropertyReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(resourcePropertyReportPluginData1.hashCode(), resourcePropertyReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(resourcePropertyReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
-		 */
-		assertTrue(observedHashCodes.size()>40);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourcePropertyReportPluginData pluginData = getRandomResourcePropertyReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 	
 	
@@ -232,5 +226,15 @@ public class AT_ResourcePropertyReportPluginData {
 			assertEquals(expectedValue, actualValue);
 		}
 
+	}
+
+	private ResourcePropertyReportPluginData getRandomResourcePropertyReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		ResourcePropertyReportPluginData pluginData =  ResourcePropertyReportPluginData.builder()//
+				.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt(Integer.MAX_VALUE)))//
+				.build();
+
+		return pluginData;
 	}
 }
