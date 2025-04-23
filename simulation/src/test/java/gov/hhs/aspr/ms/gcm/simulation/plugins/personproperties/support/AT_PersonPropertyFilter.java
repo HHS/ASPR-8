@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -187,7 +189,17 @@ public class AT_PersonPropertyFilter {
 
 	private PersonPropertyFilter getRandomPersonPropertyFilter(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		TestPersonPropertyId testPersonPropertyId = TestPersonPropertyId.getRandomPersonPropertyId(randomGenerator);
+
+		// We remove boolean TestPersonPropertyIds to increase randomness
+		List<TestPersonPropertyId> selectedValues = new ArrayList<>();
+		TestPersonPropertyId[] allValues = TestPersonPropertyId.values();
+		for (TestPersonPropertyId value : allValues) {
+			if (value.getPropertyDefinition().getType() != Boolean.class) {
+				selectedValues.add(value);
+			}
+		}
+
+		TestPersonPropertyId testPersonPropertyId = selectedValues.get(randomGenerator.nextInt(selectedValues.size()));
 		Object propertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
 		Equality equality = Equality.getRandomEquality(randomGenerator);
 
@@ -199,6 +211,13 @@ public class AT_PersonPropertyFilter {
 	@UnitTestMethod(target = PersonPropertyFilter.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3804944746539493450L);
+		
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyFilter filter = getRandomPersonPropertyFilter(randomGenerator.nextLong());
+			assertFalse(filter.equals(new Object()));
+		}
+
 		// never equals null
 		for (int i = 0; i < 30; i++) {
 			PersonPropertyFilter filter = getRandomPersonPropertyFilter(randomGenerator.nextLong());
@@ -216,7 +235,8 @@ public class AT_PersonPropertyFilter {
 			long seed = randomGenerator.nextLong();
 			PersonPropertyFilter filter1 = getRandomPersonPropertyFilter(seed);
 			PersonPropertyFilter filter2 = getRandomPersonPropertyFilter(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(filter1 == filter2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(filter1.equals(filter2));
 				assertTrue(filter2.equals(filter1));
 			}
@@ -229,10 +249,7 @@ public class AT_PersonPropertyFilter {
 			personPropertyFilters.add(filter);
 		}
 
-		// we choose 80 since the probability of collision is high due to Boolean
-		// property values
-		assertTrue(personPropertyFilters.size() > 80);
-
+		assertEquals(100, personPropertyFilters.size());
 	}
 
 	@Test
@@ -250,6 +267,14 @@ public class AT_PersonPropertyFilter {
 			assertEquals(filter1.hashCode(), filter2.hashCode());
 		}
 
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertyFilter filter = getRandomPersonPropertyFilter(randomGenerator.nextLong());
+			hashCodes.add(filter.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 
 }

@@ -1,13 +1,21 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.testsupport.TestPersonPropertyId;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_PersonPropertyInitialization {
 
@@ -38,65 +46,45 @@ public class AT_PersonPropertyInitialization {
 	@Test
 	@UnitTestMethod(target = PersonPropertyValueInitialization.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		PersonPropertyValueInitialization personProp1 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
-		PersonPropertyValueInitialization personProp2 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false);
-		PersonPropertyValueInitialization personProp3 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, true);
-		PersonPropertyValueInitialization personProp4 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
-		PersonPropertyValueInitialization personProp5 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
-		PersonPropertyValueInitialization personProp6 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821413367306870L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyValueInitialization valueInit = getRandomPersonPropertyValueInitialization(randomGenerator.nextLong());
+			assertFalse(valueInit.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyValueInitialization valueInit = getRandomPersonPropertyValueInitialization(randomGenerator.nextLong());
+			assertFalse(valueInit.equals(null));
+		}
 
 		// reflexive
-		assertEquals(personProp1, personProp1);
-		assertEquals(personProp2, personProp2);
-		assertEquals(personProp3, personProp3);
-		assertEquals(personProp4, personProp4);
-		assertEquals(personProp5, personProp5);
-		assertEquals(personProp6, personProp6);
+		for (int i = 0; i < 30; i++) {
+			PersonPropertyValueInitialization valueInit = getRandomPersonPropertyValueInitialization(randomGenerator.nextLong());
+			assertTrue(valueInit.equals(valueInit));
+		}
 
-		// symmetric
-		assertEquals(personProp1, personProp5);
-		assertEquals(personProp5, personProp1);
-		assertEquals(personProp4, personProp6);
-		assertEquals(personProp6, personProp4);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertyValueInitialization valueInit1 = getRandomPersonPropertyValueInitialization(seed);
+			PersonPropertyValueInitialization valueInit2 = getRandomPersonPropertyValueInitialization(seed);
+			assertFalse(valueInit1 == valueInit2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(valueInit1.equals(valueInit2));
+				assertTrue(valueInit2.equals(valueInit1));
+			}
+		}
 
-		assertNotEquals(personProp1, personProp2);
-		assertNotEquals(personProp1, personProp3);
-		assertNotEquals(personProp1, personProp4);
-		assertNotEquals(personProp1, personProp6);
-
-		assertNotEquals(personProp2, personProp1);
-		assertNotEquals(personProp2, personProp3);
-		assertNotEquals(personProp2, personProp4);
-		assertNotEquals(personProp2, personProp5);
-		assertNotEquals(personProp2, personProp6);
-
-		assertNotEquals(personProp3, personProp1);
-		assertNotEquals(personProp3, personProp2);
-		assertNotEquals(personProp3, personProp4);
-		assertNotEquals(personProp3, personProp5);
-		assertNotEquals(personProp3, personProp6);
-
-		assertNotEquals(personProp4, personProp1);
-		assertNotEquals(personProp4, personProp2);
-		assertNotEquals(personProp4, personProp3);
-		assertNotEquals(personProp4, personProp5);
-
-		assertNotEquals(personProp5, personProp2);
-		assertNotEquals(personProp5, personProp3);
-		assertNotEquals(personProp5, personProp4);
-		assertNotEquals(personProp5, personProp6);
-
-		assertNotEquals(personProp6, personProp1);
-		assertNotEquals(personProp6, personProp2);
-		assertNotEquals(personProp6, personProp3);
-		assertNotEquals(personProp6, personProp5);
-
-		assertNotEquals(personProp1, null);
-		assertNotEquals(personProp2, null);
-		assertNotEquals(personProp3, null);
-		assertNotEquals(personProp4, null);
-		assertNotEquals(personProp5, null);
-		assertNotEquals(personProp6, null);
+		// different inputs yield unequal personPropertyValueInitializations
+		Set<PersonPropertyValueInitialization> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertyValueInitialization valueInit = getRandomPersonPropertyValueInitialization(randomGenerator.nextLong());
+			set.add(valueInit);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -113,44 +101,43 @@ public class AT_PersonPropertyInitialization {
 	@Test
 	@UnitTestMethod(target = PersonPropertyValueInitialization.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		PersonPropertyValueInitialization personProp1 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
-		PersonPropertyValueInitialization personProp2 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, false);
-		PersonPropertyValueInitialization personProp3 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
-		PersonPropertyValueInitialization personProp4 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_3_DOUBLE_MUTABLE_NO_TRACK, 2.7);
-		PersonPropertyValueInitialization personProp5 = new PersonPropertyValueInitialization(TestPersonPropertyId.PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, 20);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491501425183354L);
 
-		// reflexive
-		assertEquals(personProp1.hashCode(), personProp1.hashCode());
-		assertEquals(personProp2.hashCode(), personProp2.hashCode());
-		assertEquals(personProp3.hashCode(), personProp3.hashCode());
-		assertEquals(personProp4.hashCode(), personProp4.hashCode());
-		assertEquals(personProp5.hashCode(), personProp5.hashCode());
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertyValueInitialization valueInit1 = getRandomPersonPropertyValueInitialization(seed);
+			PersonPropertyValueInitialization valueInit2 = getRandomPersonPropertyValueInitialization(seed);
 
-		// symmetric
-		assertEquals(personProp1.hashCode(), personProp4.hashCode());
-		assertEquals(personProp4.hashCode(), personProp1.hashCode());
-		assertEquals(personProp3.hashCode(), personProp5.hashCode());
-		assertEquals(personProp5.hashCode(), personProp3.hashCode());
+			assertEquals(valueInit1, valueInit2);
+			assertEquals(valueInit1.hashCode(), valueInit2.hashCode());
+		}
 
-		assertNotEquals(personProp1.hashCode(), personProp2.hashCode());
-		assertNotEquals(personProp1.hashCode(), personProp3.hashCode());
-		assertNotEquals(personProp1.hashCode(), personProp5.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertyValueInitialization valueInit = getRandomPersonPropertyValueInitialization(randomGenerator.nextLong());
+			hashCodes.add(valueInit.hashCode());
+		}
 
-		assertNotEquals(personProp2.hashCode(), personProp1.hashCode());
-		assertNotEquals(personProp2.hashCode(), personProp3.hashCode());
-		assertNotEquals(personProp2.hashCode(), personProp4.hashCode());
-		assertNotEquals(personProp2.hashCode(), personProp5.hashCode());
+		assertEquals(100, hashCodes.size());
+	}
 
-		assertNotEquals(personProp3.hashCode(), personProp1.hashCode());
-		assertNotEquals(personProp3.hashCode(), personProp2.hashCode());
-		assertNotEquals(personProp3.hashCode(), personProp4.hashCode());
+	private PersonPropertyValueInitialization getRandomPersonPropertyValueInitialization(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		assertNotEquals(personProp4.hashCode(), personProp2.hashCode());
-		assertNotEquals(personProp4.hashCode(), personProp3.hashCode());
-		assertNotEquals(personProp4.hashCode(), personProp5.hashCode());
+		// We remove boolean TestPersonPropertyIds to increase randomness
+		List<TestPersonPropertyId> selectedValues = new ArrayList<>();
+		TestPersonPropertyId[] allValues = TestPersonPropertyId.values();
+		for (TestPersonPropertyId value : allValues) {
+			if (value.getPropertyDefinition().getType() != Boolean.class) {
+				selectedValues.add(value);
+			}
+		}
 
-		assertNotEquals(personProp5.hashCode(), personProp1.hashCode());
-		assertNotEquals(personProp5.hashCode(), personProp2.hashCode());
-		assertNotEquals(personProp5.hashCode(), personProp4.hashCode());
+		TestPersonPropertyId testPersonPropertyId = selectedValues.get(randomGenerator.nextInt(selectedValues.size()));
+		Object propertyValue = testPersonPropertyId.getRandomPropertyValue(randomGenerator);
+
+		return new PersonPropertyValueInitialization(testPersonPropertyId, propertyValue);
 	}
 }
