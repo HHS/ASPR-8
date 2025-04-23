@@ -143,32 +143,44 @@ public class AT_StageReportPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a StageReportPluginData from the same random
-			// inputs
-			StageReportPluginData.Builder builder1 = StageReportPluginData.builder();
-			StageReportPluginData.Builder builder2 = StageReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			StageReportPluginData stageReportPluginData1 = builder1.build();
-			StageReportPluginData stageReportPluginData2 = builder2.build();
-
-			assertEquals(stageReportPluginData1, stageReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			stageReportPluginData2 = //
-					stageReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(stageReportPluginData2, stageReportPluginData1);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			StageReportPluginData pluginData = getRandomStageReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			StageReportPluginData pluginData = getRandomStageReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			StageReportPluginData pluginData = getRandomStageReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			StageReportPluginData pluginData1 = getRandomStageReportPluginData(seed);
+			StageReportPluginData pluginData2 = getRandomStageReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<StageReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			StageReportPluginData pluginData = getRandomStageReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -176,40 +188,24 @@ public class AT_StageReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a StageReportPluginData from the same random
-			// inputs
-			StageReportPluginData.Builder builder1 = StageReportPluginData.builder();
-			StageReportPluginData.Builder builder2 = StageReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			StageReportPluginData pluginData1 = getRandomStageReportPluginData(seed);
+			StageReportPluginData pluginData2 = getRandomStageReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			StageReportPluginData stageReportPluginData1 = builder1.build();
-			StageReportPluginData stageReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = stageReportPluginData1.hashCode();
-			assertEquals(hashCode, stageReportPluginData1.hashCode());
-			assertEquals(hashCode, stageReportPluginData1.hashCode());
-			assertEquals(hashCode, stageReportPluginData1.hashCode());
-			assertEquals(hashCode, stageReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(stageReportPluginData1.hashCode(), stageReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(stageReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertTrue(observedHashCodes.size() > 40);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			StageReportPluginData pluginData = getRandomStageReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -224,4 +220,13 @@ public class AT_StageReportPluginData {
 
 	}
 
+	private StageReportPluginData getRandomStageReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		StageReportPluginData pluginData = StageReportPluginData.builder()
+				.setReportLabel(new SimpleReportLabel(randomGenerator.nextInt(Integer.MAX_VALUE)))
+				.build();
+
+		return pluginData;
+	}
 }

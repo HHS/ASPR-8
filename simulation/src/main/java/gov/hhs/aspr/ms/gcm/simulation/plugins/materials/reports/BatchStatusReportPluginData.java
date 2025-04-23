@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.materials.reports;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
@@ -30,31 +32,31 @@ public final class BatchStatusReportPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			return result;
+			return Objects.hash(reportLabel);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (reportLabel == null) {
-				if (other.reportLabel != null) {
-					return false;
-				}
-			} else if (!reportLabel.equals(other.reportLabel)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(reportLabel, other.reportLabel);
 		}
 
 		@Override
@@ -174,6 +176,9 @@ public final class BatchStatusReportPluginData implements PluginData {
 		return data.reportLabel;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -182,6 +187,10 @@ public final class BatchStatusReportPluginData implements PluginData {
 		return result;
 	}
 
+	/**
+     * Two {@link BatchStatusReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

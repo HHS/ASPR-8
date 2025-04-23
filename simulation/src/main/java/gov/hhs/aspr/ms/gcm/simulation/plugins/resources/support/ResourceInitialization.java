@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.resources.support;
 
+import java.util.Objects;
+
 import net.jcip.annotations.Immutable;
 
 @Immutable
@@ -32,39 +34,31 @@ public final class ResourceInitialization {
 		return builder.toString();
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-		result = prime * result + ((resourceId == null) ? 0 : resourceId.hashCode());
-		return result;
+		return Objects.hash(resourceId, amount);
 	}
 
+	/**
+     * Two {@link ResourceInitialization} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ResourceInitialization)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ResourceInitialization other = (ResourceInitialization) obj;
-		if (amount == null) {
-			if (other.amount != null) {
-				return false;
-			}
-		} else if (!amount.equals(other.amount)) {
-			return false;
-		}
-		if (resourceId == null) {
-			if (other.resourceId != null) {
-				return false;
-			}
-		} else if (!resourceId.equals(other.resourceId)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(resourceId, other.resourceId) && Objects.equals(amount, other.amount);
 	}
 
 }

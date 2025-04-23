@@ -2,7 +2,6 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.resources.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -183,6 +182,12 @@ public class AT_ResourceFilter {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7631979699053748572L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ResourceFilter resourceFilter = getRandomResourceFilter(randomGenerator.nextLong());
+			assertFalse(resourceFilter.equals(new Object()));
+		}
+
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
 			ResourceFilter resourceFilter = getRandomResourceFilter(randomGenerator.nextLong());
@@ -200,17 +205,20 @@ public class AT_ResourceFilter {
 			long seed = randomGenerator.nextLong();
 			ResourceFilter resourceFilter1 = getRandomResourceFilter(seed);
 			ResourceFilter resourceFilter2 = getRandomResourceFilter(seed);
-			assertTrue(resourceFilter1.equals(resourceFilter2));
-			assertTrue(resourceFilter2.equals(resourceFilter1));
+			assertFalse(resourceFilter1 == resourceFilter2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(resourceFilter1.equals(resourceFilter2));
+				assertTrue(resourceFilter2.equals(resourceFilter1));
+			}
 		}
 		
 		//different inputs yield non-equal objects
-		for (int i = 0; i < 30; i++) {			
-			ResourceFilter resourceFilter1 = getRandomResourceFilter(randomGenerator.nextLong());
-			ResourceFilter resourceFilter2 = getRandomResourceFilter(randomGenerator.nextLong());
-			assertNotEquals(resourceFilter1, resourceFilter2);			
-		}		
-
+		Set<ResourceFilter> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourceFilter resourceFilter = getRandomResourceFilter(randomGenerator.nextLong());
+			set.add(resourceFilter);
+		}
+		assertEquals(100, set.size());	
 	}
 	
 	
@@ -235,7 +243,7 @@ public class AT_ResourceFilter {
 			hashCodes.add(resourceFilter.hashCode());
 		}
 		
-		assertTrue(hashCodes.size()>90);
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test

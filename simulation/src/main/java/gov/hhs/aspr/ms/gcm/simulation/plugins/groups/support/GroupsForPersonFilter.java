@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -79,31 +80,31 @@ public class GroupsForPersonFilter extends Filter {
 		return result;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
-		result = prime * result + groupCount;
-		return result;
+		return Objects.hash(equality, groupCount);
 	}
 
+	/**
+     * Two {@link GroupsForPersonFilter} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof GroupsForPersonFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		GroupsForPersonFilter other = (GroupsForPersonFilter) obj;
-		if (equality != other.equality) {
-			return false;
-		}
-		if (groupCount != other.groupCount) {
-			return false;
-		}
-		return true;
+		return equality == other.equality && groupCount == other.groupCount;
 	}
 
 	@Override

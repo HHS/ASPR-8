@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -112,39 +113,32 @@ public final class GroupsForPersonAndGroupTypeFilter extends Filter {
 		return result;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((equality == null) ? 0 : equality.hashCode());
-		result = prime * result + groupCount;
-		result = prime * result + ((groupTypeId == null) ? 0 : groupTypeId.hashCode());
-		return result;
+		return Objects.hash(groupTypeId, equality, groupCount);
 	}
 
+	/**
+     * Two {@link GroupsForPersonAndGroupTypeFilter} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof GroupsForPersonAndGroupTypeFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		GroupsForPersonAndGroupTypeFilter other = (GroupsForPersonAndGroupTypeFilter) obj;
-		if (equality != other.equality) {
-			return false;
-		}
-		if (groupCount != other.groupCount) {
-			return false;
-		}
-		if (groupTypeId == null) {
-			if (other.groupTypeId != null) {
-				return false;
-			}
-		} else if (!groupTypeId.equals(other.groupTypeId)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(groupTypeId, other.groupTypeId) && equality == other.equality
+				&& groupCount == other.groupCount;
 	}
 
 	@Override

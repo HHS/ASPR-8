@@ -8,8 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -521,90 +523,45 @@ public class AT_ResourceReportPluginData {
 	@Test
 	@UnitTestMethod(target = ResourceReportPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a ResourceReportPluginData from the same random
-			// inputs
-			ResourceReportPluginData.Builder builder1 = ResourceReportPluginData.builder();
-			ResourceReportPluginData.Builder builder2 = ResourceReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			for (int j = 0; j < 10; j++) {
-				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeResource(testResourceId);
-					builder2.includeResource(testResourceId);
-				} else {
-					builder1.excludeResource(testResourceId);
-					builder2.excludeResource(testResourceId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			ResourceReportPluginData resourceReportPluginData1 = builder1.build();
-			ResourceReportPluginData resourceReportPluginData2 = builder2.build();
-
-			assertEquals(resourceReportPluginData1, resourceReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the default inclusion
-			resourceReportPluginData2 = //
-					resourceReportPluginData1.toBuilder()//
-							.setDefaultInclusion(!defaultInclusion)//
-							.build();
-			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
-
-			// change the report period
-			int ord = reportPeriod.ordinal() + 1;
-			ord = ord % ReportPeriod.values().length;
-			reportPeriod = ReportPeriod.values()[ord];
-			resourceReportPluginData2 = //
-					resourceReportPluginData1.toBuilder()//
-							.setReportPeriod(reportPeriod)//
-							.build();
-			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			resourceReportPluginData2 = //
-					resourceReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
-
-			// change an included property id
-			if (!resourceReportPluginData1.getIncludedResourceIds().isEmpty()) {
-				ResourceId resourceId = resourceReportPluginData1.getIncludedResourceIds().iterator().next();
-				resourceReportPluginData2 = //
-						resourceReportPluginData1.toBuilder()//
-								.excludeResource(resourceId)//
-								.build();
-				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
-			}
-			// change an excluded property id
-			if (!resourceReportPluginData1.getExcludedResourceIds().isEmpty()) {
-				ResourceId resourceId = resourceReportPluginData1.getExcludedResourceIds().iterator().next();
-				resourceReportPluginData2 = //
-						resourceReportPluginData1.toBuilder()//
-								.includeResource(resourceId)//
-								.build();
-				assertNotEquals(resourceReportPluginData2, resourceReportPluginData1);
-			}
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ResourceReportPluginData pluginData = getRandomResourceReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			ResourceReportPluginData pluginData = getRandomResourceReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			ResourceReportPluginData pluginData = getRandomResourceReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourceReportPluginData pluginData1 = getRandomResourceReportPluginData(seed);
+			ResourceReportPluginData pluginData2 = getRandomResourceReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<ResourceReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourceReportPluginData pluginData = getRandomResourceReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -612,58 +569,24 @@ public class AT_ResourceReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a ResourceReportPluginData from the same random
-			// inputs
-			ResourceReportPluginData.Builder builder1 = ResourceReportPluginData.builder();
-			ResourceReportPluginData.Builder builder2 = ResourceReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			ResourceReportPluginData pluginData1 = getRandomResourceReportPluginData(seed);
+			ResourceReportPluginData pluginData2 = getRandomResourceReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			for (int j = 0; j < 10; j++) {
-				TestResourceId testResourceId = TestResourceId.getRandomResourceId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeResource(testResourceId);
-					builder2.includeResource(testResourceId);
-				} else {
-					builder1.excludeResource(testResourceId);
-					builder2.excludeResource(testResourceId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			ResourceReportPluginData resourceReportPluginData1 = builder1.build();
-			ResourceReportPluginData resourceReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = resourceReportPluginData1.hashCode();
-			assertEquals(hashCode, resourceReportPluginData1.hashCode());
-			assertEquals(hashCode, resourceReportPluginData1.hashCode());
-			assertEquals(hashCode, resourceReportPluginData1.hashCode());
-			assertEquals(hashCode, resourceReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(resourceReportPluginData1.hashCode(), resourceReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(resourceReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertEquals(50, observedHashCodes.size());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			ResourceReportPluginData pluginData = getRandomResourceReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 
 	}
 
@@ -694,4 +617,33 @@ public class AT_ResourceReportPluginData {
 
 	}
 
+	private ResourceReportPluginData getRandomResourceReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		ResourceReportPluginData.Builder builder = ResourceReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
+		builder.setReportLabel(reportLabel);
+
+		ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+		builder.setReportPeriod(reportPeriod);
+
+		builder.setDefaultInclusion(randomGenerator.nextBoolean());
+
+		List<TestResourceId> testResourceIds = Arrays.asList(TestResourceId.values());
+		Random random = new Random(randomGenerator.nextLong());
+		Collections.shuffle(testResourceIds, random);
+
+		int n = randomGenerator.nextInt(testResourceIds.size()) + 1;
+		for (int i = 0; i < n; i++) {
+			TestResourceId testResourceId = testResourceIds.get(i);
+			if (randomGenerator.nextBoolean()) {
+				builder.includeResource(testResourceId);
+			} else {
+				builder.excludeResource(testResourceId);
+			}
+		}
+
+		return builder.build();
+	}
 }
