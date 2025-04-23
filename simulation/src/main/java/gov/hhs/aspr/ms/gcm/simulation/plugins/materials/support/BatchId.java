@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.materials.support;
 
+import java.util.Objects;
+
 import net.jcip.annotations.Immutable;
 
 /**
@@ -23,24 +25,31 @@ public final class BatchId implements Comparable<BatchId> {
 		return Integer.compare(id, personId.id);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		return id;
+		return Objects.hash(id);
 	}
 
+	/**
+     * Two {@link BatchId} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof BatchId)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		BatchId other = (BatchId) obj;
-		if (id != other.id) {
-			return false;
-		}
-		return true;
+		return id == other.id;
 	}
 
 	@Override
