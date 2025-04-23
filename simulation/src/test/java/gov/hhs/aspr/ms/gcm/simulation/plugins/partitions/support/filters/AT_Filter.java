@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,10 +56,7 @@ public class AT_Filter {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((filterSensitivities == null) ? 0 : filterSensitivities.hashCode());
-			return result;
+			return Objects.hash(filterSensitivities);
 		}
 
 		@Override
@@ -66,20 +64,16 @@ public class AT_Filter {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof LocalFilter)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			LocalFilter other = (LocalFilter) obj;
-			if (filterSensitivities == null) {
-				if (other.filterSensitivities != null) {
-					return false;
-				}
-			} else if (!filterSensitivities.equals(other.filterSensitivities)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(filterSensitivities, other.filterSensitivities);
 		}
-		
+
 		@Override
 		public String toString() {
 			return "LocalFilter[]";

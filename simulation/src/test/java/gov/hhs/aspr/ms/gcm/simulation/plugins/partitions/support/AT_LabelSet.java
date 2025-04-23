@@ -6,14 +6,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 
 public class AT_LabelSet {
@@ -94,16 +100,45 @@ public class AT_LabelSet {
 	@Test
 	@UnitTestMethod(target = LabelSet.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		LabelSet labelSet1 = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
-		LabelSet labelSet2 = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
-		LabelSet labelSet3 = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label2").build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821418377306870L);
 
-		assertFalse(labelSet1 == labelSet2);
-		assertTrue(labelSet1.equals(labelSet1));
-		assertTrue(labelSet1.equals(labelSet2));
-		assertTrue(labelSet2.equals(labelSet1));
-		assertFalse(labelSet1.equals(labelSet3));
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			LabelSet labelSet = getRandomLabelSet(randomGenerator.nextLong());
+			assertFalse(labelSet.equals(new Object()));
+		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			LabelSet labelSet = getRandomLabelSet(randomGenerator.nextLong());
+			assertFalse(labelSet.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			LabelSet labelSet = getRandomLabelSet(randomGenerator.nextLong());
+			assertTrue(labelSet.equals(labelSet));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			LabelSet labelSet1 = getRandomLabelSet(seed);
+			LabelSet labelSet2 = getRandomLabelSet(seed);
+			assertFalse(labelSet1 == labelSet2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(labelSet1.equals(labelSet2));
+				assertTrue(labelSet2.equals(labelSet1));
+			}
+		}
+
+		// different inputs yield unequal labelSets
+		Set<LabelSet> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			LabelSet labelSet = getRandomLabelSet(randomGenerator.nextLong());
+			set.add(labelSet);
+		}
+		assertEquals(100, set.size());
 	}
 
 	/**
@@ -112,13 +147,26 @@ public class AT_LabelSet {
 	@Test
 	@UnitTestMethod(target = LabelSet.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653091508465183354L);
 
-		LabelSet labelSet1 = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
-		LabelSet labelSet2 = LabelSet.builder().setLabel(Dimension.DIM_1, "compartment label").build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			LabelSet labelSet1 = getRandomLabelSet(seed);
+			LabelSet labelSet2 = getRandomLabelSet(seed);
 
-		assertFalse(labelSet1 == labelSet2);
-		assertEquals(labelSet1, labelSet2);
-		assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
+			assertEquals(labelSet1, labelSet2);
+			assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
+		}
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			LabelSet labelSet = getRandomLabelSet(randomGenerator.nextLong());
+			hashCodes.add(labelSet.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -156,5 +204,23 @@ public class AT_LabelSet {
 		contractException = assertThrows(ContractException.class, () -> LabelSet.builder().setLabel(Dimension.DIM_1, null));
 		assertEquals(PartitionError.NULL_PARTITION_LABEL, contractException.getErrorType());
 
+	}
+
+	private LabelSet getRandomLabelSet(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		LabelSet.Builder builder = LabelSet.builder();
+		
+		List<Dimension> dimensions = Arrays.asList(Dimension.values());
+		Random random = new Random(randomGenerator.nextLong());
+		Collections.shuffle(dimensions, random);
+
+		int n = randomGenerator.nextInt(dimensions.size()) + 1;
+		for (int i = 0; i < n; i++) {
+			Dimension randomDimension = dimensions.get(i);
+			String randomLabel = "Label" + randomGenerator.nextInt();
+			builder.setLabel(randomDimension, randomLabel);
+		}
+
+		return builder.build();
 	}
 }

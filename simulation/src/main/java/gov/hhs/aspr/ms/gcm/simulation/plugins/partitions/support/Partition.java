@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -176,44 +177,32 @@ public final class Partition {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((filter == null) ? 0 : filter.hashCode());
-			result = prime * result + ((labelers == null) ? 0 : labelers.hashCode());
-			result = prime * result + (retainPersonKeys ? 1231 : 1237);
-			return result;
+			return Objects.hash(retainPersonKeys, labelers, filter);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (filter == null) {
-				if (other.filter != null) {
-					return false;
-				}
-			} else if (!filter.equals(other.filter)) {
-				return false;
-			}
-			if (labelers == null) {
-				if (other.labelers != null) {
-					return false;
-				}
-			} else if (!labelers.equals(other.labelers)) {
-				return false;
-			}
-			if (retainPersonKeys != other.retainPersonKeys) {
-				return false;
-			}
-			return true;
+			return retainPersonKeys == other.retainPersonKeys && Objects.equals(labelers, other.labelers)
+					&& Objects.equals(filter, other.filter);
 		}
 
 		@Override
@@ -246,31 +235,31 @@ public final class Partition {
 		return new LinkedHashSet<>(data.labelers.values());
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link Partition} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Partition)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		Partition other = (Partition) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

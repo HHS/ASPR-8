@@ -23,7 +23,9 @@ public class AT_FalseFilter {
 	@Test
 	@UnitTestMethod(target = FalseFilter.class, name = "equals", args = { Object.class })
 	public void testEquals() {
+		// never equal to another type
 		FalseFilter falseFilter = new FalseFilter();
+		assertFalse(falseFilter.equals(new Object()));
 
 		// is never equal to null
 		assertFalse(falseFilter.equals(null));
@@ -35,6 +37,7 @@ public class AT_FalseFilter {
 		for (int i = 0; i < 30; i++) {
 			FalseFilter f1 = new FalseFilter();
 			FalseFilter f2 = new FalseFilter();
+			assertFalse(f1 == f2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(f1.equals(f2));
 				assertTrue(f2.equals(f1));
@@ -46,6 +49,12 @@ public class AT_FalseFilter {
 	@UnitTestMethod(target = FalseFilter.class, name = "hashCode", args = {})
 	public void testHashCode() {
 		assertEquals(0, new FalseFilter().hashCode());
+
+		// equal objects have equal hash codes
+		FalseFilter f1 = new FalseFilter();
+		FalseFilter f2 = new FalseFilter();
+		assertEquals(f1, f2);
+		assertEquals(f1.hashCode(), f2.hashCode());
 	}
 
 	@Test

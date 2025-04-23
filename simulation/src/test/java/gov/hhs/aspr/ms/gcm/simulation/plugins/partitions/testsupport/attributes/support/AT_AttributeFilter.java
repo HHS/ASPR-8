@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -46,7 +47,6 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
-import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 
 public final class AT_AttributeFilter {
 
@@ -69,10 +69,7 @@ public final class AT_AttributeFilter {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + value;
-			return result;
+			return Objects.hash(value);
 		}
 
 		@Override
@@ -80,14 +77,14 @@ public final class AT_AttributeFilter {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (value != other.value) {
-				return false;
-			}
-			return true;
+			return value == other.value;
 		}
 	}
 
@@ -305,10 +302,20 @@ public final class AT_AttributeFilter {
 
 	private AttributeFilter getRandomAttributeFilter(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
-		TestAttributeId testAttributeId = TestAttributeId.getRandomAttributeId(randomGenerator);
-		Object propertyValue = testAttributeId.getRandomPropertyValue(randomGenerator);
+
+		// We remove boolean TestAttributeIds to increase randomness
+		List<TestAttributeId> selectedValues = new ArrayList<>();
+		TestAttributeId[] allValues = TestAttributeId.values();
+		for (TestAttributeId value : allValues) {
+			if (value.getAttributeDefinition().getType() != Boolean.class) {
+				selectedValues.add(value);
+			}
+		}
+		TestAttributeId randomTestAttributeId = selectedValues.get(randomGenerator.nextInt(selectedValues.size()));
+
+		Object propertyValue = randomTestAttributeId.getRandomPropertyValue(randomGenerator);
 		Equality randomEquality = Equality.getRandomEquality(randomGenerator);
-		return new AttributeFilter(testAttributeId, randomEquality, propertyValue);
+		return new AttributeFilter(randomTestAttributeId, randomEquality, propertyValue);
 	}
 
 	@Test
@@ -316,6 +323,12 @@ public final class AT_AttributeFilter {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6412971079328158580L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
+			assertFalse(attributeFilter.equals(new Object()));
+		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
@@ -334,7 +347,8 @@ public final class AT_AttributeFilter {
 			long seed = randomGenerator.nextLong();
 			AttributeFilter attributeFilter1 = getRandomAttributeFilter(seed);
 			AttributeFilter attributeFilter2 = getRandomAttributeFilter(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(attributeFilter1 == attributeFilter2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(attributeFilter1.equals(attributeFilter2));
 				assertTrue(attributeFilter2.equals(attributeFilter1));
 			}
@@ -342,16 +356,12 @@ public final class AT_AttributeFilter {
 
 		// different inputs yield non-equal objects
 		Set<AttributeFilter> attributeFilters = new LinkedHashSet<>();
-		Set<MultiKey> multiKeys = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
 			attributeFilters.add(attributeFilter);
-			MultiKey multiKey = new MultiKey(attributeFilter.getAttributeId(), attributeFilter.getEquality(),
-					attributeFilter.getValue());
-			multiKeys.add(multiKey);
 		}
 
-		assertEquals(multiKeys.size(), attributeFilters.size());
+		assertEquals(100, attributeFilters.size());
 
 	}
 
@@ -371,15 +381,12 @@ public final class AT_AttributeFilter {
 
 		// hash codes are reasonably distributed
 		Set<AttributeFilter> attributeFilters = new LinkedHashSet<>();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			AttributeFilter attributeFilter = getRandomAttributeFilter(randomGenerator.nextLong());
 			attributeFilters.add(attributeFilter);
 		}
 
-		// There will be a fairly high collision rate since 1/3 of the attribute
-		// properties are Booleans
-		assertTrue(attributeFilters.size() > 675);
-
+		assertEquals(100, attributeFilters.size());
 	}
 
 	@Test

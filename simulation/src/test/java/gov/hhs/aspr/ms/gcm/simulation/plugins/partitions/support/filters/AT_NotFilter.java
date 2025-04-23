@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -104,6 +105,12 @@ public class AT_NotFilter {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5725831217415880484L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			NotFilter notFilter = getRandomNotFilter(randomGenerator.nextLong());
+			assertFalse(notFilter.equals(new Object()));
+		}
+
 		// is never equal to null
 		for (int i = 0; i < 30; i++) {
 			assertFalse(getRandomNotFilter(randomGenerator.nextLong()).equals(null));
@@ -121,12 +128,20 @@ public class AT_NotFilter {
 			long seed = randomGenerator.nextLong();
 			NotFilter f1 = getRandomNotFilter(seed);
 			NotFilter f2 = getRandomNotFilter(seed);
+			assertFalse(f1 == f2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(f1.equals(f2));
 				assertTrue(f2.equals(f1));
 			}
 		}
 
+		// different inputs yield unequal notFilters
+		Set<NotFilter> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			NotFilter notFilter = getRandomNotFilter(randomGenerator.nextLong());
+			set.add(notFilter);
+		}
+		assertEquals(100, set.size());
 	}
 
 	private final static class TestFilter extends Filter {
@@ -167,10 +182,7 @@ public class AT_NotFilter {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + index;
-			return result;
+			return Objects.hash(index);
 		}
 
 		@Override
@@ -178,14 +190,14 @@ public class AT_NotFilter {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof TestFilter)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			TestFilter other = (TestFilter) obj;
-			if (index != other.index) {
-				return false;
-			}
-			return true;
+			return index == other.index;
 		}
 
 		@Override
@@ -207,9 +219,9 @@ public class AT_NotFilter {
 
 		// equal objects have equal hash codes, note that argument order does not matter
 		for (int i = 0; i < 30; i++) {
-			int seed = randomGenerator.nextInt();
-			NotFilter f1 = new NotFilter(new TestFilter(seed));
-			NotFilter f2 = new NotFilter(new TestFilter(seed));
+			long seed = randomGenerator.nextLong();
+			NotFilter f1 = getRandomNotFilter(seed);
+			NotFilter f2 = getRandomNotFilter(seed);
 			assertEquals(f1, f2);
 			assertEquals(f1.hashCode(), f2.hashCode());
 		}
@@ -218,12 +230,11 @@ public class AT_NotFilter {
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 
 		for (int i = 0; i < 100; i++) {
-			TestFilter f = new TestFilter(randomGenerator.nextInt());
-			NotFilter notFilter = new NotFilter(f);
+			NotFilter notFilter = getRandomNotFilter(randomGenerator.nextLong());
 			hashCodes.add(notFilter.hashCode());
 		}
 
-		assertTrue(hashCodes.size() > 95);
+		assertEquals(100, hashCodes.size());
 
 	}
 
