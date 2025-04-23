@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
@@ -61,47 +62,32 @@ public final class GroupsPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-			result = prime * result + ((groupPropertyValues == null) ? 0 : groupPropertyValues.hashCode());
-			result = prime * result + ((groupTypeId == null) ? 0 : groupTypeId.hashCode());
-			return result;
+			return Objects.hash(groupId, groupTypeId, groupPropertyValues);
 		}
 
+		/**
+		 * Two {@link GroupSpecification} instances are equal if and only if
+		 * their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof GroupSpecification)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			GroupSpecification other = (GroupSpecification) obj;
-			if (groupId == null) {
-				if (other.groupId != null) {
-					return false;
-				}
-			} else if (!groupId.equals(other.groupId)) {
-				return false;
-			}
-			if (groupPropertyValues == null) {
-				if (other.groupPropertyValues != null) {
-					return false;
-				}
-			} else if (!groupPropertyValues.equals(other.groupPropertyValues)) {
-				return false;
-			}
-			if (groupTypeId == null) {
-				if (other.groupTypeId != null) {
-					return false;
-				}
-			} else if (!groupTypeId.equals(other.groupTypeId)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(groupId, other.groupId) && Objects.equals(groupTypeId, other.groupTypeId)
+					&& Objects.equals(groupPropertyValues, other.groupPropertyValues);
 		}
 
 	}
@@ -127,41 +113,37 @@ public final class GroupsPluginData implements PluginData {
 			return builder.toString();
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((groupPropertyDefinitions == null) ? 0 : groupPropertyDefinitions.hashCode());
-			result = prime * result + ((groupSpecifications == null) ? 0 : groupSpecifications.hashCode());
-			result = prime * result + ((groupToPeopleMemberships == null) ? 0 : groupToPeopleMemberships.hashCode());
-			result = prime * result + ((groupTypeIds == null) ? 0 : groupTypeIds.hashCode());
-			result = prime * result + nextGroupIdValue;
-			result = prime * result + ((personToGroupsMemberships == null) ? 0 : personToGroupsMemberships.hashCode());
-			return result;
+			return Objects.hash(nextGroupIdValue, groupPropertyDefinitions, groupTypeIds, groupSpecifications,
+					personToGroupsMemberships, groupToPeopleMemberships);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (!groupPropertyDefinitions.equals(other.groupPropertyDefinitions)
-					|| !groupSpecifications.equals(other.groupSpecifications)
-					|| !groupToPeopleMemberships.equals(other.groupToPeopleMemberships)
-					|| !groupTypeIds.equals(other.groupTypeIds)) {
-				return false;
-			}
-			if (nextGroupIdValue != other.nextGroupIdValue) {
-				return false;
-			}
-			if (!personToGroupsMemberships.equals(other.personToGroupsMemberships)) {
-				return false;
-			}
-			return true;
+			return nextGroupIdValue == other.nextGroupIdValue
+					&& Objects.equals(groupPropertyDefinitions, other.groupPropertyDefinitions)
+					&& Objects.equals(groupTypeIds, other.groupTypeIds)
+					&& Objects.equals(groupSpecifications, other.groupSpecifications)
+					&& Objects.equals(personToGroupsMemberships, other.personToGroupsMemberships)
+					&& Objects.equals(groupToPeopleMemberships, other.groupToPeopleMemberships);
 		}
 
 		private int nextGroupIdValue = -1;
@@ -1061,27 +1043,31 @@ public final class GroupsPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link GroupsPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof GroupsPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		GroupsPluginData other = (GroupsPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
