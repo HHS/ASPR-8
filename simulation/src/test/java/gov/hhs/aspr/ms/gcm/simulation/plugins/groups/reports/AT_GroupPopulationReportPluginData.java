@@ -205,46 +205,44 @@ public class AT_GroupPopulationReportPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a GroupPopulationReportPluginData from the same random
-			// inputs
-			GroupPopulationReportPluginData.Builder builder1 = GroupPopulationReportPluginData.builder();
-			GroupPopulationReportPluginData.Builder builder2 = GroupPopulationReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			GroupPopulationReportPluginData proupPopulationReportPluginData1 = builder1.build();
-			GroupPopulationReportPluginData proupPopulationReportPluginData2 = builder2.build();
-
-			assertEquals(proupPopulationReportPluginData1, proupPopulationReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the report period
-			int ord = reportPeriod.ordinal() + 1;
-			ord = ord % ReportPeriod.values().length;
-			reportPeriod = ReportPeriod.values()[ord];
-			proupPopulationReportPluginData2 = //
-					proupPopulationReportPluginData1.toBuilder()//
-													.setReportPeriod(reportPeriod)//
-													.build();
-			assertNotEquals(proupPopulationReportPluginData2, proupPopulationReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			proupPopulationReportPluginData2 = //
-					proupPopulationReportPluginData1.toBuilder()//
-													.setReportLabel(reportLabel)//
-													.build();
-			assertNotEquals(proupPopulationReportPluginData2, proupPopulationReportPluginData1);
-
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupPopulationReportPluginData pluginData = getRandomGroupPopulationReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupPopulationReportPluginData pluginData = getRandomGroupPopulationReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupPopulationReportPluginData pluginData = getRandomGroupPopulationReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPopulationReportPluginData pluginData1 = getRandomGroupPopulationReportPluginData(seed);
+			GroupPopulationReportPluginData pluginData2 = getRandomGroupPopulationReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// different inputs yield unequal plugin datas
+		Set<GroupPopulationReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPopulationReportPluginData pluginData = getRandomGroupPopulationReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -252,44 +250,24 @@ public class AT_GroupPopulationReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9178672375367646465L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a GroupPopulationReportPluginData from the same random
-			// inputs
-			GroupPopulationReportPluginData.Builder builder1 = GroupPopulationReportPluginData.builder();
-			GroupPopulationReportPluginData.Builder builder2 = GroupPopulationReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPopulationReportPluginData pluginData1 = getRandomGroupPopulationReportPluginData(seed);
+			GroupPopulationReportPluginData pluginData2 = getRandomGroupPopulationReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			GroupPopulationReportPluginData proupPopulationReportPluginData1 = builder1.build();
-			GroupPopulationReportPluginData proupPopulationReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = proupPopulationReportPluginData1.hashCode();
-			assertEquals(hashCode, proupPopulationReportPluginData1.hashCode());
-			assertEquals(hashCode, proupPopulationReportPluginData1.hashCode());
-			assertEquals(hashCode, proupPopulationReportPluginData1.hashCode());
-			assertEquals(hashCode, proupPopulationReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(proupPopulationReportPluginData1.hashCode(), proupPopulationReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(proupPopulationReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are
-		 * unique values -- this is dependent on the random seed
-		 */
-		assertTrue(observedHashCodes.size()>45);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPopulationReportPluginData pluginData = getRandomGroupPopulationReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
     @Test
@@ -326,4 +304,18 @@ public class AT_GroupPopulationReportPluginData {
             assertEquals(sb.toString(), groupPopulationReportPluginData.toString());
         }
     }
+
+	private GroupPopulationReportPluginData getRandomGroupPopulationReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		GroupPopulationReportPluginData.Builder builder = GroupPopulationReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
+		builder.setReportLabel(reportLabel);
+
+		ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+        builder.setReportPeriod(reportPeriod);
+
+		return builder.build();
+	}
 }

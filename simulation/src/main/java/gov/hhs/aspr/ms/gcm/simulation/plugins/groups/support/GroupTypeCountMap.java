@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
@@ -33,27 +34,38 @@ public final class GroupTypeCountMap {
 			locked = data.locked;
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
+		@Override
+		public int hashCode() {
+			return Objects.hash(map);
+		}
+
+		/**
+		 * Two {@link Data} instances are equal if and only if
+		 * their inputs are equal.
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Data other = (Data) obj;
+			return Objects.equals(map, other.map);
+		}
 	}
 
 	private final Data data;
 
 	private GroupTypeCountMap(Data data) {
 		this.data = data;
-	}
-
-	/**
-	 * Follows the requirements of equals()
-	 */
-	@Override
-	public int hashCode() {
-		int result = 1;
-		for (GroupTypeId groupTypeId : data.map.keySet()) {
-			Integer value = data.map.get(groupTypeId);
-			if (value.intValue() != 0) {
-				result += value.hashCode();
-			}
-		}
-		return result;
 	}
 
 	/**
@@ -65,39 +77,31 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Two {@link GroupTypeCountMap} objects are considered equal if the POSITIVE
-	 * values associated with their group type ids are equal.
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(data);
+	}
+
+	/**
+	 * Two {@link GroupTypeCountMap} instances are equal if and only if
+	 * their inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		GroupTypeCountMap other = (GroupTypeCountMap) obj;
-		for (GroupTypeId groupTypeId : data.map.keySet()) {
-			int value = data.map.get(groupTypeId);
-			if (value > 0) {
-				int groupCount = other.getGroupCount(groupTypeId);
-				if (value != groupCount) {
-					return false;
-				}
-			}
-		}
-		for (GroupTypeId groupTypeId : other.data.map.keySet()) {
-			int value = other.data.map.get(groupTypeId);
-			if (value > 0) {
-				int groupCount = getGroupCount(groupTypeId);
-				if (value != groupCount) {
-					return false;
-				}
-			}
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
-
 
 	public int getGroupCount(GroupTypeId groupTypeId) {
 		Integer result = data.map.get(groupTypeId);

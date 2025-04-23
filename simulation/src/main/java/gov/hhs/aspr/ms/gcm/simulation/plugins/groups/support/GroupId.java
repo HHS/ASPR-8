@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.groups.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
 
@@ -32,24 +34,31 @@ public final class GroupId implements Comparable<GroupId> {
 		return Integer.compare(id, groupId.id);
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		return id;
+		return Objects.hash(id);
 	}
 
+	/**
+     * Two {@link GroupId} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof GroupId)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		GroupId other = (GroupId) obj;
-		if (id != other.id) {
-			return false;
-		}
-		return true;
+		return id == other.id;
 	}
 
 	@Override
