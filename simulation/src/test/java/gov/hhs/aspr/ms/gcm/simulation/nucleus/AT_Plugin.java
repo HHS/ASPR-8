@@ -2,12 +2,12 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -43,10 +43,7 @@ public class AT_Plugin {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + value;
-			return result;
+			return Objects.hash(value);
 		}
 
 		@Override
@@ -54,14 +51,14 @@ public class AT_Plugin {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof YPluginData)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			YPluginData other = (YPluginData) obj;
-			if (value != other.value) {
-				return false;
-			}
-			return true;
+			return value == other.value;
 		}
 
 	}
@@ -280,69 +277,66 @@ public class AT_Plugin {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1667890710500097680L);
 
-		Set<Integer> hashcodes = new LinkedHashSet<>();
-		// show equal objects have equal hash codes
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			Plugin plugin1 = getRandomPlugin(seed);
+			Plugin plugin2 = getRandomPlugin(seed);
 
+			assertEquals(plugin1, plugin2);
+			assertEquals(plugin1.hashCode(), plugin2.hashCode());
+		}
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
-			Plugin.Builder builder1 = Plugin.builder();
-			Plugin.Builder builder2 = Plugin.builder();
+			Plugin plugin = getRandomPlugin(randomGenerator.nextLong());
+			hashCodes.add(plugin.hashCode());
+		}
 
-			Set<PluginData> pluginDatas = new LinkedHashSet<>();
-			int pluginDataCount = randomGenerator.nextInt(5) + 1;
-			for (int j = 0; j < pluginDataCount; j++) {
-				pluginDatas.add(new YPluginData(randomGenerator.nextInt(100)));
-			}
+		assertEquals(100, hashCodes.size());
 
-			for (PluginData pluginData : pluginDatas) {
-				builder1.addPluginData(pluginData);
-				builder2.addPluginData(pluginData);
-			}
+		// The order in which plugindatas are added does not matter
+		Plugin.Builder builder1 = Plugin.builder();
+		Plugin.Builder builder2 = Plugin.builder();
 
-			PluginIds pluginId = PluginIds.getRandomPluginId(randomGenerator);
-			builder1.setPluginId(pluginId);
-			builder2.setPluginId(pluginId);
+		builder1.addPluginData(new YPluginData(5));
+		builder1.addPluginData(new YPluginData(9));
+		builder2.addPluginData(new YPluginData(9));
+		builder2.addPluginData(new YPluginData(5));
 
-			Set<PluginIds> randomPluginIds = PluginIds.getRandomPluginIds(randomGenerator);
-			for (PluginIds pluginIds : randomPluginIds) {
+		PluginIds pluginId = PluginIds.getRandomPluginId(randomGenerator);
+		builder1.setPluginId(pluginId);
+		builder2.setPluginId(pluginId);
+
+		Set<PluginIds> randomPluginIds = PluginIds.getRandomPluginIds(randomGenerator);
+		for (PluginIds pluginIds : randomPluginIds) {
+			if (pluginIds != pluginId) {
 				builder1.addPluginDependency(pluginIds);
 				builder2.addPluginDependency(pluginIds);
 			}
-
-			builder1.setInitializer((c) -> {
-			});
-			builder2.setInitializer((c) -> {
-			});
-
-			Plugin plugin1 = builder1.build();
-			Plugin plugin2 = builder2.build();
-
-			assertEquals(plugin1.hashCode(), plugin2.hashCode());
-			hashcodes.add(plugin1.hashCode());
-
 		}
 
-		// show that hash codes are dispersed -- low collision rate even for
-		// these very simple examples
-		assertTrue(hashcodes.size() > 95);
+		Plugin plugin1 = builder1.build();
+		Plugin plugin2 = builder2.build();
 
+		assertEquals(plugin1, plugin2);
+		assertEquals(plugin1.hashCode(), plugin2.hashCode());
 	}
 
 	private Plugin getRandomPlugin(long seed) {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
-		// show equal objects have equal hash codes
-
 		Plugin.Builder builder = Plugin.builder();
 
 		Set<PluginData> pluginDatas = new LinkedHashSet<>();
 		int pluginDataCount = randomGenerator.nextInt(5) + 1;
-		for (int j = 0; j < pluginDataCount; j++) {
-			pluginDatas.add(new YPluginData(randomGenerator.nextInt(100)));
+		while (pluginDatas.size() < pluginDataCount) {
+			pluginDatas.add(new YPluginData(randomGenerator.nextInt(1000)));
 		}
 
 		for (PluginData pluginData : pluginDatas) {
 			builder.addPluginData(pluginData);
-
 		}
 
 		PluginIds pluginId = PluginIds.getRandomPluginId(randomGenerator);
@@ -350,15 +344,15 @@ public class AT_Plugin {
 
 		Set<PluginIds> randomPluginIds = PluginIds.getRandomPluginIds(randomGenerator);
 		for (PluginIds pluginIds : randomPluginIds) {
-			builder.addPluginDependency(pluginIds);
-
+			if (pluginIds != pluginId) {
+				builder.addPluginDependency(pluginIds);
+			}
 		}
 
 		builder.setInitializer((c) -> {
 		});
 
 		return builder.build();
-
 	}
 
 	@UnitTestMethod(target = Plugin.class, name = "equals", args = { Object.class })
@@ -367,36 +361,71 @@ public class AT_Plugin {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1276670681120545443L);
 
-		// show equal objects have equal hash codes
-		for (int i = 0; i < 100; i++) {
-			long seed = randomGenerator.nextLong();
-			Plugin plugin1 = getRandomPlugin(seed);
-			Plugin plugin2 = getRandomPlugin(seed);
-			assertEquals(plugin1, plugin2);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			Plugin plugin = getRandomPlugin(randomGenerator.nextLong());
+			assertFalse(plugin.equals(new Object()));
 		}
 
-		// show that non-equal objects are not equal
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			Plugin plugin = getRandomPlugin(randomGenerator.nextLong());
+			assertFalse(plugin.equals(null));
+		}
 
-		int nonEqualityCheck = 0;
-		for (int i = 0; i < 100; i++) {
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			Plugin plugin = getRandomPlugin(randomGenerator.nextLong());
+			assertTrue(plugin.equals(plugin));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			Plugin plugin1 = getRandomPlugin(seed);
-			seed = randomGenerator.nextLong();
 			Plugin plugin2 = getRandomPlugin(seed);
-
-			boolean equals = plugin1.getPluginDatas().equals(plugin2.getPluginDatas())//
-					&& plugin1.getPluginId().equals(plugin2.getPluginId())//
-					&& plugin1.getPluginDependencies().equals(plugin2.getPluginDependencies());//
-
-			if (!equals) {
-				nonEqualityCheck++;
-				assertNotEquals(plugin1, plugin2);
+			assertFalse(plugin1 == plugin2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(plugin1.equals(plugin2));
+				assertTrue(plugin2.equals(plugin1));
 			}
 		}
 
-		// show that we generated sufficient non-equal comparisons
-		assertTrue(nonEqualityCheck > 90);
+		// different inputs yield unequal plugins
+		Set<Plugin> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			Plugin plugin = getRandomPlugin(randomGenerator.nextLong());
+			set.add(plugin);
+		}
+		assertEquals(100, set.size());
 
+		// The order in which plugindatas are added does not matter
+		Plugin.Builder builder1 = Plugin.builder();
+		Plugin.Builder builder2 = Plugin.builder();
+
+		builder1.addPluginData(new YPluginData(5));
+		builder1.addPluginData(new YPluginData(9));
+		builder2.addPluginData(new YPluginData(9));
+		builder2.addPluginData(new YPluginData(5));
+
+		PluginIds pluginId = PluginIds.getRandomPluginId(randomGenerator);
+		builder1.setPluginId(pluginId);
+		builder2.setPluginId(pluginId);
+
+		Set<PluginIds> randomPluginIds = PluginIds.getRandomPluginIds(randomGenerator);
+		for (PluginIds pluginIds : randomPluginIds) {
+			if (pluginIds != pluginId) {
+				builder1.addPluginDependency(pluginIds);
+				builder2.addPluginDependency(pluginIds);
+			}
+		}
+
+		Plugin plugin1 = builder1.build();
+		Plugin plugin2 = builder2.build();
+
+		assertFalse(plugin1 == plugin2);
+		assertTrue(plugin1.equals(plugin2));
+		assertTrue(plugin2.equals(plugin1));
 	}
 
 }

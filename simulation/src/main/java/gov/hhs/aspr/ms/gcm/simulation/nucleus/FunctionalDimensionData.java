@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -166,16 +167,18 @@ public final class FunctionalDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+        /**
+         * Standard implementation consistent with the {@link #equals(Object)} method
+         */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((levelNames == null) ? 0 : levelNames.hashCode());
-            result = prime * result + ((values == null) ? 0 : values.hashCode());
-            result = prime * result + ((metaData == null) ? 0 : metaData.hashCode());
-            return result;
+            return Objects.hash(levelNames, values, metaData);
         }
 
+        /**
+         * Two {@link Data} instances are equal if and only if
+         * their inputs are equal.
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -188,22 +191,8 @@ public final class FunctionalDimensionData extends DimensionData {
                 return false;
             }
             Data other = (Data) obj;
-            if (levelNames == null) {
-                if (other.levelNames != null)
-                    return false;
-            } else if (!levelNames.equals(other.levelNames))
-                return false;
-            if (values == null) {
-                if (other.values != null)
-                    return false;
-            } else if (!values.equals(other.values))
-                return false;
-            if (metaData == null) {
-                if (other.metaData != null)
-                    return false;
-            } else if (!metaData.equals(other.metaData))
-                return false;
-            return true;
+            return Objects.equals(levelNames, other.levelNames) && Objects.equals(values, other.values)
+                    && Objects.equals(metaData, other.metaData);
         }
 
         @Override
@@ -271,29 +260,31 @@ public final class FunctionalDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+        return Objects.hash(data);
     }
 
+    /**
+     * Two {@link FunctionalDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         FunctionalDimensionData other = (FunctionalDimensionData) obj;
-        if (data == null) {
-            if (other.data != null)
-                return false;
-        } else if (!data.equals(other.data))
-            return false;
-        return true;
+        return Objects.equals(data, other.data);
     }
 
     @Override

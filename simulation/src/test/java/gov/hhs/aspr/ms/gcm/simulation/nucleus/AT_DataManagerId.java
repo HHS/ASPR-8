@@ -1,7 +1,8 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -34,40 +35,70 @@ public final class AT_DataManagerId {
 	@UnitTestMethod(target = DataManagerId.class, name = "hashCode", args = {})
 	@Test
 	public void testHashCode() {
-		// show equal objects have equal hashcodes
-		for (int i = 0; i < 10; i++) {
-			DataManagerId a = new DataManagerId(i);
-			DataManagerId b = new DataManagerId(i);
-			assertEquals(a, b);
-			assertEquals(a.hashCode(), b.hashCode());
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491508465183354L);
+
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			DataManagerId dataManagerId1 = getRandomDataManagerId(seed);
+			DataManagerId dataManagerId2 = getRandomDataManagerId(seed);
+
+			assertEquals(dataManagerId1, dataManagerId2);
+			assertEquals(dataManagerId1.hashCode(), dataManagerId2.hashCode());
 		}
 
-		// show that hash codes are dispersed
-		Set<Integer> hashcodes = new LinkedHashSet<>();
-		for (int i = 0; i < 1000; i++) {
-			hashcodes.add(new DataManagerId(i).hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			DataManagerId dataManagerId = getRandomDataManagerId(randomGenerator.nextLong());
+			hashCodes.add(dataManagerId.hashCode());
 		}
-		assertEquals(1000, hashcodes.size());
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@UnitTestMethod(target = DataManagerId.class, name = "equals", args = { Object.class })
 	@Test
 	public void testEquals() {
-		// show data manager ids are equal if and only if they have the same
-		// base int
-		// value
-		for (int i = 0; i < 10; i++) {
-			DataManagerId a = new DataManagerId(i);
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980825558377306870L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			DataManagerId dataManagerId = getRandomDataManagerId(randomGenerator.nextLong());
+			assertFalse(dataManagerId.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			DataManagerId dataManagerId = getRandomDataManagerId(randomGenerator.nextLong());
+			assertFalse(dataManagerId.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			DataManagerId dataManagerId = getRandomDataManagerId(randomGenerator.nextLong());
+			assertTrue(dataManagerId.equals(dataManagerId));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			DataManagerId dataManagerId1 = getRandomDataManagerId(seed);
+			DataManagerId dataManagerId2 = getRandomDataManagerId(seed);
+			assertFalse(dataManagerId1 == dataManagerId2);
 			for (int j = 0; j < 10; j++) {
-				DataManagerId b = new DataManagerId(j);
-				if (i == j) {
-					assertEquals(a, b);
-				} else {
-					assertNotEquals(a, b);
-				}
+				assertTrue(dataManagerId1.equals(dataManagerId2));
+				assertTrue(dataManagerId2.equals(dataManagerId1));
 			}
 		}
+
+		// different inputs yield unequal dataManagerIds
+		Set<DataManagerId> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			DataManagerId dataManagerId = getRandomDataManagerId(randomGenerator.nextLong());
+			set.add(dataManagerId);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -98,4 +129,8 @@ public final class AT_DataManagerId {
 		}
 	}
 
+	private DataManagerId getRandomDataManagerId(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new DataManagerId(randomGenerator.nextInt(Integer.MAX_VALUE));
+	}
 }

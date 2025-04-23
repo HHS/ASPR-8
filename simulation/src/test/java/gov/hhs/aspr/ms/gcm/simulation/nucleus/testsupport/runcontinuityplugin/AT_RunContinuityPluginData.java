@@ -174,7 +174,7 @@ public class AT_RunContinuityPluginData {
 			assertFalse(runContinuityPluginData.equals(null));
 		}
 
-		// is never equal to null something else
+		// is never equal to another type
 		for (int i = 0; i < 30; i++) {
 			RunContinuityPluginData runContinuityPluginData = getRandomRunContinuityPluginData(
 					randomGenerator.nextLong());
@@ -193,8 +193,8 @@ public class AT_RunContinuityPluginData {
 			long seed = randomGenerator.nextLong();
 			RunContinuityPluginData runContinuityPluginData1 = getRandomRunContinuityPluginData(seed);
 			RunContinuityPluginData runContinuityPluginData2 = getRandomRunContinuityPluginData(seed);
-
-			for (int j = 0; j < 5; j++) {
+			assertFalse(runContinuityPluginData1 == runContinuityPluginData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(runContinuityPluginData1.equals(runContinuityPluginData2));
 				assertTrue(runContinuityPluginData2.equals(runContinuityPluginData1));
 			}

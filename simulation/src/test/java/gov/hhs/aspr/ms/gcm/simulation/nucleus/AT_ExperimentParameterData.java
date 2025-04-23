@@ -419,6 +419,13 @@ public class AT_ExperimentParameterData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2179495435117370503L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
+					randomGenerator.nextLong());
+			assertFalse(experimentParameterData.equals(new Object()));
+		}
+
 		// never equal null
 		for (int i = 0; i < 30; i++) {
 			ExperimentParameterData experimentParameterData = getRandomExperimentParameterData(
@@ -438,7 +445,8 @@ public class AT_ExperimentParameterData {
 			long seed = randomGenerator.nextLong();
 			ExperimentParameterData experimentParameterData1 = getRandomExperimentParameterData(seed);
 			ExperimentParameterData experimentParameterData2 = getRandomExperimentParameterData(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(experimentParameterData1 == experimentParameterData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(experimentParameterData1.equals(experimentParameterData2));
 				assertTrue(experimentParameterData2.equals(experimentParameterData1));
 			}

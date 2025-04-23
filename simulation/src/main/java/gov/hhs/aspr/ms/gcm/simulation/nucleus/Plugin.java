@@ -3,6 +3,7 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -36,40 +37,42 @@ public final class Plugin {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
 			LinkedHashSet<PluginData> set = new LinkedHashSet<>(pluginDatas);
-			result = prime * result + set.hashCode();
-			result = prime * result + pluginDependencies.hashCode();
-			result = prime * result + pluginId.hashCode();
-			return result;
+			return Objects.hash(pluginId, pluginDependencies, set);
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if 
+		 * their plugin IDs, plugin dependencies, and plugin datas 
+		 * are equal. The order in which plugin datas are added 
+		 * does not matter. INITIALIZERS ARE NOT COMPARED. 
+		 * Initialization behavior can only be confirmed by 
+		 * executing the plugin via a simulation instance.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
 			LinkedHashSet<PluginData> set = new LinkedHashSet<>(pluginDatas);
 			LinkedHashSet<PluginData> otherSet = new LinkedHashSet<>(other.pluginDatas);
-			if (!set.equals(otherSet)) {
-				return false;
-			}
-			if (!pluginDependencies.equals(other.pluginDependencies)) {
-				return false;
-			}
-			if (!pluginId.equals(other.pluginId)) {
-				return false;
-			}
-			return true;
-		}
 
+			return Objects.equals(pluginId, other.pluginId)
+					&& Objects.equals(pluginDependencies, other.pluginDependencies)
+					&& Objects.equals(set, otherSet);
+		}
 	}
 
 	/**
@@ -230,39 +233,34 @@ public final class Plugin {
 	}
 
 	/**
-	 * Implementation consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
 	/**
-	 * Two Plugins are equal if and only if their plugin ids, plugin dependencies
-	 * and plugin datas are equal. INITIALIZERS ARE NOT COMPARED. Initialization
-	 * behavior can only be confirmed by executing the plugin via a simulation
-	 * instance.
+	 * Two {@link Plugin} instances are equal if and only if
+	 * their plugin IDs, plugin dependencies, and plugin datas
+	 * are equal. The order in which plugin datas are added 
+	 * does not matter. INITIALIZERS ARE NOT COMPARED. Initialization
+	 * behavior can only be confirmed by executing the plugin via
+	 * a simulation instance.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Plugin)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		Plugin other = (Plugin) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	/**

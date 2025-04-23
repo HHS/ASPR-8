@@ -1,13 +1,13 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ReportContext;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Test Support class that describes an action for an actor as a scheduled plan
- * with an optional key.
+ * Test Support class that describes an action for a report as a scheduled plan.
  */
 public class TestReportPlan {
 
@@ -18,8 +18,7 @@ public class TestReportPlan {
 	private final Consumer<ReportContext> plan;
 
 	/**
-	 * Constructs an report action plan. If assignKey is false, then this report
-	 * action plan will return an empty optional key.
+	 * Constructs an report action plan.
 	 * 
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
@@ -36,46 +35,38 @@ public class TestReportPlan {
 	}
 
 	/**
-	 * Boilerplate implementation of hashCode consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(scheduledTime);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
+		return Objects.hash(scheduledTime, executed);
 	}
 
 	/**
-	 * TestActorPlans are equal if and only they return the same values for
-	 * 1)executed() and 2)getScheduledTime()This limited sense of equality is
-	 * present simply to provide some reasonable evidence that the plugin data
-	 * cloning method is working correctly for the test plugin data.
+	 * Two {@link TestReportPlan} instances are equal if and only if
+	 * they return the same values for 1) executed() and 2) getScheduledTime(). 
+	 * This limited sense of equality is present simply to provide some reasonable 
+	 * evidence that the plugin data cloning method is working correctly for the 
+	 * test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TestReportPlan)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		TestReportPlan other = (TestReportPlan) obj;
-		if (executed != other.executed) {
-			return false;
-		}
-
-		if (Double.doubleToLongBits(scheduledTime) != Double.doubleToLongBits(other.scheduledTime)) {
-			return false;
-		}
-		return true;
+		return Double.doubleToLongBits(scheduledTime) == Double.doubleToLongBits(other.scheduledTime)
+				&& executed == other.executed;
 	}
 
 	/**
-	 * Constructs an test actor plan from another test actor plan.
+	 * Constructs an test report plan from another test report plan.
 	 */
 	public TestReportPlan(TestReportPlan testReportPlan) {
 		scheduledTime = testReportPlan.scheduledTime;
@@ -84,7 +75,7 @@ public class TestReportPlan {
 	}
 
 	/**
-	 * Returns true if an only if this actor action plan was executed
+	 * Returns true if an only if this report action plan was executed
 	 */
 	public boolean executed() {
 		return executed;
@@ -94,9 +85,9 @@ public class TestReportPlan {
 	 * Package access. Executes the embedded action and marks this action plan as
 	 * executed.
 	 */
-	void executeAction(final ReportContext actorContext) {
+	void executeAction(final ReportContext reportContext) {
 		try {
-			plan.accept(actorContext);
+			plan.accept(reportContext);
 		} finally {
 			executed = true;
 		}

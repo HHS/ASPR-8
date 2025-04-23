@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.runcontinuityplugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.util.Pair;
@@ -31,39 +32,32 @@ public class RunContinuityPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((consumers == null) ? 0 : consumers.hashCode());
-			result = prime * result + (locked ? 1231 : 1237);
-			return result;
+			return Objects.hash(consumers);
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if
+		 * their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (consumers == null) {
-				if (other.consumers != null) {
-					return false;
-				}
-			} else if (!consumers.equals(other.consumers)) {
-				return false;
-			}
-			if (locked != other.locked) {
-				return false;
-			}
-			return true;
+			return Objects.equals(consumers, other.consumers);
 		}
-		
-		
-
 	}
 
 	/**
@@ -150,31 +144,30 @@ public class RunContinuityPluginData implements PluginData {
 		return data.consumers.isEmpty();
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link RunContinuityPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof RunContinuityPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		RunContinuityPluginData other = (RunContinuityPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
-
 }
