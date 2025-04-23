@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -121,76 +122,38 @@ public final class ResourcesPluginData implements PluginData {
 		}
 
 		/**
-		 * 
-		 */
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + resourceDefaultTimes.hashCode();
-			result = prime * result + resourceTimeTrackingPolicies.hashCode();
-			result = prime * result + resourcePropertyDefinitions.hashCode();
-			result = prime * result + resourcePropertyValues.hashCode();
-			result = prime * result + personResourceLevels.hashCode();
-			result = prime * result + personResourceTimes.hashCode();
-			result = prime * result + regionResourceLevels.hashCode();
-
-			return result;
+			return Objects.hash(resourceDefaultTimes, resourceTimeTrackingPolicies, resourcePropertyDefinitions,
+					resourcePropertyValues, personResourceLevels, personResourceTimes, regionResourceLevels);
 		}
 
 		/**
-		 * 
-		 */
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			/*
-			 * We exclude the following fields:
-			 * 
-			 * locked -- two Datas are only compared when they are both locked -- there are
-			 * no equality comparisons in this class.
-			 * 
-			 * 
-			 */
-			// These are simply compared:
-			if (!resourceDefaultTimes.equals(other.resourceDefaultTimes)) {
-				return false;
-			}
-
-			if (!resourceTimeTrackingPolicies.equals(other.resourceTimeTrackingPolicies)) {
-				return false;
-			}
-
-			if (!resourcePropertyDefinitions.equals(other.resourcePropertyDefinitions)) {
-				return false;
-			}
-
-			if (!resourcePropertyValues.equals(other.resourcePropertyValues)) {
-				return false;
-			}
-
-			if (!personResourceLevels.equals(other.personResourceLevels)) {
-				return false;
-			}
-
-			if (!personResourceTimes.equals(other.personResourceTimes)) {
-				return false;
-			}
-
-			if (!regionResourceLevels.equals(other.regionResourceLevels)) {
-				return false;
-			}
-
-			return true;
+			return Objects.equals(resourceDefaultTimes, other.resourceDefaultTimes)
+					&& Objects.equals(resourceTimeTrackingPolicies, other.resourceTimeTrackingPolicies)
+					&& Objects.equals(resourcePropertyDefinitions, other.resourcePropertyDefinitions)
+					&& Objects.equals(resourcePropertyValues, other.resourcePropertyValues)
+					&& Objects.equals(personResourceLevels, other.personResourceLevels)
+					&& Objects.equals(personResourceTimes, other.personResourceTimes)
+					&& Objects.equals(regionResourceLevels, other.regionResourceLevels);
 		}
-
 	}
 
 	private final Data data;
@@ -866,27 +829,31 @@ public final class ResourcesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link ResourcesPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ResourcesPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ResourcesPluginData other = (ResourcesPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override
