@@ -63,7 +63,7 @@ public enum NucleusError implements ContractError {
 	NULL_SCENARIO_ID("Null scenario id"),//
 	NULL_SCENARIO_PROGRESS_FILE("Null scenario progress file"),//
 	NULL_SIMULATION_CONTEXT("Null simulation context"),//
-	NULL_SIMULATION_TIME("Null simulation time"),//
+	NULL_SIMULATION_STATE("Null simulation state data"),//
 	OBSERVATION_EVENT_IMPROPER_RELEASE("An observation event is being released during a mutation by a data manager without the use of a corresponding mutation event"),//
 	PAST_PLANNING_TIME("Plan execution time is in the past"),//
 	PLANNING_QUEUE_ACTIVE("The planning queue is still active and plans cannot be retrieved"),//

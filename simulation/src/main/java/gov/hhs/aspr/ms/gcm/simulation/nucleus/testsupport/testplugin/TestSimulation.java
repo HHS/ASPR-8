@@ -74,13 +74,13 @@ public class TestSimulation {
 		 * Set the simulation time. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
-		 *                           simulation time is null
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_STATE} if the
+		 *                           simulation state is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			ensureDataMutability();
 			if (simulationState == null) {
-				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+				throw new ContractException(NucleusError.NULL_SIMULATION_STATE);
 			}
 			data.simulationState = simulationState;
 			return this;
