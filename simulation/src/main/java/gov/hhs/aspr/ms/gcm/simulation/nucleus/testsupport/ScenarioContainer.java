@@ -32,17 +32,6 @@ public final class ScenarioContainer {
 			locked = data.locked;
 		}
 
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			builder.append("Data [plugins=");
-			builder.append(plugins);
-			builder.append(", simulationState=");
-			builder.append(simulationState);
-			builder.append("]");
-			return builder.toString();
-		}
-
 		/**
 		 * Standard implementation consistent with the {@link #equals(Object)} method
 		 */
@@ -278,14 +267,5 @@ public final class ScenarioContainer {
 		}
 		ScenarioContainer other = (ScenarioContainer) obj;
 		return Objects.equals(data, other.data);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder builder2 = new StringBuilder();
-		builder2.append("ScenarioContainer [data=");
-		builder2.append(data);
-		builder2.append("]");
-		return builder2.toString();
 	}
 }

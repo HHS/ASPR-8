@@ -20,7 +20,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
@@ -226,29 +225,69 @@ public class AT_ScenarioContainer {
     @Test
     @UnitTestMethod(target = ScenarioContainer.class, name = "getPlugin", args = { PluginId.class })
     public void testGetPlugin() {
-        //testGetterAdderPlugin(7334822399033740607L);
+        testGetterAdderPlugin(7334822399033740607L);
     }
 
     @Test
     @UnitTestMethod(target = ScenarioContainer.class, name = "getPlugins", args = {})
     public void testGetPlugins() {
-        //testGetterAdderPlugin(7334822392421740607L);
+        testGetterAdderPlugin(7334822392421740607L);
     }
 
     @Test
     @UnitTestMethod(target = ScenarioContainer.class, name = "getPluginData", args = { Class.class })
     public void testGetPluginData() {
-        //testGetterAdderPlugin(7334822772341740607L);
+        testGetterAdderPlugin(7334822772341740607L);
+
+        // precondition test: if the class reference is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            ScenarioContainer.Builder builder = ScenarioContainer.builder();
+            Plugin plugin = Plugin.builder()//
+                    .setPluginId(PluginIds.PLUGIN_ID_1)//
+                    .addPluginData(new XPluginData(5))//
+                    .build();
+
+            builder.addPlugin(plugin);
+            builder.build().getPluginData(null);
+        });
+        assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
+        // precondition test: if more than one plugin data object matches the class reference
+        contractException = assertThrows(ContractException.class, () -> {
+            ScenarioContainer.Builder builder = ScenarioContainer.builder();
+            Plugin plugin = Plugin.builder()//
+                    .setPluginId(PluginIds.PLUGIN_ID_1)//
+                    .addPluginData(new XPluginData(5))//
+                    .addPluginData(new XPluginData(99))//
+                    .build();
+
+            builder.addPlugin(plugin);
+            builder.build().getPluginData(XPluginData.class);
+        });
+        assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS, contractException.getErrorType());
     }
 
     @Test
     @UnitTestMethod(target = ScenarioContainer.class, name = "getPluginDatas", args = { Class.class })
     public void testGetPluginDatas() {
-        //testGetterAdderPlugin(7334829908341740607L);
-    //}
+        testGetterAdderPlugin(7334829908341740607L);
 
-    //private void testGetterAdderPlugin(long seed) {
-        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7334829908341740607L);
+        // precondition test: if the class reference is null
+        ContractException contractException = assertThrows(ContractException.class, () -> {
+            ScenarioContainer.Builder builder = ScenarioContainer.builder();
+            Plugin plugin = Plugin.builder()//
+                    .setPluginId(PluginIds.PLUGIN_ID_1)//
+                    .addPluginData(new XPluginData(5))//
+                    .build();
+
+            builder.addPlugin(plugin);
+            builder.build().getPluginDatas(null);
+        });
+        assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
+    }
+
+    private void testGetterAdderPlugin(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
 
         for (int i = 0; i < 50; i++) {
             ScenarioContainer.Builder scenarioContainerBuilder = ScenarioContainer.builder();
@@ -398,7 +437,7 @@ public class AT_ScenarioContainer {
             }
         }
 
-        // different inputs yield unequal plugin datas
+        // different inputs yield unequal objects
         Set<ScenarioContainer> set = new LinkedHashSet<>();
         for (int i = 0; i < 100; i++) {
             ScenarioContainer scenarioContainer = getRandomScenarioContainer(
@@ -456,35 +495,6 @@ public class AT_ScenarioContainer {
         return builder.build();
     }
 
-    @Disabled
-    @Test
-    @UnitTestMethod(target = ScenarioContainer.class, name = "toString", args = {})
-    public void testToString() {
-        Plugin plugin = Plugin.builder()//
-                .addPluginData(new XPluginData(5))//
-                .setPluginId(PluginIds.PLUGIN_ID_1)//
-                .build();
-
-        SimulationState simState = SimulationState.builder()//
-                .setBaseDate(LocalDate.of(2025, 5, 7))//
-                .setStartTime(0.0)//
-                .build();
-
-        ScenarioContainer scenarioContainer = ScenarioContainer.builder()//
-                .addPlugin(plugin)//
-                .setSimulationState(simState)//
-                .build();
-
-        String expectedValue = "ScenarioContainer [data=Data ["
-                + "plugins={PLUGIN_ID_1=gov.hhs.aspr.ms.gcm.simulation.nucleus.Plugin@ffd2c8d6}, "
-                + "simulationState=gov.hhs.aspr.ms.gcm.simulation.nucleus.SimulationState@3f4d27"
-                + "]]";
-
-        String actualValue = scenarioContainer.toString();
-
-        assertEquals(expectedValue, actualValue);
-    }
-
     @Test
     @UnitTestMethod(target = ScenarioContainer.Builder.class, name = "build", args = {})
     public void testBuild() {
@@ -508,7 +518,7 @@ public class AT_ScenarioContainer {
     @Test
     @UnitTestMethod(target = ScenarioContainer.Builder.class, name = "addPlugin", args = { Plugin.class })
     public void testAddPlugin() {
-        //testGetterAdderPlugin(7334839908341740607L);
+        testGetterAdderPlugin(7334839908341740607L);
 
         // precondition test: if the plugin is null
         ContractException contractException = assertThrows(ContractException.class, () -> {
