@@ -36,6 +36,7 @@ public enum NucleusError implements ContractError {
 	NULL_CLASS_REFERENCE("Null class reference"),//
 	NULL_DATA_MANAGER("Null data manager"),//
 	NULL_DATA_MANAGER_CLASS("Null data manager class"),//
+	NULL_DATA_MANAGER_CONTEXT("Null data manager context"),//
 	NULL_DATA_MANAGER_CONTEXT_CONSUMER("Null data manager context consumer"),//
 	NULL_DIMENSION_LEVEL_NAME("Null Dimension level name"), //
 	NULL_EVENT("Event is null"),//
