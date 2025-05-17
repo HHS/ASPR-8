@@ -13,10 +13,10 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class DimensionContext implements PluginDataBuilderContainer {
 
-	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderBaseMap = new LinkedHashMap<>();
-	private Map<Class<?>, PluginDataBuilder> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
-	private Map<Class<?>, PluginData> pluginDataBaseMap = new LinkedHashMap<>();
-	private Map<Class<?>, PluginData> pluginDataWorkingMap = new LinkedHashMap<>();
+	private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderBaseMap = new LinkedHashMap<>();
+	private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
+	private Map<Class<?>, List<PluginData>> pluginDataBaseMap = new LinkedHashMap<>();
+	private Map<Class<?>, List<PluginData>> pluginDataWorkingMap = new LinkedHashMap<>();
 
 	private DimensionContext() {
 	}
@@ -28,8 +28,8 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		private Builder() {
 		}
 
-		private Map<Class<?>, PluginDataBuilder> pluginDataBuilderMap = new LinkedHashMap<>();
-		private Map<Class<?>, PluginData> pluginDataMap = new LinkedHashMap<>();
+		private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderMap = new LinkedHashMap<>();
+		private Map<Class<?>, List<PluginData>> pluginDataMap = new LinkedHashMap<>();
 
 		/**
 		 * Returns the DimensionContext instance composed from the inputs to this
@@ -43,8 +43,8 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		}
 
 		/**
-		 * Given a plugin Data, will add it and its clone builder to the internal map in
-		 * this class
+		 * Adds the plugin data to the context and returns the plugin data builder
+		 * generated from the plugin data.
 		 * 
 		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA} if the
 		 *                           plugin data builder is null
@@ -53,10 +53,20 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 			if (t == null) {
 				throw new ContractException(NucleusError.NULL_PLUGIN_DATA);
 			}
-			pluginDataMap.put(t.getClass(), t);
-			PluginDataBuilder builder = t.toBuilder();
+			List<PluginData> pluginDatas = pluginDataMap.get(t.getClass());
+			if (pluginDatas == null) {
+				pluginDatas = new ArrayList<>();
+				pluginDataMap.put(t.getClass(), pluginDatas);
+			}
+			pluginDatas.add(t);
 
-			pluginDataBuilderMap.put(builder.getClass(), builder);
+			PluginDataBuilder builder = t.toBuilder();
+			List<PluginDataBuilder> pluginDataBuilders = pluginDataBuilderMap.get(builder.getClass());
+			if (pluginDataBuilders == null) {
+				pluginDataBuilders = new ArrayList<>();
+				pluginDataBuilderMap.put(builder.getClass(), pluginDataBuilders);
+			}
+			pluginDataBuilders.add(builder);
 			return builder;
 		}
 	}
@@ -68,36 +78,93 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		return new Builder();
 	}
 
-	@Override
-	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
-
-		PluginDataBuilder pluginDataBuilder = pluginDataBuilderWorkingMap.get(classRef);
-		if (pluginDataBuilder == null) {
-			List<Class<?>> candidates = new ArrayList<>();
-			for (Class<?> c : pluginDataBuilderBaseMap.keySet()) {
-				if (classRef.isAssignableFrom(c)) {
-					candidates.add(c);
-				}
-			}
-			if (candidates.isEmpty()) {
-				throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_BUILDER_CLASS);
-			}
-			if (candidates.size() > 1) {
-				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS);
-			}
-
-			pluginDataBuilder = pluginDataBuilderBaseMap.get(candidates.get(0));
-			pluginDataBuilderWorkingMap.put(classRef, pluginDataBuilder);
-		}
-
-		return classRef.cast(pluginDataBuilder);
-	}
-
 	/**
-	 * Returns the stored item matching the given class reference.
+	 * Returns the stored plugin data builder matching the given class reference.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER_CLASS}
+	 *                           if the class reference is null</li>
+	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS}
+	 *                           if more than one plugin data builder matches the
+	 *                           given class reference</li>
+	 *                           <li>{@linkplain NucleusError#UNKNOWN_PLUGIN_DATA_BUILDER_CLASS}
+	 *                           if no plugin data builder matches the given class
+	 *                           reference</li>
+	 *                           </ul>
+	 */
+	@Override
+	public <T extends PluginDataBuilder> T getPluginDataBuilder(Class<T> classRef) {
+		if (classRef == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_BUILDER_CLASS);
+		}
+		List<PluginDataBuilder> pluginDataBuilders = pluginDataBuilderWorkingMap.get(classRef);
+
+		if (pluginDataBuilders == null) {
+			pluginDataBuilders = new ArrayList<>();
+			for (Class<?> c : pluginDataBuilderBaseMap.keySet()) {
+				if (classRef.isAssignableFrom(c)) {
+					List<PluginDataBuilder> list = pluginDataBuilderBaseMap.get(c);
+					pluginDataBuilders.addAll(list);
+				}
+			}
+			pluginDataBuilderWorkingMap.put(classRef, pluginDataBuilders);
+		}
+		if (pluginDataBuilders.isEmpty()) {
+			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_BUILDER_CLASS);
+		}
+		if (pluginDataBuilders.size() > 1) {
+			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_BUILDER_CLASS);
+		}
+		PluginDataBuilder pluginDataBuilder = pluginDataBuilders.get(0);
+
+		return classRef.cast(pluginDataBuilder);
+	}
+	
+	/**
+	 * Returns the stored plugin data builders matching the given class reference.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER_CLASS}
+	 *                           if the class reference is null</li>	 *                          
+	 *                           </ul>
+	 */
+	@SuppressWarnings("unchecked")	
+	public <T extends PluginDataBuilder> List<T> getPluginDataBuilders(Class<T> classRef) {
+		if (classRef == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_BUILDER_CLASS);
+		}
+		
+		List<T> result = new ArrayList<>();
+		
+		List<PluginDataBuilder> pluginDataBuilders = pluginDataBuilderWorkingMap.get(classRef);
+
+		if (pluginDataBuilders == null) {
+			pluginDataBuilders = new ArrayList<>();
+			for (Class<?> c : pluginDataBuilderBaseMap.keySet()) {
+				if (classRef.isAssignableFrom(c)) {
+					List<PluginDataBuilder> list = pluginDataBuilderBaseMap.get(c);
+					pluginDataBuilders.addAll(list);
+				}
+			}
+			pluginDataBuilderWorkingMap.put(classRef, pluginDataBuilders);
+		}
+		
+		for(PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
+			result.add((T)pluginDataBuilder);
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Returns the stored plugin data matching the given class reference.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
+	 *                           if the class reference is null</li>
 	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
 	 *                           if more than one plugin data matches the given
 	 *                           class reference</li>
@@ -108,25 +175,69 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	 */
 	public <T extends PluginData> T getPluginData(Class<T> classRef) {
 
-		PluginData pluginData = pluginDataWorkingMap.get(classRef);
-		if (pluginData == null) {
-			List<Class<?>> candidates = new ArrayList<>();
-			for (Class<?> c : pluginDataBaseMap.keySet()) {
-				if (classRef.isAssignableFrom(c)) {
-					candidates.add(c);
-				}
-			}
-			if (candidates.isEmpty()) {
-				throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
-			}
-			if (candidates.size() > 1) {
-				throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
-			}
-
-			pluginData = pluginDataBaseMap.get(candidates.get(0));
-			pluginDataWorkingMap.put(classRef, pluginData);
+		if (classRef == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
 
+		List<PluginData> pluginDatas = pluginDataWorkingMap.get(classRef);
+		if (pluginDatas == null) {
+			pluginDatas = new ArrayList<>();
+			for (Class<?> c : pluginDataBaseMap.keySet()) {
+				if (classRef.isAssignableFrom(c)) {
+					List<PluginData> list = pluginDataBaseMap.get(c);
+					pluginDatas.addAll(list);
+				}
+			}
+			pluginDataWorkingMap.put(classRef, pluginDatas);
+		}
+
+		if (pluginDatas.isEmpty()) {
+			throw new ContractException(NucleusError.UNKNOWN_PLUGIN_DATA_CLASS);
+		}
+		if (pluginDatas.size() > 1) {
+			throw new ContractException(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS);
+		}
+
+		PluginData pluginData = pluginDatas.get(0);
+
 		return classRef.cast(pluginData);
+	}
+
+	/**
+	 * Returns the stored plugin datas matching the given class reference.
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
+	 *                           if the class reference is null</li>
+	 *                           </ul>
+	 */
+	@SuppressWarnings("unchecked")	
+	public <T extends PluginData> List<T> getPluginDatas(Class<T> classRef) {
+
+		
+		if (classRef == null) {
+			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
+		}
+		
+		List<T> result = new ArrayList<>();
+
+		List<PluginData> pluginDatas = pluginDataWorkingMap.get(classRef);
+		if (pluginDatas == null) {
+			pluginDatas = new ArrayList<>();
+			for (Class<?> c : pluginDataBaseMap.keySet()) {
+				if (classRef.isAssignableFrom(c)) {
+					List<PluginData> list = pluginDataBaseMap.get(c);
+					pluginDatas.addAll(list);
+				}
+			}
+			pluginDataWorkingMap.put(classRef, pluginDatas);
+		}
+		
+		for(PluginData pluginData : pluginDatas) {
+			result.add((T)pluginData);
+		}
+
+		return result;
 	}
 }

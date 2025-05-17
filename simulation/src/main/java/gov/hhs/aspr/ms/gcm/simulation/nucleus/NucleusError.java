@@ -57,6 +57,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLUGIN_CONTEXT("Null plugin context"),//
 	NULL_PLUGIN_DATA("Null plugin data"),//
 	NULL_PLUGIN_DATA_CLASS("Null plugin data class"),//
+	NULL_PLUGIN_DATA_BUILDER_CLASS("Null plugin data builder class"),//
 	NULL_PLUGIN_ID("Null plugin id"),//
 	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),//
 	NULL_PLUGINS("Null collection of plugins"),//
