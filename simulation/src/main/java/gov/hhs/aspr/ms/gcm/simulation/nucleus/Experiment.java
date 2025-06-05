@@ -534,6 +534,9 @@ public final class Experiment {
 				list.add(contextBuilder.add(pluginData));
 			}
 		}
+		
+		contextBuilder.setSimulationState(data.simulationState);
+		
 		final DimensionContext dimensionContext = contextBuilder.build();
 
 		// initialize the scenario meta data

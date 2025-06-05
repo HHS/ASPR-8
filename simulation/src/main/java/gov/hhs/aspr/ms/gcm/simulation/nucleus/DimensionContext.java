@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  */
 public final class DimensionContext implements PluginDataBuilderContainer {
 
+	private SimulationState simulationState;
 	private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderBaseMap = new LinkedHashMap<>();
 	private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderWorkingMap = new LinkedHashMap<>();
 	private Map<Class<?>, List<PluginData>> pluginDataBaseMap = new LinkedHashMap<>();
@@ -28,17 +29,32 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 		private Builder() {
 		}
 
+		private SimulationState simulationState;
 		private Map<Class<?>, List<PluginDataBuilder>> pluginDataBuilderMap = new LinkedHashMap<>();
 		private Map<Class<?>, List<PluginData>> pluginDataMap = new LinkedHashMap<>();
+
+		private void validate() {
+			if(simulationState == null) {
+				throw new ContractException(NucleusError.NULL_SIMULATION_STATE);
+			}
+		}
 
 		/**
 		 * Returns the DimensionContext instance composed from the inputs to this
 		 * builder.
+		 * 
+		 * @throws ContractException
+		 *                           <ul>
+		 *                           <li>{@linkplain NucleusError#NULL_SIMULATION_STATE}
+		 *                           if the simulation state is not set</li>
+		 *                           </ul>
 		 */
 		public DimensionContext build() {
+			validate();
 			DimensionContext result = new DimensionContext();
 			result.pluginDataBuilderBaseMap.putAll(pluginDataBuilderMap);
 			result.pluginDataBaseMap.putAll(pluginDataMap);
+			result.simulationState = simulationState;
 			return result;
 		}
 
@@ -68,6 +84,10 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 			}
 			pluginDataBuilders.add(builder);
 			return builder;
+		}
+		
+		public void setSimulationState(SimulationState simulationState) {
+			this.simulationState = simulationState;
 		}
 	}
 
@@ -120,24 +140,24 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 
 		return classRef.cast(pluginDataBuilder);
 	}
-	
+
 	/**
 	 * Returns the stored plugin data builders matching the given class reference.
 	 * 
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if the class reference is null</li>	 *                          
+	 *                           if the class reference is null</li> *
 	 *                           </ul>
 	 */
-	@SuppressWarnings("unchecked")	
+	@SuppressWarnings("unchecked")
 	public <T extends PluginDataBuilder> List<T> getPluginDataBuilders(Class<T> classRef) {
 		if (classRef == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_BUILDER_CLASS);
 		}
-		
+
 		List<T> result = new ArrayList<>();
-		
+
 		List<PluginDataBuilder> pluginDataBuilders = pluginDataBuilderWorkingMap.get(classRef);
 
 		if (pluginDataBuilders == null) {
@@ -150,11 +170,11 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 			}
 			pluginDataBuilderWorkingMap.put(classRef, pluginDataBuilders);
 		}
-		
-		for(PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
-			result.add((T)pluginDataBuilder);
+
+		for (PluginDataBuilder pluginDataBuilder : pluginDataBuilders) {
+			result.add((T) pluginDataBuilder);
 		}
-		
+
 		return result;
 	}
 
@@ -212,14 +232,13 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	 *                           if the class reference is null</li>
 	 *                           </ul>
 	 */
-	@SuppressWarnings("unchecked")	
+	@SuppressWarnings("unchecked")
 	public <T extends PluginData> List<T> getPluginDatas(Class<T> classRef) {
 
-		
 		if (classRef == null) {
 			throw new ContractException(NucleusError.NULL_PLUGIN_DATA_CLASS);
 		}
-		
+
 		List<T> result = new ArrayList<>();
 
 		List<PluginData> pluginDatas = pluginDataWorkingMap.get(classRef);
@@ -233,11 +252,18 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 			}
 			pluginDataWorkingMap.put(classRef, pluginDatas);
 		}
-		
-		for(PluginData pluginData : pluginDatas) {
-			result.add((T)pluginData);
+
+		for (PluginData pluginData : pluginDatas) {
+			result.add((T) pluginData);
 		}
 
 		return result;
+	}
+
+	/**
+	 * Returns the simulation state.
+	 */
+	public SimulationState getSimulationState() {
+		return simulationState;
 	}
 }

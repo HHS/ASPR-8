@@ -12,6 +12,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.SimulationState;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.datamanagers.RegionsPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.regions.testsupport.TestRegionPropertyId;
@@ -97,6 +98,7 @@ public class AT_RegionPropertyDimension {
 				DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
 
 				pluginDataBuilder = (RegionsPluginData.Builder) dimensionContextBuilder.add(pluginDataBuilder.build());
+				dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
 				DimensionContext dimensionContext = dimensionContextBuilder.build();
 
 				// execute the dimension with the level
