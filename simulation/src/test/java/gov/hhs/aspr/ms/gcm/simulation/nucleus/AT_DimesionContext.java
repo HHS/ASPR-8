@@ -160,6 +160,7 @@ public class AT_DimesionContext {
 		PluginData p4 = new PluginData2();
 
 		DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
+		dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
 
 		dimensionContextBuilder.add(p1);
 		dimensionContextBuilder.add(p2);
@@ -223,6 +224,7 @@ public class AT_DimesionContext {
 		PluginData p4 = new PluginData2();
 
 		DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
+		dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
 
 		dimensionContextBuilder.add(p1);
 		dimensionContextBuilder.add(p2);
@@ -245,13 +247,15 @@ public class AT_DimesionContext {
 		assertEquals(p1.toBuilder(), pluginData1Builders.get(0));
 
 		// There should be exactly one type3 builder
-		List<PluginData3.Builder> pluginData3Builders = dimensionContext.getPluginDataBuilders(PluginData3.Builder.class);
+		List<PluginData3.Builder> pluginData3Builders = dimensionContext
+				.getPluginDataBuilders(PluginData3.Builder.class);
 		assertNotNull(pluginData3Builders);
 		assertEquals(1, pluginData3Builders.size());
 		assertEquals(p3.toBuilder(), pluginData3Builders.get(0));
 
 		// There should be exactly two type2 builders
-		List<PluginData2.Builder> pluginData2Builders = dimensionContext.getPluginDataBuilders(PluginData2.Builder.class);
+		List<PluginData2.Builder> pluginData2Builders = dimensionContext
+				.getPluginDataBuilders(PluginData2.Builder.class);
 		assertNotNull(pluginData2Builders);
 		assertEquals(2, pluginData2Builders.size());
 		assertTrue(pluginData2Builders.contains(p2.toBuilder()));
@@ -267,7 +271,8 @@ public class AT_DimesionContext {
 		assertTrue(pluginDataBuilders.contains(p4.toBuilder()));
 
 		// There should be exactly zero type4s
-		List<PluginData4.Builder> pluginData4Builders = dimensionContext.getPluginDataBuilders(PluginData4.Builder.class);
+		List<PluginData4.Builder> pluginData4Builders = dimensionContext
+				.getPluginDataBuilders(PluginData4.Builder.class);
 		assertNotNull(pluginData4Builders);
 		assertEquals(0, pluginData4Builders.size());
 
@@ -293,6 +298,8 @@ public class AT_DimesionContext {
 		PluginData p4 = new PluginData2();
 
 		DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
+		dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
+		dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
 
 		dimensionContextBuilder.add(p1);
 		dimensionContextBuilder.add(p2);
@@ -356,6 +363,7 @@ public class AT_DimesionContext {
 		PluginData p4 = new PluginData2();
 
 		DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
+		dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
 
 		dimensionContextBuilder.add(p1);
 		dimensionContextBuilder.add(p2);
@@ -406,6 +414,27 @@ public class AT_DimesionContext {
 	}
 
 	@Test
+	@UnitTestMethod(target = DimensionContext.class, name = "getSimulationState", args = {})
+	public void testGetSimulationState() {
+		SimulationState simulationState = SimulationState.builder().build();
+		DimensionContext.Builder builder = DimensionContext.builder();
+		builder.setSimulationState(simulationState);
+		DimensionContext dimensionContext = builder.build();
+		assertTrue(simulationState == dimensionContext.getSimulationState());
+	}
+	
+	@Test
+	@UnitTestMethod(target = DimensionContext.Builder.class, name = "setSimulationState", args = {SimulationState.class})
+	public void testSetSimulationState() {
+		SimulationState simulationState = SimulationState.builder().build();
+		DimensionContext.Builder builder = DimensionContext.builder();
+		builder.setSimulationState(simulationState);
+		DimensionContext dimensionContext = builder.build();
+		assertTrue(simulationState == dimensionContext.getSimulationState());
+	}
+
+
+	@Test	
 	@UnitTestMethod(target = DimensionContext.Builder.class, name = "add", args = { PluginData.class })
 	public void testAdd() {
 		PluginData p1 = new PluginData1();
@@ -417,6 +446,7 @@ public class AT_DimesionContext {
 		expectedContents.add(p2);
 
 		DimensionContext.Builder builder = DimensionContext.builder();
+		builder.setSimulationState(SimulationState.builder().build());
 
 		PluginDataBuilder p1b = builder.add(p1);
 		PluginDataBuilder p2b = builder.add(p2);
@@ -449,6 +479,7 @@ public class AT_DimesionContext {
 		expectedContents.add(p2);
 
 		DimensionContext.Builder builder = DimensionContext.builder();
+		builder.setSimulationState(SimulationState.builder().build());
 
 		PluginDataBuilder p1b = builder.add(p1);
 		PluginDataBuilder p2b = builder.add(p2);
@@ -463,6 +494,12 @@ public class AT_DimesionContext {
 		assertDoesNotThrow(() -> actualContents.add(dimensionContext.getPluginData(PluginData2.class)));
 
 		assertEquals(expectedContents, actualContents);
+
+		// precondition test: if the simulation state is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			DimensionContext.builder().build();
+		});
+		assertEquals(NucleusError.NULL_SIMULATION_STATE, contractException.getErrorType());
 
 	}
 }
