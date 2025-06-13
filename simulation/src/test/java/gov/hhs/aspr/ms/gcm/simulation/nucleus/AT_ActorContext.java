@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -392,12 +393,9 @@ public class AT_ActorContext {
 		// show that the number of actor ids matches the number of actor aliases
 		assertEquals(3, observedActorIds.size());
 	}
-	
-	
-	
-	
+
 	private void executeGetDataManagerTest(Consumer<ActorContext> consumer) {
-		
+
 		// create the test plugin data builder
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
@@ -408,7 +406,7 @@ public class AT_ActorContext {
 		pluginDataBuilder.addTestDataManager("dm3B", () -> new TestDataManager3B());
 		pluginDataBuilder.addTestDataManager("dm4A", () -> new TestDataManager4A());
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0,  consumer));
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, consumer));
 
 		// build the action plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
@@ -421,9 +419,9 @@ public class AT_ActorContext {
 	@UnitTestMethod(target = ActorContext.class, name = "getDataManager", args = { Class.class })
 	public void testGetDataManager() {
 
-		//postcondition test: 
-		executeGetDataManagerTest((c)->{
-			assertNotNull(c.getDataManager(TestDataManager1.class));			 
+		// postcondition test:
+		executeGetDataManagerTest((c) -> {
+			assertNotNull(c.getDataManager(TestDataManager1.class));
 			assertNotNull(c.getDataManager(TestDataManager3A.class));
 			assertNotNull(c.getDataManager(TestDataManager3B.class));
 			assertNotNull(c.getDataManager(TestDataManager4A.class));
@@ -431,24 +429,24 @@ public class AT_ActorContext {
 		});
 
 		// precondition test: if the class reference is null
-		ContractException contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(null);
 			});
 		});
 		assertEquals(NucleusError.NULL_DATA_MANAGER_CLASS, contractException.getErrorType());
-		
+
 		// precondition test: if the class reference is null
-		contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(TestDataManager3.class);
 			});
 		});
 		assertEquals(NucleusError.AMBIGUOUS_DATA_MANAGER_CLASS, contractException.getErrorType());
-		
+
 		// precondition test: if the class reference is unknown
-		contractException = assertThrows(ContractException.class, ()->{
-			executeGetDataManagerTest((c)->{
+		contractException = assertThrows(ContractException.class, () -> {
+			executeGetDataManagerTest((c) -> {
 				c.getDataManager(TestDataManager4B.class);
 			});
 		});
@@ -1069,5 +1067,156 @@ public class AT_ActorContext {
 
 		assertEquals(expectedPlans.size(), plans.size());
 		assertEquals(expectedPlans, plans);
+	}
+
+	private static class LocalPluginData implements PluginData {
+
+		public static class Builder implements PluginDataBuilder {
+			@Override
+			public LocalPluginData build() {
+				return new LocalPluginData();
+			}
+		}
+
+		@Override
+		public PluginDataBuilder toBuilder() {
+			return new Builder();
+		}
+	}
+	
+	private static class LocalPluginData2 implements PluginData {
+
+		public static class Builder implements PluginDataBuilder {
+			@Override
+			public LocalPluginData2 build() {
+				return new LocalPluginData2();
+			}
+		}
+
+		@Override
+		public PluginDataBuilder toBuilder() {
+			return new Builder();
+		}
+	}
+
+	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "getPluginData", args = { Class.class })
+	public void testGetPluginData() {
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			Optional<LocalPluginData> optional1 = c.getPluginData(LocalPluginData.class);
+			assertTrue(optional1.isPresent());
+			Optional<LocalPluginData2> optional2 = c.getPluginData(LocalPluginData2.class);
+			assertFalse(optional2.isPresent());
+
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		Plugin localPlugin = Plugin.builder()//
+				.setPluginId(new SimplePluginId("localPlugin"))//
+				.addPluginData(new LocalPluginData())//
+				.build();
+
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.addPlugin(localPlugin)//
+				.build()//
+				.execute();//
+
+		// precondition test: if more than one plugin data object matches the class
+		// reference
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Plugin lp = Plugin.builder()//
+					.setPluginId(new SimplePluginId("localPlugin"))//
+					.addPluginData(new LocalPluginData())//
+					.addPluginData(new LocalPluginData())//
+					.build();
+
+			Simulation.builder()//
+					.addPlugin(lp)//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.getPluginData(LocalPluginData.class);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
+		// precondition test: if the class reference is null
+		contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.getPluginData(null);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
+	}
+
+	@Test
+	@UnitTestMethod(target = ActorContext.class, name = "getPluginDatas", args = { Class.class })
+	public void testGetPluginDatas() {
+		/*
+		 * Returns the plugin data objects associated with the given class reference
+		 * 
+		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
+		 * the class reference is null
+		 */
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+			List<LocalPluginData> localPluginDatas = c.getPluginDatas(LocalPluginData.class);
+			assertNotNull(localPluginDatas);
+			assertEquals(2,localPluginDatas.size());
+			
+			List<LocalPluginData2> localPluginData2s = c.getPluginDatas(LocalPluginData2.class);
+			assertNotNull(localPluginData2s);
+			assertEquals(0,localPluginData2s.size());
+			
+			List<PluginData> pluginDatas = c.getPluginDatas(PluginData.class);
+			assertNotNull(pluginDatas);
+			assertEquals(3,pluginDatas.size());
+
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+
+		Plugin localPlugin = Plugin.builder()//
+				.setPluginId(new SimplePluginId("localPlugin"))//
+				.addPluginData(new LocalPluginData())//
+				.addPluginData(new LocalPluginData())//
+				.build();
+
+		// run the simulation
+		Simulation.builder()//
+				.addPlugin(testPlugin)//
+				.addPlugin(localPlugin)//
+				.build()//
+				.execute();//
+
+		// precondition test: if the class reference is null
+		ContractException contractException = assertThrows(ContractException.class, () -> {
+			Simulation.builder()//
+					.addPlugin(TestPlugin.getTestPlugin(
+							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+								c.getPluginDatas(null);
+							})).build()))//
+					.build()//
+					.execute();//
+		});
+		assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
+
 	}
 }
