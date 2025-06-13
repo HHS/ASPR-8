@@ -72,7 +72,7 @@
         <!-- dependency versions -->
         <taskit.version>5.2.0-SNAPSHOT</taskit.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
-        <junit-jupiter-engine.version>5.13.0</junit-jupiter-engine.version>
+        <junit-jupiter-engine.version>5.13.1</junit-jupiter-engine.version>
     </properties>
 
     <dependencyManagement>
