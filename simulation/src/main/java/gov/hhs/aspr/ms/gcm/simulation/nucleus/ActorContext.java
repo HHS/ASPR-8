@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * managers to actors. It is supplied by the engine each time it interacts with
  * an actor. Actors are defined by this context. If this context is passed to a
  * method invocation, then that method is an actor method.
+ * 
  */
 public final class ActorContext {
 
