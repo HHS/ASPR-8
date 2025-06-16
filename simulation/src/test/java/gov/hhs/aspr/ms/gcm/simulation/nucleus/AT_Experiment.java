@@ -398,7 +398,7 @@ public class AT_Experiment {
 		testSetHaltOnException_Implicit();
 	}
 
-	@Test
+	
 	private void testSetHaltOnException_Explicit_True() {
 		// This test will run the experiment two times in single thread mode
 

@@ -24,7 +24,7 @@ To use this project in your project, simply add the following dependency to your
 <dependency>
     <groupId>gov.hhs.aspr.ms.gcm</groupId>
     <artifactId>simulation</artifactId>
-    <version>4.2.0</version>
+    <version>4.4.0</version>
 </dependency>
 ```
 
@@ -53,7 +53,7 @@ Data managers and actors are organized into plugins. A GCM model is thus compose
 ### Requirements
 - Maven 3.8.x
 - Java 17
-- Your favroite IDE for developing Java projects
+- Your favorite IDE for developing Java projects
 - Modeling Utilities located [here](https://github.com/HHS/ASPR-ms-util)
 
 *Note that Modeling Utilities is in Maven Central, so there is no need to clone and build it. 
@@ -69,7 +69,7 @@ To build this project:
 The documentation can be found at [https://hhs.github.io/ASPR-8/](https://hhs.github.io/ASPR-8/)
 
 ## Lessons
-The documentation contains lessons which the code can be found in [lessons](lessons).
+Code for all lessons in the documentation above can be found in [lessons](lessons).
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/HHS/ASPR-8

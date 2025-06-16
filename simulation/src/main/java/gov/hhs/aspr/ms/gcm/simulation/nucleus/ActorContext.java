@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * managers to actors. It is supplied by the engine each time it interacts with
  * an actor. Actors are defined by this context. If this context is passed to a
  * method invocation, then that method is an actor method.
+ * 
  */
 public final class ActorContext {
 
@@ -250,6 +251,32 @@ public final class ActorContext {
 	 */
 	public Optional<Double> getSimulationHaltTime() {
 		return simulation.getSimulationHaltTime();
+	}
+	
+	/**
+	 * Returns the plugin data object associated with the given class reference
+	 * 
+	 * @throws ContractException
+	 *                           <ul>
+	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS}
+	 *                           if the class reference is null</li>
+	 *                           <li>{@linkplain NucleusError#AMBIGUOUS_PLUGIN_DATA_CLASS}
+	 *                           if more than one plugin data object matches the
+	 *                           class reference</li>
+	 *                           </ul>
+	 */
+	public <T extends PluginData> Optional<T> getPluginData(Class<T> pluginDataClass) {
+		return simulation.getPluginData(pluginDataClass);
+	}
+
+	/**
+	 * Returns the plugin data objects associated with the given class reference
+	 * 
+	 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
+	 *                           the class reference is null
+	 */
+	public <T extends PluginData> List<T> getPluginDatas(Class<T> pluginDataClass) {
+		return simulation.getPluginDatas(pluginDataClass);
 	}
 
 }
