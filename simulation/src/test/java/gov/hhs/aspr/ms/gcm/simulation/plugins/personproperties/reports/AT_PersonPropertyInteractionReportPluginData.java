@@ -358,7 +358,7 @@ public class AT_PersonPropertyInteractionReportPluginData {
 
 		String expectedValue = "PersonPropertyInteractionReportPluginData [data=Data ["
 				+ "reportLabel=SimpleReportLabel [value=report label95], "
-				+ "reportPeriod=HOURLY, "
+				+ "reportPeriod=WEEKLY, "
 				+ "personPropertyIds=["
 				+ "PERSON_PROPERTY_1_BOOLEAN_MUTABLE_NO_TRACK, "
 				+ "PERSON_PROPERTY_2_INTEGER_MUTABLE_NO_TRACK, "
