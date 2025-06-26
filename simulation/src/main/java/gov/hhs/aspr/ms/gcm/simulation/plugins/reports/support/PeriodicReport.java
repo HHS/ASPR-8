@@ -171,12 +171,13 @@ public abstract class PeriodicReport {
 	private double getNextPlanTime() {
 		switch (reportPeriod) {
 		case DAILY:
-		case WEEKLY:
 			return reportingDay;
 
 		case HOURLY:
 			return reportingDay + (double) (reportingHour) / 24;
 
+		case WEEKLY:
+			return reportingWeek * 7;
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
@@ -195,7 +196,8 @@ public abstract class PeriodicReport {
 			}
 			break;
 		case WEEKLY:
-			reportingDay += 7;
+			int extraDays = reportingDay % 7;
+			reportingDay += (7 - extraDays);
 			reportingWeek++;
 			break;
 		case END_OF_SIMULATION:
