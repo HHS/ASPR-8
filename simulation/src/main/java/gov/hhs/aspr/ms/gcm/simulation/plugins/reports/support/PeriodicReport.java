@@ -50,10 +50,15 @@ public abstract class PeriodicReport {
 	 */
 	private Integer reportingHour = 0;
 
+	/*
+	 * The week value to be used in report lines
+	 */
+	private Integer reportingWeek = 0;
+
 	/**
 	 * Adds the time field column(s) to the given {@link ReportHeader.Builder} as
 	 * appropriate to the {@link ReportPeriod} specified during construction. DAILY
-	 * : Day HOURLY : Day, Hour END_OF_SIMULATION has no header additions
+	 * : day; HOURLY : day, hour; WEEKLY : day, week; END_OF_SIMULATION has no header additions
 	 */
 	protected final ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
 		switch (reportPeriod) {
@@ -66,6 +71,10 @@ public abstract class PeriodicReport {
 		case HOURLY:
 			reportHeaderBuilder.add("day");
 			reportHeaderBuilder.add("hour");
+			break;
+		case WEEKLY:
+			reportHeaderBuilder.add("day");
+			reportHeaderBuilder.add("week");
 			break;
 		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
@@ -82,8 +91,9 @@ public abstract class PeriodicReport {
 	}
 
 	/**
-	 * Places the current reporting day and report hour on the report as appropriate
-	 * to the {@link ReportPeriod} specified during construction.
+	 * Places the current reporting day, reporting hour, and reporting week on the
+	 * report as appropriate to the {@link ReportPeriod} specified during
+	 * construction.
 	 */
 	protected final void fillTimeFields(final ReportItem.Builder reportItemBuilder) {
 
@@ -97,6 +107,10 @@ public abstract class PeriodicReport {
 		case HOURLY:
 			reportItemBuilder.addValue(reportingDay);
 			reportItemBuilder.addValue(reportingHour);
+			break;
+		case WEEKLY:
+			reportItemBuilder.addValue(reportingDay);
+			reportItemBuilder.addValue(reportingWeek);
 			break;
 		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
@@ -124,6 +138,7 @@ public abstract class PeriodicReport {
 		if (reportingHour > 23) {
 			reportingHour = 23;
 		}
+		reportingWeek = (int) (reportContext.getTime() / 7);
 
 		prepare(reportContext);
 
@@ -161,6 +176,8 @@ public abstract class PeriodicReport {
 		case HOURLY:
 			return reportingDay + (double) (reportingHour) / 24;
 
+		case WEEKLY:
+			return reportingWeek * 7;
 		default:
 			throw new RuntimeException("unhandled report period " + reportPeriod);
 		}
@@ -177,6 +194,11 @@ public abstract class PeriodicReport {
 				reportingHour = 0;
 				reportingDay++;
 			}
+			break;
+		case WEEKLY:
+			int extraDays = reportingDay % 7;
+			reportingDay += (7 - extraDays);
+			reportingWeek++;
 			break;
 		case END_OF_SIMULATION:
 			// do nothing

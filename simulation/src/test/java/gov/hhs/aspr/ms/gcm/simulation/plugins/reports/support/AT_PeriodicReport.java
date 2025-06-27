@@ -142,6 +142,55 @@ public class AT_PeriodicReport {
 
 	/*
 	 * Used to test the fillTimeFields() method when the period is
+	 * ReportPeriod.WEEKLY
+	 */
+	private static class WeeklyTestReport extends PeriodicReport {
+
+		private MutableInteger testCounter = new MutableInteger();
+
+		public WeeklyTestReport(ReportLabel reportLabel, ReportPeriod reportPeriod) {
+			super(reportLabel, reportPeriod);
+			if (reportPeriod != ReportPeriod.WEEKLY) {
+				throw new RuntimeException("must be a weekly report");
+			}
+		}
+
+		@Override
+		protected void flush(ReportContext reportContext) {
+			testCounter.increment();
+			ReportItem.Builder reportItemBuilder = ReportItem.builder();
+
+			fillTimeFields(reportItemBuilder);
+
+			ReportItem reportItem = reportItemBuilder.setReportLabel(getReportLabel()).build();
+			int dayValue = (int) FastMath.ceil(reportContext.getTime());
+			int extraDays = dayValue % 7;
+			if (extraDays != 0) {
+				dayValue += (7 - extraDays);
+			} 
+
+			String expectedDayTimeString = Integer.toString(dayValue);
+			String expectedWeekTimeString = Integer.toString(dayValue / 7);
+			String actualDayTimeString = reportItem.getValue(0);
+			String actualWeekTimeString = reportItem.getValue(1);
+			assertEquals(expectedDayTimeString, actualDayTimeString);
+			assertEquals(expectedWeekTimeString, actualWeekTimeString);
+
+			reportContext.releaseOutput(reportItem);
+		}
+
+		@Override
+		protected void prepare(ReportContext reportContext) {
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			this.addTimeFieldHeaders(reportHeaderBuilder);
+			ReportHeader reportHeader = reportHeaderBuilder.setReportLabel(getReportLabel()).build();
+
+			reportContext.releaseOutput(reportHeader);
+		}
+	}
+
+	/*
+	 * Used to test the fillTimeFields() method when the period is
 	 * ReportPeriod.END_OF_SIMULATION
 	 */
 	private static class EndOfSimulationTestReport extends PeriodicReport {
@@ -225,6 +274,15 @@ public class AT_PeriodicReport {
 		assertEquals(2, headerStrings.size());
 		assertEquals("day", headerStrings.get(0));
 		assertEquals("hour", headerStrings.get(1));
+
+		reportHeaderBuilder = ReportHeader.builder();
+		testReport = new TestReport(reportLabel, ReportPeriod.WEEKLY);
+		testReport.addTimeFieldHeaders(reportHeaderBuilder);
+		reportHeader = reportHeaderBuilder.setReportLabel(reportLabel).build();
+		headerStrings = reportHeader.getHeaderStrings();
+		assertEquals(2, headerStrings.size());
+		assertEquals("day", headerStrings.get(0));
+		assertEquals("week", headerStrings.get(1));
 
 		reportHeaderBuilder = ReportHeader.builder();
 		testReport = new TestReport(reportLabel, ReportPeriod.DAILY);
@@ -352,6 +410,63 @@ public class AT_PeriodicReport {
 
 	@Test
 	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
+	public void testFillTimeFields_Weekly() {
+		double simulationEndTime = 21.5;
+
+		List<Plugin> plugins = new ArrayList<>();
+
+		ReportLabel reportLabel = new SimpleReportLabel("report");
+		WeeklyTestReport weeklyTestReport = new WeeklyTestReport(reportLabel, ReportPeriod.WEEKLY);
+
+		plugins.add(Plugin.builder()//
+				.setPluginId(new SimplePluginId("anonymous plugin"))//
+				.setInitializer((pc) -> {
+					pc.addReport(weeklyTestReport::init);
+				})//
+				.build());
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+		// create an agent that will make the engine run for a few days
+		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(simulationEndTime, (c) -> {
+		}));
+
+		TestPluginData testPluginData = pluginBuilder.build();
+		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
+		plugins.add(testPlugin);
+
+		// build and execute the engine
+		TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
+				.addPlugins(plugins)//
+				.build()//
+				.execute();
+
+		// weeks 0 through 4 weeks inclusive
+		Set<Integer> expectedWeeks = new LinkedHashSet<>();
+		Set<Integer> expectedDays = new LinkedHashSet<>();
+		for (int i = 1; i <= 4; i++) {
+			expectedWeeks.add(i);
+			expectedDays.add(i * 7);
+		}
+
+		Set<Integer> actualDays = new LinkedHashSet<>();
+		Set<Integer> actualWeeks = new LinkedHashSet<>();
+		Map<ReportItem, Integer> outputItems = testOutputConsumer.getOutputItemMap(ReportItem.class);
+		for (ReportItem reportItem : outputItems.keySet()) {
+			Integer count = outputItems.get(reportItem);
+			assertEquals(1, count);
+			int day = Integer.parseInt(reportItem.getValue(0));
+			actualDays.add(day);
+			int week = Integer.parseInt(reportItem.getValue(1));
+			actualWeeks.add(week);
+		}
+
+		assertEquals(expectedDays, actualDays);
+		assertEquals(expectedWeeks, actualWeeks);
+	}
+
+	@Test
+	@UnitTestMethod(target = PeriodicReport.class, name = "init", args = { ReportContext.class })
 	public void testFillTimeFields_EndOfSimulation() {
 		double simulationEndTime = 3.6;
 
@@ -459,6 +574,14 @@ public class AT_PeriodicReport {
 				}
 				expectedTimes.add(simulationEndTime);
 
+				break;
+			case WEEKLY:
+				int lastWeek = (int) (simulationEndTime / 7);
+				for (int i = 1; i <= lastWeek; i++) {
+					double time = i * 7;
+					expectedTimes.add(time);
+				}
+				expectedTimes.add(simulationEndTime);
 				break;
 			default:
 				throw new RuntimeException("unhandled report period " + reportPeriod);

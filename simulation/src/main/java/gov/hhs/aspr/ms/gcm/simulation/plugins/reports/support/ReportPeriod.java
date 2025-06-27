@@ -5,7 +5,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
  * periodicity of the report.
  */
 public enum ReportPeriod {
-	HOURLY, DAILY, END_OF_SIMULATION;
+	HOURLY, DAILY, WEEKLY, END_OF_SIMULATION;
 	
 	public ReportPeriod next() {
 		int index = (ordinal()+1) % ReportPeriod.values().length;

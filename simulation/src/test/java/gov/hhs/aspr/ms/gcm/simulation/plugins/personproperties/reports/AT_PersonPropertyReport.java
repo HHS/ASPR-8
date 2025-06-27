@@ -427,6 +427,9 @@ public class AT_PersonPropertyReport {
 		case HOURLY:
 			expectedReportHeader = REPORT_HOURLY_HEADER;
 			break;
+		case WEEKLY:
+			expectedReportHeader = REPORT_WEEKLY_HEADER;
+			break;
 		default:
 			throw new RuntimeException("unhandled case " + reportPeriod);
 
@@ -1159,6 +1162,8 @@ public class AT_PersonPropertyReport {
 	private static final ReportLabel REPORT_LABEL = new SimpleReportLabel("report label");
 
 	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("region")
+			.add("property").add("value").add("person_count").build();
+	private static final ReportHeader REPORT_WEEKLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("week").add("region")
 			.add("property").add("value").add("person_count").build();
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("region")
 			.add("property").add("value").add("person_count").build();
