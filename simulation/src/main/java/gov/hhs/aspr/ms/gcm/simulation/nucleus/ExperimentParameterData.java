@@ -170,61 +170,38 @@ public final class ExperimentParameterData {
 			locked = data.locked;
 		}
 
+		/**
+		 * Standard implementation consistent with the {@link #equals(Object)} method
+		 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (continueFromProgressLog ? 1231 : 1237);
-			result = prime * result + ((experimentProgressLogPath == null) ? 0 : experimentProgressLogPath.hashCode());
-			result = prime * result + ((explicitScenarioIds == null) ? 0 : explicitScenarioIds.hashCode());
-			result = prime * result + (haltOnException ? 1231 : 1237);
-			result = prime * result + ((simulationHaltTime == null) ? 0 : simulationHaltTime.hashCode());
-			result = prime * result + (stateRecordingIsScheduled ? 1231 : 1237);
-			result = prime * result + threadCount;
-			return result;
+			return Objects.hash(threadCount, stateRecordingIsScheduled, simulationHaltTime, haltOnException,
+					experimentProgressLogPath, continueFromProgressLog, explicitScenarioIds);
 		}
 
+		/**
+		 * Two {@link Data} instances are equal if and only if
+		 * their inputs are equal.
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (continueFromProgressLog != other.continueFromProgressLog) {
-				return false;
-			}
-			if (experimentProgressLogPath == null) {
-				if (other.experimentProgressLogPath != null) {
-					return false;
-				}
-			} else if (!experimentProgressLogPath.equals(other.experimentProgressLogPath)) {
-				return false;
-			}
-			if (!explicitScenarioIds.equals(other.explicitScenarioIds)) {
-				return false;
-			}
-			if (haltOnException != other.haltOnException) {
-				return false;
-			}
-			if (simulationHaltTime == null) {
-				if (other.simulationHaltTime != null) {
-					return false;
-				}
-			} else if (!simulationHaltTime.equals(other.simulationHaltTime)) {
-				return false;
-			}
-			if (stateRecordingIsScheduled != other.stateRecordingIsScheduled) {
-				return false;
-			}
-			if (threadCount != other.threadCount) {
-				return false;
-			}
-			return true;
+			return threadCount == other.threadCount && stateRecordingIsScheduled == other.stateRecordingIsScheduled
+					&& Objects.equals(simulationHaltTime, other.simulationHaltTime)
+					&& haltOnException == other.haltOnException
+					&& Objects.equals(experimentProgressLogPath, other.experimentProgressLogPath)
+					&& continueFromProgressLog == other.continueFromProgressLog
+					&& Objects.equals(explicitScenarioIds, other.explicitScenarioIds);
 		}
-
 	}
 
 	/**
@@ -316,11 +293,18 @@ public final class ExperimentParameterData {
 		return StandardVersioning.checkVersionSupported(version);
 	}
 	
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link ExperimentParameterData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

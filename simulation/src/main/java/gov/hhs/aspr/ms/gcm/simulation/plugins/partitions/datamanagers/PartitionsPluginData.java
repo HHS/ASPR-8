@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.datamanagers;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.StandardVersioning;
@@ -76,29 +78,31 @@ public final class PartitionsPluginData implements PluginData {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + (supportRunContinuity ? 1231 : 1237);
-			return result;
+			return Objects.hash(supportRunContinuity);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (supportRunContinuity != other.supportRunContinuity) {
-				return false;
-			}
-			return true;
+			return supportRunContinuity == other.supportRunContinuity;
 		}
 
 		@Override
@@ -157,27 +161,31 @@ public final class PartitionsPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link PartitionsPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof PartitionsPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		PartitionsPluginData other = (PartitionsPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

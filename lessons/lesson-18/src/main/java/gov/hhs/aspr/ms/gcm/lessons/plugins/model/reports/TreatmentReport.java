@@ -33,6 +33,7 @@ public final class TreatmentReport {
 		 * ordered key values in the multikeys.
 		 */
 		ReportHeader reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
 				.add("immune")//
 				.add("infected")//
 				.add("treated_with_antiviral")//

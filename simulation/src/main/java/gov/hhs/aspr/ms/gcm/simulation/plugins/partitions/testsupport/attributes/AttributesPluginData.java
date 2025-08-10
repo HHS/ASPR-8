@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
@@ -40,39 +41,32 @@ public class AttributesPluginData implements PluginData {
 			}
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((attributeDefinitions == null) ? 0 : attributeDefinitions.hashCode());
-			result = prime * result + ((personAttributeValues == null) ? 0 : personAttributeValues.hashCode());
-			return result;
+			return Objects.hash(attributeDefinitions, personAttributeValues);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (attributeDefinitions == null) {
-				if (other.attributeDefinitions != null) {
-					return false;
-				}
-			} else if (!attributeDefinitions.equals(other.attributeDefinitions)) {
-				return false;
-			}
-			if (personAttributeValues == null) {
-				if (other.personAttributeValues != null) {
-					return false;
-				}
-			} else if (!personAttributeValues.equals(other.personAttributeValues)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(attributeDefinitions, other.attributeDefinitions)
+					&& Objects.equals(personAttributeValues, other.personAttributeValues);
 		}
 
 		@Override
@@ -305,31 +299,31 @@ public class AttributesPluginData implements PluginData {
 		return new Builder(data);
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+	 * Two {@link AttributesPluginData} instances are equal if and only if
+	 * their inputs are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof AttributesPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		AttributesPluginData other = (AttributesPluginData) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

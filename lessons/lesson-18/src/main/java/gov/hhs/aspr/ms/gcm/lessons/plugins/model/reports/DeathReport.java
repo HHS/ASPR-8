@@ -29,6 +29,7 @@ public final class DeathReport {
 		reportContext.subscribeToSimulationClose(this::report);
 
 		ReportHeader reportHeader = ReportHeader.builder()//
+				.setReportLabel(reportLabel)//
 				.add("region")//
 				.add("pop_size")//
 				.add("deaths")//

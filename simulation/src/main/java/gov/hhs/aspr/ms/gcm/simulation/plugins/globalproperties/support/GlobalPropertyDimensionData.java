@@ -180,27 +180,30 @@ public final class GlobalPropertyDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+        /**
+         * Standard implementation consistent with the {@link #equals(Object)} method
+         */
         @Override
         public int hashCode() {
             return Objects.hash(levelNames, values, globalPropertyId, assignmentTime);
         }
 
+        /**
+         * Two {@link Data} instances are equal if and only if
+         * their inputs are equal.
+         */
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+            if (this == obj)
                 return true;
-            }
-            if (obj == null) {
+            if (obj == null)
                 return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (getClass() != obj.getClass())
                 return false;
-            }
             Data other = (Data) obj;
-            return Objects.equals(levelNames, other.levelNames)
-                    && Objects.equals(values, other.values)
+            return Objects.equals(levelNames, other.levelNames) && Objects.equals(values, other.values)
                     && Objects.equals(globalPropertyId, other.globalPropertyId)
-                    && assignmentTime == other.assignmentTime;
+                    && Double.doubleToLongBits(assignmentTime) == Double.doubleToLongBits(other.assignmentTime);
         }
 
         @Override
@@ -280,22 +283,26 @@ public final class GlobalPropertyDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
         return Objects.hash(data);
     }
 
+    /**
+     * Two {@link GlobalPropertyDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         GlobalPropertyDimensionData other = (GlobalPropertyDimensionData) obj;
         return Objects.equals(data, other.data);
     }

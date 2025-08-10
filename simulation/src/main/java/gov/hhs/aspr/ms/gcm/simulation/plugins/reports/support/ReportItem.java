@@ -2,6 +2,7 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.NotThreadSafe;
@@ -117,39 +118,31 @@ public final class ReportItem {
 			locked = data.locked;
 		}
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-			result = prime * result + ((values == null) ? 0 : values.hashCode());
-			return result;
+			return Objects.hash(reportLabel, values);
 		}
 
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-			if (reportLabel == null) {
-				if (other.reportLabel != null) {
-					return false;
-				}
-			} else if (!reportLabel.equals(other.reportLabel)) {
-				return false;
-			}
-			if (values == null) {
-				if (other.values != null) {
-					return false;
-				}
-			} else if (!values.equals(other.values)) {
-				return false;
-			}
-			return true;
+			return Objects.equals(reportLabel, other.reportLabel) && Objects.equals(values, other.values);
 		}
 	}
 
@@ -211,35 +204,31 @@ public final class ReportItem {
 		return data.values.toString();
 	}
 
+	/**
+	 * Standard implementation consistent with the {@link #equals(Object)} method
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((data == null) ? 0 : data.hashCode());
-		return result;
+		return Objects.hash(data);
 	}
 
 	/**
-	 * Two report items are equal iff and only if their ids, headers and ordered
-	 * values are equal.
+	 * Two {@link ReportItem} instances are equal if and only if
+	 * their inputs are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof ReportItem)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		ReportItem other = (ReportItem) obj;
-		if (data == null) {
-			if (other.data != null) {
-				return false;
-			}
-		} else if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	public Builder toBuilder() {

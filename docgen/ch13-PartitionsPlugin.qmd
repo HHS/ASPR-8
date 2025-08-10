@@ -1,0 +1,357 @@
+# Partitions Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+A common problem that arises during modeling is the need to select (sample) people based on complex criteria while the people are evolving relative to those criteria. For example, a model may need to select people to vaccinate while the selection policies evolve, people are changing their status relative to vaccination and the avalibilty of vaccine is waxing and waning. Another common example is in infectious contact management, where contact rules, tranmission probabilities and mitigation strategies are all changing over time. The resultant code in the relevant actors and data managers can be complex and have unexpected run time and memory allocation consequences.
+
+The partitions plugin provides a robust general solution to these requirements by introducing the partition. A partition represents a subset of the population that meets various filtering criteria and is further subdivided into a cellular structure of sub-populations within that partition. Partitions remain current as people change their characteristics.
+
+#### An example: {.unnumbered}
+
+A partition could represent all people who are have been vaccinated in the last 20 years and who have not yet received a booster. The partition could be further subdivided by regional associations, work status or any other relevant person-related characteristic. An actor using the partition could then select people from the partition who live in a certain region and are employed. Person membership in the partition and the person's location in the cells of the partition are maintained by the plugin and the client actor needs to simply specify the partition's parameters once.
+
+## Plugin Data Initialization
+
+Partitions are built dynamically by actors and data managers. While serialization of simulation state exceeds the scope of this chapter, the PartitionsPluginData class contains a single argument to support run-continuity between related experiment executions. The default policy is to not support run continuity and should only be set to true when the need for run continuity exists.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the PartitionsDataManager that is initialized with the PartitionsPluginData. The plugin has fixed dependencies on the People plugin and the Stochastic plugin. Unlike other plugins, its dependencies are dynamic and provided by the modeler.
+
+Plugins form a directed, acyclic graph (**DAG**) via their plugin dependencies and these are usually defined the by the plugins themselves and don't require more inputs from the modeler. We can think of the plugins as being arranged in the downward facing tree with the GCM-defined plugins at the top and modeler defined plugins toward the bottom. Although it is the plugins that are arranged in a DAG, it is really the data managers that require this DAG pattern. As models grow complex, the issue of staleness becomes a source of hidden error and can be difficult to address without some amount of formalism. Consider two data managers, A and B with B having logic that depends on the information contained in A. Now suppose we add a person to the simulation and B processes the addition **before** A. The dependent logic will likely not work and might throw an exception. That would be bad enough, but worse yet it might not throw an exception and instead just not work correctly. GCM uses the DAG to ensure that events (recall that all mutations are treated as events) are resolved in the correct order so that no staleness occurs.
+
+The partitions data manager is responsible for passing events to the partitions so that the partitions can properly reflect the current state of the model. Thus if a partition depends on a data manager in plugin X and X is further down in the DAG than the partitions data manger, then the state of X may not be fresh when the partition is updating. This forces us to move the partitions data manager downward in the DAG to a point below the various data managers used by its partitions.
+
+We accomplish this by adding plugin dependencies to the partitions plugin: we are pushing the plugin downward in the DAG. If we fail to do this, GCM will notice when a partition is accessing (via the partition data managers context) a data manager that is downward in the DAG and will throw a DATA_MANAGER_ACCESS_VIOLATION contract exception.
+
+## Data Manager
+
+The PartitionsDataManager provides various operations with partitions. The data manager provides public methods that:
+
+-   Add partitions
+-   Remove partitions
+-   Provide various queries about the state of partitions
+-   Allow random sampling of people from partitions
+
+Partitions are referenced by a client-assigned id and are maintained by the data manager. Each partition is composed of a multi-layered filter and zero to many labelers. A labeler is a mechanism for labeling a person based on that person's characteristics. The labels form the dimensions of the cellular structure of the partition. For example, a labeler could label a person based on their integer age, but convert that age into labels such as "CHILD", "ADULT" AND "SENIOR". Labelers can span multiple personal charactertics such as combining regions with ages. For example, the labels might be "EASTERN_SHOOL_AGE_CHILDREN" or "WESTERN_SENIORS", etc.
+
+## Example Code (Lesson 20)
+
+Example_20.java shows the use of the partitions plugin. In it we will examine
+
+-   The formation of partitions
+-   The sampling of partitions
+
+The example includes seven plugins:
+
+-   People plugin -- (GCM core plugin) used to manage people
+-   Person properties plugin-- (GCM core plugin) used to decorate properties onto people
+-   Global properties plugin-- (GCM core plugin) used to store policies and initial conditions
+-   Stochastics plugin -- (GCM core plugin) used to generate random numbers used in various decisions
+-   Regions Plugin-- (GCM core plugin) supports the person properties plugin
+-   Partitions Plugin - (GCM core plugin) used for managing partitions
+-   Model plugin -- (local plugin) used to introduce three actors that will:
+    -   Load the population
+    -   Manage infectious contacts
+    -   Manage vaccinations
+
+## Model
+
+The example's model represents a disease that is preventable through vaccination. A small number of people at the start of the simulation are infected and the rest are susceptible. Vaccination is limited to uninfected adults and three vaccinations are needed to confer full immunity. There is 30 day delay between vaccine doses. The disease is transmitted at random from the infected to the susceptible, there is no incubation period and infectiousness lasts from 3 to 12 days. Vaccine supply is unlimited, but the vaccination rate is fixed with vaccine being assigned using lottery assignment: Older adults and those with the least vaccine protection are given a statistical preference.
+
+## Model Execution
+
+The example's execution is shown in @lst-partitions_plugin_example_20_execute
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_example_20_execute$code_cap
+#| code: !expr fig$partitions_plugin_example_20_execute$code
+#| echo: true
+```
+
+There are several fixed global properties, @lst-partitions_plugin_global_properties :
+
+-   VACCINATOR_TYPE -- the type of vaccinator used by the model
+-   VACCINATIONS_PER_DAY -- the number of vaccinations per day allowed
+-   TRANSMISSION_PROBABILTY -- the base probabilty of disease transmission per infectious contact
+-   INFECTIOUS_CONTACT_RATE -- the number of potentially infectious contacts per day per person
+-   MINIMUM_INFECTIOUS_PERIOD -- then minimum number of days that a person is infectious
+-   MAXIMUM_INFECTIOUS_PERIOD -- the maximum number of days that a person is infectious
+-   INITIAL_INFECTION_COUNT -- the number of people who are infectious at the begining of the simulation
+-   INTER_VACCINATION_DELAY_TIME -- the number of days required between a peson's vaccinations
+-   POPULATION_SIZE -- the initial size of the population
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_global_properties$code_cap
+#| code: !expr fig$partitions_plugin_global_properties$code
+#| echo: true
+```
+
+The person properties plugin contains four properties, @lst-partitions_plugin_person_properties:
+
+-   AGE -- the integer age of a person
+-   WAITING_FOR_NEXT_DOSE -- Boolean indicating that it is too soon to administer another dose of the vaccine
+-   VACCINATION_COUNT -- the number or vaccinations received
+-   DISEASE_STATE -- the state of the disease: SUSCEPTIBLE, INFECTIOUS or RECOVERED
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_person_properties$code_cap
+#| code: !expr fig$partitions_plugin_person_properties$code
+#| echo: true
+```
+
+The regions plugin contains three regions that will be randomly assigned to people. It exists to fulfill a dependency of the person properties plugin. The stochastics and people plugins are similarly minimal.
+
+The partitions plugin is initialized in @lst-partitions_plugin_partitions_init. It requires dependencies on those plugins that will be used to calculate partition filters and labelers. This runs counter to intuition since the model plugin (via its actors) is using the partitions plugin. However, the partitions data manager needs to keep the partitions current with the state of people. In the example model, all partitions use person properties, so the person properties plugin must process events before the partitions plugin.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_partitions_init$code_cap
+#| code: !expr fig$partitions_plugin_partitions_init$code
+#| echo: true
+```
+
+## Experiment dimensions
+
+There are no experiment dimensions in this example with a single scenario being executed.
+
+## The Actors
+
+### Population Loader
+
+The population loader adds 10,000 people to the simulation in @lst-partitions_plugin_population_loader. Each person is assigned a randomly chosen region. All person properties are left at default value except for AGE which is generated randomly.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_population_loader$code_cap
+#| code: !expr fig$partitions_plugin_population_loader$code
+#| echo: true
+```
+
+### Contact Manager
+
+The ContactManager actor, @lst-partitions_plugin_contact_manager_init, schedules infectious contacts between infected people and the susceptible population. On its initialization, it establishes various parameters from the global variables and schedules the initial infections. It uses a simple partition configured in its default state. It has no filter and no labelers, so it will include all people in the simulation. It is used to select random people for potential infectious contacts and is somewhat more efficient than storing a list of all people locally.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_contact_manager_init$code_cap
+#| code: !expr fig$partitions_plugin_contact_manager_init$code
+#| echo: true
+```
+
+Infection of a person, @lst-partitions_plugin_contact_manager_infect_person, results in the immediate scheduling of infectious contacts. The person is infectious for 3 to 12 days and will have 2 contacts per day. Each contact has a base 15% probability of infecting the contacted person, @lst-partitions_plugin_contact_manager_infectious_contact. Susceptible people who have been previously vaccinated have a reduced chance of contracting the disease. Note that the partition is used to select the contacted person and that the infectious person is excluded from contact since a person cannot contact themselves.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_contact_manager_infect_person$code_cap
+#| code: !expr fig$partitions_plugin_contact_manager_infect_person$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_contact_manager_infectious_contact$code_cap
+#| code: !expr fig$partitions_plugin_contact_manager_infectious_contact$code
+#| echo: true
+```
+
+### Vaccinator Manager
+
+This example contains three versions of the vaccinator actor that demonstrate an evolving solution to person selection. The vaccine manager, @lst-partitions_plugin_vaccine_manager, uses the global property,VACCINATOR_TYPE, to create an instance of the vaccinator actor. The global property is set to the partition vaccinator and the remaining two possibilities are left for reader inspection.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_vaccine_manager$code_cap
+#| code: !expr fig$partitions_plugin_vaccine_manager$code
+#| echo: true
+```
+
+### Inspection Vaccinator
+
+The inspection vaccinator represents the most obvious approach to finding the next person to vaccinate. It initializes, @lst-partitions_plugin_inspection_init, and immediately starts vaccinating the population.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_inspection_init$code_cap
+#| code: !expr fig$partitions_plugin_inspection_init$code
+#| echo: true
+```
+
+Each vaccine attempt repeats the following steps, @lst-partitions_plugin_inspection_vaccination:
+
+-   Gather the list of all people
+
+-   Build data structures to hold those people in separate groups aligned to age and vaccination status priorities
+
+-   Loop through the population, selecting people who:
+
+    -   Are adults
+    -   Are not infectious or recovered
+    -   Have fewer that 3 vaccinations
+    -   Are not the in post-vaccination 30 day waiting period
+
+-   Assign each selected person to an age/vaccination count category
+
+-   Note if there are people who will need vaccination in the future after the waiting period is over
+
+-   Select a category based on the weight, @lst-partitions_plugin_inspection_weighing, of the category and the number of people who are associated with the category
+
+-   Select a person at random from the selected category
+
+-   If a person was selected or a future vaccination will be needed, choose to continue the vaccination process
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_inspection_vaccination$code_cap
+#| code: !expr fig$partitions_plugin_inspection_vaccination$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_inspection_weighing$code_cap
+#| code: !expr fig$partitions_plugin_inspection_weighing$code
+#| echo: true
+```
+
+While this process is fairly straight forward, it does involve fairly complex and tricky calculations. Worse yet, it is extremely repetitive and does not scale well to realistic population sizes. It is orders of magnitude slower than the next two approaches.
+
+### Event Vaccinator
+
+The event vaccinator transforms the inspection vaccinator's approach by retaining the category organizational structures and using the event system to maintain the lists of eligible people. It initializes, @lst-partitions_plugin_event_init, by building the sub-populations of eligible people and subscribing to all events that may alter those populations.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_event_init$code_cap
+#| code: !expr fig$partitions_plugin_event_init$code
+#| echo: true
+```
+
+The vaccination process is very similar to the inspection-based method, but there is no recalculation of the sub-populations, @lst-partitions_plugin_event_vaccinate. Instead, the event-based approach subscribes to all person property updates, @lst-partitions_plugin_event_handle_property_update , and processes each update by:
+
+-   Removing the relevant person from the sub-populations
+-   Filtering out people who :
+    -   Are not susceptible
+    -   Are not adults
+    -   Are waiting from the last dose
+    -   Already have 3 vaccinations
+-   Adding the person back into the sub-populations. Note the person may have moved from one sub-population to another.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_event_vaccinate$code_cap
+#| code: !expr fig$partitions_plugin_event_vaccinate$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_event_handle_property_update$code_cap
+#| code: !expr fig$partitions_plugin_event_handle_property_update$code
+#| echo: true
+```
+
+Some care must be given to properly terminating the vaccination process. When a vaccination attempt is made and there is no eligible candidate, no new attempt is scheduled. Instead, the vaccinator relies on knowing that a new candidate will appear only when a person has ended their post-vaccination waiting period. To accomplish this, @lst-partitions_plugin_event_end_wait, the vaccinator uses a plan id for vaccination plans. When it processes the end of the waiting period for a person it looks to the simulation and determines whether there is a future plan to vaccinate. If no such plan exists, it immediately vaccinates the person and re-starts the vaccination process.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_event_end_wait$code_cap
+#| code: !expr fig$partitions_plugin_event_end_wait$code
+#| echo: true
+```
+
+The performance of the code is multiple orders of magnitude better than the inspection approach. However, there are a few drawbacks:
+
+-   The code is more complex and is more difficult to get right. Edge cases abound.
+-   It still relies on list/map/set based data structures which can be slow and use too much memory.
+-   If the selection criteria were to become more complex or if the actor needs to select people from subsets of the eligible people for special purposes as occurs in more realistic use cases, a great deal of effort would have to expended to ensure correctly functioning code.
+
+### Partition Vaccinator
+
+The partition-vaccinator improves on the event-vaccinator by using partitions. Internally, the partitions are performing similar event-triggered updates of the sub-populations. However, their approach is more sophisticated:
+
+-   Supports complex filtering
+-   Allows for categorization of data via labels
+-   Supports multi-dimensional labeling of the filtered population
+-   Supports nuanced sampling of the population that can be aligned to label based subsets
+
+The vaccinator initializes, @lst-partitions_plugin_partition_init, by creating partitions that will manage the data structures and subscribe to the relevant events. It then proceeds with vaccination planning as in the previous versions.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_partition_init$code_cap
+#| code: !expr fig$partitions_plugin_partition_init$code
+#| echo: true
+```
+
+The vaccinator uses two partitions to manage vaccination, @lst-partitions_plugin_partition_create_partitions. The first partition is used to select currently eligible people and the second covers people who may become eligible in the future and is used to determine if vaccination of the population is complete.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_partition_create_partitions$code_cap
+#| code: !expr fig$partitions_plugin_partition_create_partitions$code
+#| echo: true
+```
+
+The first step in this process is to create the filter that will pass only eligible people. Filters are provided as extensions of the Filter.java class in the partitions plugin. The plugin contains base filter implementations for the logical operators of AND, OR, NOT, TRUE, and FALSE. Nearly all plugins provide more refined filters via the plugin's support package. In the example code, we create four filters that select:
+
+-   Adults
+-   People who are susceptible
+-   People who have received fewer that 3 vaccinations
+-   People who have not been recently vaccinated
+
+All these filters are based on person properties, so we use the PersonPropertyFilter class provided by the person properties plugin. We combine the filters using the AND operator native to all filters.
+
+We need to select people not only on their membership in the partition, but also on their personal properties, preferring older people and those who have had fewer vaccinations. Thus we will be using weighted selection and will use labelers to assign weight to the cells in the partition. The nine cells are formed from the combinations of :
+
+-   ADULT_18_44, ADULT_45_64, SENIOR
+
+-   VACCINATION_COUNT = 0, 1, 2
+
+The two labelers will use the FunctionalPersonPropertyLabeler class to specify the transformation of values into labels. Note that the age labeler is converting an integer age value into an AgeGroup while the vaccination count labeler is simply returning the vaccination count. The resulting partition is formed from the filter and the two labelers and is added to the partitions data manager under the 'currentlyEligibleKey' key value. This partition will be used to select a new person to vaccinate each time a vaccination comes due.
+
+The next partition uses a reduced filter that allows for people who have been recently vaccinated but are not fully vaccinated. It does not require any labelers since we will use this partition only to determine if vaccinations should continue to be scheduled.
+
+The vaccination process, @lst-partitions_plugin_partition_vaccinate, greatly simplifies the previous designs. The decision to continue vaccination is based on the potentially eligible population containing at least one person. Selection of a person from the currently eligible population uses a PartitionSampler, which specifies how the partition is to perform the sample. In this case we are only providing the weighting function that assigns a weighting value to each of the nine categories. Other capabilities of the PartitionSampler include:
+
+-   Excluding a particular person -- useful for contact management
+-   Limiting sampling to a constrained portion of the cells that compose the partition
+-   Selecting a specific random number generator for the sampling process
+
+The resulting code is easier to refactor, less error prone and executes much faster with far less memory than the previous implementations. Cells in the partition are dynamically allocated to multiple implementations that can approach 1.3 bits per person in the population while maintaining O(ln(n) ) performance for sampling.
+
+The weight function used in the sampler now takes in a label set for each cell in the partition. It gets the labels (AgeGroup and vaccine count) from the label set and proceeds to calculate a weight for that cell similar to the other vaccinator implementations.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$partitions_plugin_partition_vaccinate$code_cap
+#| code: !expr fig$partitions_plugin_partition_vaccinate$code
+#| echo: true
+```
+
+## Inspecting the output
+
+### Disease State Report
+
+The disease state report, @fig-partitions_plugin_output, records the number of people having various vaccine counts, disease state and age grouping at the end of the simulation. The results show that the vaccination rate is not sufficient to prevent the majority of infections, but does reflect vaccination eligibility and prioritization rules. The results here are for the partition vaccinator, but the results for the other vaccinators are similar. Since each implementation has subtle ordering differences when choosing people to vaccinate, the results vary by amounts that would correspond to changes in the stochastic seed value.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$partitions_plugin_output$code_cap
+#| label: fig-partitions_plugin_output
+options(knitr.kable.NA = '')
+metadata$partitions_plugin_output$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```

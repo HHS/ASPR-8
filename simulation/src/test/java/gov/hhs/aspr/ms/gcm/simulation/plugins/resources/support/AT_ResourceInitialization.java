@@ -60,6 +60,12 @@ public class AT_ResourceInitialization {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8342493324811391268L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			ResourceInitialization resourceInitialization = getRandomResourceInitialization(randomGenerator.nextLong());
+			assertFalse(resourceInitialization.equals(new Object()));
+		}
+
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
 			ResourceInitialization resourceInitialization = getRandomResourceInitialization(randomGenerator.nextLong());
@@ -77,7 +83,8 @@ public class AT_ResourceInitialization {
 			long seed = randomGenerator.nextLong();
 			ResourceInitialization resourceInitialization1 = getRandomResourceInitialization(seed);
 			ResourceInitialization resourceInitialization2 = getRandomResourceInitialization(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(resourceInitialization1 == resourceInitialization2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(resourceInitialization1.equals(resourceInitialization2));
 				assertTrue(resourceInitialization1.equals(resourceInitialization2));
 			}

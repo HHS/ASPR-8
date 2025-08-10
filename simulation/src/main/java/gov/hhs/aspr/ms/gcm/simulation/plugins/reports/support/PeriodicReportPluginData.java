@@ -1,5 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.reports.support;
 
+import java.util.Objects;
+
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.PluginDataBuilder;
 import gov.hhs.aspr.ms.util.errors.ContractException;
@@ -28,35 +30,31 @@ public abstract class PeriodicReportPluginData implements PluginData {
             reportPeriod = data.reportPeriod;
         }
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((reportLabel == null) ? 0 : reportLabel.hashCode());
-            result = prime * result + ((reportPeriod == null) ? 0 : reportPeriod.hashCode());
-            return result;
+            return Objects.hash(reportLabel, reportPeriod);
         }
 
+        /**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof Data)) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             Data other = (Data) obj;
-            if (reportLabel == null) {
-                if (other.reportLabel != null) {
-                    return false;
-                }
-            } else if (!reportLabel.equals(other.reportLabel)) {
-                return false;
-            }
-            if (reportPeriod != other.reportPeriod) {
-                return false;
-            }
-            return true;
+            return Objects.equals(reportLabel, other.reportLabel) && reportPeriod == other.reportPeriod;
         }
 
         @Override
@@ -129,30 +127,30 @@ public abstract class PeriodicReportPluginData implements PluginData {
         return data.reportPeriod;
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+        return Objects.hash(data);
     }
 
+    /**
+     * Two {@link PeriodicReportPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PeriodicReportPluginData)) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         PeriodicReportPluginData other = (PeriodicReportPluginData) obj;
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(data, other.data);
     }
 }

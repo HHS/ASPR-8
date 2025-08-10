@@ -219,7 +219,7 @@ public final class AT_PeoplePluginData {
 				.addPersonRange(new PersonRange(12, 15))//
 				.addPersonRange(new PersonRange(3, 8))//
 				.addPersonRange(new PersonRange(13, 18))//
-				.addPersonRange(new PersonRange(20, 22));//				
+				.addPersonRange(new PersonRange(20, 22));//
 		assertEquals(23, builder.build().getPersonCount());
 
 		builder.setPersonCount(4000);
@@ -353,7 +353,6 @@ public final class AT_PeoplePluginData {
 			high = low + randomGenerator.nextInt(10) + 1;
 			builder.addPersonRange(new PersonRange(low, high));
 			low = high + 1;
-
 		}
 
 		builder.setAssignmentTime(randomGenerator.nextDouble() * 100 - 50);
@@ -389,6 +388,12 @@ public final class AT_PeoplePluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821493557306870L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PeoplePluginData pluginData = getRandomPeoplePluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
+		}
+
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
 			PeoplePluginData pluginData = getRandomPeoplePluginData(randomGenerator.nextLong());
@@ -406,7 +411,8 @@ public final class AT_PeoplePluginData {
 			long seed = randomGenerator.nextLong();
 			PeoplePluginData pluginData1 = getRandomPeoplePluginData(seed);
 			PeoplePluginData pluginData2 = getRandomPeoplePluginData(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {				
 				assertTrue(pluginData1.equals(pluginData2));
 				assertTrue(pluginData2.equals(pluginData1));
 			}
@@ -443,7 +449,8 @@ public final class AT_PeoplePluginData {
 			PeoplePluginData pluginData = getRandomPeoplePluginData(randomGenerator.nextLong());
 			hashCodes.add(pluginData.hashCode());
 		}
-		assertTrue(hashCodes.size() > 95);
+		
+		assertEquals(100,hashCodes.size());
 	}
 
 	@Test

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.math3.util.FastMath;
@@ -1121,127 +1122,49 @@ public final class MaterialsPluginData implements PluginData {
 			locked = data.locked;
 		}
 
-		/*
-		 * This is not a boiler plate hash code contract. See notes below
-		 */
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-
-			result = prime * result + batchAmounts.hashCode();
-			result = prime * result + batchIds.hashCode();
-			result = prime * result + batchMaterials.hashCode();
-			result = prime * result + materialsProducerInventoryBatches.hashCode();
-			result = prime * result + batchPropertyDefinitions.hashCode();
-			result = prime * result + materialIds.hashCode();
-			result = prime * result + materialsProducerIds.hashCode();
-			result = prime * result + materialsProducerPropertyDefinitions.hashCode();
-			result = prime * result + stageBatches.hashCode();
-			result = prime * result + stageIds.hashCode();
-			result = prime * result + materialsProducerStages.hashCode();
-			result = prime * result + stageOffers.hashCode();
-			result = prime * result + nextBatchRecordId;
-			result = prime * result + nextStageRecordId;
-			result = prime * result + batchPropertyValues.hashCode();
-			result = prime * result + materialsProducerPropertyValues.hashCode();
-			result = prime * result + materialsProducerResourceLevels.hashCode();
-			return result;
+			return Objects.hash(materialsProducerIds, materialIds, batchPropertyDefinitions,
+					materialsProducerPropertyDefinitions, materialsProducerPropertyValues,
+					materialsProducerResourceLevels, batchIds, stageIds, batchPropertyValues, stageOffers,
+					batchMaterials, batchAmounts, materialsProducerStages, stageBatches,
+					materialsProducerInventoryBatches, nextBatchRecordId, nextStageRecordId);
 		}
 
-		/*
-		 * This is not a boiler plate equals contract. See notes below
-		 */
+		/**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
 		@Override
 		public boolean equals(Object obj) {
-
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof Data)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			Data other = (Data) obj;
-
-			/*
-			 * We exclude the following fields:
-			 *
-			 * emptyBatchPropertyValues -- just an empty list
-			 *
-			 * emptyMaterialsProducerPropertyValuesMap -- just an empty map
-			 *
-			 * locked -- should be locked when equals is invoked
-			 */
-			// most of the fields use normal comparison
-
-			if (!batchAmounts.equals(other.batchAmounts)) {
-				return false;
-			}
-
-			if (!batchIds.equals(other.batchIds)) {
-				return false;
-			}
-
-			if (!batchMaterials.equals(other.batchMaterials)) {
-				return false;
-			}
-
-			if (!materialsProducerInventoryBatches.equals(other.materialsProducerInventoryBatches)) {
-				return false;
-			}
-
-			if (!batchPropertyDefinitions.equals(other.batchPropertyDefinitions)) {
-				return false;
-			}
-
-			if (!materialIds.equals(other.materialIds)) {
-				return false;
-			}
-
-			if (!materialsProducerIds.equals(other.materialsProducerIds)) {
-				return false;
-			}
-
-			if (!materialsProducerPropertyDefinitions.equals(other.materialsProducerPropertyDefinitions)) {
-				return false;
-			}
-
-			if (!stageBatches.equals(other.stageBatches)) {
-				return false;
-			}
-
-			if (!stageIds.equals(other.stageIds)) {
-				return false;
-			}
-
-			if (!materialsProducerStages.equals(other.materialsProducerStages)) {
-				return false;
-			}
-
-			if (!stageOffers.equals(other.stageOffers)) {
-				return false;
-			}
-
-			if (nextBatchRecordId != other.nextBatchRecordId) {
-				return false;
-			}
-			if (nextStageRecordId != other.nextStageRecordId) {
-				return false;
-			}
-
-			if (!batchPropertyValues.equals(other.batchPropertyValues)) {
-				return false;
-			}
-
-			if (!materialsProducerPropertyValues.equals(other.materialsProducerPropertyValues)) {
-				return false;
-			}
-
-			if (!materialsProducerResourceLevels.equals(other.materialsProducerResourceLevels)) {
-				return false;
-			}
-
-			return true;
+			return Objects.equals(materialsProducerIds, other.materialsProducerIds)
+					&& Objects.equals(materialIds, other.materialIds)
+					&& Objects.equals(batchPropertyDefinitions, other.batchPropertyDefinitions)
+					&& Objects.equals(materialsProducerPropertyDefinitions, other.materialsProducerPropertyDefinitions)
+					&& Objects.equals(materialsProducerPropertyValues, other.materialsProducerPropertyValues)
+					&& Objects.equals(materialsProducerResourceLevels, other.materialsProducerResourceLevels)
+					&& Objects.equals(batchIds, other.batchIds) && Objects.equals(stageIds, other.stageIds)
+					&& Objects.equals(batchPropertyValues, other.batchPropertyValues)
+					&& Objects.equals(stageOffers, other.stageOffers)
+					&& Objects.equals(batchMaterials, other.batchMaterials)
+					&& Objects.equals(batchAmounts, other.batchAmounts)
+					&& Objects.equals(materialsProducerStages, other.materialsProducerStages)
+					&& Objects.equals(stageBatches, other.stageBatches)
+					&& Objects.equals(materialsProducerInventoryBatches, other.materialsProducerInventoryBatches)
+					&& nextBatchRecordId == other.nextBatchRecordId && nextStageRecordId == other.nextStageRecordId;
 		}
 
 		@Override
@@ -1790,27 +1713,31 @@ public final class MaterialsPluginData implements PluginData {
 		return data.nextStageRecordId;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + data.hashCode();
-		return result;
+		return Objects.hash(data);
 	}
 
+	/**
+     * Two {@link MaterialsPluginData} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof MaterialsPluginData)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		MaterialsPluginData other = (MaterialsPluginData) obj;
-		if (!data.equals(other.data)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(data, other.data);
 	}
 
 	@Override

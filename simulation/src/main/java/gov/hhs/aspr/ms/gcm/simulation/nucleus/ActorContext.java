@@ -13,6 +13,7 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * managers to actors. It is supplied by the engine each time it interacts with
  * an actor. Actors are defined by this context. If this context is passed to a
  * method invocation, then that method is an actor method.
+ * 
  */
 public final class ActorContext {
 
@@ -100,6 +101,14 @@ public final class ActorContext {
 	 */
 	public <T extends Event> void subscribe(EventFilter<T> eventFilter, BiConsumer<ActorContext, T> eventConsumer) {
 		simulation.subscribeActorToEventByFilter(eventFilter, eventConsumer);
+	}
+	
+	/**
+	 * Returns true if and only if there are actor or data managers subscribed to
+	 * the given event type.
+	 */
+	public boolean subscribersExist(Class<? extends Event> eventClass) {
+		return simulation.subscribersExistForEvent(eventClass);
 	}
 
 	/**

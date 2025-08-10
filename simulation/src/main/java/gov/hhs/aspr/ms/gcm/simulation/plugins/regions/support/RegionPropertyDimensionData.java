@@ -195,11 +195,18 @@ public final class RegionPropertyDimensionData extends DimensionData {
             locked = data.locked;
         }
 
+		/**
+    	 * Standard implementation consistent with the {@link #equals(Object)} method
+    	 */
         @Override
         public int hashCode() {
             return Objects.hash(levelNames, values, regionId, regionPropertyId);
         }
 
+        /**
+    	 * Two {@link Data} instances are equal if and only if
+    	 * their inputs are equal.
+    	 */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -294,11 +301,18 @@ public final class RegionPropertyDimensionData extends DimensionData {
         return StandardVersioning.checkVersionSupported(version);
     }
 
+    /**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
         return Objects.hash(data);
     }
 
+    /**
+     * Two {@link RegionPropertyDimensionData} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

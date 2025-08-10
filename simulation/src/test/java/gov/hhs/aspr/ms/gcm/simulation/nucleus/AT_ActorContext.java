@@ -12,7 +12,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -74,18 +74,23 @@ public class AT_ActorContext {
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public int hashCode() {
+			return Objects.hash(datumType, value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof DataChangeEvent)) {
+			if (obj == null) {
 				return false;
 			}
-			final DataChangeEvent other = (DataChangeEvent) obj;
-			if ((datumType != other.datumType) || (value != other.value)) {
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			return true;
+			DataChangeEvent other = (DataChangeEvent) obj;
+			return datumType == other.datumType && value == other.value;
 		}
 
 		public DatumType getDatumType() {
@@ -94,15 +99,6 @@ public class AT_ActorContext {
 
 		public int getValue() {
 			return value;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = (prime * result) + ((datumType == null) ? 0 : datumType.hashCode());
-			result = (prime * result) + value;
-			return result;
 		}
 
 		@Override
@@ -1069,154 +1065,75 @@ public class AT_ActorContext {
 		assertEquals(expectedPlans, plans);
 	}
 
-	private static class LocalPluginData implements PluginData {
-
-		public static class Builder implements PluginDataBuilder {
-			@Override
-			public LocalPluginData build() {
-				return new LocalPluginData();
-			}
-		}
-
-		@Override
-		public PluginDataBuilder toBuilder() {
-			return new Builder();
-		}
-	}
-	
-	private static class LocalPluginData2 implements PluginData {
-
-		public static class Builder implements PluginDataBuilder {
-			@Override
-			public LocalPluginData2 build() {
-				return new LocalPluginData2();
-			}
-		}
-
-		@Override
-		public PluginDataBuilder toBuilder() {
-			return new Builder();
-		}
-	}
-
 	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPluginData", args = { Class.class })
-	public void testGetPluginData() {
+	@UnitTestMethod(target = ActorContext.class, name = "subscribersExist", args = { Class.class })
+	public void testSubscribersExist() {
 
-		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
-
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			Optional<LocalPluginData> optional1 = c.getPluginData(LocalPluginData.class);
-			assertTrue(optional1.isPresent());
-			Optional<LocalPluginData2> optional2 = c.getPluginData(LocalPluginData2.class);
-			assertFalse(optional2.isPresent());
-
-		}));
-
-		// build the plugin
-		TestPluginData testPluginData = pluginDataBuilder.build();
-		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
-
-		Plugin localPlugin = Plugin.builder()//
-				.setPluginId(new SimplePluginId("localPlugin"))//
-				.addPluginData(new LocalPluginData())//
-				.build();
-
-		// run the simulation
-		Simulation.builder()//
-				.addPlugin(testPlugin)//
-				.addPlugin(localPlugin)//
-				.build()//
-				.execute();//
-
-		// precondition test: if more than one plugin data object matches the class
-		// reference
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Plugin lp = Plugin.builder()//
-					.setPluginId(new SimplePluginId("localPlugin"))//
-					.addPluginData(new LocalPluginData())//
-					.addPluginData(new LocalPluginData())//
-					.build();
-
-			Simulation.builder()//
-					.addPlugin(lp)//
-					.addPlugin(TestPlugin.getTestPlugin(
-							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-								c.getPluginData(LocalPluginData.class);
-							})).build()))//
-					.build()//
-					.execute();//
-		});
-		assertEquals(NucleusError.AMBIGUOUS_PLUGIN_DATA_CLASS, contractException.getErrorType());
-
-		// precondition test: if the class reference is null
-		contractException = assertThrows(ContractException.class, () -> {
-			Simulation.builder()//
-					.addPlugin(TestPlugin.getTestPlugin(
-							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-								c.getPluginData(null);
-							})).build()))//
-					.build()//
-					.execute();//
-		});
-		assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
-
-	}
-
-	@Test
-	@UnitTestMethod(target = ActorContext.class, name = "getPluginDatas", args = { Class.class })
-	public void testGetPluginDatas() {
 		/*
-		 * Returns the plugin data objects associated with the given class reference
-		 * 
-		 * @throws ContractException {@linkplain NucleusError#NULL_PLUGIN_DATA_CLASS} if
-		 * the class reference is null
+		 * create a simple event filter as a place holder -- all test events will be
+		 * matched
 		 */
+		EventFilter<TestEvent> eventFilter = EventFilter.builder(TestEvent.class)//
+				.build();//
+
 		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
 
-		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-			List<LocalPluginData> localPluginDatas = c.getPluginDatas(LocalPluginData.class);
-			assertNotNull(localPluginDatas);
-			assertEquals(2,localPluginDatas.size());
-			
-			List<LocalPluginData2> localPluginData2s = c.getPluginDatas(LocalPluginData2.class);
-			assertNotNull(localPluginData2s);
-			assertEquals(0,localPluginData2s.size());
-			
-			List<PluginData> pluginDatas = c.getPluginDatas(PluginData.class);
-			assertNotNull(pluginDatas);
-			assertEquals(3,pluginDatas.size());
+		// add the first data actor
 
+		/*
+		 * Have the test resolver show that there are initially no subscribers to test
+		 * events.
+		 */
+
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(0, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
+		}));
+
+		// create an agent and have it subscribe to test events at time 1
+		pluginDataBuilder.addTestActorPlan("subscriber1", new TestActorPlan(1, (c) -> {
+			// subscribe to the event label
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+		}));
+
+		// create an agent and have it subscribe to test events at time 1
+		pluginDataBuilder.addTestActorPlan("subscriber2", new TestActorPlan(1, (c) -> {
+			// subscribe to the event label
+			c.subscribe(eventFilter, (c2, e) -> {
+			});
+		}));
+
+		// show that actor1 now sees that there are subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+
+		// have the subscriber unsubscribe
+		pluginDataBuilder.addTestActorPlan("subscriber1", new TestActorPlan(3, (c) -> {
+			c.unsubscribe(eventFilter);
+		}));
+
+		// show that the observer still sees that there are subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(2, (c) -> {
+			assertTrue(c.subscribersExist(TestEvent.class));
+		}));
+		
+		// have the subscriber2 unsubscribe
+		pluginDataBuilder.addTestActorPlan("subscriber2", new TestActorPlan(3, (c) -> {
+			c.unsubscribe(eventFilter);
+		}));
+
+		// show that the observer sees no subscribers
+		pluginDataBuilder.addTestActorPlan("observer", new TestActorPlan(4, (c) -> {
+			assertFalse(c.subscribersExist(TestEvent.class));
 		}));
 
 		// build the plugin
 		TestPluginData testPluginData = pluginDataBuilder.build();
 		Plugin testPlugin = TestPlugin.getTestPlugin(testPluginData);
 
-		Plugin localPlugin = Plugin.builder()//
-				.setPluginId(new SimplePluginId("localPlugin"))//
-				.addPluginData(new LocalPluginData())//
-				.addPluginData(new LocalPluginData())//
-				.build();
-
-		// run the simulation
-		Simulation.builder()//
-				.addPlugin(testPlugin)//
-				.addPlugin(localPlugin)//
-				.build()//
-				.execute();//
-
-		// precondition test: if the class reference is null
-		ContractException contractException = assertThrows(ContractException.class, () -> {
-			Simulation.builder()//
-					.addPlugin(TestPlugin.getTestPlugin(
-							TestPluginData.builder().addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
-								c.getPluginDatas(null);
-							})).build()))//
-					.build()//
-					.execute();//
-		});
-		assertEquals(NucleusError.NULL_PLUGIN_DATA_CLASS, contractException.getErrorType());
-
+		// build and execute the engine
+		TestSimulation.builder().addPlugin(testPlugin).build().execute();
 	}
+
 }

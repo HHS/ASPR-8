@@ -630,96 +630,45 @@ public class AT_GroupPropertyReportPluginData {
 	@Test
 	@UnitTestMethod(target = GroupPropertyReportPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a GroupPropertyReportPluginData from the same random
-			// inputs
-			GroupPropertyReportPluginData.Builder builder1 = GroupPropertyReportPluginData.builder();
-			GroupPropertyReportPluginData.Builder builder2 = GroupPropertyReportPluginData.builder();
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupPropertyReportPluginData pluginData = getRandomGroupPropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
+		}
 
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupPropertyReportPluginData pluginData = getRandomGroupPropertyReportPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
 
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupPropertyReportPluginData pluginData = getRandomGroupPropertyReportPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPropertyReportPluginData pluginData1 = getRandomGroupPropertyReportPluginData(seed);
+			GroupPropertyReportPluginData pluginData2 = getRandomGroupPropertyReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
 			for (int j = 0; j < 10; j++) {
-				TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId
-						.getRandomTestGroupPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-					builder2.includeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-				} else {
-					builder1.excludeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-					builder2.excludeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			GroupPropertyReportPluginData groupPropertyReportPluginData1 = builder1.build();
-			GroupPropertyReportPluginData groupPropertyReportPluginData2 = builder2.build();
-
-			assertEquals(groupPropertyReportPluginData1, groupPropertyReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the default inclusion
-			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.toBuilder()//
-							.setDefaultInclusion(!defaultInclusion)//
-							.build();
-			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
-
-			// change the report period
-			int ord = reportPeriod.ordinal() + 1;
-			ord = ord % ReportPeriod.values().length;
-			reportPeriod = ReportPeriod.values()[ord];
-			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.toBuilder()//
-							.setReportPeriod(reportPeriod)//
-							.build();
-			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			groupPropertyReportPluginData2 = //
-					groupPropertyReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
-
-			// change an included property id
-			for (GroupTypeId testGroupTypeId : groupPropertyReportPluginData1.getGroupTypeIds()) {
-				if (!groupPropertyReportPluginData1.getIncludedProperties(testGroupTypeId).isEmpty()) {
-					GroupPropertyId testGroupPropertyId = groupPropertyReportPluginData1
-							.getIncludedProperties(testGroupTypeId).iterator().next();
-					groupPropertyReportPluginData2 = //
-							groupPropertyReportPluginData1.toBuilder()//
-									.excludeGroupProperty(testGroupTypeId, testGroupPropertyId)//
-									.build();
-					assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
-				}
-			}
-			// change an excluded property id
-			for (GroupTypeId testGroupTypeId : groupPropertyReportPluginData1.getGroupTypeIds()) {
-				if (!groupPropertyReportPluginData1.getExcludedProperties(testGroupTypeId).isEmpty()) {
-					GroupPropertyId testGroupPropertyId = groupPropertyReportPluginData1
-							.getExcludedProperties(testGroupTypeId).iterator().next();
-					groupPropertyReportPluginData2 = //
-							groupPropertyReportPluginData1.toBuilder()//
-									.includeGroupProperty(testGroupTypeId, testGroupPropertyId)//
-									.build();
-					assertNotEquals(groupPropertyReportPluginData2, groupPropertyReportPluginData1);
-				}
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
 			}
 		}
 
+		// different inputs yield unequal plugin datas
+		Set<GroupPropertyReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPropertyReportPluginData pluginData = getRandomGroupPropertyReportPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -727,60 +676,24 @@ public class AT_GroupPropertyReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a GroupPropertyReportPluginData from the same random
-			// inputs
-			GroupPropertyReportPluginData.Builder builder1 = GroupPropertyReportPluginData.builder();
-			GroupPropertyReportPluginData.Builder builder2 = GroupPropertyReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupPropertyReportPluginData pluginData1 = getRandomGroupPropertyReportPluginData(seed);
+			GroupPropertyReportPluginData pluginData2 = getRandomGroupPropertyReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			for (int j = 0; j < 10; j++) {
-				TestGroupPropertyId testGroupPropertyId = TestGroupPropertyId
-						.getRandomTestGroupPropertyId(randomGenerator);
-				if (randomGenerator.nextBoolean()) {
-					builder1.includeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-					builder2.includeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-				} else {
-					builder1.excludeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-					builder2.excludeGroupProperty(testGroupPropertyId.getTestGroupTypeId(), testGroupPropertyId);
-				}
-			}
-
-			boolean defaultInclusion = randomGenerator.nextBoolean();
-			builder1.setDefaultInclusion(defaultInclusion).build();
-			builder2.setDefaultInclusion(defaultInclusion).build();
-
-			GroupPropertyReportPluginData groupPropertyReportPluginData1 = builder1.build();
-			GroupPropertyReportPluginData groupPropertyReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = groupPropertyReportPluginData1.hashCode();
-			assertEquals(hashCode, groupPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, groupPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, groupPropertyReportPluginData1.hashCode());
-			assertEquals(hashCode, groupPropertyReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(groupPropertyReportPluginData1.hashCode(), groupPropertyReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(groupPropertyReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertEquals(50, observedHashCodes.size());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupPropertyReportPluginData pluginData = getRandomGroupPropertyReportPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -897,5 +810,40 @@ public class AT_GroupPropertyReportPluginData {
 
 			assertEquals(sb.toString(), groupPropertyReportPluginData.toString());
 		}
+	}
+
+	private GroupPropertyReportPluginData getRandomGroupPropertyReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		GroupPropertyReportPluginData.Builder builder = GroupPropertyReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
+		builder.setReportLabel(reportLabel);
+
+		ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+		builder.setReportPeriod(reportPeriod);
+
+		builder.setDefaultInclusion(randomGenerator.nextBoolean());
+
+		List<TestGroupTypeId> testGroupTypeIds = TestGroupTypeId.getShuffledTestGroupTypeIds(randomGenerator);
+
+		int numTestGroupTypeIdsToUse = randomGenerator.nextInt(testGroupTypeIds.size()) + 1;
+		for (int i = 0; i < numTestGroupTypeIdsToUse; i++) {
+			TestGroupTypeId testGroupTypeId = testGroupTypeIds.get(i);
+
+			List<TestGroupPropertyId> testGroupPropertyIds = TestGroupPropertyId.getShuffledTestGroupPropertyIds(testGroupTypeId, randomGenerator);
+
+			int numTestGroupPropertyIdsToUse = randomGenerator.nextInt(testGroupPropertyIds.size()) + 1;
+			for (int j = 0; j < numTestGroupPropertyIdsToUse; j++) {
+				TestGroupPropertyId testGroupPropertyId = testGroupPropertyIds.get(j);
+
+				if (randomGenerator.nextBoolean()) {
+					builder.includeGroupProperty(testGroupTypeId, testGroupPropertyId);
+				} else {
+					builder.excludeGroupProperty(testGroupTypeId, testGroupPropertyId);
+				}
+			}
+		}
+
+		return builder.build();
 	}
 }

@@ -342,6 +342,9 @@ public final class ResourceReport extends PeriodicReport {
 			reportContext.subscribeToSimulationClose(this::recordSimulationState);
 		}
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (final ResourceId resourceId : resourcesDataManager.getResourceIds()) {
 			addToCurrentResourceIds(resourceId);
 		}
@@ -379,9 +382,6 @@ public final class ResourceReport extends PeriodicReport {
 				increment(regionId, resourceId, Activity.REGION_RESOURCE_ADDITION, regionResourceLevel);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

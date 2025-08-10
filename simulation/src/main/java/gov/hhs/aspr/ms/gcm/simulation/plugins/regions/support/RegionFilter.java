@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,31 +99,31 @@ public final class RegionFilter extends Filter {
 		return result;
 	}
 
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((regionIds == null) ? 0 : regionIds.hashCode());
-		return result;
+		return Objects.hash(regionIds);
 	}
 
+	/**
+     * Two {@link RegionFilter} instances are equal if and only if
+     * their inputs are equal.
+     */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof RegionFilter)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		RegionFilter other = (RegionFilter) obj;
-		if (regionIds == null) {
-			if (other.regionIds != null) {
-				return false;
-			}
-		} else if (!regionIds.equals(other.regionIds)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(regionIds, other.regionIds);
 	}
 
 }

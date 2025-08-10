@@ -529,167 +529,71 @@ public class AT_TestPluginData {
 	@Test
 	@UnitTestMethod(target = TestPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1276670681120545443L);
 
-		SimplePluginId simplePluginIdA = new SimplePluginId("A");
-		SimplePluginId simplePluginIdB = new SimplePluginId("B");
-		Supplier<TestDataManager> supplier1 = () -> new TestDataManager();
-		Supplier<TestDataManager> supplier2 = () -> new TestDataManager();
-		TestActorPlan testActorPlan1 = new TestActorPlan(0, (c) -> {
-		});
-		TestActorPlan testActorPlan2 = new TestActorPlan(0, (c) -> {
-		});
-		TestDataManagerPlan testDataManagerPlan1 = new TestDataManagerPlan(0, (c) -> {
-		});
-		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
-		});
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TestPluginData testPluginData = getRandomTestPluginData(randomGenerator.nextLong());
+			assertFalse(testPluginData.equals(new Object()));
+		}
 
-		TestPluginData testPluginData1 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TestPluginData testPluginData = getRandomTestPluginData(randomGenerator.nextLong());
+			assertFalse(testPluginData.equals(null));
+		}
 
-		// identical inputs
-		TestPluginData testPluginData2 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TestPluginData testPluginData = getRandomTestPluginData(randomGenerator.nextLong());
+			assertTrue(testPluginData.equals(testPluginData));
+		}
 
-		assertEquals(testPluginData1, testPluginData2);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestPluginData testPluginData1 = getRandomTestPluginData(seed);
+			TestPluginData testPluginData2 = getRandomTestPluginData(seed);
+			assertFalse(testPluginData1 == testPluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testPluginData1.equals(testPluginData2));
+				assertTrue(testPluginData2.equals(testPluginData1));
+			}
+		}
 
-		// with different plugin dependencies
-		TestPluginData testPluginData3 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
-		assertNotEquals(testPluginData1, testPluginData3);
-
-		testPluginData3 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
-		assertNotEquals(testPluginData1, testPluginData3);
-
-		// with different actor plans
-		TestPluginData testPluginData4 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan2)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
-		assertEquals(testPluginData1, testPluginData4);
-
-		testPluginData4 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor2", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
-		assertNotEquals(testPluginData1, testPluginData4);
-
-		// with different data manager plans
-		TestPluginData testPluginData5 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
-		assertEquals(testPluginData1, testPluginData5);
-
-		// with different data manager suppliers
-		TestPluginData testPluginData6 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier2)//
-				.build();
-		assertNotEquals(testPluginData1, testPluginData6);
-
+		// different inputs yield unequal testPluginDatas
+		Set<TestPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestPluginData testPluginData = getRandomTestPluginData(randomGenerator.nextLong());
+			set.add(testPluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = TestPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		/*
-		 * Show that equal objects have equal hash codes over a few example cases
-		 */
 
-		SimplePluginId simplePluginIdA = new SimplePluginId("A");
-		SimplePluginId simplePluginIdB = new SimplePluginId("B");
-		Supplier<TestDataManager> supplier1 = () -> new TestDataManager();
-		Supplier<TestDataManager> supplier2 = () -> new TestDataManager();
-		TestActorPlan testActorPlan1 = new TestActorPlan(0, (c) -> {
-		});
-		TestActorPlan testActorPlan2 = new TestActorPlan(0, (c) -> {
-		});
-		TestDataManagerPlan testDataManagerPlan1 = new TestDataManagerPlan(0, (c) -> {
-		});
-		TestDataManagerPlan testDataManagerPlan2 = new TestDataManagerPlan(0, (c) -> {
-		});
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1667890710500097680L);
 
-		TestPluginData testPluginData1 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestPluginData testPluginData1 = getRandomTestPluginData(seed);
+			TestPluginData testPluginData2 = getRandomTestPluginData(seed);
 
-		// identical inputs
-		TestPluginData testPluginData2 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier1)//
-				.build();
+			assertEquals(testPluginData1, testPluginData2);
+			assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
+		}
 
-		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestPluginData testPluginData = getRandomTestPluginData(randomGenerator.nextLong());
+			hashCodes.add(testPluginData.hashCode());
+		}
 
-		testPluginData1 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan2)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier2)//
-				.build();
-
-		testPluginData2 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan2)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan1)//
-				.addTestDataManager("dm", supplier2)//
-				.build();
-
-		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
-
-		testPluginData1 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestActorPlan("actor", testActorPlan2)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-				.addTestDataManager("dm", supplier2)//
-				.build();
-
-		testPluginData2 = TestPluginData.builder()//
-				.addPluginDependency(simplePluginIdA)//
-				.addPluginDependency(simplePluginIdB)//
-				.addTestActorPlan("actor", testActorPlan1)//
-				.addTestActorPlan("actor", testActorPlan2)//
-				.addTestDataManagerPlan("dm", testDataManagerPlan2)//
-				.addTestDataManager("dm", supplier2)//
-				.build();
-
-		assertEquals(testPluginData1.hashCode(), testPluginData2.hashCode());
-
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -719,4 +623,57 @@ public class AT_TestPluginData {
 		}
 	}
 
+	private TestPluginData getRandomTestPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		TestPluginData.Builder builder = TestPluginData.builder();
+
+		// plugin dependencies
+		Set<SimplePluginId> pluginDependenciesSet = new LinkedHashSet<>();
+		int pluginDependenciesCount = randomGenerator.nextInt(5) + 1;
+		while (pluginDependenciesSet.size() < pluginDependenciesCount) {
+			pluginDependenciesSet.add(new SimplePluginId(randomGenerator.nextInt(1000)));
+		}
+
+		for (SimplePluginId simplePluginId : pluginDependenciesSet) {
+			builder.addPluginDependency(simplePluginId);
+		}
+
+		// report plans
+		Set<TestReportPlan> testReportPlanSet = new LinkedHashSet<>();
+		int testReportPlansCount = randomGenerator.nextInt(5) + 1;
+		while (testReportPlanSet.size() < testReportPlansCount) {
+			testReportPlanSet.add(new TestReportPlan(randomGenerator.nextDouble(), (c) -> {}));
+		}
+
+		for (TestReportPlan testReportPlan : testReportPlanSet) {
+			builder.addTestReportPlan("report", testReportPlan);
+		}
+
+		// actor plans
+		Set<TestActorPlan> testActorPlanSet = new LinkedHashSet<>();
+		int testActorPlansCount = randomGenerator.nextInt(5) + 1;
+		while (testActorPlanSet.size() < testActorPlansCount) {
+			testActorPlanSet.add(new TestActorPlan(randomGenerator.nextDouble(), (c) -> {}));
+		}
+
+		for (TestActorPlan testActorPlan : testActorPlanSet) {
+			builder.addTestActorPlan("Actor", testActorPlan);
+		}
+
+		// data manager plans
+		Set<TestDataManagerPlan> testDataManagerPlanSet = new LinkedHashSet<>();
+		int testDataManagerPlansCount = randomGenerator.nextInt(5) + 1;
+		while (testDataManagerPlanSet.size() < testDataManagerPlansCount) {
+			testDataManagerPlanSet.add(new TestDataManagerPlan(randomGenerator.nextDouble(), (c) -> {}));
+		}
+
+		for (TestDataManagerPlan testDataManagerPlan : testDataManagerPlanSet) {
+			builder.addTestDataManagerPlan("dataManager", testDataManagerPlan);
+		}
+
+		// data manager suppliers
+		builder.addTestDataManager("dataManager", () -> new TestDataManager());
+
+		return builder.build();
+	}
 }

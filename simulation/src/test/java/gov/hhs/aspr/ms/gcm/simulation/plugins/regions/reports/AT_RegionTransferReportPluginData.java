@@ -204,47 +204,48 @@ public class AT_RegionTransferReportPluginData {
 	public void testEquals() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(7759639255438669162L);
-		for (int i = 0; i < 10; i++) {
-			// build a RegionTransferReportPluginData from the same random
-			// inputs
-			RegionTransferReportPluginData.Builder builder1 = RegionTransferReportPluginData.builder();
-			RegionTransferReportPluginData.Builder builder2 = RegionTransferReportPluginData.builder();
-
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			RegionTransferReportPluginData regionTransferReportPluginData1 = builder1.build();
-			RegionTransferReportPluginData regionTransferReportPluginData2 = builder2.build();
-
-			assertEquals(regionTransferReportPluginData1, regionTransferReportPluginData2);
-
-			// show that plugin datas with different inputs are not equal
-
-			// change the report period
-			int ord = reportPeriod.ordinal() + 1;
-			ord = ord % ReportPeriod.values().length;
-			reportPeriod = ReportPeriod.values()[ord];
-			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1.toBuilder()//
-							.setReportPeriod(reportPeriod)//
-							.build();
-			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);
-
-			// change the report label
-			reportLabel = new SimpleReportLabel(1000);
-			regionTransferReportPluginData2 = //
-					regionTransferReportPluginData1.toBuilder()//
-							.setReportLabel(reportLabel)//
-							.build();
-			assertNotEquals(regionTransferReportPluginData2, regionTransferReportPluginData1);
-
+	
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			RegionTransferReportPluginData pluginData = getRandomRegionTransferReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			RegionTransferReportPluginData pluginData = getRandomRegionTransferReportPluginData(
+					randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
+
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			RegionTransferReportPluginData pluginData = getRandomRegionTransferReportPluginData(
+					randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
+
+		// symmetric, transitive and consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionTransferReportPluginData pluginData1 = getRandomRegionTransferReportPluginData(seed);
+			RegionTransferReportPluginData pluginData2 = getRandomRegionTransferReportPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
+
+		// Different inputs yield unequal values
+		Set<RegionTransferReportPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			RegionTransferReportPluginData pluginData = getRandomRegionTransferReportPluginData(
+					randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -252,44 +253,25 @@ public class AT_RegionTransferReportPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(9079768427072825406L);
 
-		Set<Integer> observedHashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 50; i++) {
-			// build a RegionTransferReportPluginData from the same random
-			// inputs
-			RegionTransferReportPluginData.Builder builder1 = RegionTransferReportPluginData.builder();
-			RegionTransferReportPluginData.Builder builder2 = RegionTransferReportPluginData.builder();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			RegionTransferReportPluginData pluginData1 = getRandomRegionTransferReportPluginData(seed);
+			RegionTransferReportPluginData pluginData2 = getRandomRegionTransferReportPluginData(seed);
 
-			ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt(100));
-			builder1.setReportLabel(reportLabel);
-			builder2.setReportLabel(reportLabel);
-
-			ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
-			builder1.setReportPeriod(reportPeriod);
-			builder2.setReportPeriod(reportPeriod);
-
-			RegionTransferReportPluginData regionTransferReportPluginData1 = builder1.build();
-			RegionTransferReportPluginData regionTransferReportPluginData2 = builder2.build();
-
-			// show that the hash code is stable
-			int hashCode = regionTransferReportPluginData1.hashCode();
-			assertEquals(hashCode, regionTransferReportPluginData1.hashCode());
-			assertEquals(hashCode, regionTransferReportPluginData1.hashCode());
-			assertEquals(hashCode, regionTransferReportPluginData1.hashCode());
-			assertEquals(hashCode, regionTransferReportPluginData1.hashCode());
-
-			// show that equal objects have equal hash codes
-			assertEquals(regionTransferReportPluginData1.hashCode(), regionTransferReportPluginData2.hashCode());
-
-			// collect the hashcode
-			observedHashCodes.add(regionTransferReportPluginData1.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		/*
-		 * The hash codes should be dispersed -- we only show that they are unique
-		 * values -- this is dependent on the random seed
-		 */
-		assertTrue(observedHashCodes.size() > 45);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			RegionTransferReportPluginData pluginData = getRandomRegionTransferReportPluginData(
+					randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -309,4 +291,17 @@ public class AT_RegionTransferReportPluginData {
 
 	}
 
+	private RegionTransferReportPluginData getRandomRegionTransferReportPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		RegionTransferReportPluginData.Builder builder = RegionTransferReportPluginData.builder();
+
+		ReportLabel reportLabel = new SimpleReportLabel(randomGenerator.nextInt());
+		builder.setReportLabel(reportLabel);
+
+		ReportPeriod reportPeriod = ReportPeriod.values()[randomGenerator.nextInt(ReportPeriod.values().length)];
+		builder.setReportPeriod(reportPeriod);
+
+		return builder.build();
+	}
 }

@@ -11,6 +11,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DimensionContext;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.SimulationState;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.datamanagers.GroupsPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.testsupport.TestGroupPropertyId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.groups.testsupport.TestGroupTypeId;
@@ -98,6 +99,7 @@ public class AT_GroupPropertyDimension {
                 DimensionContext.Builder dimensionContextBuilder = DimensionContext.builder();
 
                 pluginDataBuilder = (GroupsPluginData.Builder) dimensionContextBuilder.add(pluginDataBuilder.build());
+                dimensionContextBuilder.setSimulationState(SimulationState.builder().build());
                 DimensionContext dimensionContext = dimensionContextBuilder.build();
 
                 // execute the dimension with the level

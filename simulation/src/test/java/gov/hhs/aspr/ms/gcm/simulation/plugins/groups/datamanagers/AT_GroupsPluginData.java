@@ -1185,70 +1185,24 @@ public class AT_GroupsPluginData {
 	public void testHashCode() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(386194196593528301L);
 
-		List<PersonId> people = new ArrayList<>();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupsPluginData pluginData1 = getRandomGroupsPluginData(seed);
+			GroupsPluginData pluginData2 = getRandomGroupsPluginData(seed);
 
-		for (int i = 0; i < 100; i++) {
-			people.add(new PersonId(i));
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
 
-		long sameSeed = randomGenerator.nextLong();
-		GroupsPluginData groupsPluginData1 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData2 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData3 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData4 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData5 = GroupsTestPluginFactory.getStandardGroupsPluginData(1, 10, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData6 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 10, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData7 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData8 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData9 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				sameSeed);
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupsPluginData pluginData = getRandomGroupsPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
 
-		assertEquals(groupsPluginData1.hashCode(), groupsPluginData1.hashCode());
-
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData2.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData3.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData4.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData5.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData6.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData3.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData4.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData5.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData6.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData1.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData4.hashCode());
-		assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData5.hashCode());
-		assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData6.hashCode());
-		assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData3.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData5.hashCode());
-		assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData6.hashCode());
-		assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData4.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData6.hashCode());
-		assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData5.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData6.hashCode(), groupsPluginData7.hashCode());
-		assertNotEquals(groupsPluginData6.hashCode(), groupsPluginData8.hashCode());
-
-		assertNotEquals(groupsPluginData7.hashCode(), groupsPluginData8.hashCode());
-
-		assertEquals(groupsPluginData1.hashCode(), groupsPluginData9.hashCode());
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -1256,75 +1210,43 @@ public class AT_GroupsPluginData {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1974882207275712576L);
 
-		List<PersonId> people = new ArrayList<>();
-
-		for (int i = 0; i < 100; i++) {
-			people.add(new PersonId(i));
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			GroupsPluginData pluginData = getRandomGroupsPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
 		}
 
-		long sameSeed = randomGenerator.nextLong();
-		GroupsPluginData groupsPluginData1 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData2 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData3 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData4 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 5, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData5 = GroupsTestPluginFactory.getStandardGroupsPluginData(1, 10, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData6 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 10, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData7 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
-				sameSeed);
-		GroupsPluginData groupsPluginData8 = GroupsTestPluginFactory.getStandardGroupsPluginData(3, 5, people,
-				randomGenerator.nextLong());
-		GroupsPluginData groupsPluginData9 = GroupsTestPluginFactory.getStandardGroupsPluginData(2, 10, people,
-				sameSeed);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			GroupsPluginData pluginData = getRandomGroupsPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
 
-		assertEquals(groupsPluginData1, groupsPluginData1);
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			GroupsPluginData pluginData = getRandomGroupsPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
 
-		assertNotEquals(groupsPluginData1, null);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GroupsPluginData pluginData1 = getRandomGroupsPluginData(seed);
+			GroupsPluginData pluginData2 = getRandomGroupsPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
 
-		assertNotEquals(groupsPluginData1, new Object());
-
-		assertNotEquals(groupsPluginData1, groupsPluginData2);
-		assertNotEquals(groupsPluginData1, groupsPluginData3);
-		assertNotEquals(groupsPluginData1, groupsPluginData4);
-		assertNotEquals(groupsPluginData1, groupsPluginData5);
-		assertNotEquals(groupsPluginData1, groupsPluginData6);
-		assertNotEquals(groupsPluginData1, groupsPluginData7);
-		assertNotEquals(groupsPluginData1, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData1, groupsPluginData3);
-		assertNotEquals(groupsPluginData1, groupsPluginData4);
-		assertNotEquals(groupsPluginData1, groupsPluginData5);
-		assertNotEquals(groupsPluginData1, groupsPluginData6);
-		assertNotEquals(groupsPluginData1, groupsPluginData7);
-		assertNotEquals(groupsPluginData1, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData3, groupsPluginData4);
-		assertNotEquals(groupsPluginData3, groupsPluginData5);
-		assertNotEquals(groupsPluginData3, groupsPluginData6);
-		assertNotEquals(groupsPluginData3, groupsPluginData7);
-		assertNotEquals(groupsPluginData3, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData4, groupsPluginData5);
-		assertNotEquals(groupsPluginData4, groupsPluginData6);
-		assertNotEquals(groupsPluginData4, groupsPluginData7);
-		assertNotEquals(groupsPluginData4, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData5, groupsPluginData6);
-		assertNotEquals(groupsPluginData5, groupsPluginData7);
-		assertNotEquals(groupsPluginData5, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData6, groupsPluginData7);
-		assertNotEquals(groupsPluginData6, groupsPluginData8);
-
-		assertNotEquals(groupsPluginData7, groupsPluginData8);
-
-		assertEquals(groupsPluginData1, groupsPluginData9);
-
+		// different inputs yield unequal plugin datas
+		Set<GroupsPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GroupsPluginData pluginData = getRandomGroupsPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -1625,4 +1547,20 @@ public class AT_GroupsPluginData {
 		assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 	}
 
+	private GroupsPluginData getRandomGroupsPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		double randomExpectedGroupsPerPerson = randomGenerator.nextInt(5) + 1;
+		double randomExpectedPeoplePerGroup = randomGenerator.nextInt(5) + 1;
+
+		List<PersonId> people = new ArrayList<>();
+		int n = randomGenerator.nextInt(100) + 1;
+		for (int i = 0; i < n; i++) {
+			people.add(new PersonId(i));
+		}
+
+		long newSeed = randomGenerator.nextLong();
+
+		return GroupsTestPluginFactory.getStandardGroupsPluginData(randomExpectedGroupsPerPerson, randomExpectedPeoplePerGroup, people, newSeed);
+	}
 }

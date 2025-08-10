@@ -3,11 +3,11 @@ package gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -112,6 +112,12 @@ public class AT_AndFilter {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(5725831217415880484L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			AndFilter andFilter = getRandomAndFilter(randomGenerator.nextLong());
+			assertFalse(andFilter.equals(new Object()));
+		}
+
 		// is never equal to null
 		for (int i = 0; i < 30; i++) {
 			assertFalse(getRandomAndFilter(randomGenerator.nextLong()).equals(null));
@@ -129,23 +135,26 @@ public class AT_AndFilter {
 			long seed = randomGenerator.nextLong();
 			AndFilter f1 = getRandomAndFilter(seed);
 			AndFilter f2 = getRandomAndFilter(seed);
+			assertFalse(f1 == f2);
 			for (int j = 0; j < 10; j++) {
 				assertTrue(f1.equals(f2));
 				assertTrue(f2.equals(f1));
 			}
 		}
 
+		// different inputs yield unequal andFilters
+		Set<AndFilter> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			AndFilter andFilter = getRandomAndFilter(randomGenerator.nextLong());
+			set.add(andFilter);
+		}
+		assertEquals(100, set.size());
+
+		// The order in which inputs are added does not matter
 		AndFilter f1 = new AndFilter(new TestFilter(3), new TestFilter(5));
 		AndFilter f2 = new AndFilter(new TestFilter(5), new TestFilter(3));
-		AndFilter f3 = new AndFilter(new TestFilter(3), new TestFilter(4));
-
-		// return true when arguments are equal in some order
-		assertEquals(f1, f2);
-
-		// returns false when filter inputs are different in any order
-		assertNotEquals(f1, f3);
-		assertNotEquals(f2, f3);
-
+		assertTrue(f1.equals(f2));
+		assertTrue(f2.equals(f1));
 	}
 
 	private final static class TestFilter extends Filter {
@@ -186,10 +195,7 @@ public class AT_AndFilter {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + index;
-			return result;
+			return Objects.hash(index);
 		}
 
 		@Override
@@ -197,14 +203,14 @@ public class AT_AndFilter {
 			if (this == obj) {
 				return true;
 			}
-			if (!(obj instanceof TestFilter)) {
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
 			}
 			TestFilter other = (TestFilter) obj;
-			if (index != other.index) {
-				return false;
-			}
-			return true;
+			return index == other.index;
 		}
 
 		@Override
@@ -226,26 +232,28 @@ public class AT_AndFilter {
 
 		// equal objects have equal hash codes, note that argument order does not matter
 		for (int i = 0; i < 30; i++) {
-			int seed1 = randomGenerator.nextInt();
-			int seed2 = randomGenerator.nextInt();
-			AndFilter f12 = new AndFilter(new TestFilter(seed1), new TestFilter(seed2));
-			AndFilter f21 = new AndFilter(new TestFilter(seed2), new TestFilter(seed1));
-			assertEquals(f12, f21);
-			assertEquals(f12.hashCode(), f21.hashCode());
+			long seed = randomGenerator.nextLong();
+			AndFilter f1 = getRandomAndFilter(seed);
+			AndFilter f2 = getRandomAndFilter(seed);
+			assertEquals(f1, f2);
+			assertEquals(f1.hashCode(), f2.hashCode());
 		}
 
 		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 
 		for (int i = 0; i < 100; i++) {
-			TestFilter f1 = new TestFilter(randomGenerator.nextInt());
-			TestFilter f2 = new TestFilter(randomGenerator.nextInt());
-			AndFilter andFilter = new AndFilter(f1, f2);
+			AndFilter andFilter = getRandomAndFilter(randomGenerator.nextLong());
 			hashCodes.add(andFilter.hashCode());
 		}
 
-		assertTrue(hashCodes.size() > 95);
+		assertEquals(100, hashCodes.size());
 
+		// The order in which inputs are added does not matter
+		AndFilter f1 = new AndFilter(new TestFilter(3), new TestFilter(5));
+		AndFilter f2 = new AndFilter(new TestFilter(5), new TestFilter(3));
+		assertEquals(f1, f2);
+		assertEquals(f1.hashCode(), f2.hashCode());
 	}
 
 	private AndFilter getAndFilter(int a, int b) {

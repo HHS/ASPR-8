@@ -1,0 +1,178 @@
+# People Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The people plugin implements the dynamic management of person identity. Each person is identified with an immutable PersonId object that wraps an int value. People are numbered with non-negative values starting with zero and filling a contiguous range, but may contain any number of gaps in that range.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a PeoplePluginData object that collects person id values in contiguous ranges. Note that there is no auxiliary data about people and only their existence as a person at the start of the simulation is captured. Other plugins that deal with the various characteristics of people will separately handle adding that data via their own plugin data structures.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the PeopleDataManager that is initialized with the PeoplePluginData.
+
+## Data Manager
+
+The data manager provides access to people and provides the ability to:
+
+-   Add or remove a person
+-   Answer questions about person existence
+    -   Get the current set of PersonId values
+-   Get the total number of people
+-   Transform PersonId objects to and from int values
+    -   Answer questions about int value ranges used in managing internal data structures in various data managers
+
+The data manager also produces observable events when people are added or removed from the simulation:
+
+-   PersonImminentAdditionEvent -- notifies that a person is about to be removed
+-   PersonAdditionEvent -- notifies that a person is removed
+-   PersonImminentRemovalEvent -- notifies that a person is being added
+-   PersonRemovalEvent -- notifies that a person is fully added
+
+## Add/Remove event patterns
+
+A common pattern used throughout many plugins for events signifying the addition or removal of an item from the simulation is to represent each of these with two events. The first event is to notify all concerned actors and data managers that an item is about to be removed, but the removal has not yet occurred so any reference to the item will still be available and any finalization or bookkeeping can be performed. The second event will act as an instruction to remove the item and it is expected that the item will not be available for further inspection.
+
+As an example, let's consider the removal of a person by an actor. The person to remove is PersonId\[47\] and the actor requests the person be removed by the PeopleDataManager. The data manager first **plans** to release the PersonRemovalEvent as soon as possible. This will schedule the release of the event onto the planning queue and time will not move forward before the execution of this event. However, this is a plan and it will only take place after the all current activities are complete. The data manager next releases the PersonImminentRemovalEvent. This event will propagate immediately to the other data managers and to any actors or reports that are subscribed to person removals. Since the data managers generally do not act on the imminent removal, the actors are able to retrieve any information about the person they need to take final actions or produce reports. Once everyone has had a chance to see that the person will be removed, the planned PersonRemovalEvent will be released and the data managers will finally remove any information related to the person from their data structures. This two-phase removal pattern is useful and practical but does present one problem: Consider the original actor that was deleting person 47. On the very next line of their code after they request the removal of the person, the person still exists. The removal is not immediate, but is slightly delayed in that it will occur only after flow of control has returned to the simulation. This delay will not correspond to any time flow, so the removal of the person will occur at the same time as the request for the removal.
+
+The addition of a person follows a similar pattern. To understand this, we first need to look at the PersonConstructionData used to add a person. The PersonConstructionData is a container for zero to many objects that carry information about the new person to be used by the various data managers who will need to integrate corresponding data about the person. For example, if the Regions plugin is being used, it requires that every person has a region assignment and thus a RegionId will need to be included in the PersonConstructionData. The people data manager does not understand this auxiliary data but simply repackages it into the PersonImminentAdditionEvent. The event is released and all the relevant data managers take what they need from the data stored in the event to fully initialize the state of the person. Once all data managers have initialized the person, the people data manager releases the PersonAdditionEvent and actors/reports, will now see that the new person has been added to the simulation and will have access to the person's full initialized complement of data.
+
+In summary, the general convention is:
+
+-   imminent addition event
+    -   used by data managers to piecemeal add an item's details
+    -   ignored by actors and reports
+-   addition event
+    -   ignored by data managers
+    -   used by actors and reports to integrate the addition now that all the details are in place
+-   imminent removal event
+    -   ignored by data managers
+    -   used by actors to have a last chance to reference details on the item
+-   removal event
+    -   used by data managers to fully remove all stored data on the item
+    -   ignored by the actors since the item will be fully removed
+
+## Example Code (Lesson 14)
+
+Example_14.java shows the use of the people plugin. The example includes four plugins:
+
+-   People plugin -- (GCM core plugin) used to manage people
+-   Stochastics Plugin -- (GCM plugin) provides random number generation
+-   Model plugin -- (local plugin) used to introduce two actors that will
+    -   add/remove people
+    -   vaccinate people
+-   Vaccine plugin -- (local plugin) used to track vaccinations for each person
+
+The example's main method starts in @lst-people_plugin_example_14_init by establishing two reports:
+
+-   The population trace report simply lists the additions and deletions of people by time. The report is managed by the PopulationTraceReport and is added to the simulation by the model plugin.
+-   The vaccination report shows a daily accounting of the number of people having 0, 1...6+ vaccinations. The report is managed by the VaccineReport class added by the vaccine plugin.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_example_14_init$code_cap
+#| code: !expr fig$people_plugin_example_14_init$code
+#| echo: true
+```
+
+The main method continues by creating the people plugin and initializing it with 10 people. Note that the people will have id values of 1, 3, 5, ... ,19 showing that any set of non-negative values are acceptable. The stochastics plugin is next and is initialized with a seed value. We will be controlling the random seed values via a dimension as presented in @lst-people_plugin_stochastics_dimension. As a result, the experiment will have 5 scenarios, with each scenario differing in only the random seed value that starts the simulation.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_example_14_adding_plugins$code_cap
+#| code: !expr fig$people_plugin_example_14_adding_plugins$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_stochastics_dimension$code_cap
+#| code: !expr fig$people_plugin_stochastics_dimension$code
+#| echo: true
+```
+
+There are two actors provided by the model plugin. The first is the PopulationManager (@lst-people_plugin_population_manager) that upon its initialization plans 100 future actions to randomly remove (10% chance) or add (90% chance) people to the simulation. For people who are added, an initial vaccination count is included in the request to add the person so that the vaccine data manager can set the proper count.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_population_manager$code_cap
+#| code: !expr fig$people_plugin_population_manager$code
+#| echo: true
+```
+
+@lst-people_plugin_vaccinator shows the second actor, the Vaccinator. It plans 300 vaccination actions over a period of approximately 100 days, selecting a random person to vaccinate each time. There is no limit to the number of vaccinations a person can have and we would expect that some people will have a relatively high number of vaccinations in the vaccine report.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_vaccinator$code_cap
+#| code: !expr fig$people_plugin_vaccinator$code
+#| echo: true
+```
+
+## Interacting with the addition and removal events
+
+The remaining code blocks will focus on the handling of the four person addition and removal events in the vaccine data manager and the population trace report. The vaccine report is periodic and does not subscribe to any events and is left for the reader to examine.
+
+Following the general conventions above, the vaccine data manager subscribes to the PersonRemovalEvent and the PersonImminentAdditionEvent during its initialization in @lst-people_plugin_vaccination_data_manager.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_vaccination_data_manager$code_cap
+#| code: !expr fig$people_plugin_vaccination_data_manager$code
+#| echo: true
+```
+
+The vaccine data manager uses a simple map from person id to a counter to track the number of vaccinations for each person:
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_vaccine_counts$code_cap
+#| code: !expr fig$people_plugin_vaccine_counts$code
+#| echo: true
+```
+
+The subscriptions above refer to the local methods of the vaccine data manager in @lst-people_plugin_vaccination_handling_person_removal. Handling the removal of a person is simple; the person id dropped from the map. Handling the addition requires that the manager try to locate a VaccinationInitialization object (which is just a wrapper around and integer count) contained in the construction. If the VaccinationInitialization is present, then the manager further validates the count is not negative.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$people_plugin_vaccination_handling_person_removal$code_cap
+#| code: !expr fig$people_plugin_vaccination_handling_person_removal$code
+#| echo: true
+```
+
+## Inspecting the output
+
+@fig-people_plugin_output_1 shows the population trace report spanning the five scenarios and 500 additions and removals of people. In @fig-people_plugin_output_2 we have the vaccination report showing the number of people having from 0 to 6+ vaccinations over each day of the simulation across the five scenarios. As expected, the number of people having six or more vaccinations starts out at zero and monotonically increases as the days progress.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$people_plugin_output_1$code_cap
+#| label: fig-people_plugin_output_1
+options(knitr.kable.NA = '')
+metadata$people_plugin_output_1$code_out %>% read_table() %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>% 
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$people_plugin_output_2$code_cap
+#| label: fig-people_plugin_output_2
+options(knitr.kable.NA = '')
+metadata$people_plugin_output_2$code_out %>% read_table() %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>% 
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```

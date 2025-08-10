@@ -50,7 +50,7 @@ public class TeleworkManager {
 		double threshold = globalPropertiesDataManager
 				.getGlobalPropertyValue(GlobalProperty.TELEWORK_INFECTION_THRESHOLD);
 		double teleworkProbability = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILTY);
+				.getGlobalPropertyValue(GlobalProperty.TELEWORK_PROBABILITY);
 
 		int infectiousCount = personPropertiesDataManager.getPersonCountForPropertyValue(PersonProperty.DISEASE_STATE,
 				DiseaseState.INFECTIOUS);

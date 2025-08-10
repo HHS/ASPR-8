@@ -1,14 +1,19 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_IdentifiableFunction {
 
@@ -29,29 +34,45 @@ public class AT_IdentifiableFunction {
 	public void testEquals() {
 		// identifiable functions are equal if and only if their internal id
 		// values are equal
-		IdentifiableFunction<Integer> a1 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));
-		IdentifiableFunction<Integer> a2 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));
-		IdentifiableFunction<Integer> a3 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980997618377306870L);
 
-		IdentifiableFunction<Integer> b = new IdentifiableFunction<>("B", (n) -> Integer.toString(n));
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			IdentifiableFunction<Integer> identifiableFunction = getRandomIdentifiableFunction(randomGenerator.nextLong());
+			assertFalse(identifiableFunction.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			IdentifiableFunction<Integer> identifiableFunction = getRandomIdentifiableFunction(randomGenerator.nextLong());
+			assertFalse(identifiableFunction.equals(null));
+		}
 
 		// reflexive
-		assertEquals(a1, a1);
+		for (int i = 0; i < 30; i++) {
+			IdentifiableFunction<Integer> identifiableFunction = getRandomIdentifiableFunction(randomGenerator.nextLong());
+			assertTrue(identifiableFunction.equals(identifiableFunction));
+		}
 
-		// symmetric
-		assertEquals(a1, a2);
-		assertEquals(a2, a1);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			IdentifiableFunction<Integer> identifiableFunction1 = getRandomIdentifiableFunction(seed);
+			IdentifiableFunction<Integer> identifiableFunction2 = getRandomIdentifiableFunction(seed);
+			assertFalse(identifiableFunction1 == identifiableFunction2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(identifiableFunction1.equals(identifiableFunction2));
+				assertTrue(identifiableFunction2.equals(identifiableFunction1));
+			}
+		}
 
-		// transitive
-		assertEquals(a2, a3);
-		assertEquals(a1, a3);
-
-		// non-equal ids
-
-		assertNotEquals(a1, b);
-		assertNotEquals(a2, b);
-		assertNotEquals(a3, b);
-
+		// different inputs yield unequal identifiableFunctions
+		Set<IdentifiableFunction<Integer>> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			IdentifiableFunction<Integer> identifiableFunction = getRandomIdentifiableFunction(randomGenerator.nextLong());
+			set.add(identifiableFunction);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -74,17 +95,30 @@ public class AT_IdentifiableFunction {
 	@Test
 	@UnitTestMethod(target = IdentifiableFunction.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2666881508465183354L);
 
-		IdentifiableFunction<Integer> a1 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));
-		IdentifiableFunction<Integer> a2 = new IdentifiableFunction<>("A", (n) -> Integer.toString(n));
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			IdentifiableFunction<Integer> identifiableFunction1 = getRandomIdentifiableFunction(seed);
+			IdentifiableFunction<Integer> identifiableFunction2 = getRandomIdentifiableFunction(seed);
 
-		IdentifiableFunction<Integer> b1 = new IdentifiableFunction<>("B", (n) -> Integer.toString(n));
-		IdentifiableFunction<Integer> b2 = new IdentifiableFunction<>("B", (n) -> Integer.toString(n));
+			assertEquals(identifiableFunction1, identifiableFunction2);
+			assertEquals(identifiableFunction1.hashCode(), identifiableFunction2.hashCode());
+		}
 
-		// show equal objects have equal hash codes
-		assertEquals(a1.hashCode(), a2.hashCode());
-		assertEquals(b1.hashCode(), b2.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			IdentifiableFunction<Integer> identifiableFunction = getRandomIdentifiableFunction(randomGenerator.nextLong());
+			hashCodes.add(identifiableFunction.hashCode());
+		}
 
+		assertEquals(100, hashCodes.size());
 	}
 
+	private IdentifiableFunction<Integer> getRandomIdentifiableFunction(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new IdentifiableFunction<>(randomGenerator.nextInt(), (Integer n) -> Integer.toString(n));
+	}
 }

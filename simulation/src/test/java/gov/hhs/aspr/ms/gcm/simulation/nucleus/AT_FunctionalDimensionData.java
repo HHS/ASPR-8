@@ -9,7 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -232,151 +236,71 @@ public class AT_FunctionalDimensionData {
     @Test
     @UnitTestMethod(target = FunctionalDimensionData.class, name = "hashCode", args = {})
     public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491508465183354L);
 
-        Function<DimensionContext, List<String>> commonValue1 = ((c) -> {
-            return new ArrayList<>();
-        });
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			FunctionalDimensionData dimData1 = getRandomFunctionalDimensionData(seed);
+			FunctionalDimensionData dimData2 = getRandomFunctionalDimensionData(seed);
 
-        Function<DimensionContext, List<String>> commonValue2 = ((c) -> {
-            List<String> result = new ArrayList<>();
-            result.add("same");
-            return result;
-        });
+			assertEquals(dimData1, dimData2);
+			assertEquals(dimData1.hashCode(), dimData2.hashCode());
+		}
 
-        FunctionalDimensionData dimData1 = FunctionalDimensionData.builder()
-                .addMetaDatum("0")
-                .addValue("Level_0", commonValue1)
-                .build();
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			FunctionalDimensionData dimData = getRandomFunctionalDimensionData(randomGenerator.nextLong());
+			hashCodes.add(dimData.hashCode());
+		}
 
-        FunctionalDimensionData dimData2 = FunctionalDimensionData.builder()
-                .addMetaDatum("1")
-                .addValue("Level_0", (c) -> {
-                    return new ArrayList<>();
-                })
-                .build();
-
-        FunctionalDimensionData dimData3 = FunctionalDimensionData.builder()
-                .addMetaDatum("1")
-                .addValue("Level_0", (c) -> {
-                    List<String> result = new ArrayList<>();
-                    result.add("1");
-                    return result;
-                })
-                .build();
-
-        FunctionalDimensionData dimData4 = FunctionalDimensionData.builder()
-                .addMetaDatum("2")
-                .addValue("Level_0", commonValue2)
-                .build();
-
-        FunctionalDimensionData dimData5 = FunctionalDimensionData.builder()
-                .addMetaDatum("3")
-                .addValue("Level_0", commonValue2)
-                .build();
-
-        FunctionalDimensionData dimData6 = FunctionalDimensionData.builder()
-                .addMetaDatum("0")
-                .addValue("Level_0", commonValue1)
-                .build();
-
-        assertEquals(dimData1.hashCode(), dimData1.hashCode());
-
-        assertNotEquals(dimData1.hashCode(), dimData2.hashCode());
-        assertNotEquals(dimData1.hashCode(), dimData3.hashCode());
-        assertNotEquals(dimData1.hashCode(), dimData4.hashCode());
-        assertNotEquals(dimData1.hashCode(), dimData5.hashCode());
-
-        assertNotEquals(dimData2.hashCode(), dimData3.hashCode());
-        assertNotEquals(dimData2.hashCode(), dimData4.hashCode());
-        assertNotEquals(dimData2.hashCode(), dimData5.hashCode());
-        assertNotEquals(dimData2.hashCode(), dimData6.hashCode());
-
-        assertNotEquals(dimData3.hashCode(), dimData4.hashCode());
-        assertNotEquals(dimData3.hashCode(), dimData5.hashCode());
-        assertNotEquals(dimData3.hashCode(), dimData6.hashCode());
-
-        assertNotEquals(dimData4.hashCode(), dimData5.hashCode());
-        assertNotEquals(dimData4.hashCode(), dimData6.hashCode());
-
-        assertNotEquals(dimData5.hashCode(), dimData6.hashCode());
-
-        assertEquals(dimData1.hashCode(), dimData6.hashCode());
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = FunctionalDimensionData.class, name = "equals", args = { Object.class })
     public void testEquals() {
 
-        Function<DimensionContext, List<String>> commonValue1 = ((c) -> {
-            return new ArrayList<>();
-        });
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980811118377306870L);
 
-        Function<DimensionContext, List<String>> commonValue2 = ((c) -> {
-            List<String> result = new ArrayList<>();
-            result.add("same");
-            return result;
-        });
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			FunctionalDimensionData dimData = getRandomFunctionalDimensionData(randomGenerator.nextLong());
+			assertFalse(dimData.equals(new Object()));
+		}
 
-        FunctionalDimensionData dimData1 = FunctionalDimensionData.builder()
-                .addMetaDatum("0")
-                .addValue("Level_0", commonValue1)
-                .build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			FunctionalDimensionData dimData = getRandomFunctionalDimensionData(randomGenerator.nextLong());
+			assertFalse(dimData.equals(null));
+		}
 
-        FunctionalDimensionData dimData2 = FunctionalDimensionData.builder()
-                .addMetaDatum("1")
-                .addValue("Level_0", (c) -> {
-                    return new ArrayList<>();
-                })
-                .build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			FunctionalDimensionData dimData = getRandomFunctionalDimensionData(randomGenerator.nextLong());
+			assertTrue(dimData.equals(dimData));
+		}
 
-        FunctionalDimensionData dimData3 = FunctionalDimensionData.builder()
-                .addMetaDatum("1")
-                .addValue("Level_0", (c) -> {
-                    List<String> result = new ArrayList<>();
-                    result.add("1");
-                    return result;
-                })
-                .build();
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			FunctionalDimensionData dimData1 = getRandomFunctionalDimensionData(seed);
+			FunctionalDimensionData dimData2 = getRandomFunctionalDimensionData(seed);
+			assertFalse(dimData1 == dimData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(dimData1.equals(dimData2));
+				assertTrue(dimData2.equals(dimData1));
+			}
+		}
 
-        FunctionalDimensionData dimData4 = FunctionalDimensionData.builder()
-                .addMetaDatum("2")
-                .addValue("Level_0", commonValue2)
-                .build();
-
-        FunctionalDimensionData dimData5 = FunctionalDimensionData.builder()
-                .addMetaDatum("3")
-                .addValue("Level_0", commonValue2)
-                .build();
-
-        FunctionalDimensionData dimData6 = FunctionalDimensionData.builder()
-                .addMetaDatum("0")
-                .addValue("Level_0", commonValue1)
-                .build();
-
-        assertEquals(dimData1, dimData1);
-        assertNotEquals(dimData1, null);
-        assertNotEquals(dimData1, new Object());
-
-        assertNotEquals(dimData1, dimData2);
-        assertNotEquals(dimData1, dimData3);
-        assertNotEquals(dimData1, dimData4);
-        assertNotEquals(dimData1, dimData5);
-
-        assertNotEquals(dimData2, dimData3);
-        assertNotEquals(dimData2, dimData4);
-        assertNotEquals(dimData2, dimData5);
-        assertNotEquals(dimData2, dimData6);
-
-        assertNotEquals(dimData3, dimData4);
-        assertNotEquals(dimData3, dimData5);
-        assertNotEquals(dimData3, dimData6);
-
-        assertNotEquals(dimData4, dimData5);
-        assertNotEquals(dimData4, dimData6);
-
-        assertNotEquals(dimData5, dimData6);
-
-        assertEquals(dimData1, dimData6);
+		// different inputs yield unequal functionalDimensionDatas
+		Set<FunctionalDimensionData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			FunctionalDimensionData dimData = getRandomFunctionalDimensionData(randomGenerator.nextLong());
+			set.add(dimData);
+		}
+		assertEquals(100, set.size());
     }
 
     @Test
@@ -468,5 +392,46 @@ public class AT_FunctionalDimensionData {
         }
 
         return result;
+    }
+
+    private static List<Function<DimensionContext, List<String>>> staticFunctions = new ArrayList<>();
+
+	/*
+	 * Thread safe means of creating a list of 20 functions. Comparing functions for
+	 * equality is implemented via == comparison in Java, so we need to create a
+	 * static set of them. 
+	 */
+	private static List<Function<DimensionContext, List<String>>> getStaticFunctions() {
+		synchronized (staticFunctions) {
+			if (staticFunctions.isEmpty()) {
+				staticFunctions = new ArrayList<>();
+				for (int i = 0; i < 20; i++) {
+					staticFunctions.add((c) -> {
+                        List<String> result = new ArrayList<>();
+                        result.add("Data Value");
+                        return result;
+					});
+				}
+			}
+		}
+		return staticFunctions;
+	}
+
+    private FunctionalDimensionData getRandomFunctionalDimensionData(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        FunctionalDimensionData.Builder builder = FunctionalDimensionData.builder();
+
+        List<Function<DimensionContext, List<String>>> staticFunctions =  new ArrayList<>(getStaticFunctions());
+        Random random = new Random(randomGenerator.nextLong());
+        Collections.shuffle(staticFunctions, random);
+       
+        int numOfLevels = randomGenerator.nextInt(staticFunctions.size()) + 1;
+        for (int i = 0; i < numOfLevels; i++) {
+            builder.addValue("Level_" + i, staticFunctions.get(i));
+        }
+
+        builder.addMetaDatum("MetaDatum_" + randomGenerator.nextInt());
+
+        return builder.build();
     }
 }

@@ -1,5 +1,6 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
@@ -7,16 +8,14 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorPlan;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 
 /**
- * Test Support class that describes an action for an actor as a scheduled plan
- * with an optional key.
+ * Test Support class that describes an action for an actor as a scheduled plan.
  */
 public class TestActorPlan extends ActorPlan {
 	private boolean executed;
 	private Consumer<ActorContext> consumer;
 
 	/**
-	 * Constructs an actor action plan. If assignKey is false, then this actor
-	 * action plan will return an empty optional key.
+	 * Constructs an actor action plan.
 	 * 
 	 * @throws ContractException {@linkplain TestError#NULL_PLAN} if the plan is
 	 *                           null
@@ -30,38 +29,35 @@ public class TestActorPlan extends ActorPlan {
 	}
 
 	/**
-	 * Boilerplate implementation of hashCode consistent with equals()
+	 * Standard implementation consistent with the {@link #equals(Object)} method
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (executed ? 1231 : 1237);
-		long temp;
-		temp = Double.doubleToLongBits(getTime());
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		return result;
+		return Objects.hash(executed, getTime());
 	}
 
 	/**
-	 * TestActorPlans are equal if and only they return the same values for
-	 * 1)executed() and 2)getScheduledTime()This limited sense of equality is
-	 * present simply to provide some reasonable evidence that the plugin data
-	 * cloning method is working correctly for the test plugin data.
+	 * Two {@link TestActorPlan} instances are equal if and only if
+	 * they return the same values for 1) executed() and 2) getTime(). 
+	 * This limited sense of equality is present simply to provide some reasonable 
+	 * evidence that the plugin data cloning method is working correctly for the 
+	 * test plugin data.
 	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof TestActorPlan)) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
 		}
 		TestActorPlan other = (TestActorPlan) obj;
 		if (executed != other.executed) {
 			return false;
 		}
-
 		if (Double.doubleToLongBits(getTime()) != Double.doubleToLongBits(other.getTime())) {
 			return false;
 		}

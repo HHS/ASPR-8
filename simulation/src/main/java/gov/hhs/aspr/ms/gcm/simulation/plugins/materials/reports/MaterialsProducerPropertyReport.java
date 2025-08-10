@@ -60,6 +60,9 @@ public final class MaterialsProducerPropertyReport {
 
 		MaterialsDataManager materialsDataManager = reportContext.getDataManager(MaterialsDataManager.class);
 
+		// release report header
+		reportContext.releaseOutput(getReportHeader());
+
 		for (final MaterialsProducerId materialsProducerId : materialsDataManager.getMaterialsProducerIds()) {
 			for (final MaterialsProducerPropertyId materialsProducerPropertyId : materialsDataManager
 					.getMaterialsProducerPropertyIds()) {
@@ -69,9 +72,6 @@ public final class MaterialsProducerPropertyReport {
 						materialsProducerPropertyValue);
 			}
 		}
-
-		// release report header
-		reportContext.releaseOutput(getReportHeader());
 	}
 
 	private void recordSimulationState(ReportContext reportContext) {

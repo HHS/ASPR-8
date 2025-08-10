@@ -52,16 +52,16 @@ public final class Example_15 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.REGION_PROPERTY_REPORT, //
-						outputDirectory.resolve("region_property_report.xls"))//
+						outputDirectory.resolve("region_property_report.csv"))//
 				.addReport(ModelReportLabel.REGION_TRANSFER_REPORT, //
-						outputDirectory.resolve("region_transfer_report.xls"))//
+						outputDirectory.resolve("region_transfer_report.csv"))//
 				.addReport(ModelReportLabel.VACCINATION, //
-						outputDirectory.resolve("vaccine_report.xls"))//
+						outputDirectory.resolve("vaccine_report.csv"))//
 				.build();
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_getting_people_plugin|code_cap=The people plugin is initialized with the starting populaiton. */
+	/* start code_ref= regions_plugin_example_getting_people_plugin|code_cap=The people plugin is initialized with the starting population. */
 	private Plugin getPeoplePlugin() {
 		PeoplePluginData.Builder peoplePluginDataBuilder = PeoplePluginData.builder();
 		for (PersonId personId : initialPeople) {
@@ -120,7 +120,7 @@ public final class Example_15 {
 	}
 	/* end */
 
-	/* start code_ref= regions_plugin_example_15_intialize_people_regions|code_cap=Lists of initial people and regions are created and will be used to initialize the various plugins. */
+	/* start code_ref= regions_plugin_example_15_initialize_people_regions|code_cap=Lists of initial people and regions are created and will be used to initialize the various plugins. */
 	private void initializePeopleAndRegions() {
 		for (int i = 0; i < 1000; i++) {
 			initialPeople.add(new PersonId(i));

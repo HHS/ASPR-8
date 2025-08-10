@@ -146,13 +146,13 @@ public final class Experiment {
 		 * Set the simulation state. Defaults to the current date and a start time of
 		 * zero.
 		 * 
-		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_TIME} if the
-		 *                           simulation time is null
+		 * @throws ContractException {@link NucleusError#NULL_SIMULATION_STATE} if the
+		 *                           simulation state is null
 		 */
 		public Builder setSimulationState(SimulationState simulationState) {
 			ensureDataMutability();
 			if (simulationState == null) {
-				throw new ContractException(NucleusError.NULL_SIMULATION_TIME);
+				throw new ContractException(NucleusError.NULL_SIMULATION_STATE);
 			}
 			data.simulationState = simulationState;
 			return this;
@@ -534,6 +534,9 @@ public final class Experiment {
 				list.add(contextBuilder.add(pluginData));
 			}
 		}
+		
+		contextBuilder.setSimulationState(data.simulationState);
+		
 		final DimensionContext dimensionContext = contextBuilder.build();
 
 		// initialize the scenario meta data

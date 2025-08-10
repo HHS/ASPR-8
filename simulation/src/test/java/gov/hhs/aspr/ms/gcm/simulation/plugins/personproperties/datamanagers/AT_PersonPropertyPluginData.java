@@ -24,6 +24,7 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.PersonPropertyError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.support.PersonPropertyId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.testsupport.PersonPropertiesTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.personproperties.testsupport.TestPersonPropertyId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyDefinition;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.properties.support.PropertyError;
@@ -960,267 +961,70 @@ public class AT_PersonPropertyPluginData {
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		// equality on property definitions
-		PersonPropertyId propId1 = new PersonPropertyId() {
-		};
-		PropertyDefinition def1 = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(5)//
-				.setPropertyValueMutability(true)//
-				.build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980821418377306870L);
 
-		PersonPropertyId propId2 = new PersonPropertyId() {
-		};
-		PropertyDefinition def2 = PropertyDefinition.builder()//
-				.setType(Double.class)//
-				.setDefaultValue(3.0)//
-				.setPropertyValueMutability(true)//
-				.build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			PersonPropertiesPluginData pluginData = getRandomPersonPropertiesPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(new Object()));
+		}
 
-		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData.builder().build();
-		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2.0, true)//
-				.build();
-		PersonPropertiesPluginData pluginData3 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2.0, true)//
-				.build();
-		PersonPropertiesPluginData pluginData4 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId2, def1, 0, true)//
-				.build();
-		PersonPropertiesPluginData pluginData5 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId2, def2, 0, true)//
-				.build();
-		PersonPropertiesPluginData pluginData6 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 0, true)//
-				.definePersonProperty(propId2, def2, 0, true)//
-				.build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			PersonPropertiesPluginData pluginData = getRandomPersonPropertiesPluginData(randomGenerator.nextLong());
+			assertFalse(pluginData.equals(null));
+		}
 
 		// reflexive
-		assertEquals(pluginData1, pluginData1);
-		assertEquals(pluginData2, pluginData2);
-		// symmetric
-		assertEquals(pluginData2, pluginData3);
-		assertEquals(pluginData3, pluginData2);
+		for (int i = 0; i < 30; i++) {
+			PersonPropertiesPluginData pluginData = getRandomPersonPropertiesPluginData(randomGenerator.nextLong());
+			assertTrue(pluginData.equals(pluginData));
+		}
 
-		// transitive implicitly covered
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertiesPluginData pluginData1 = getRandomPersonPropertiesPluginData(seed);
+			PersonPropertiesPluginData pluginData2 = getRandomPersonPropertiesPluginData(seed);
+			assertFalse(pluginData1 == pluginData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(pluginData1.equals(pluginData2));
+				assertTrue(pluginData2.equals(pluginData1));
+			}
+		}
 
-		// not equals
-		assertNotEquals(pluginData1, pluginData2);
-		assertNotEquals(pluginData2, pluginData4);
-		assertNotEquals(pluginData4, pluginData5);
-		assertNotEquals(pluginData2, pluginData5);
-		assertNotEquals(pluginData5, pluginData6);
-
-		// equality on time tracking
-		pluginData1 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2.3, true)//
-				.definePersonProperty(propId2, def2, 0, false)//
-				.build();
-
-		// same as 1
-		pluginData2 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2.3, true)//
-				.definePersonProperty(propId2, def2, 0, false)//
-				.build();
-
-		// use a different property id
-		pluginData3 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 0, false)//
-				.definePersonProperty(propId2, def2, 2.3, true)//
-				.build();
-
-		// changed the default time
-		pluginData4 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 5.3, true)//
-				.definePersonProperty(propId2, def2, 0, false)//
-				.build();
-
-		// now has two default times
-		pluginData5 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2.3, true)//
-				.definePersonProperty(propId2, def2, 4.7, true)//
-				.build();
-
-		assertEquals(pluginData1, pluginData1);
-		assertEquals(pluginData1, pluginData2);
-		assertNotEquals(pluginData1, pluginData3);
-		assertNotEquals(pluginData1, pluginData4);
-		assertNotEquals(pluginData1, pluginData5);
-
-		// equality on person property values
-		pluginData1 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 6, true)//
-				.definePersonProperty(propId2, def2, 5.4, true)//
-				.build();
-
-		pluginData2 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 6, true)//
-				.definePersonProperty(propId2, def2, 5.4, true)//
-				.build();
-
-		// change a person
-		pluginData3 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 6, true)//
-				.definePersonProperty(propId2, def2, 5.4, false)//
-				.build();
-
-		// change a value
-		pluginData4 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 6, true)//
-				.definePersonProperty(propId2, def2, 5.5, true)//
-				.build();
-
-		// add a person
-		pluginData5 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 0, false)//
-				.definePersonProperty(propId2, def2, 0, false)//
-				.setPersonPropertyValue(new PersonId(2), propId1, 6)//
-				.setPersonPropertyValue(new PersonId(5), propId2, 5.4)//
-				.setPersonPropertyValue(new PersonId(8), propId2, 8.4)//
-				.build();
-
-		assertEquals(pluginData1, pluginData1);
-		assertEquals(pluginData1, pluginData2);
-		assertNotEquals(pluginData1, pluginData3);
-		assertNotEquals(pluginData1, pluginData4);
-		assertNotEquals(pluginData1, pluginData5);
-
-		// equality on person property times
-		pluginData1 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
-				.build();
-
-		pluginData2 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
-				.build();
-
-		// change a person
-		pluginData3 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-				.setPersonPropertyTime(new PersonId(1), propId1, 6.0)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 5.4)//
-				.build();
-
-		// change a time
-		pluginData4 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 5.5)//
-				.build();
-
-		// add a person
-		pluginData5 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 5.5)//
-				.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-				.build();
-
-		assertEquals(pluginData1, pluginData1);
-		assertEquals(pluginData1, pluginData2);
-		assertNotEquals(pluginData1, pluginData3);
-		assertNotEquals(pluginData1, pluginData4);
-		assertNotEquals(pluginData1, pluginData5);
-
+		// different inputs yield unequal plugin datas
+		Set<PersonPropertiesPluginData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertiesPluginData pluginData = getRandomPersonPropertiesPluginData(randomGenerator.nextLong());
+			set.add(pluginData);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = PersonPropertiesPluginData.class, name = "hashCode", args = {})
 	public void testHashCode() {
-
-		// some setup first
-		PersonPropertyId propId1 = new PersonPropertyId() {
-		};
-		PropertyDefinition def1 = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(5)//
-				.setPropertyValueMutability(true)//
-				.build();
-
-		PersonPropertyId propId2 = new PersonPropertyId() {
-		};
-		PropertyDefinition def2 = PropertyDefinition.builder()//
-				.setType(Double.class)//
-				.setDefaultValue(3.0)//
-				.setPropertyValueMutability(true)//
-				.build();
-
-		PersonPropertiesPluginData pluginData1 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-
-				.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-				.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
-
-				.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-				.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-				.build();
-
-		PersonPropertiesPluginData pluginData2 = PersonPropertiesPluginData.builder()//
-				.definePersonProperty(propId1, def1, 2, true)//
-				.definePersonProperty(propId2, def2, 3, true)//
-
-				.setPersonPropertyValue(new PersonId(2), propId1, 5)//
-				.setPersonPropertyTime(new PersonId(2), propId1, 6.0)//
-
-				.setPersonPropertyValue(new PersonId(5), propId2, 12.5)//
-				.setPersonPropertyTime(new PersonId(5), propId2, 3.0)//
-
-				.setPersonPropertyTime(new PersonId(8), propId2, 8.4)//
-				.setPersonPropertyTime(new PersonId(8), propId2, 12.7)//
-				.build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653491509065183354L);
 
 		// equal objects have equal hash codes
-		assertEquals(pluginData1, pluginData2);
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			PersonPropertiesPluginData pluginData1 = getRandomPersonPropertiesPluginData(seed);
+			PersonPropertiesPluginData pluginData2 = getRandomPersonPropertiesPluginData(seed);
 
-		assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
-
-		// show that hash codes are reasonably distributed
-		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3839519625960869013L);
-
-		int n = 100;
-		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < n; i++) {
-			PersonPropertiesPluginData.Builder builder = PersonPropertiesPluginData.builder();
-			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-				if (randomGenerator.nextBoolean()) {
-					boolean trackTimes = randomGenerator.nextBoolean();
-					double baseTime = randomGenerator.nextDouble();
-					PropertyDefinition propertyDefinition = testPersonPropertyId.getPropertyDefinition();
-					builder.definePersonProperty(testPersonPropertyId, propertyDefinition, baseTime, trackTimes);//
-					for (int j = 0; j < 5; j++) {
-						if (randomGenerator.nextBoolean()) {
-							builder.setPersonPropertyValue(new PersonId(j), testPersonPropertyId,
-									testPersonPropertyId.getRandomPropertyValue(randomGenerator));
-						}
-					}
-					if (trackTimes) {
-						for (int j = 0; j < 5; j++) {
-							if (randomGenerator.nextBoolean()) {
-								builder.setPersonPropertyTime(new PersonId(j), testPersonPropertyId,
-										baseTime + randomGenerator.nextDouble());
-							}
-						}
-					}
-				}
-			}
-			PersonPropertiesPluginData personPropertiesPluginData = builder.build();
-			hashCodes.add(personPropertiesPluginData.hashCode());
+			assertEquals(pluginData1, pluginData2);
+			assertEquals(pluginData1.hashCode(), pluginData2.hashCode());
 		}
-		int expectedCount = (9 * n) / 10;
-		assertTrue(hashCodes.size() > expectedCount);
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			PersonPropertiesPluginData pluginData = getRandomPersonPropertiesPluginData(randomGenerator.nextLong());
+			hashCodes.add(pluginData.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
@@ -1325,5 +1129,22 @@ public class AT_PersonPropertyPluginData {
 
 		assertEquals(expectedValue, actualValue);
 
+	}
+
+	private PersonPropertiesPluginData getRandomPersonPropertiesPluginData(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+
+		List<PersonId> people = new ArrayList<>();
+
+		int n = randomGenerator.nextInt(100) + 1;
+		for (int i = 0; i < n; i++) {
+			people.add(new PersonId(i));
+		}
+
+		long newSeed = randomGenerator.nextLong();
+
+		double propertyTime = randomGenerator.nextDouble();
+
+		return PersonPropertiesTestPluginFactory.getStandardPersonPropertiesPluginData(people, newSeed, propertyTime);
 	}
 }

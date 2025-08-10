@@ -29,6 +29,7 @@ public class HourlyVaccineReport extends PeriodicReport {
 
 		ReportHeader.Builder builder = ReportHeader.builder();
 		addTimeFieldHeaders(builder);
+		builder.setReportLabel(reportLabel);
 		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			builder.add(familyVaccineStatus.description);
 		}
@@ -147,6 +148,8 @@ public class HourlyVaccineReport extends PeriodicReport {
 		vaccinationDataManager = reportContext.getDataManager(VaccinationDataManager.class);
 		PersonDataManager personDataManager = reportContext.getDataManager(PersonDataManager.class);
 
+		reportContext.releaseOutput(reportHeader);
+
 		for (FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			statusToFamiliesMap.put(familyVaccineStatus, new MutableInteger());
 		}
@@ -166,8 +169,6 @@ public class HourlyVaccineReport extends PeriodicReport {
 				refreshIndividualStatus(personId);
 			}
 		}
-
-		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void handlePersonAdditionEvent(ReportContext reportContext, PersonAdditionEvent personAdditionEvent) {

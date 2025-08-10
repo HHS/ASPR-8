@@ -23,7 +23,7 @@ public class ContactManager {
 	private double maximumInfectiousPeriod;
 	private double infectiousContactRate;
 	private int infectionCount;
-	private double transmissionProbabilty;
+	private double transmissionProbability;
 
 	private final Object partitionKey = new Object();
 
@@ -53,9 +53,9 @@ public class ContactManager {
 			throw new RuntimeException("infectious contact rate is negative");
 		}
 
-		transmissionProbabilty = globalPropertiesDataManager
-				.getGlobalPropertyValue(GlobalProperty.TRANSMISSION_PROBABILTY);
-		if (transmissionProbabilty < 0 || transmissionProbabilty > 1) {
+		transmissionProbability = globalPropertiesDataManager
+				.getGlobalPropertyValue(GlobalProperty.TRANSMISSION_PROBABILITY);
+		if (transmissionProbability < 0 || transmissionProbability > 1) {
 			throw new RuntimeException("transmission probability out of bounds[0,1]");
 		}
 		infectionCount = globalPropertiesDataManager.getGlobalPropertyValue(GlobalProperty.INITIAL_INFECTION_COUNT);
@@ -166,7 +166,7 @@ public class ContactManager {
 					break;
 				}
 
-				mitigatedTransmissionProbability *= transmissionProbabilty;
+				mitigatedTransmissionProbability *= transmissionProbability;
 
 				if (randomGenerator.nextDouble() < mitigatedTransmissionProbability) {
 					infectPerson(contactedPersonId);

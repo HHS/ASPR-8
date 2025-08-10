@@ -116,6 +116,7 @@ public class StatelessVaccineReport extends PeriodicReport {
 	@Override
 	protected void prepare(ReportContext reportContext) {
 		ReportHeader.Builder headerBuilder = ReportHeader.builder();
+		headerBuilder.setReportLabel(getReportLabel());
 		addTimeFieldHeaders(headerBuilder);
 		for (VaccineStatus vaccineStatus : VaccineStatus.values()) {
 			headerBuilder.add(vaccineStatus.description);

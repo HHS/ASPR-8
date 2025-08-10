@@ -2,14 +2,15 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -123,7 +124,6 @@ public class AT_SimulationState {
 				.setBaseDate(LocalDate.of(randomGenerator.nextInt(20) + 2000, randomGenerator.nextInt(12) + 1,
 						randomGenerator.nextInt(28) + 1))
 				.setStartTime(randomGenerator.nextDouble() * 100)
-				.setStartTime(randomGenerator.nextDouble()*100)
 				.build();
 	}
 
@@ -153,6 +153,12 @@ public class AT_SimulationState {
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(1814317894811919552L);
 
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			SimulationState simulationState = getRandomSimulationState(randomGenerator.nextLong());
+			assertFalse(simulationState.equals(new Object()));
+		}
+
 		// show not equal to null
 		for (int i = 0; i < 30; i++) {
 			SimulationState simulationState = getRandomSimulationState(randomGenerator.nextLong());
@@ -165,23 +171,26 @@ public class AT_SimulationState {
 			assertTrue(simulationState.equals(simulationState));
 		}
 		
-		// show symmetry/transitivity
+		// show symmetry/transitivity/consistency
 		for (int i = 0; i < 30; i++) {
 			long seed = randomGenerator.nextLong();
 			
 			SimulationState simulationState1 = getRandomSimulationState(seed);
 			SimulationState simulationState2 = getRandomSimulationState(seed);
-			assertTrue(simulationState1.equals(simulationState2));
-			assertTrue(simulationState2.equals(simulationState1));
+			assertFalse(simulationState1 == simulationState2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(simulationState1.equals(simulationState2));
+				assertTrue(simulationState2.equals(simulationState1));
+			}
 		}
 		
 		//show different inputs cause non-equality
-		for (int i = 0; i < 30; i++) {
+		Set<SimulationState> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
 			SimulationState simulationState1 = getRandomSimulationState(randomGenerator.nextLong());
-			SimulationState simulationState2 = getRandomSimulationState(randomGenerator.nextLong());
-			assertNotEquals(simulationState1,simulationState2);
+			set.add(simulationState1);
 		}
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -198,5 +207,13 @@ public class AT_SimulationState {
 			assertEquals(simulationState1.hashCode(),simulationState2.hashCode());
 		}
 
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			SimulationState simulationState = getRandomSimulationState(randomGenerator.nextLong());
+			hashCodes.add(simulationState.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 }

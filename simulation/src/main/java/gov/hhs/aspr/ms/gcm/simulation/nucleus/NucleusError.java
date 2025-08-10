@@ -36,6 +36,7 @@ public enum NucleusError implements ContractError {
 	NULL_CLASS_REFERENCE("Null class reference"),//
 	NULL_DATA_MANAGER("Null data manager"),//
 	NULL_DATA_MANAGER_CLASS("Null data manager class"),//
+	NULL_DATA_MANAGER_CONTEXT("Null data manager context"),//
 	NULL_DATA_MANAGER_CONTEXT_CONSUMER("Null data manager context consumer"),//
 	NULL_DIMENSION_LEVEL_NAME("Null Dimension level name"), //
 	NULL_EVENT("Event is null"),//
@@ -56,6 +57,7 @@ public enum NucleusError implements ContractError {
 	NULL_PLUGIN_CONTEXT("Null plugin context"),//
 	NULL_PLUGIN_DATA("Null plugin data"),//
 	NULL_PLUGIN_DATA_CLASS("Null plugin data class"),//
+	NULL_PLUGIN_DATA_BUILDER_CLASS("Null plugin data builder class"),//
 	NULL_PLUGIN_ID("Null plugin id"),//
 	NULL_PLUGIN_INITIALIZER("Null plugin initializer"),//
 	NULL_PLUGINS("Null collection of plugins"),//
@@ -63,7 +65,7 @@ public enum NucleusError implements ContractError {
 	NULL_SCENARIO_ID("Null scenario id"),//
 	NULL_SCENARIO_PROGRESS_FILE("Null scenario progress file"),//
 	NULL_SIMULATION_CONTEXT("Null simulation context"),//
-	NULL_SIMULATION_TIME("Null simulation time"),//
+	NULL_SIMULATION_STATE("Null simulation state data"),//
 	OBSERVATION_EVENT_IMPROPER_RELEASE("An observation event is being released during a mutation by a data manager without the use of a corresponding mutation event"),//
 	PAST_PLANNING_TIME("Plan execution time is in the past"),//
 	PLANNING_QUEUE_ACTIVE("The planning queue is still active and plans cannot be retrieved"),//

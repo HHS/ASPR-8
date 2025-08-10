@@ -1,6 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.nucleus;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import net.jcip.annotations.Immutable;
@@ -27,37 +28,32 @@ public class SimulationState {
             locked = data.locked;
         }
 
+        /**
+         * Standard implementation consistent with the {@link #equals(Object)} method
+         */
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((baseDate == null) ? 0 : baseDate.hashCode());
-            long temp;
-            temp = Double.doubleToLongBits(startTime);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
-            return result;
+            return Objects.hash(startTime, baseDate);
         }
 
+        /**
+         * Two {@link Data} instances are equal if and only if
+         * their inputs are equal.
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof Data)) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
             }
             Data other = (Data) obj;
-            if (baseDate == null) {
-                if (other.baseDate != null) {
-                    return false;
-                }
-            } else if (!baseDate.equals(other.baseDate)) {
-                return false;
-            }
-            if (Double.doubleToLongBits(startTime) != Double.doubleToLongBits(other.startTime)) {
-                return false;
-            }
-            return true;
+            return Double.doubleToLongBits(startTime) == Double.doubleToLongBits(other.startTime)
+                    && Objects.equals(baseDate, other.baseDate);
         }
     }
 
@@ -165,31 +161,31 @@ public class SimulationState {
 		return StandardVersioning.checkVersionSupported(version);
 	}
     
+	/**
+     * Standard implementation consistent with the {@link #equals(Object)} method
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((data == null) ? 0 : data.hashCode());
-        return result;
+        return Objects.hash(data);
     }
 
+    /**
+     * Two {@link SimulationState} instances are equal if and only if
+     * their inputs are equal.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof SimulationState)) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         SimulationState other = (SimulationState) obj;
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(data, other.data);
     }
 
     /**

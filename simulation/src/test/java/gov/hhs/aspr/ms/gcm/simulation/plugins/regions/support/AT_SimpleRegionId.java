@@ -1,7 +1,7 @@
 package gov.hhs.aspr.ms.gcm.simulation.plugins.regions.support;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,10 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
+import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_SimpleRegionId {
 
@@ -64,84 +66,74 @@ public class AT_SimpleRegionId {
 	@Test
 	@UnitTestMethod(target = SimpleRegionId.class, name = "equals", args = { Object.class })
 	public void testEquals() {
-		SimpleRegionId id_1 = new SimpleRegionId(2);
-		SimpleRegionId id_2 = new SimpleRegionId(5);
-		SimpleRegionId id_3 = new SimpleRegionId(2);
-		SimpleRegionId id_4 = new SimpleRegionId("A");
-		SimpleRegionId id_5 = new SimpleRegionId("A");
-		SimpleRegionId id_6 = new SimpleRegionId("B");
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980223493557306496L);
+        
+        // never equal to another type
+		for (int i = 0; i < 30; i++) {
+            SimpleRegionId simpleRegionId = getRandomSimpleRegionId(randomGenerator.nextLong());
+            assertFalse(simpleRegionId.equals(new Object()));
+		}
+
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			SimpleRegionId simpleRegionId = getRandomSimpleRegionId(randomGenerator.nextLong());
+			assertFalse(simpleRegionId.equals(null));
+		}
 
 		// reflexive
-		assertEquals(id_1, id_1);
-		assertEquals(id_2, id_2);
-		assertEquals(id_3, id_3);
-		assertEquals(id_4, id_4);
-		assertEquals(id_5, id_5);
-		assertEquals(id_6, id_6);
+		for (int i = 0; i < 30; i++) {
+			SimpleRegionId simpleRegionId = getRandomSimpleRegionId(randomGenerator.nextLong());
+			assertTrue(simpleRegionId.equals(simpleRegionId));
+		}
 
-		// symmetric
-		assertEquals(id_1, id_3);
-		assertEquals(id_3, id_1);
-		assertEquals(id_4, id_5);
-		assertEquals(id_5, id_4);
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			SimpleRegionId simpleRegionId1 = getRandomSimpleRegionId(seed);
+			SimpleRegionId simpleRegionId2 = getRandomSimpleRegionId(seed);
+			assertFalse(simpleRegionId1 == simpleRegionId2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(simpleRegionId1.equals(simpleRegionId2));
+				assertTrue(simpleRegionId2.equals(simpleRegionId1));
+			}
+		}
 
-		assertNotEquals(id_1, id_2);
-		assertNotEquals(id_1, id_4);
-		assertNotEquals(id_1, id_5);
-		assertNotEquals(id_1, id_6);
-
-		assertNotEquals(id_2, id_1);
-		assertNotEquals(id_2, id_3);
-		assertNotEquals(id_2, id_4);
-		assertNotEquals(id_2, id_5);
-		assertNotEquals(id_2, id_6);
-
-		assertNotEquals(id_3, id_2);
-		assertNotEquals(id_3, id_4);
-		assertNotEquals(id_3, id_5);
-		assertNotEquals(id_3, id_6);
-
-		assertNotEquals(id_4, id_1);
-		assertNotEquals(id_4, id_2);
-		assertNotEquals(id_4, id_3);
-		assertNotEquals(id_4, id_6);
-
-		assertNotEquals(id_5, id_1);
-		assertNotEquals(id_5, id_2);
-		assertNotEquals(id_5, id_3);
-		assertNotEquals(id_5, id_6);
-
-		assertNotEquals(id_6, id_1);
-		assertNotEquals(id_6, id_2);
-		assertNotEquals(id_6, id_3);
-		assertNotEquals(id_6, id_4);
-		assertNotEquals(id_6, id_5);
-
-		assertNotEquals(id_1, null);
-		assertNotEquals(id_2, null);
-		assertNotEquals(id_3, null);
-		assertNotEquals(id_4, null);
-		assertNotEquals(id_5, null);
-		assertNotEquals(id_6, null);
-
+		// different inputs yield unequal SimpleRegionIds
+		Set<SimpleRegionId> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			SimpleRegionId simpleRegionId = getRandomSimpleRegionId(randomGenerator.nextLong());
+			set.add(simpleRegionId);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = SimpleRegionId.class, name = "hashCode", args = {})
 	public void testHashCode() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6496939919926275913L);
 
 		// equal objects have equal hash codes
 		for (int i = 0; i < 30; i++) {
-			SimpleRegionId s1 = new SimpleRegionId(i);
-			SimpleRegionId s2 = new SimpleRegionId(i);
+			long seed = randomGenerator.nextLong();
+			SimpleRegionId s1 = getRandomSimpleRegionId(seed);
+			SimpleRegionId s2 = getRandomSimpleRegionId(seed);
+
+			assertEquals(s1, s2);
 			assertEquals(s1.hashCode(), s2.hashCode());
 		}
 
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
-		for (int i = 0; i < 30; i++) {
-			boolean unique = hashCodes.add(new SimpleRegionId(i).hashCode());
-			assertTrue(unique);
+		for (int i = 0; i < 100; i++) {
+			SimpleRegionId simpleRegionId = getRandomSimpleRegionId(randomGenerator.nextLong());
+			hashCodes.add(simpleRegionId.hashCode());
 		}
 
+		assertEquals(100, hashCodes.size());
+	}
+
+	private SimpleRegionId getRandomSimpleRegionId(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new SimpleRegionId(randomGenerator.nextInt());
 	}
 }

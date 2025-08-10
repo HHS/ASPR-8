@@ -76,10 +76,10 @@ public final class Example_18 {
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
 				.addReport(ModelReportLabel.PERSON_RESOURCE_REPORT,
-						outputDirectory.resolve("person_resource_report.xls"))//
-				.addReport(ModelReportLabel.TREATMENT_REPORT, outputDirectory.resolve("treatment_report.xls"))//
-				.addReport(ModelReportLabel.DEATH_REPORT, outputDirectory.resolve("death_report.xls"))//
-				.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, outputDirectory.resolve("questionnaire_report.xls"))//
+						outputDirectory.resolve("person_resource_report.csv"))//
+				.addReport(ModelReportLabel.TREATMENT_REPORT, outputDirectory.resolve("treatment_report.csv"))//
+				.addReport(ModelReportLabel.DEATH_REPORT, outputDirectory.resolve("death_report.csv"))//
+				.addReport(ModelReportLabel.QUESTIONNAIRE_REPORT, outputDirectory.resolve("questionnaire_report.csv"))//
 				.build();
 	}
 

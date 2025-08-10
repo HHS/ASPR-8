@@ -1,0 +1,320 @@
+# Groups Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The groups plugin manages the assignment people to various groups such as homes, schools, work places and other social organizations. As such, it is dependent on the people plugin. Like people, groups can have property definitions. Unlike people, groups have a modeler-defined group type that dictates which group properties apply.
+
+## Plugin Data Dependency
+
+The groups plugin depends on the people plugin and the stochastics plugin. The stochastics plugin is used for random sampling of people from groups.
+
+## Plugin Data initialization
+
+The plugin is initialized using a GroupsPluginData object that:
+
+-   adds group types
+-   defines group properties for each group type
+-   sets group property value per group
+-   adds groups
+-   initializes the person membership in groups
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the GroupsDataManager that is initialized with the GroupsPluginData.
+
+## Data Manager
+
+The data manager manages group memberships and group property values. The data manager provides public methods that:
+
+-   Add/Remove a group
+-   Add a group type
+-   Add/Remove a person to/from a group
+-   Define a group property
+-   Set a group property value
+-   Sample a random person from a group
+-   Provide many queries about the state of groups
+
+The data manager also produces observable events:
+
+-   GroupAdditionEvent -- when a group is added
+-   GroupImminentRemovalEvent -- when a group is about to be removed
+-   GroupMembershipAdditionEvent -- when a person is added to a group
+-   GroupMembershipRemovalEvent -- when a person is removed from a group
+-   GroupPropertyDefinitionEvent -- when a new group property is defined
+-   GroupPropertyUpdateEvent -- when a group property value is updated
+-   GroupTypeAdditionEvent -- when a new group type is added
+
+## Example Code (Lesson 17)
+
+Example_17.java shows the use of the groups plugin. In it we will examine:
+
+-   The initialization of the groups plugin
+-   The movement of people in and out of groups
+
+The example includes seven plugins:
+
+-   Groups plugin -- (GCM core plugin) used to manage groups
+-   People plugin -- (GCM core plugin) used to manage people
+-   Person properties plugin -- (GCM core plugin) used to decorate properties onto people
+-   Global properties plugin -- (GCM core plugin) used to store policies and initial conditions affecting groups and disease transmission
+-   Stochastics plugin -- (GCM core plugin) used to generate random numbers used in various decisions
+-   Regions Plugin -- (GCM core plugin) used for various reports
+-   Model plugin -- (local plugin) used to introduce four actors that will:
+    -   Load the population
+    -   Manage the spread of disease through transmission in groups
+    -   Manage group-based mitigation strategies in schools
+    -   Manage group-based mitigation strategies in work places
+
+## Model
+
+The example's model represents a disease that is not treatable but can be mitigated through social distancing, school closures and the use of telework arrangements. People at the start of the simulation are either immune or susceptible. Infection is spread through personal contact in groups and is subject to public policies triggered by the number of infectious people present in the total population or in specific groups. The population is set to 10,000 people and the groups are synthetically derived using fixed proportions (global properties) for school aged children (0-18 yrs), working adults (19 to 64 yrs) and non-working seniors (65+yrs). All people are assigned a home group. School aged children are assigned to a single school group and working age adults are assigned to a single work group. The number of each group type is determined by fixed expected groups sizes (global properties).
+
+At the beginning of the model, a small number of adults are infected at random. Each infected person is immediately infectious and will infect one person per day over a random period from 3 to 12 days inclusive. Without mitigations, each transmission is successful. Public policies are reviewed on a weekly basis. As the number of total public infections increase, some work groups may elect to move to a telework status, reducing transmissions by 50% in those groups. Similarly, when a school's level of infection increases it will move to a split cohort mode, reducing transmission success to 50%. If infection within a cohort continues to rise, the cohort is closed and the children are no longer assigned to a school group. For simplicity of modeling, telework arrangements, cohort schools and school closures do not revert as infection levels subside.
+
+## Model Execution
+
+The example's execution is shown in @lst-groups_plugin_example_17_init and @lst-groups_plugin_example_17_execute.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_example_17_init$code_cap
+#| code: !expr fig$groups_plugin_example_17_init$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_example_17_execute$code_cap
+#| code: !expr fig$groups_plugin_example_17_execute$code
+#| echo: true
+```
+
+The first action is to load the global properties plugin (@lst-groups_plugin_example_17_global_properties). The fifteen global properties are marked as immutable since they will not change over the course of the simulation. Further, eleven of the properties are fixed and their values are set in the plugin data. The four remaining properties participate in the dimensions of the experiment and are not directly set in the global plugin.
+
+-   SUSCEPTIBLE_POPULATION_PROPORTION -- The fraction of the population that is susceptible
+-   INITIAL_INFECTIONS -- The number of adults initially infected
+-   MIN_INFECTIOUS_PERIOD -- The minimum number of days a person is infectious
+-   MAX_INFECTIOUS_PERIOD -- The maximum number of days a person is infectious
+-   POPULATION_SIZE -- The initial size of the population
+-   CHILD_POPULATION_PROPORTION -- The fraction of the population between the ages of 0 and 18, inclusive
+-   SENIOR_POPULATION_PROPORTION -- The fraction of the population 65 and older
+-   R0 -- The expected number of people a single person will infect if all contacts are susceptible and transmission success is 100% likely
+-   AVERAGE_HOME_SIZE -- The average number of people per household
+-   AVERAGE_SCHOOL_SIZE -- The average number of students in a school
+-   AVERAGE_WORK_SIZE -- The average number of people per work place
+-   TELEWORK_INFECTION_THRESHOLD -- The total infection density that triggers some work places to institute telework mode
+-   TELEWORK_PROBABILTY -- The probability that a work place will convert to telework mode once telework is allowed
+-   SCHOOL_COHORT_INFECTION_THRESHOLD -- The infection density within a school that triggers the school moving to a split cohort
+-   SCHOOL_CLOSURE_INFECTION_THRESHOLD -- The infection density within a school cohort that triggers the closure of that cohort.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_example_17_global_properties$code_cap
+#| code: !expr fig$groups_plugin_example_17_global_properties$code
+#| echo: true
+```
+
+The person properties plugin is loaded in (@lst-groups_plugin_example_17_person_properties). The properties are:
+
+-   AGE -- An integer value for the age of a person: child (0-18), adult (19-64), senior (65+)
+-   DISEASE_STATE -- The state for a person: IMMUNE, SUSCEPTIBLE, INFECTIOUS, RECOVERED
+-   INFECTED_COUNT -- The number of people infected by each particular person
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_example_17_person_properties$code_cap
+#| code: !expr fig$groups_plugin_example_17_person_properties$code
+#| echo: true
+```
+
+The groups plugin (@lst-groups_plugin_example_17_groups_plugin) loads the group types and their corresponding group properties. The creation of groups is left to the Population Loader.
+
+-   HOME
+-   SCHOOL
+    -   SCHOOL_STATUS : OPEN, COHORT (50% transmission reduction), CLOSED (100% transmission reduction)
+-   WORK
+    -   TELEWORK -- Boolean designating work place as telework, reducing transmission by 50%
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_example_17_groups_plugin$code_cap
+#| code: !expr fig$groups_plugin_example_17_groups_plugin$code
+#| echo: true
+```
+
+The stochastics plugin is initialized with a random seed and all simulations will start in the same stochastic state. The regions plugin has five regions and the people plugin is loaded in an empty state. People are added by an actor in the model plugin.
+
+The model plugin adds four actors
+
+-   PopulationLoader -- Adds people and groups to the simulation and initializes immunity.
+-   InfectionManager-- Infects a small number of randomly chosen adults. Manages the progress of infections and the spread of infection from one per to another via their shared groups.
+-   TeleworkManager -- Reviews the status of infections within the greater population every week and triggers randomly selected work places to move to telework mode.
+-   SchoolManager -- Reviews the status of infections per school every week and splits school groups into cohorts. If infections increase it can close individual schools.
+
+The reports in this model are:
+
+-   GroupPopulationReport -- Shows the distribution of group sizes for each group type at the end of the simulation.
+-   PersonPropertyReport -- Shows the distribution of disease state values over each day by regions
+-   DiseaseStateReport -- Shows the distribution of disease state at the end of the simulation with a single line per scenario
+-   ContagionReport -- Shows the distribution of the number of infections spread per person
+
+## Experiment dimensions
+
+Three dimensions are added to the experiment that define alternate values for telework infection thresholds, telework adoption probability, school cohort infection thresholds and school closure infection thresholds, yielding 36 scenarios. The values are:
+
+-   Telework infection threshold -- 0.1, 1, and 10 percent
+-   Telework adoption probability -- 10, 30, 50 and 80 percent
+-   School cohort and closure infection thresholds
+    -   0.1 and 1 percent
+    -   1 and 2 percent
+    -   10 and 20 percent
+
+## The actors
+
+We will finish this chapter by reviewing the four actors of the model plugin and then examine the output.
+
+### Population Loader
+
+The PopulationLoader actor, in @lst-groups_plugin_population_loader_init, adds people to the simulation based on the number in the POPULATION_SIZE global property. The population is split evenly between the regions. For each region, the manager determines the number of homes needed to house the people based on the AVERAGE_HOME_SIZE. The people are grouped into children, working adults and seniors based on related global properties. Similar calculations determine the number of schools and workplaces. The people are randomly distributed based on their ages into homes, work places and schools. Some care is given to ensure that every household has at least one adult.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_population_loader_init$code_cap
+#| code: !expr fig$groups_plugin_population_loader_init$code
+#| echo: true
+```
+
+Initializing the region population, @lst-groups_plugin_population_loader_init_region_population, first establishes the number of home groups, school groups and work groups by determining the number of children, working adults and seniors that are present based on various fixed global property values. The people are added with randomly determined ages and disease immunity.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_population_loader_init_region_population$code_cap
+#| code: !expr fig$groups_plugin_population_loader_init_region_population$code
+#| echo: true
+```
+
+In @lst-groups_plugin_population_loader_adding_groups, the manager continues by creating the work, home and school groups. It then organizes the people by age group in @lst-groups_plugin_population_loader_age_subsets. Finally, it places the people into the appropriate groups in @lst-groups_plugin_population_loader_group_assignments.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_population_loader_adding_groups$code_cap
+#| code: !expr fig$groups_plugin_population_loader_adding_groups$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_population_loader_age_subsets$code_cap
+#| code: !expr fig$groups_plugin_population_loader_age_subsets$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_population_loader_group_assignments$code_cap
+#| code: !expr fig$groups_plugin_population_loader_group_assignments$code
+#| echo: true
+```
+
+### Telework manager
+
+The TeleworkManager actor, in @lst-groups_plugin_telework_manager_init, schedules a weekly review of school disease mitigation strategies. Note that the scheduling is through a passive plan, which indicates to the simulation that this plan should only be executed if there are active plans still remaining. Passive plans are generally used when there is a continuing task that is not driven directly by events. When active plans cease and only passive plans remain, the simulation halts since the passive plans are not reason enough to continue time flow.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_telework_manager_init$code_cap
+#| code: !expr fig$groups_plugin_telework_manager_init$code
+#| echo: true
+```
+
+The review process (@lst-groups_plugin_telework_review_status) continues until a disease threshold has been reached. At that point, the telework manager randomly determines which work groups will be in telework mode. Note that there is no returning from this mode and there is no further evolution of the telework mode even after the disease wanes.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_telework_review_status$code_cap
+#| code: !expr fig$groups_plugin_telework_review_status$code
+#| echo: true
+```
+
+### School manager
+
+The SchoolManager actor (@lst-groups_plugin_school_manager_init) initializes by establishing various values derived from fixed global properties and then scheduling a weekly review of all schools.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_school_manager_init$code_cap
+#| code: !expr fig$groups_plugin_school_manager_init$code
+#| echo: true
+```
+
+The review of each school group is shown in @lst-groups_plugin_school_manager_review_school. The fraction of the school's students who are infectious is calculated. Depending on the current state of the group (OPEN, COHORT, CLOSED) the group may move to the next state. If the group moves from OPEN to COHORT (@lst-groups_plugin_school_manager_split_schools), a new group is formed and half of the students are moved into the new group. Both groups are then marked as COHORT groups. If the group moves from COHORT to CLOSED (@lst-groups_plugin_school_manager_close_schools), all students are removed from the group.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_school_manager_review_school$code_cap
+#| code: !expr fig$groups_plugin_school_manager_review_school$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_school_manager_split_schools$code_cap
+#| code: !expr fig$groups_plugin_school_manager_split_schools$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_school_manager_close_schools$code_cap
+#| code: !expr fig$groups_plugin_school_manager_close_schools$code
+#| echo: true
+```
+
+### Infection Manager
+
+The InfectionManager actor, in @lst-groups_plugin_infection_manager_init, first determines various values from the fixed global properties that will be used to manage infections. The most important calculation is to determine the length of time between infectious contacts as a function of the global R0 value and the expected number of days a person will be infectious. It then selects a small set of adults to infect during first day of the simulation. Infecting a person (@lst-groups_plugin_infection_manager_infect_person) first requires the manager to determine the number of days of the infection for the particular person and then schedule infectious contact times for that person. At the end of the infectious contacts the manager schedules the transition of the person from infectious to recovered.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_infection_manager_init$code_cap
+#| code: !expr fig$groups_plugin_infection_manager_init$code
+#| echo: true
+```
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_infection_manager_infect_person$code_cap
+#| code: !expr fig$groups_plugin_infection_manager_infect_person$code
+#| echo: true
+```
+
+An infectious contact , @lst-groups_plugin_infection_manager_infect_contact, first selects a group at random from the person's groups. A person to infect is selected from the group, excluding the person who is infecting. If such a person can be found and that person is susceptible then, barring mitigation, the susceptible person becomes infected and is immediately infectious. Cohort schools are mitigated by 50% and closed schools are 100% mitigated. Telework groups are mitigated by 50%.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$groups_plugin_infection_manager_infect_contact$code_cap
+#| code: !expr fig$groups_plugin_infection_manager_infect_contact$code
+#| echo: true
+```
+
+## Inspecting the output
+
+### Person Property Report
+
+The 36 scenarios result in a large amount of output in the person property report. It is effectively a trace log of the initial state and changes to each person.
+
+### Group Population Report
+
+The group population report shows the distribution of people at the end of the simulation. Since there is no stochastics dimension, each scenario has an identical distribution of people into homes. The report shows all the expected patterns as a response to initial policies. For example, higher school closure infection thresholds drive the ending school populations to less than 1/3 their initial values.
+
+### Disease State Report
+
+The disease state report shows the ending counts for each disease state. By analyzing the number of people recovered over the 36 scenarios, we observe that the disease threshold for triggering work places into a telework status is significant. If that threshold is set to 10%, the working population does not telework and the number of recovered is significantly higher that at the lower levels. School cohort and closure policies exhibit a similar pattern.
+
+### Contagion Report
+
+The contagion report shows then number of people infected by each infectious person as counts. The report shows that early decisions to close schools and institute telework policies can significantly reduce the spread of the disease.

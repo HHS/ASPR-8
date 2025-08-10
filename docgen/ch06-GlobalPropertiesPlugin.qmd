@@ -1,0 +1,98 @@
+# Global Properties Plugin
+
+```{r}
+#| echo: false
+#| warning: false
+source("RCode/CreateCodeBlocksFromSource.R")
+```
+
+The global property plugin implements a flexible property system for properties that have global scope. Specifically, global properties have no association with a specific person, place or other instance-based concept.
+
+## Plugin Data Initialization
+
+The plugin is initialized using a GlobalPropertiesPluginData object that collects global property definitions and global property values. Even though the property definitions can contain default property values, the ability to set property values is included to add some flexibility to the collection process since the client model may separate definitions from values in its input files.
+
+## Plugin Behavior
+
+The plugin adds a single data manager to the simulation as an instance of the GlobalPropertiesDataManager that is initialized with the GlobalPropertiesPluginData.
+
+## Data Manager
+
+The data manager provides access to the global properties and provides the ability to:
+
+-   Define new global properties (not contained in the initial data)
+-   Retrieve global property definitions
+-   Retrieve global property ids
+-   Retrieve global property values and the times when they were set
+-   Set global property values
+
+The data manager also produces observable events when a new global property is defined or when a global property value is assigned. The plugin provides the GlobalPropertyReport that subscribes to these events and produces a trace report of property value assignments.
+
+## Example Code (Lesson 13)
+
+Example_13.java shows a simple usage of the global properties plugin. In it we will add three double valued properties: ALPHA, BETA, and GAMMA. ALPHA and BETA will be used to vary the scenarios in the experiment and GAMMA will be set to a simple function of ALPHA and BETA that will change over time in the simulation. This will culminate in a report that shows each time the global variables are defined or their values are set.
+
+The example includes two plugins:
+
+-   Global properties plugin -- (GCM core plugin) used to manage the properties
+-   Model plugin -- (local plugin) used to introduce a single actor that will alter the value of GAMMA over time
+
+The example's main method in @lst-global_properties_plugin_example_13 adds the two plugins:
+
+-   Global properties plugin
+    -   initialized with the three global properties
+    -   adds the GlobalPropertyReport
+-   Model plugin
+    -   Uses no inputs, but will add a single instance of the GammaActor class
+
+The main method continues by associating the report to a file via the NIOReportItemHandler. It then forms a dimension for the experiment from variant values of ALPHA and BETA. Finally, it executes the experiment.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$global_properties_plugin_example_13$code_cap
+#| code: !expr fig$global_properties_plugin_example_13$code
+#| echo: true
+```
+
+Initialization of the global properties is shown in @lst-global_properties_plugin_get_property_data.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$global_properties_plugin_get_property_data$code_cap
+#| code: !expr fig$global_properties_plugin_get_property_data$code
+#| echo: true
+```
+
+@lst-global_properties_plugin_alpha_beta_dimension shows the construction of the experiment's single dimension.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$global_properties_plugin_alpha_beta_dimension$code_cap
+#| code: !expr fig$global_properties_plugin_alpha_beta_dimension$code
+#| echo: true
+```
+
+The GammaActor class in @lst-global_properties_plugin_gamma_actor schedules 10 plans, set one day apart, to change the GAMMA value as a successive interpolation between the ALPHA and BETA values that are in turn controlled by the experiment.
+
+```{java}
+#| eval: false
+#| attr-source: !expr fig$global_properties_plugin_gamma_actor$code_cap
+#| code: !expr fig$global_properties_plugin_gamma_actor$code
+#| echo: true
+```
+
+The resultant global properties report shows the correct interpolated values for the five scenarios in @fig-global_proerties_plugin_output.
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-cap: !expr metadata$global_proerties_plugin_output$code_cap
+#| label: fig-global_proerties_plugin_output
+options(knitr.kable.NA = '')
+metadata$global_proerties_plugin_output$code_out %>% read_tsv(col_types=cols(.default = "c")) %>% 
+  knitr::kable(foramt="html") %>% 
+  kableExtra::kable_styling(html_font="monospace", full_width = FALSE) %>%
+  kableExtra::scroll_box(width = "100%", height = "500px")
+```

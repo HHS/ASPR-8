@@ -96,7 +96,7 @@ public final class Example_19 {
 
 				.addDimension(getInfectionThresholdDimension())//
 				.addDimension(getCommunityContactRateDimension())//
-				.addDimension(getIntialInfectionsDimension())//
+				.addDimension(getInitialInfectionsDimension())//
 				.addDimension(getR0Dimension())//
 
 				.addExperimentContextConsumer(getNIOReportItemHandler())//
@@ -197,7 +197,7 @@ public final class Example_19 {
 		return GroupsPlugin.builder().setGroupsPluginData(groupsPluginData).getGroupsPlugin();
 	}
 
-	private Dimension getIntialInfectionsDimension() {
+	private Dimension getInitialInfectionsDimension() {
 		final Integer[] values = new Integer[] { 1, 10, 100 };
 		return getGlobalPropertyDimension(GlobalProperty.INITIAL_INFECTIONS, "initial_infections", values);
 	}
@@ -286,20 +286,20 @@ public final class Example_19 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
-				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.xls"))//
+				.addReport(ModelReportLabel.DISEASE_STATE_REPORT, outputDirectory.resolve("disease_state_report.csv"))//
 				.addReport(ModelReportLabel.PERSON_PROPERTY_REPORT,
-						outputDirectory.resolve("person_property_report.xls"))//
-				.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.xls"))//
+						outputDirectory.resolve("person_property_report.csv"))//
+				.addReport(ModelReportLabel.VACCINE_REPORT, outputDirectory.resolve("vaccine_report.csv"))//
 				.addReport(ModelReportLabel.VACCINE_PRODUCTION_REPORT,
-						outputDirectory.resolve("vaccine_production_report.xls"))//
+						outputDirectory.resolve("vaccine_production_report.csv"))//
 				.build();
 	}
 
 	/* start code_ref=materials_plugin_example_19_resources_plugin|code_cap=The resources plugin is created with the single VACCINE resource id.*/
 	private Plugin getResourcesPlugin() {
 		final ResourcesPluginData.Builder builder = ResourcesPluginData.builder();
-		for (final ResourceId resourcId : Resource.values()) {
-			builder.addResource(resourcId, 0.0, true);
+		for (final ResourceId resourceId : Resource.values()) {
+			builder.addResource(resourceId, 0.0, true);
 		}
 		final ResourcesPluginData resourcesPluginData = builder.build();
 		return ResourcesPlugin.builder().setResourcesPluginData(resourcesPluginData).getResourcesPlugin();

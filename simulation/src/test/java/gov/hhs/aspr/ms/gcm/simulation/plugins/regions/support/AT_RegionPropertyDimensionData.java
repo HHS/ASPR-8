@@ -28,7 +28,7 @@ import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 public class AT_RegionPropertyDimensionData {
 
 	@Test
-	@UnitTestMethod(target = RegionPropertyDimensionData.Builder.class, name = "addValue", args = { Object.class })
+	@UnitTestMethod(target = RegionPropertyDimensionData.Builder.class, name = "addValue", args = { String.class, Object.class })
 	public void testAddValue() {
 
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3468803942988565031L);
@@ -293,13 +293,21 @@ public class AT_RegionPropertyDimensionData {
 					randomGenerator.nextLong());
 			hashCodes.add(regionPropertyDimensionData.hashCode());
 		}
-		assertTrue(hashCodes.size() > 95);
+
+		assertEquals(100, hashCodes.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = RegionPropertyDimensionData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(6276127520796404855L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			RegionPropertyDimensionData regionPropertyDimensionData = getRandomRegionPropertyDimensionData(
+					randomGenerator.nextLong());
+			assertFalse(regionPropertyDimensionData.equals(new Object()));
+		}
 
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
@@ -320,20 +328,21 @@ public class AT_RegionPropertyDimensionData {
 			long seed = randomGenerator.nextLong();
 			RegionPropertyDimensionData regionPropertyDimensionData1 = getRandomRegionPropertyDimensionData(seed);
 			RegionPropertyDimensionData regionPropertyDimensionData2 = getRandomRegionPropertyDimensionData(seed);
-
-			assertTrue(regionPropertyDimensionData1.equals(regionPropertyDimensionData2));
-			assertTrue(regionPropertyDimensionData2.equals(regionPropertyDimensionData1));
+			assertFalse(regionPropertyDimensionData1 == regionPropertyDimensionData2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(regionPropertyDimensionData1.equals(regionPropertyDimensionData2));
+				assertTrue(regionPropertyDimensionData2.equals(regionPropertyDimensionData1));
+			}
 		}
 
 		// Different inputs yield unequal values
-		Set<RegionPropertyDimensionData> regionPropertyDimensionDataSet = new LinkedHashSet<>();
+		Set<RegionPropertyDimensionData> set = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 			RegionPropertyDimensionData regionPropertyDimensionData = getRandomRegionPropertyDimensionData(
 					randomGenerator.nextLong());
-			regionPropertyDimensionDataSet.add(regionPropertyDimensionData);
+			set.add(regionPropertyDimensionData);
 		}
-		assertTrue(regionPropertyDimensionDataSet.size() > 95);
-
+		assertEquals(100, set.size());
 	}
 
 	@Test
@@ -419,10 +428,10 @@ public class AT_RegionPropertyDimensionData {
 
 		RegionPropertyDimensionData.Builder builder = RegionPropertyDimensionData.builder();
 
-		builder.setRegionId(TestRegionId.getRandomRegionId(randomGenerator));
+		builder.setRegionId(new SimpleRegionId(randomGenerator.nextInt()));
 
 		TestRegionPropertyId regionPropertyId = TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator);
-		builder.setRegionPropertyId(TestRegionPropertyId.getRandomRegionPropertyId(randomGenerator));
+		builder.setRegionPropertyId(regionPropertyId);
 
 		int count = randomGenerator.nextInt(3) + 1;
 		for (int i = 0; i < count; i++) {

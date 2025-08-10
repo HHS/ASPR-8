@@ -7,58 +7,9 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.AttributeId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.TestAttributeId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
-import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 
 public class AT_AttributeUpdateEvent {
-
-	@Test
-	@UnitTestConstructor(target = AttributeUpdateEvent.class, args = { PersonId.class, AttributeId.class, Object.class, Object.class })
-	public void testConstructor() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "equals", args = { Object.class })
-	public void testEquals() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "toString", args = {})
-	public void testToString() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "hashCode", args = {})
-	public void testHashCode() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "personId", args = {})
-	public void testPersonId() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "attributeId", args = {})
-	public void testAttributeId() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "previousValue", args = {})
-	public void testPreviousValue() {
-		// nothing to test
-	}
-
-	@Test
-	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "currentValue", args = {})
-	public void testCurrentValue() {
-		// nothing to test
-	}
 
 	@Test
 	@UnitTestMethod(target = AttributeUpdateEvent.class, name = "getPreviousValue", args = {})

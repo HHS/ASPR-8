@@ -31,7 +31,7 @@ public final class VaccineReport extends PeriodicReport {
 			builder.add("count_" + i);
 		}
 		builder.add("count_" + maxVaccineCount + "+");
-
+		builder.setReportLabel(reportLabel);
 		reportHeader = builder.build();
 	}
 

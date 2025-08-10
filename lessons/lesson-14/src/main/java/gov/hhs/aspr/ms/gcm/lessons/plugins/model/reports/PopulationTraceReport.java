@@ -18,14 +18,17 @@ public final class PopulationTraceReport {
 
 	private ReportContext reportContext;
 
-	private ReportHeader reportHeader = ReportHeader.builder()//
-			.add("time")//
-			.add("personId")//
-			.add("action")//
-			.build();
+	private ReportHeader reportHeader;
 
 	public PopulationTraceReport(ReportLabel reportLabel) {
 		this.reportLabel = reportLabel;
+
+		reportHeader = ReportHeader.builder()//
+			.add("time")//
+			.add("personId")//
+			.add("action")//
+			.setReportLabel(reportLabel)
+			.build();
 	}
 
 	public void init(ReportContext reportContext) {
@@ -35,11 +38,11 @@ public final class PopulationTraceReport {
 		reportContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 		reportContext.subscribe(PersonImminentRemovalEvent.class, this::handlePersonImminentRemovalEvent);
 
+		reportContext.releaseOutput(reportHeader);
+
 		for (PersonId personId : peopleDataManager.getPeople()) {
 			generateReportItem(Action.ADDITION, personId);
 		}
-
-		reportContext.releaseOutput(reportHeader);
 	}
 
 	private void handlePersonImminentRemovalEvent(ReportContext reportContext,

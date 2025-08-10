@@ -2,10 +2,11 @@ package gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -69,38 +70,88 @@ public class AT_TestActorPlan {
 	@Test
 	@UnitTestMethod(target = TestActorPlan.class, name = "equals", args = { Object.class })
 	public void testEquals() {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8954621418377306870L);
 
-		TestActorPlan plan1 = new TestActorPlan(4.5, (c) -> {
-		});
-		TestActorPlan plan2 = new TestActorPlan(4.5, (c) -> {
-		});
-		assertEquals(plan1, plan2);
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			TestActorPlan testActorPlan = getRandomTestActorPlan(randomGenerator.nextLong());
+			assertFalse(testActorPlan.equals(new Object()));
+		}
 
-		plan1 = new TestActorPlan(6.5, (c) -> {
-		});
-		plan2 = new TestActorPlan(4.5, (c) -> {
-		});
-		assertNotEquals(plan1, plan2);
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+			TestActorPlan testActorPlan = getRandomTestActorPlan(randomGenerator.nextLong());
+			assertFalse(testActorPlan.equals(null));
+		}
 
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+			TestActorPlan testActorPlan = getRandomTestActorPlan(randomGenerator.nextLong());
+			assertTrue(testActorPlan.equals(testActorPlan));
+		}
+
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestActorPlan testActorPlan1 = getRandomTestActorPlan(seed);
+			TestActorPlan testActorPlan2 = getRandomTestActorPlan(seed);
+			assertFalse(testActorPlan1 == testActorPlan2);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testActorPlan1.equals(testActorPlan2));
+				assertTrue(testActorPlan2.equals(testActorPlan1));
+			}
+
+			// execute both plans and show they are still equal
+			testActorPlan1.execute(null);
+			testActorPlan2.execute(null);
+			for (int j = 0; j < 10; j++) {
+				assertTrue(testActorPlan1.equals(testActorPlan2));
+				assertTrue(testActorPlan2.equals(testActorPlan1));
+			}
+		}
+
+		// different inputs yield unequal testActorPlans
+		Set<TestActorPlan> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestActorPlan testActorPlan = getRandomTestActorPlan(randomGenerator.nextLong());
+			set.add(testActorPlan);
+		}
+		assertEquals(100, set.size());
 	}
 
 	@Test
 	@UnitTestMethod(target = TestActorPlan.class, name = "hashCode", args = {})
 	public void testHashCode() {
-		/*
-		 * show that equal objects have equal hash codes
-		 */
-		TestActorPlan plan1 = new TestActorPlan(4.5, (c) -> {
-		});
-		TestActorPlan plan2 = new TestActorPlan(4.5, (c) -> {
-		});
-		assertEquals(plan1.hashCode(), plan2.hashCode());
-		
-		
-		plan1.execute(null);
-		plan2.execute(null);
-		assertEquals(plan1.hashCode(), plan2.hashCode());
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(2653090533465183354L);
 
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			TestActorPlan testActorPlan1 = getRandomTestActorPlan(seed);
+			TestActorPlan testActorPlan2 = getRandomTestActorPlan(seed);
+
+			assertEquals(testActorPlan1, testActorPlan2);
+			assertEquals(testActorPlan1.hashCode(), testActorPlan2.hashCode());
+
+			// execute both plans and show they are still equal with equal hash codes
+			testActorPlan1.execute(null);
+			testActorPlan2.execute(null);
+			assertEquals(testActorPlan1, testActorPlan2);
+			assertEquals(testActorPlan1.hashCode(), testActorPlan2.hashCode());
+		}
+
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			TestActorPlan testActorPlan = getRandomTestActorPlan(randomGenerator.nextLong());
+			hashCodes.add(testActorPlan.hashCode());
+		}
+
+		assertEquals(100, hashCodes.size());
 	}
 
+	private TestActorPlan getRandomTestActorPlan(long seed) {
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+		return new TestActorPlan(randomGenerator.nextDouble(), (c) -> {});
+	}
 }

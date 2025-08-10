@@ -235,6 +235,13 @@ public class AT_StochasticsPluginData {
 	@UnitTestMethod(target = StochasticsPluginData.class, name = "equals", args = { Object.class })
 	public void testEquals() {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(4427478130102505257L);
+
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+			StochasticsPluginData stochasticsPluginData = getRandomStochasticsPluginData(randomGenerator.nextLong());
+			assertFalse(stochasticsPluginData.equals(new Object()));
+		}
+
 		// never equal to null
 		for (int i = 0; i < 30; i++) {
 			StochasticsPluginData stochasticsPluginData = getRandomStochasticsPluginData(randomGenerator.nextLong());
@@ -252,7 +259,8 @@ public class AT_StochasticsPluginData {
 			long seed = randomGenerator.nextLong();
 			StochasticsPluginData stochasticsPluginData1 = getRandomStochasticsPluginData(seed);
 			StochasticsPluginData stochasticsPluginData2 = getRandomStochasticsPluginData(seed);
-			for (int j = 0; j < 5; j++) {
+			assertFalse(stochasticsPluginData1 == stochasticsPluginData2);
+			for (int j = 0; j < 10; j++) {
 				assertTrue(stochasticsPluginData1.equals(stochasticsPluginData2));
 				assertTrue(stochasticsPluginData2.equals(stochasticsPluginData1));
 			}

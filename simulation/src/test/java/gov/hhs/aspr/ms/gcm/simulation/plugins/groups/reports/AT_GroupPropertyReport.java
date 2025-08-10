@@ -410,6 +410,12 @@ public class AT_GroupPropertyReport {
 					assertDoesNotThrow(() -> Integer.parseInt(reportItem.getValue(1)));
 					assertDoesNotThrow(() -> TestGroupTypeId.valueOf(reportItem.getValue(2)));
 					break;
+				case WEEKLY:
+					assertEquals(REPORT_WEEKLY_HEADER, reportHeader);
+					assertDoesNotThrow(() -> Integer.parseInt(reportItem.getValue(0)));
+					assertDoesNotThrow(() -> Integer.parseInt(reportItem.getValue(1)));
+					assertDoesNotThrow(() -> TestGroupTypeId.valueOf(reportItem.getValue(2)));
+					break;
 				default:
 					throw new RuntimeException("unhandled case " + reportPeriod);
 				}
@@ -842,6 +848,9 @@ public class AT_GroupPropertyReport {
 					case HOURLY:
 						assertEquals(REPORT_HOURLY_HEADER, reportHeader);
 						break;
+					case WEEKLY:
+						assertEquals(REPORT_WEEKLY_HEADER, reportHeader);
+						break;
 					default:
 						throw new RuntimeException("unhandled case " + reportPeriod);
 				}
@@ -943,6 +952,7 @@ public class AT_GroupPropertyReport {
 
 	private static final ReportHeader REPORT_DAILY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("group_type").add("property").add("value").add("group_count").build();
 	private static final ReportHeader REPORT_HOURLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("hour").add("group_type").add("property").add("value").add("group_count").build();
+	private static final ReportHeader REPORT_WEEKLY_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("day").add("week").add("group_type").add("property").add("value").add("group_count").build();
 	private static final ReportHeader REPORT_END_OF_SIMULATION_HEADER = ReportHeader.builder().setReportLabel(REPORT_LABEL).add("group_type").add("property").add("value").add("group_count").build();
 
 }

@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.Test;
@@ -25,7 +27,7 @@ import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 public class AT_GlobalPropertyDimensionData {
 
     @Test
-    @UnitTestMethod(target = GlobalPropertyDimensionData.Builder.class, name = "addValue", args = { Object.class })
+    @UnitTestMethod(target = GlobalPropertyDimensionData.Builder.class, name = "addValue", args = { String.class, Object.class })
     public void testAddValue() {
 
         RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(3468803942988565031L);
@@ -251,118 +253,70 @@ public class AT_GlobalPropertyDimensionData {
     @Test
     @UnitTestMethod(target = GlobalPropertyDimensionData.class, name = "hashCode", args = {})
     public void testHashCode() {
-        GlobalPropertyDimensionData dimensionData1 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(0)
-                .build();
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8266930019491275913L);
 
-        GlobalPropertyDimensionData dimensionData2 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(1)
-                .build();
+		// equal objects have equal hash codes
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertyDimensionData globalPropertyDimensionData1 = getRandomGlobalPropertyDimensionData(seed);
+			GlobalPropertyDimensionData globalPropertyDimensionData2 = getRandomGlobalPropertyDimensionData(seed);
 
-        GlobalPropertyDimensionData dimensionData3 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE)
-                .setAssignmentTime(0)
-                .build();
+			assertEquals(globalPropertyDimensionData1, globalPropertyDimensionData2);
+			assertEquals(globalPropertyDimensionData1.hashCode(), globalPropertyDimensionData2.hashCode());
+		}
 
-        GlobalPropertyDimensionData dimensionData4 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE)
-                .setAssignmentTime(1)
-                .build();
-
-        GlobalPropertyDimensionData dimensionData5 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE)
-                .setAssignmentTime(1)
-                .build();
-
-        GlobalPropertyDimensionData dimensionData6 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(0)
-                .build();
-
-        assertEquals(dimensionData1.hashCode(), dimensionData1.hashCode());
-
-        assertNotEquals(dimensionData1.hashCode(), dimensionData2.hashCode());
-        assertNotEquals(dimensionData1.hashCode(), dimensionData3.hashCode());
-        assertNotEquals(dimensionData1.hashCode(), dimensionData4.hashCode());
-        assertNotEquals(dimensionData1.hashCode(), dimensionData5.hashCode());
-
-        assertNotEquals(dimensionData2.hashCode(), dimensionData3.hashCode());
-        assertNotEquals(dimensionData2.hashCode(), dimensionData4.hashCode());
-        assertNotEquals(dimensionData2.hashCode(), dimensionData5.hashCode());
-        assertNotEquals(dimensionData2.hashCode(), dimensionData6.hashCode());
-
-        assertNotEquals(dimensionData3.hashCode(), dimensionData4.hashCode());
-        assertNotEquals(dimensionData3.hashCode(), dimensionData5.hashCode());
-        assertNotEquals(dimensionData3.hashCode(), dimensionData6.hashCode());
-
-        assertNotEquals(dimensionData4.hashCode(), dimensionData5.hashCode());
-        assertNotEquals(dimensionData4.hashCode(), dimensionData6.hashCode());
-
-        assertNotEquals(dimensionData5.hashCode(), dimensionData6.hashCode());
-
-        assertEquals(dimensionData1.hashCode(), dimensionData6.hashCode());
+		// hash codes are reasonably distributed
+		Set<Integer> hashCodes = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertyDimensionData globalPropertyDimensionData = getRandomGlobalPropertyDimensionData(randomGenerator.nextLong());
+			hashCodes.add(globalPropertyDimensionData.hashCode());
+		}
+		
+		assertEquals(100, hashCodes.size());
     }
 
     @Test
     @UnitTestMethod(target = GlobalPropertyDimensionData.class, name = "equals", args = { Object.class })
     public void testEquals() {
-        GlobalPropertyDimensionData dimensionData1 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(0)
-                .build();
+		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8980205493557306870L);
 
-        GlobalPropertyDimensionData dimensionData2 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(1)
-                .build();
+		// never equal to another type
+		for (int i = 0; i < 30; i++) {
+            GlobalPropertyDimensionData globalPropertyDimensionData = getRandomGlobalPropertyDimensionData(randomGenerator.nextLong());
+            assertFalse(globalPropertyDimensionData.equals(new Object()));
+		}
 
-        GlobalPropertyDimensionData dimensionData3 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_2_INTEGER_MUTABLE)
-                .setAssignmentTime(0)
-                .build();
+		// never equal to null
+		for (int i = 0; i < 30; i++) {
+            GlobalPropertyDimensionData globalPropertyDimensionData = getRandomGlobalPropertyDimensionData(randomGenerator.nextLong());
+            assertFalse(globalPropertyDimensionData.equals(null));
+		}
 
-        GlobalPropertyDimensionData dimensionData4 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_3_DOUBLE_MUTABLE)
-                .setAssignmentTime(1)
-                .build();
+		// reflexive
+		for (int i = 0; i < 30; i++) {
+            GlobalPropertyDimensionData globalPropertyDimensionData = getRandomGlobalPropertyDimensionData(randomGenerator.nextLong());
+            assertTrue(globalPropertyDimensionData.equals(globalPropertyDimensionData));
+		}
 
-        GlobalPropertyDimensionData dimensionData5 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_4_BOOLEAN_IMMUTABLE)
-                .setAssignmentTime(1)
-                .build();
+		// symmetric, transitive, consistent
+		for (int i = 0; i < 30; i++) {
+			long seed = randomGenerator.nextLong();
+			GlobalPropertyDimensionData globalPropertyDimensionData1 = getRandomGlobalPropertyDimensionData(seed);
+			GlobalPropertyDimensionData globalPropertyDimensionData2 = getRandomGlobalPropertyDimensionData(seed);
+			assertFalse(globalPropertyDimensionData1 == globalPropertyDimensionData2);
+			for (int j = 0; j < 10; j++) {				
+				assertTrue(globalPropertyDimensionData1.equals(globalPropertyDimensionData2));
+				assertTrue(globalPropertyDimensionData2.equals(globalPropertyDimensionData1));
+			}
+		}
 
-        GlobalPropertyDimensionData dimensionData6 = GlobalPropertyDimensionData.builder()
-                .setGlobalPropertyId(TestGlobalPropertyId.GLOBAL_PROPERTY_6_DOUBLE_IMMUTABLE)
-                .setAssignmentTime(0)
-                .build();
-
-        assertEquals(dimensionData1, dimensionData1);
-
-        assertNotEquals(dimensionData1, null);
-        assertNotEquals(dimensionData1, new Object());
-
-        assertNotEquals(dimensionData1, dimensionData2);
-        assertNotEquals(dimensionData1, dimensionData3);
-        assertNotEquals(dimensionData1, dimensionData4);
-        assertNotEquals(dimensionData1, dimensionData5);
-
-        assertNotEquals(dimensionData2, dimensionData3);
-        assertNotEquals(dimensionData2, dimensionData4);
-        assertNotEquals(dimensionData2, dimensionData5);
-        assertNotEquals(dimensionData2, dimensionData6);
-
-        assertNotEquals(dimensionData3, dimensionData4);
-        assertNotEquals(dimensionData3, dimensionData5);
-        assertNotEquals(dimensionData3, dimensionData6);
-
-        assertNotEquals(dimensionData4, dimensionData5);
-        assertNotEquals(dimensionData4, dimensionData6);
-
-        assertNotEquals(dimensionData5, dimensionData6);
-
-        assertEquals(dimensionData1, dimensionData6);
+		// different inputs yield unequal GlobalPropertyDimensionDatas
+		Set<GlobalPropertyDimensionData> set = new LinkedHashSet<>();
+		for (int i = 0; i < 100; i++) {
+			GlobalPropertyDimensionData globalPropertyDimensionData = getRandomGlobalPropertyDimensionData(randomGenerator.nextLong());
+			set.add(globalPropertyDimensionData);
+		}
+		assertEquals(100, set.size());
     }
 
     @Test
@@ -443,5 +397,24 @@ public class AT_GlobalPropertyDimensionData {
         cloneBuilder = dimensionData.toBuilder();
         cloneBuilder.addValue("Level_2", "newValue");
         assertNotEquals(dimensionData, cloneBuilder.build());
+    }
+
+    private GlobalPropertyDimensionData getRandomGlobalPropertyDimensionData(long seed) {
+        RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(seed);
+        GlobalPropertyDimensionData.Builder builder = GlobalPropertyDimensionData.builder();
+
+        TestGlobalPropertyId testGlobalPropertyId = TestGlobalPropertyId.getRandomGlobalPropertyId(randomGenerator);
+        builder.setGlobalPropertyId(testGlobalPropertyId);
+
+        Double testAssignmentTime = randomGenerator.nextDouble();
+        builder.setAssignmentTime(testAssignmentTime);
+
+        int n = randomGenerator.nextInt(10) + 1;
+        for (int i = 0; i < n; i++) {
+            Object testPropertyValue = testGlobalPropertyId.getRandomPropertyValue(randomGenerator);
+            builder.addValue("Level_" + i, testPropertyValue);
+        }
+
+        return builder.build();
     }
 }

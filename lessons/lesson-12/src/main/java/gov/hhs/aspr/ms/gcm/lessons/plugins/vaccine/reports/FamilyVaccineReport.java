@@ -73,6 +73,7 @@ public class FamilyVaccineReport {
 
 		final ReportHeader.Builder builder = ReportHeader.builder();
 		builder.add("time");
+		builder.setReportLabel(reportLabel);
 		for (final FamilyVaccineStatus familyVaccineStatus : FamilyVaccineStatus.values()) {
 			builder.add(familyVaccineStatus.description);
 		}
@@ -135,7 +136,7 @@ public class FamilyVaccineReport {
 
 		/*
 		 * Some of the events may have already occurred before we initialize this
-		 * report, so we will need to build up out status maps
+		 * report, so we will need to build up our status maps
 		 */
 
 		/* start code_ref=reports_plugin_family_vaccine_report_init_setup|code_cap=The local data structures are initialized from the current vaccine states. */
@@ -199,8 +200,8 @@ public class FamilyVaccineReport {
 		/* end */
 
 		/* start code_ref=reports_plugin_family_vaccine_report_init_releasing_output|code_cap=The initial state of the report is released as a single report item.*/
-		releaseReportItem();
 		reportContext.releaseOutput(reportHeader);
+		releaseReportItem();
 		/* end */
 	}
 
@@ -270,8 +271,10 @@ public class FamilyVaccineReport {
 	 * start code_ref=reports_plugin_family_vaccine_report_init_releasing_report_item|code_cap=Each time a family or individual have a relevant change a report item is released.
 	 */
 	private void releaseReportItem() {
-		final ReportItem.Builder builder = ReportItem.builder().setReportLabel(reportLabel);
-		builder.addValue(reportContext.getTime());
+		final ReportItem.Builder builder = ReportItem.builder()//
+				.setReportLabel(reportLabel)//
+				.addValue(reportContext.getTime());
+
 		for (final FamilyVaccineStatus familyVaccineStatus : statusToFamiliesMap.keySet()) {
 			MutableInteger mutableInteger = statusToFamiliesMap.get(familyVaccineStatus);
 			builder.addValue(mutableInteger.getValue());

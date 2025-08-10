@@ -50,6 +50,7 @@ public final class DiseaseStateReport extends PeriodicReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			final ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeaderBuilder.setReportLabel(getReportLabel());
 			addTimeFieldHeaders(reportHeaderBuilder);//
 			reportHeaderBuilder.add("day");
 			reportHeaderBuilder.add("vaccinated");

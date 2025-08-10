@@ -57,10 +57,10 @@ public final class Example_17 {
 
 	private NIOReportItemHandler getNIOReportItemHandler() {
 		return NIOReportItemHandler.builder()//
-				.addReport(ModelReportLabel.GROUP_POPULATON, outputDirectory.resolve("group_population_report.xls"))//
-				.addReport(ModelReportLabel.PERSON_PROPERTY, outputDirectory.resolve("person_property_report.xls"))//
-				.addReport(ModelReportLabel.DISEASE_STATE, outputDirectory.resolve("disease_state_report.xls"))//
-				.addReport(ModelReportLabel.CONTAGION, outputDirectory.resolve("contagion_report.xls"))//
+				.addReport(ModelReportLabel.GROUP_POPULATION, outputDirectory.resolve("group_population_report.csv"))//
+				.addReport(ModelReportLabel.PERSON_PROPERTY, outputDirectory.resolve("person_property_report.csv"))//
+				.addReport(ModelReportLabel.DISEASE_STATE, outputDirectory.resolve("disease_state_report.csv"))//
+				.addReport(ModelReportLabel.CONTAGION, outputDirectory.resolve("contagion_report.csv"))//
 				.build();
 	}
 
@@ -93,7 +93,7 @@ public final class Example_17 {
 
 		GroupPopulationReportPluginData groupPopulationReportPluginData = //
 				GroupPopulationReportPluginData.builder()//
-						.setReportLabel(ModelReportLabel.GROUP_POPULATON)//
+						.setReportLabel(ModelReportLabel.GROUP_POPULATION)//
 						.setReportPeriod(ReportPeriod.END_OF_SIMULATION)//
 						.build();//
 		return GroupsPlugin.builder()//
@@ -171,7 +171,7 @@ public final class Example_17 {
 		builder.defineGlobalProperty(GlobalProperty.SENIOR_POPULATION_PROPORTION, propertyDefinition, 0);
 		builder.defineGlobalProperty(GlobalProperty.R0, propertyDefinition, 0);
 		builder.defineGlobalProperty(GlobalProperty.TELEWORK_INFECTION_THRESHOLD, propertyDefinition, 0);
-		builder.defineGlobalProperty(GlobalProperty.TELEWORK_PROBABILTY, propertyDefinition, 0);
+		builder.defineGlobalProperty(GlobalProperty.TELEWORK_PROBABILITY, propertyDefinition, 0);
 		builder.defineGlobalProperty(GlobalProperty.SCHOOL_COHORT_INFECTION_THRESHOLD, propertyDefinition, 0);
 		builder.defineGlobalProperty(GlobalProperty.SCHOOL_CLOSURE_INFECTION_THRESHOLD, propertyDefinition, 0);
 
@@ -287,7 +287,7 @@ public final class Example_17 {
 
 	private Dimension getTeleworkProbabilityDimension() {
 		double[] values = new double[] { 0.1, 0.3, 0.5, 0.8 };
-		return getGlobalPropertyDimension(GlobalProperty.TELEWORK_PROBABILTY, "telework_probabilty", values);
+		return getGlobalPropertyDimension(GlobalProperty.TELEWORK_PROBABILITY, "telework_probability", values);
 	}
 
 	private Dimension getTeleworkInfectionThresholdDimension() {
