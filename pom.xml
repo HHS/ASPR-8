@@ -51,7 +51,7 @@
 
     <!-- Properties -->
     <properties>
-        <revision>4.5.0</revision>
+        <revision>4.6.0-SNAPSHOT</revision>
 
         <!-- basic project properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +70,7 @@
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
 
         <!-- dependency versions -->
-        <taskit.version>5.2.0</taskit.version>
+        <taskit.version>5.3.0-SNAPSHOT</taskit.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <junit-jupiter-engine.version>5.13.2</junit-jupiter-engine.version>
     </properties>
