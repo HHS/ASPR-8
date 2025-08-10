@@ -147,7 +147,7 @@ public final class DimensionContext implements PluginDataBuilderContainer {
 	 * @throws ContractException
 	 *                           <ul>
 	 *                           <li>{@linkplain NucleusError#NULL_PLUGIN_DATA_BUILDER_CLASS}
-	 *                           if the class reference is null</li> *
+	 *                           if the class reference is null</li>
 	 *                           </ul>
 	 */
 	@SuppressWarnings("unchecked")
