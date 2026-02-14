@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
@@ -297,8 +298,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private int personCount;
 
 	private final StochasticsDataManager stochasticsDataManager;
-
+	private final Object id;
 	private final boolean supportRunContinuity;
+	private final DataManagerContext dataManagerContext;
 	private final PartitionsContext partitionsContext;
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
 	private final Map<Class<? extends Event>, List<LabelerSensitivity<? extends Event>>> eventClassToLabelerSensitivityMap = new LinkedHashMap<>();
@@ -324,10 +326,12 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 *                          <li>if the partition contains labelers</li>
 	 *                          </ul>
 	 */
-	public PopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
+	public PopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext, final Partition partition,
 			boolean supportRunContinuity) {
+		this.id = id;
 		this.supportRunContinuity = supportRunContinuity;
-		this.partitionsContext = partitionsContext;
+		this.dataManagerContext = dataManagerContext;
+		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
 
 		retainPersonKeys = partition.retainPersonKeys();
 		peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);

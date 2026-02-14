@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +17,25 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.jupiter.api.Test;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestDataManagerPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestSimulation;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
-import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.TestPartitionsContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.AttributesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.AttributesPluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.PeoplePluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonConstructionData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -36,16 +43,96 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_DegeneratePopulationPartitionImpl {
+	private static class Holder<T> {
+		private T t;
+
+		public T get() {
+			return t;
+		}
+
+		public void set(T t) {
+			this.t = t;
+		}
+
+	}
+
+	
+
+	@Test
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonAddition", args = {
+			PersonId.class })
+	public void testAttemptPersonAddition() {
+		Holder<PopulationPartition> holder = new Holder<>();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
+
+			/*
+			 * Create the population partition filtering on attribute BOOLEAN_0 = true
+			 */
+			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+			Partition partition = Partition.builder().setFilter(filter).build();
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
+			holder.set(populationPartition);
+
+			// precondition test:
+			assertThrows(RuntimeException.class, () -> populationPartition.attemptPersonAddition(null));
+
+		}));
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			/*
+			 * Add new people, setting the attribute to alternating values of true and false
+			 */
+			for (int i = 0; i < 20; i++) {
+				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
+				boolean attributeValue = i % 2 == 0;
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, attributeValue);
+			}
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(2, (c) -> {
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			/*
+			 * Add new people, setting the attribute to alternating values of true and false
+			 */
+
+			PopulationPartition populationPartition = holder.get();
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				boolean attributeValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+				populationPartition.attemptPersonAddition(personId);
+
+				/*
+				 * Show that the person is in the population partition if and only if their
+				 * attribute value was set to true
+				 */
+				assertEquals(attributeValue, populationPartition.contains(personId));
+			}
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(0, 6873190067286969816L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
 
 	@Test
 	@UnitTestConstructor(target = DegeneratePopulationPartitionImpl.class, args = { PartitionsContext.class,
 			Partition.class, boolean.class })
 	public void testConstructor() {
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
-		Factory factory = PartitionsTestPluginFactory.factory(100, 3760806761100897313L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			// establish data view
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -53,7 +140,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
 			// select about half of the people
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
+
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					expectedPeople.add(personId);
@@ -65,11 +152,18 @@ public class AT_DegeneratePopulationPartitionImpl {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
 			}
 
+		}));
+
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
 			// create the population partition
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			// show that the population partition contains the expected people
 			List<PersonId> actualPeople = populationPartition.getPeople();
@@ -78,66 +172,23 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			// precondition tests
 			// if the context is null
-			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(null, partition, false));
+			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(null,null, partition, false));
 
 			// if the partition is null
-			assertThrows(RuntimeException.class,
-					() -> new DegeneratePopulationPartitionImpl(testPartitionsContext, null, false));
+			assertThrows(RuntimeException.class, () -> new DegeneratePopulationPartitionImpl(null,c, null, false));
 
 			// if the partition is not degenerate
 			ContractException contractException = assertThrows(ContractException.class,
-					() -> new DegeneratePopulationPartitionImpl(testPartitionsContext, Partition.builder()
+					() -> new DegeneratePopulationPartitionImpl(null,c, Partition.builder()
 							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_0, (v) -> v)).build(),
 							false));
 			assertEquals(PartitionError.NON_DEGENERATE_PARTITION, contractException.getErrorType());
 
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
+		}));
 
-	@Test
-	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonAddition", args = {
-			PersonId.class })
-	public void testAttemptPersonAddition() {
+		TestPluginData testPluginData = pluginDataBuilder.build();
 
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2545018253500191849L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0 = true
-			 */
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
-
-			// precondition test:
-			assertThrows(RuntimeException.class, () -> populationPartition.attemptPersonAddition(null));
-
-			/*
-			 * Add new people, setting the attribute to alternating values of true and false
-			 */
-			for (int i = 0; i < 20; i++) {
-
-				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-
-				boolean attributeValue = i % 2 == 0;
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, attributeValue);
-
-				populationPartition.attemptPersonAddition(personId);
-
-				/*
-				 * Show that the person is in the population partition if and only if their
-				 * attribute value was set to true
-				 */
-				assertEquals(attributeValue, populationPartition.contains(personId));
-			}
-		});
+		Factory factory = PartitionsTestPluginFactory.factory(100, 912138252225017914L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -145,9 +196,11 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "attemptPersonRemoval", args = {
 			PersonId.class })
 	public void testAttemptPersonRemoval() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 1924419629240381672L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -159,7 +212,6 @@ public class AT_DegeneratePopulationPartitionImpl {
 			 * Create a container for the people we expect to be contained in the population
 			 * partition.
 			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
@@ -169,14 +221,18 @@ public class AT_DegeneratePopulationPartitionImpl {
 					expectedPeople.add(personId);
 				}
 			}
-
+		}));
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			// show that the expected people are in the population partition
 			List<PersonId> actualPeople = populationPartition.getPeople();
@@ -187,53 +243,81 @@ public class AT_DegeneratePopulationPartitionImpl {
 			 * Remove people and show that they are no longer in the partition
 			 */
 			for (PersonId personId : expectedPeople) {
-				peopleDataManager.removePerson(personId);
 				populationPartition.attemptPersonRemoval(personId);
 				// show that the person was removed
 				assertFalse(populationPartition.contains(personId));
 			}
-		});
+
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 922512449101771634L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "handleEvent", args = { Event.class })
 	public void testHandleEvent() {
+		Holder<PopulationPartition> holder = new Holder<>();
 
-		Factory factory = PartitionsTestPluginFactory.factory(100, 5331854470768144150L, (c) -> {
+		// randomly assign attribute values to people
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0,
 						randomGenerator.nextBoolean());
 			}
+		}));
 
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0 = true
-			 */
+		/*
+		 * Create the population partition filtering on attribute BOOLEAN_0 = true
+		 */
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
+			holder.set(populationPartition);
+		}));
+
+		// reverse the values for all the people
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);
+			}
+		}));
+
+		/*
+		 * show that the event handling corresponding to the reversal brings the
+		 * population partition into alignment with the attributes data manager
+		 */
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			PopulationPartition populationPartition = holder.get();
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
-
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);
-				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
-
-				assertEquals(!b0, populationPartition.contains(personId));
-
+				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, !b0, b0));
+				assertEquals(b0, populationPartition.contains(personId));
 			}
+		}));
 
-		});
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 7750190990335591726L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -241,24 +325,28 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "validateLabelSetInfo", args = {
 			LabelSet.class })
 	public void testValidateLabelSetInfo() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 7896267308674363012L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
 
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(0, (c) -> {
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, 2).build();
 			assertFalse(populationPartition.validateLabelSetInfo(labelSet));
 
 			assertTrue(populationPartition.validateLabelSetInfo(LabelSet.builder().build()));
-
-		});
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4766406448301584199L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -266,65 +354,84 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeopleCount", args = {})
 	public void testGetPeopleCount() {
 
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2295886123984917407L, (c) -> {
+		Holder<PopulationPartition> holder = new Holder<>();
+		List<PersonId> peopleInitiallyInPartition = new ArrayList<>();
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
 
-			// establish data views
+		/* select about half of the people to have attribute BOOLEAN_0 value of true */
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
 
-			/*
-			 * Create a container for the people we expect to be contained in the population
-			 * partition.
-			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
-
-			// select about half of the people to have attribute BOOLEAN_0 value
-			// of true
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				if (randomGenerator.nextBoolean()) {
 					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
-					expectedPeople.add(personId);
 				}
 			}
+		}));
 
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0 = true
-			 */
+		// Create the population partition filtering on attribute BOOLEAN_0 = true
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
+			holder.set(populationPartition);
+			peopleInitiallyInPartition.addAll(populationPartition.getPeople());
+		}));
 
-			// show that the people count matches expectations
-			assertEquals(expectedPeople.size(), populationPartition.getPeopleCount());
+		/* change all of the values to false */
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(2, (c) -> {
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);
+			}
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(3, (c) -> {
+			PopulationPartition populationPartition = holder.get();
+
+			int expectedCount = peopleInitiallyInPartition.size();
+
+			// show that the partition contains then expected number of people
+			assertEquals(expectedCount, populationPartition.getPeopleCount());
 
 			/*
-			 * Change the attributes for the expected people and show that the expected
-			 * count is correct
+			 * Get the partition to handle the event. Note that it is only updating via the
+			 * event and not through the changes to the attributes. Also, it will ignore the
+			 * values we give it in the event and will instead look to the various data
+			 * managers to determine if the person is contained.
 			 */
-			int expectedPeopleCount = expectedPeople.size();
-			for (PersonId personId : expectedPeople) {
-				expectedPeopleCount--;
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, false);
+			for (PersonId personId : peopleInitiallyInPartition) {
 				populationPartition
 						.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, true, false));
-				assertEquals(expectedPeopleCount, populationPartition.getPeopleCount());
+				expectedCount--;
+				assertEquals(expectedCount, populationPartition.getPeopleCount());
 			}
-		});
+
+		}));
+
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 7023429244847451961L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+
 	}
 
 	@Test
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeopleCount", args = {
 			LabelSet.class })
 	public void testGetPeopleCount_LabelSet() {
-		Factory factory = PartitionsTestPluginFactory.factory(1000, 1957059921486084637L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -338,6 +445,16 @@ public class AT_DegeneratePopulationPartitionImpl {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1,
 						randomGenerator.nextBoolean());
 			}
+
+		}));
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			// build a container to hold the expected relationship from label
 			// sets to people
@@ -358,14 +475,15 @@ public class AT_DegeneratePopulationPartitionImpl {
 			Filter filter = filter_0.and(filter_1);
 			Partition partition = Partition.builder().setFilter(filter).build();
 
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			// show that the people count matches expectations
 			List<PersonId> actualPeople = populationPartition.getPeople(LabelSet.builder().build());
 			assertEquals(expectedPeople.size(), actualPeople.size());
 
-		});
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 3958771757327646617L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -374,9 +492,8 @@ public class AT_DegeneratePopulationPartitionImpl {
 			LabelSet.class })
 	public void testGetPeopleCountMap() {
 
-		Factory factory = PartitionsTestPluginFactory.factory(1000, 5254073186909000918L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
@@ -388,11 +505,18 @@ public class AT_DegeneratePopulationPartitionImpl {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0,
 						randomGenerator.nextBoolean());
 			}
+		}));
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
 			// build the population partition with the BOOLEAN_0
 			Partition partition = Partition.builder()
 					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true)).build();
-			DegeneratePopulationPartitionImpl populationPartition = new DegeneratePopulationPartitionImpl(
-					testPartitionsContext, partition, false);
+			DegeneratePopulationPartitionImpl populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition,
+					false);
 
 			Map<LabelSet, Integer> peopleCountMap = populationPartition.getPeopleCountMap(LabelSet.builder().build());
 
@@ -402,28 +526,30 @@ public class AT_DegeneratePopulationPartitionImpl {
 			Integer count = peopleCountMap.get(keyLabelSet);
 			assertEquals(populationPartition.getPeopleCount(), count);
 
-		});
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 7288093765381076347L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class })
 	public void testContains() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2907418341194860848L, (c) -> {
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			/*
-			 * Create a container for the people we expect to be contained in the population
-			 * partition.
-			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
@@ -434,20 +560,28 @@ public class AT_DegeneratePopulationPartitionImpl {
 				}
 			}
 
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			// show that the person data view contains the people we expect
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertEquals(expectedPeople.contains(personId), populationPartition.contains(personId));
 			}
-		});
+
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 8043153191304312393L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -455,21 +589,26 @@ public class AT_DegeneratePopulationPartitionImpl {
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "contains", args = { PersonId.class,
 			LabelSet.class })
 	public void testContains_LabelSet() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2888054511830289156L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		/*
+		 * Create a container for the people we expect to be contained in the population
+		 * partition.
+		 */
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			/*
-			 * Create a container for the people we expect to be contained in the population
-			 * partition.
-			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
@@ -479,14 +618,19 @@ public class AT_DegeneratePopulationPartitionImpl {
 					expectedPeople.add(personId);
 				}
 			}
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			LabelSet labelSet = LabelSet.builder().build();
 			// show that the person data view contains the people we expect
@@ -494,17 +638,25 @@ public class AT_DegeneratePopulationPartitionImpl {
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				assertEquals(expectedPeople.contains(personId), populationPartition.contains(personId, labelSet));
 			}
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 860559202120978211L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
 	@Test
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = { LabelSet.class })
 	public void testGetPeople_LabelSet() {
-		Factory factory = PartitionsTestPluginFactory.factory(1000, 8577028018353363458L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
@@ -521,7 +673,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			// build a container to hold the expected relationship from label
 			// sets to people
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
+
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
 				Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
@@ -530,6 +682,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 				}
 			}
 
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
@@ -538,37 +693,40 @@ public class AT_DegeneratePopulationPartitionImpl {
 			Filter filter = filter_0.and(filter_1);
 			Partition partition = Partition.builder().setFilter(filter).build();
 
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			// show that the people count matches expectations
 			List<PersonId> actualPeople = populationPartition.getPeople(LabelSet.builder().build());
 			assertEquals(expectedPeople.size(), actualPeople.size());
 			assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
 
-		});
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 5185836164667617012L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
 	}
 
 	@Test
 	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPeople", args = {})
 	public void testGetPeople() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 3706541397073246652L, (c) -> {
+		/*
+		 * Create a container for the people we expect to be contained in the population
+		 * partition.
+		 */
+		Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			/*
-			 * Create a container for the people we expect to be contained in the population
-			 * partition.
-			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
 
 			// select about half of the people to have attribute BOOLEAN_0 value
 			// of true
@@ -578,20 +736,74 @@ public class AT_DegeneratePopulationPartitionImpl {
 					expectedPeople.add(personId);
 				}
 			}
+		}));
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+			/*
+			 * Create the population partition filtering on attribute BOOLEAN_0 = true
+			 */
+			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+			Partition partition = Partition.builder().setFilter(filter).build();
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
+
+			// show that the person data view contains the people we expect
+			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
+			assertEquals(expectedPeople, new LinkedHashSet<>(populationPartition.getPeople()));
+
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4898522508430761018L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+
+	@Test
+	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPersonValue", args = {
+			LabelSetFunction.class, PersonId.class })
+	public void testGetPersonValue() {
+
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
+
+			// select about half of the people to have attribute BOOLEAN_0 value
+			// of true
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				if (randomGenerator.nextBoolean()) {
+					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
+				}
+			}
+
+		}));
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 
 			/*
 			 * Create the population partition filtering on attribute BOOLEAN_0 = true
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
-			// show that the person data view contains the people we expect
-			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
-			assertEquals(expectedPeople, new LinkedHashSet<>(populationPartition.getPeople()));
+			LabelSetFunction<Integer> f = (pc, ls) -> 5;
 
-		});
+			for (PersonId personId : peopleDataManager.getPeople()) {
+				Optional<Integer> optional = populationPartition.getPersonValue(f, personId);
+				assertTrue(optional.isEmpty());
+			}
+
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(100, 4213246844219996412L, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 
@@ -669,7 +881,6 @@ public class AT_DegeneratePopulationPartitionImpl {
 		RandomGenerator randomGenerator = RandomGeneratorProvider.getRandomGenerator(8925918754735468568L);
 
 		for (ExcludedPersonType excludedPersonType : ExcludedPersonType.values()) {
-
 			for (Boolean useFilter : useFilterValues) {
 				long seed = randomGenerator.nextLong();
 				for (Boolean useLabelSet : useLabelSetValues) {
@@ -677,19 +888,18 @@ public class AT_DegeneratePopulationPartitionImpl {
 					executeSamplingTest(seed, useFilter, excludedPersonType, useLabelSet);
 				}
 			}
-
 		}
 	}
 
 	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType,
 			boolean useLabelSet) {
 
-		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// remember to test with general and COMET to show they get
-			// different results?
+		TestPluginData.Builder pluginDataBuilder = TestPluginData.builder();
+		pluginDataBuilder.addTestDataManager("dm", () -> new TestDataManager());
+		pluginDataBuilder.addPluginDependency(PeoplePluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(StochasticsPluginId.PLUGIN_ID);
+		pluginDataBuilder.addPluginDependency(AttributesPluginId.PLUGIN_ID);
+		pluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 
 			// establish data views
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -722,6 +932,17 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			}
 
+		}));
+
+		pluginDataBuilder.addTestDataManagerPlan("dm", new TestDataManagerPlan(1, (c) -> {
+
+			// establish data views
+			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+
+			// determine the people in the world
+			List<PersonId> peopleInTheWorld = peopleDataManager.getPeople();
+
 			/*
 			 * Create a partition that may filter about half of the population on BOOLEAN_0.
 			 * We will partition on INT_0, INT_1, DOUBLE_0 and DOUBLE_1. Note that we do not
@@ -735,8 +956,7 @@ public class AT_DegeneratePopulationPartitionImpl {
 
 			Partition partition = partitionBuilder.build();
 
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
+			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(null,c, partition, false);
 
 			/*
 			 * Create a label set for the query.
@@ -826,49 +1046,9 @@ public class AT_DegeneratePopulationPartitionImpl {
 				}
 			}
 
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-	}
-
-	@Test
-	@UnitTestMethod(target = DegeneratePopulationPartitionImpl.class, name = "getPersonValue", args = {
-			LabelSetFunction.class, PersonId.class })
-	public void testGetPersonValue() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 3706541397073246652L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// select about half of the people to have attribute BOOLEAN_0 value
-			// of true
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
-				}
-			}
-
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0 = true
-			 */
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new DegeneratePopulationPartitionImpl(testPartitionsContext,
-					partition, false);
-
-			LabelSetFunction<Integer> f = (pc, ls) -> 5;
-
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				Optional<Integer> optional = populationPartition.getPersonValue(f, personId);
-				assertTrue(optional.isEmpty());
-			}
-
-		});
+		}));
+		TestPluginData testPluginData = pluginDataBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, testPluginData);
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
 	}
 

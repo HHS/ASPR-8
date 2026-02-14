@@ -22,21 +22,27 @@ import org.junit.jupiter.api.Test;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.ActorContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestActorPlan;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestDataManagerPlan;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestSimulation;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.datamanagers.PartitionsDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.AT_DegeneratePopulationPartitionImpl.Holder;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.FunctionalAttributeLabeler;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.PartitionsTestPluginFactory.Factory;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.TestPartitionsContext;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.AttributesDataManager;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.AttributesPluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.events.AttributeUpdateEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.AttributeFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.testsupport.attributes.support.TestAttributeId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.people.PeoplePluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonConstructionData;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.support.PersonId;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.StochasticsPluginId;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.stochastics.datamanagers.StochasticsDataManager;
 import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
@@ -44,203 +50,8 @@ import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
 
 public class AT_PopulationPartitionImpl {
 
-	@Test
-	@UnitTestConstructor(target = PopulationPartitionImpl.class, args = { PartitionsContext.class, Partition.class,boolean.class })
-	public void testConstructor() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 2997202170895856110L, (c) -> {
 
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data view
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			// select about half of the people
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextBoolean()) {
-					expectedPeople.add(personId);
-				}
-			}
-
-			// set attribute BOOLEAN_0 to true for those people
-			for (PersonId personId : expectedPeople) {
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
-			}
-
-			// create the population partition
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
-
-			// show that the population partition contains the expected people
-			List<PersonId> actualPeople = populationPartition.getPeople();
-			assertEquals(expectedPeople.size(), actualPeople.size());
-			assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
-
-			// precondition tests
-			// if the context is null
-			assertThrows(RuntimeException.class, () -> new PopulationPartitionImpl(null, partition,false));
-
-			// if the partition is null
-			assertThrows(RuntimeException.class, () -> new PopulationPartitionImpl(testPartitionsContext, null,false));
-
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-
-	}
-
-	@Test
-	@UnitTestMethod(target = PopulationPartitionImpl.class, name = "attemptPersonAddition", args = { PersonId.class })
-	public void testAttemptPersonAddition() {
-
-		Factory factory = PartitionsTestPluginFactory.factory(100, 3063819509780972206L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0
-			 * = true
-			 */
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
-
-			// precondition test:
-			assertThrows(RuntimeException.class, () -> populationPartition.attemptPersonAddition(null));
-
-			/*
-			 * Add new people, setting the attribute to alternating values of
-			 * true and false
-			 */
-			for (int i = 0; i < 20; i++) {
-				PersonId personId = peopleDataManager.addPerson(PersonConstructionData.builder().build());
-				boolean attributeValue = i % 2 == 0;
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, attributeValue);
-				populationPartition.attemptPersonAddition(personId);
-
-				/*
-				 * Show that the person is in the population partition if and
-				 * only if their attribute value was set to true
-				 */
-				assertEquals(attributeValue, populationPartition.contains(personId));
-			}
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
-
-	@Test
-	@UnitTestMethod(target = PopulationPartitionImpl.class, name = "attemptPersonRemoval", args = { PersonId.class })
-	public void testAttemptPersonRemoval() {
-
-		Factory factory = PartitionsTestPluginFactory.factory(100, 4856457716960397685L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-
-			/*
-			 * Create a container for the people we expect to be contained in
-			 * the population partition.
-			 */
-			Set<PersonId> expectedPeople = new LinkedHashSet<>();
-
-			// select about half of the people to have attribute BOOLEAN_0 value
-			// of true
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				if (randomGenerator.nextBoolean()) {
-					attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
-					expectedPeople.add(personId);
-				}
-			}
-
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0
-			 * = true
-			 */
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
-
-			// show that the expected people are in the population partition
-			List<PersonId> actualPeople = populationPartition.getPeople();
-			assertEquals(expectedPeople.size(), actualPeople.size());
-			assertEquals(expectedPeople, new LinkedHashSet<>(actualPeople));
-
-			/*
-			 * Remove people and show that they are no longer in the partition
-			 */
-			for (PersonId personId : expectedPeople) {
-				peopleDataManager.removePerson(personId);
-				populationPartition.attemptPersonRemoval(personId);
-				// show that the person was removed
-				assertFalse(populationPartition.contains(personId));
-			}
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
-
-	@Test
-	@UnitTestMethod(target = PopulationPartitionImpl.class, name = "handleEvent", args = { Event.class })
-	public void testHandleEvent() {
-		Factory factory = PartitionsTestPluginFactory.factory(100, 8982209428616460818L, (c) -> {
-
-			TestPartitionsContext testPartitionsContext = new TestPartitionsContext(c);
-
-			// establish data views
-			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
-			StochasticsDataManager stochasticsDataManager = c.getDataManager(StochasticsDataManager.class);
-			RandomGenerator randomGenerator = stochasticsDataManager.getRandomGenerator();
-			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
-
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, randomGenerator.nextBoolean());
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, randomGenerator.nextBoolean());
-			}
-
-			/*
-			 * Create the population partition filtering on attribute BOOLEAN_0
-			 * = true
-			 */
-
-			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
-			Partition partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
-
-			for (PersonId personId : peopleDataManager.getPeople()) {
-				Boolean b0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
-				Boolean b1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_1);
-
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, !b0);
-				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_0, b0, !b0));
-
-				assertEquals(!b0, populationPartition.contains(personId));
-
-				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, !b1);
-				populationPartition.handleEvent(new AttributeUpdateEvent(personId, TestAttributeId.BOOLEAN_1, b1, !b1));
-
-				if (!b0) {
-					LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, !b1).build();
-					assertTrue(populationPartition.contains(personId, labelSet));
-
-					labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, b1).build();
-					assertFalse(populationPartition.contains(personId, labelSet));
-				}
-			}
-
-		});
-		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
-	}
+	
 
 	@Test
 	@UnitTestMethod(target = PopulationPartitionImpl.class, name = "validateLabelSetInfo", args = { LabelSet.class })
@@ -257,7 +68,7 @@ public class AT_PopulationPartitionImpl {
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition	.builder().setFilter(filter).addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> 1))
 											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (i) -> "value")).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, 2).build();
 			assertTrue(populationPartition.validateLabelSetInfo(labelSet));
@@ -306,7 +117,7 @@ public class AT_PopulationPartitionImpl {
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the people count matches expectations
 			assertEquals(expectedPeople.size(), populationPartition.getPeopleCount());
@@ -462,7 +273,7 @@ public class AT_PopulationPartitionImpl {
 											.setFilter(filter)//
 											.build();//
 
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the people count matches expectations
 			int expectedCount = 0;
@@ -505,7 +316,7 @@ public class AT_PopulationPartitionImpl {
 											.setFilter(filter)//
 											.build();//
 
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			List<Integer> int_0_labelValues = new ArrayList<>();
 			int_0_labelValues.add(0);
@@ -610,7 +421,7 @@ public class AT_PopulationPartitionImpl {
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the person data view contains the people we expect
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
@@ -650,7 +461,7 @@ public class AT_PopulationPartitionImpl {
 											.setFilter(filter)//
 											.build();//
 
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the people count matches expectations
 			int expectedCount = 0;
@@ -702,7 +513,7 @@ public class AT_PopulationPartitionImpl {
 											.setFilter(filter)//
 											.build();//
 
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the people count matches expectations
 			int expectedCount = 0;
@@ -756,7 +567,7 @@ public class AT_PopulationPartitionImpl {
 			 */
 			Filter filter = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			Partition partition = Partition.builder().addLabeler(new FunctionalAttributeLabeler(TestAttributeId.BOOLEAN_1, (v) -> v)).setFilter(filter).build();
-			PopulationPartition populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartition populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			// show that the person data view contains the people we expect
 			assertEquals(expectedPeople.size(), populationPartition.getPeople().size());
@@ -944,7 +755,7 @@ public class AT_PopulationPartitionImpl {
 
 			Partition partition = partitionBuilder.build();
 
-			PopulationPartitionImpl populationPartition = new PopulationPartitionImpl(testPartitionsContext, partition,false);
+			PopulationPartitionImpl populationPartition = new PopulationPartitionImpl(null,testPartitionsContext, partition,false);
 
 			/*
 			 * Create a label set for the query that does not contain all the

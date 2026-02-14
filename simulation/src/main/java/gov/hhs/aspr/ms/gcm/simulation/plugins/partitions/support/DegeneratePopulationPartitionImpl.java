@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.TrueFilter;
@@ -31,6 +32,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private final PeopleContainer peopleContainer;
 
 	private final PartitionsContext partitionsContext;
+	private final DataManagerContext dataManagerContext;
+	private final Object id;
 
 	private final Filter filter;
 
@@ -48,9 +51,11 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 *                           <li>if the partition contains labelers</li>
 	 *                           </ul>
 	 */
-	public DegeneratePopulationPartitionImpl(final PartitionsContext partitionsContext, final Partition partition,
+	public DegeneratePopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext, final Partition partition,
 			boolean supportRunContinuity) {
-		this.partitionsContext = partitionsContext;
+		this.id = id;
+		this.dataManagerContext = dataManagerContext;
+		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
 		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(new TrueFilter());
 

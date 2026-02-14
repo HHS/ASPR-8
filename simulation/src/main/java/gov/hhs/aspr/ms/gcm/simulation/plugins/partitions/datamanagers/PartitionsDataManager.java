@@ -11,7 +11,6 @@ import java.util.Set;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
-import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.DegeneratePopulationPartitionImpl;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.FilterSensitivity;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSet;
@@ -22,6 +21,7 @@ import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionError;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionSampler;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContext;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PartitionsContextImpl;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PopulationPartition;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.PopulationPartitionImpl;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
@@ -528,10 +528,10 @@ public final class PartitionsDataManager extends DataManager {
 
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(partitionsContext, partition,
+			populationPartition = new DegeneratePopulationPartitionImpl(key,dataManagerContext, partition,
 					supportRunContinuity);
 		} else {
-			populationPartition = new PopulationPartitionImpl(partitionsContext, partition, supportRunContinuity);
+			populationPartition = new PopulationPartitionImpl(key,dataManagerContext, partition, supportRunContinuity);
 		}
 		keyToPopulationPartitionMap.put(key, populationPartition);
 
@@ -577,36 +577,16 @@ public final class PartitionsDataManager extends DataManager {
 			}
 		}
 	}
+	
+	
+//	public void subscribeForCellOccupancyEvents(final Object key, final LabelSet labelSet) {
+//		
+//	}
+	
+//	public void unsubscribeForCellOccupancyEvents(final Object key, final LabelSet labelSet) {
+//	
+//}
 
-	private final class PartitionsContextImpl implements PartitionsContext {
-		private final DataManagerContext dataManagerContext;
 
-		public PartitionsContextImpl(DataManagerContext dataManagerContext) {
-			this.dataManagerContext = dataManagerContext;
-		}
-
-		/**
-		 * Returns the data manager from the given class reference
-		 * 
-		 * @throws ContractException
-		 *                           <ul>
-		 *                           <li>{@linkplain NucleusError#NULL_DATA_MANAGER_CLASS}
-		 *                           if data manager class is null</li>
-		 *                           <li>{@linkplain NucleusError#AMBIGUOUS_DATA_MANAGER_CLASS}
-		 *                           if more than one data manager matches the given
-		 *                           class</li>
-		 *                           </ul>
-		 */
-		public <T extends DataManager> T getDataManager(Class<T> dataManagerClass) {
-			return dataManagerContext.getDataManager(dataManagerClass);
-		}
-
-		/**
-		 * Returns the current time in the simulation
-		 */
-		public double getTime() {
-			return dataManagerContext.getTime();
-		}
-	}
 
 }
