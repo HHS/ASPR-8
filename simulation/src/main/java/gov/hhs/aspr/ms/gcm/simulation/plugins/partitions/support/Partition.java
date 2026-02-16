@@ -107,6 +107,15 @@ public final class Partition {
 			data.filter = filter;
 			return this;
 		}
+		
+		/**
+		 * Sets the policy for the production of CellOccupancyEvent objects during the maintenance of the {@linkplain Partition}. Defaults to false.
+		 */
+		public Builder setProduceCellOccupancyEvents(boolean produceCellOccupancyEvents) {
+			ensureDataMutability();
+			data.produceCellOccupancyEvents = produceCellOccupancyEvents;
+			return this;
+		}
 
 		/**
 		 * Set the retention policy for derived partition cell keys for people. Defaults
@@ -164,6 +173,8 @@ public final class Partition {
 		private Map<Object, Labeler> labelers = new LinkedHashMap<>();
 
 		private Filter filter;
+		
+		private boolean produceCellOccupancyEvents;
 
 		private boolean locked;
 
@@ -177,37 +188,27 @@ public final class Partition {
 			locked = data.locked;
 		}
 
-		/**
-    	 * Standard implementation consistent with the {@link #equals(Object)} method
-    	 */
 		@Override
 		public int hashCode() {
-			return Objects.hash(retainPersonKeys, labelers, filter);
+			return Objects.hash(filter, labelers, produceCellOccupancyEvents, retainPersonKeys);
 		}
 
-		/**
-    	 * Two {@link Data} instances are equal if and only if
-    	 * their inputs are equal.
-    	 */
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
+			if (!(obj instanceof Data)) {
 				return false;
 			}
 			Data other = (Data) obj;
-			return retainPersonKeys == other.retainPersonKeys && Objects.equals(labelers, other.labelers)
-					&& Objects.equals(filter, other.filter);
+			return Objects.equals(filter, other.filter) && Objects.equals(labelers, other.labelers)
+					&& produceCellOccupancyEvents == other.produceCellOccupancyEvents
+					&& retainPersonKeys == other.retainPersonKeys;
 		}
 
 		@Override
 		public String toString() {
-
 			StringBuilder builder = new StringBuilder();
 			builder.append("Data [filter=");
 			builder.append(filter);
@@ -215,6 +216,8 @@ public final class Partition {
 			builder.append(labelers);
 			builder.append(", retainPersonKeys=");
 			builder.append(retainPersonKeys);
+			builder.append(", produceCellOccupancyEvents=");
+			builder.append(produceCellOccupancyEvents);
 			builder.append("]");
 			return builder.toString();
 		}
@@ -226,6 +229,13 @@ public final class Partition {
 	 */
 	public Optional<Filter> getFilter() {
 		return Optional.ofNullable(data.filter);
+	}
+	
+	/**
+	 * Returns the policy for producing CellOccupancyEvents.
+	 */
+	public boolean produceCellOccupancyEvents() {
+		return data.produceCellOccupancyEvents;
 	}
 
 	/**

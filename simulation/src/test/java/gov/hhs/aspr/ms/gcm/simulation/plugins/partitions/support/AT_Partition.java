@@ -120,6 +120,17 @@ public class AT_Partition {
 	}
 
 	@Test
+	@UnitTestMethod(target = Partition.Builder.class, name = "setProduceCellOccupancyEvents", args = { boolean.class })
+	public void testSetProduceCellOccupancyEvents() {
+		for (boolean value : new boolean[] { false, true }) {
+			Partition.Builder builder = Partition.builder();			
+			builder.setProduceCellOccupancyEvents(value);
+			Partition partition = builder.build();			
+			assertEquals(value, partition.produceCellOccupancyEvents());			
+		}
+	}
+
+	@Test
 	@UnitTestMethod(target = Partition.Builder.class, name = "setRetainPersonKeys", args = { boolean.class })
 	public void testSetRetainPersonKeys() {
 		Partition retainKeys = Partition.builder().setRetainPersonKeys(true).build();
@@ -197,6 +208,15 @@ public class AT_Partition {
 			return value == other.value;
 		}
 
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("LocalLabeler [value=");
+			builder.append(value);
+			builder.append("]");
+			return builder.toString();
+		}
+
 	}
 
 	private Partition getRandomPartition(long seed) {
@@ -207,6 +227,7 @@ public class AT_Partition {
 		builder.setFilter(new AttributeFilter(TestAttributeId.getRandomAttributeId(randomGenerator),
 				Equality.getRandomEquality(randomGenerator), randomGenerator.nextInt()));
 		builder.addLabeler(labeler);
+		builder.setProduceCellOccupancyEvents(randomGenerator.nextBoolean());
 		return builder.build();
 	}
 
@@ -270,9 +291,8 @@ public class AT_Partition {
 			assertEquals(partition1, partition2);
 			assertEquals(partition1.hashCode(), partition2.hashCode());
 		}
-		
-		
-		//hash codes are reasonably distributed
+
+		// hash codes are reasonably distributed
 		Set<Integer> hashCodes = new LinkedHashSet<>();
 		for (int i = 0; i < 100; i++) {
 
@@ -283,14 +303,14 @@ public class AT_Partition {
 		assertEquals(100, hashCodes.size());
 	}
 
- 
 	@Test
 	@UnitTestMethod(target = Partition.class, name = "toString", args = {})
 	public void testToString() {
 		Partition randomPartition = getRandomPartition(5250756946904578664L);
 		String actualValue = randomPartition.toString();
-		
-		String expectedValue =	"Partition [data=Data [filter=AttributeFilter [attributeId=BOOLEAN_1, value=2146794287, equality=LESS_THAN, attributesDataManager=null], labelers={1157575879=gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.AT_Partition$LocalLabeler@44ff34e6}, retainPersonKeys=false]]";
+
+		String expectedValue = "Partition [data=Data [filter=AttributeFilter [attributeId=BOOLEAN_1, value=2146794287, equality=LESS_THAN, attributesDataManager=null], labelers={1157575879=LocalLabeler [value=1157575879]}, retainPersonKeys=false, produceCellOccupancyEvents=false]]";
+
 		assertEquals(expectedValue, actualValue);
 	}
 }

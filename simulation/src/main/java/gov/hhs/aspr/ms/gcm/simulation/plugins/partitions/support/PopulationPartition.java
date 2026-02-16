@@ -103,5 +103,21 @@ public interface PopulationPartition {
 	 * create this population partition. No precondition tests will be performed.
 	 */
 	public <T> Optional<T> getPersonValue(LabelSetFunction<T> labelSetFunction, PersonId personId);
+	
+	
+//	/**
+//	 * Subscribes an actor to PartitionOccupancyEvents associated with the given
+//	 * label set and partition.
+//	 *
+//	 */
+//	public void subscribeToPartitionOccupancyEvents(final Object key, final LabelSet labelSet);
+//		
+//
+//	/**
+//	 * Un-subscribes an actor to PartitionOccupancyEvents associated with the given
+//	 * label set and partition.
+//	 */
+//
+//	public void unsubscribeToPartitionOccupancyEvents(final Object key, final LabelSet labelSet);
 
 }

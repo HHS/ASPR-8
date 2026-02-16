@@ -10,6 +10,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.events.CellOccupancyEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.TrueFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
@@ -28,13 +29,9 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
 public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 	private final StochasticsDataManager stochasticsDataManager;
-
 	private final PeopleContainer peopleContainer;
-
 	private final PartitionsContext partitionsContext;
 	private final DataManagerContext dataManagerContext;
-	private final Object id;
-
 	private final Filter filter;
 
 	private final Map<Class<? extends Event>, List<FilterSensitivity<? extends Event>>> eventClassToFilterSensitivityMap = new LinkedHashMap<>();
@@ -51,12 +48,13 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 *                           <li>if the partition contains labelers</li>
 	 *                           </ul>
 	 */
-	public DegeneratePopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext, final Partition partition,
-			boolean supportRunContinuity) {
-		this.id = id;
+	public DegeneratePopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext,
+			final Partition partition, boolean supportRunContinuity) {
+		cellOccupancyEvent = new CellOccupancyEvent(id, occupancyLabelSet);		
+		produceCellOccupanceEvents = partition.produceCellOccupancyEvents();
 		this.dataManagerContext = dataManagerContext;
-		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
-		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
+		partitionsContext = new PartitionsContextImpl(dataManagerContext);
+		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 		filter = partition.getFilter().orElse(new TrueFilter());
 
 		if (!partition.isDegenerate()) {
@@ -72,11 +70,10 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			}
 			list.add(filterSensitivity);
 		}
-		
+
 		final PeopleDataManager peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
 		peopleContainer = new BasePeopleContainer(peopleDataManager, supportRunContinuity);
 
-		
 		final int personIdLimit = peopleDataManager.getPersonIdLimit();
 		for (int i = 0; i < personIdLimit; i++) {
 			if (peopleDataManager.personIndexExists(i)) {
@@ -101,9 +98,27 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 			 * simulation or new to this population partition and thus cannot already in
 			 * members of this population partition.
 			 */
-			peopleContainer.unsafeAdd(personId);
+			
+			if(produceCellOccupanceEvents) {
+				boolean initiallyEmpty = peopleContainer.size() == 0;
+				peopleContainer.unsafeAdd(personId);
+				//The container should only fail to add when it is not initially empty
+				if (initiallyEmpty) {					
+					dataManagerContext.releaseObservationEvent(cellOccupancyEvent);
+				}	
+			}else {
+				peopleContainer.unsafeAdd(personId);
+			}
+			
+
 		}
 	}
+
+	private final LabelSet occupancyLabelSet = LabelSet.builder().build();
+	private final boolean produceCellOccupanceEvents;
+	private final CellOccupancyEvent cellOccupancyEvent;
+
+	
 
 	@Override
 	public void attemptPersonRemoval(final PersonId personId) {
@@ -172,7 +187,17 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 		if (personId != null) {
 			if (filter.evaluate(partitionsContext, personId)) {
-				peopleContainer.safeAdd(personId);
+				
+				if(produceCellOccupanceEvents) {
+					boolean initiallyEmpty = peopleContainer.size() == 0;
+					peopleContainer.safeAdd(personId);
+					//The container should only fail to add when it is not initially empty
+					if (initiallyEmpty) {					
+						dataManagerContext.releaseObservationEvent(cellOccupancyEvent);
+					}	
+				}else {
+					peopleContainer.safeAdd(personId);
+				}				
 			} else {
 				peopleContainer.remove(personId);
 			}

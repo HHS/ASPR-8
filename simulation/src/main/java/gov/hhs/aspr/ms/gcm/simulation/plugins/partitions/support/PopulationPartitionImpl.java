@@ -17,6 +17,7 @@ import org.apache.commons.math3.util.FastMath;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.NucleusError;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.events.CellOccupancyEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.Filter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.filters.TrueFilter;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.people.datamanagers.PeopleDataManager;
@@ -278,6 +279,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private final boolean retainPersonKeys;
 
+	private final boolean produceCellOccupancyEvents;
+
 	private final Map<Key, Key> keyMap = new LinkedHashMap<>();
 
 	private final Map<Key, LabelSet> labelSetInfoMap = new LinkedHashMap<>();
@@ -326,15 +329,16 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 *                          <li>if the partition contains labelers</li>
 	 *                          </ul>
 	 */
-	public PopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext, final Partition partition,
-			boolean supportRunContinuity) {
+	public PopulationPartitionImpl(final Object id, final DataManagerContext dataManagerContext,
+			final Partition partition, boolean supportRunContinuity) {
 		this.id = id;
+		produceCellOccupancyEvents = partition.produceCellOccupancyEvents();
 		this.supportRunContinuity = supportRunContinuity;
 		this.dataManagerContext = dataManagerContext;
 		this.partitionsContext = new PartitionsContextImpl(dataManagerContext);
 
 		retainPersonKeys = partition.retainPersonKeys();
-		peopleDataManager = partitionsContext.getDataManager(PeopleDataManager.class);
+		peopleDataManager = dataManagerContext.getDataManager(PeopleDataManager.class);
 
 		if (retainPersonKeys) {
 			personToKeyMap = new ArrayList<>(peopleDataManager.getPersonIdLimit());
@@ -372,7 +376,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 		labelerSensitivities = new LabelerSensitivity<?>[maxLabelerSensitivityCount];
 
-		stochasticsDataManager = partitionsContext.getDataManager(StochasticsDataManager.class);
+		stochasticsDataManager = dataManagerContext.getDataManager(StochasticsDataManager.class);
 
 		keySize = labelers.size();
 		tempKeyForLabelSets = new Key(keySize);
@@ -449,7 +453,24 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			personMembership.set(personId.getValue());
 		}
 
-		keyToPeopleMap.get(cleanedKey).unsafeAdd(personId);
+		// monkey
+		// keyToPeopleMap.get(cleanedKey).unsafeAdd(personId);
+
+		/////////////////////////
+		if (produceCellOccupancyEvents) {
+			PeopleContainer peopleContainer = keyToPeopleMap.get(cleanedKey);
+			boolean initiallyEmpty = peopleContainer.size() == 0;
+			peopleContainer.unsafeAdd(personId);
+			// The container should only fail to add when it is not initially empty
+			if (initiallyEmpty) {
+				LabelSet labelSet = labelSetInfoMap.get(cleanedKey);
+				dataManagerContext.releaseObservationEvent(new CellOccupancyEvent(id, labelSet));
+			}
+		} else {
+			keyToPeopleMap.get(cleanedKey).unsafeAdd(personId);
+		}
+		////////////////////////
+
 		personCount++;
 	}
 
@@ -616,7 +637,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		return key;
 	}
-
+	
 	/*
 	 * Returns the key for the personId, if the person is already a member of this
 	 * partition. Otherwise, return null.
@@ -1033,7 +1054,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			labelSetInfoMap.put(cleanedNewKey, labelSet);
 		}
 
-		final PeopleContainer peopleContainer = keyToPeopleMap.get(currentKey);
+		PeopleContainer peopleContainer = keyToPeopleMap.get(currentKey);
 		peopleContainer.remove(personId);
 		if (peopleContainer.size() == 0) {
 			keyToPeopleMap.remove(currentKey);
@@ -1045,7 +1066,23 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		 * the people container associated with the new key as it is not equal to the
 		 * old key
 		 */
-		keyToPeopleMap.get(cleanedNewKey).unsafeAdd(personId);
+		// monkey
+		// keyToPeopleMap.get(cleanedNewKey).unsafeAdd(personId);
+
+		/////////////////////////
+		if (produceCellOccupancyEvents) {
+			peopleContainer = keyToPeopleMap.get(cleanedNewKey);
+			boolean initiallyEmpty = peopleContainer.size() == 0;
+			peopleContainer.unsafeAdd(personId);
+			// The container should only fail to add when it is not initially empty
+			if (initiallyEmpty) {
+				LabelSet labelSet = labelSetInfoMap.get(cleanedNewKey);
+				dataManagerContext.releaseObservationEvent(new CellOccupancyEvent(id, labelSet));
+			}
+		} else {
+			keyToPeopleMap.get(cleanedNewKey).unsafeAdd(personId);
+		}
+		////////////////////////
 
 		if (retainPersonKeys) {
 			personToKeyMap.set(personId.getValue(), cleanedNewKey);

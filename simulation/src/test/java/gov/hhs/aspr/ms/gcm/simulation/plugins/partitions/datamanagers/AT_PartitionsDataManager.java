@@ -31,8 +31,10 @@ import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestOutputC
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestPluginData;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.testsupport.testplugin.TestSimulation;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.PartitionsPlugin;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.events.CellOccupancyEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Equality;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSet;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSet.Builder;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSetFunction;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSetWeightingFunction;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.Partition;
@@ -56,12 +58,13 @@ import gov.hhs.aspr.ms.util.annotations.UnitTestConstructor;
 import gov.hhs.aspr.ms.util.annotations.UnitTestMethod;
 import gov.hhs.aspr.ms.util.errors.ContractException;
 import gov.hhs.aspr.ms.util.random.RandomGeneratorProvider;
+import gov.hhs.aspr.ms.util.wrappers.MultiKey;
 import gov.hhs.aspr.ms.util.wrappers.MutableInteger;
 
 public final class AT_PartitionsDataManager {
 
 	@Test
-	@UnitTestConstructor(target = PartitionsDataManager.class, args = {PartitionsPluginData.class})
+	@UnitTestConstructor(target = PartitionsDataManager.class, args = { PartitionsPluginData.class })
 	public void testConstructor() {
 		PartitionsDataManager dataManager = new PartitionsDataManager(PartitionsPluginData.builder().build());
 		assertNotNull(dataManager);
@@ -130,10 +133,10 @@ public final class AT_PartitionsDataManager {
 	};
 
 	/*
-	 * Creates a map from LabelSet to PersonId that covers all people who have
-	 * an attribute value of true for BOOLEAN_0 and false for BOOLEAN_1, to be
-	 * consistent with the filter used in the partition addition test. Label
-	 * sets consist of labels for INT_0, INT_1, DOUBLE_0 and DOUBLE_1.
+	 * Creates a map from LabelSet to PersonId that covers all people who have an
+	 * attribute value of true for BOOLEAN_0 and false for BOOLEAN_1, to be
+	 * consistent with the filter used in the partition addition test. Label sets
+	 * consist of labels for INT_0, INT_1, DOUBLE_0 and DOUBLE_1.
 	 */
 	private static Map<LabelSet, Set<PersonId>> getExpectedStructure(final ActorContext c) {
 		final PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -157,12 +160,12 @@ public final class AT_PartitionsDataManager {
 				final Double d1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_1);
 				final Object label_d1 = DOUBLE_1_LABELFUNCTION.apply(d1);
 
-				final LabelSet labelSet = LabelSet	.builder()//
-													.setLabel(TestAttributeId.INT_0, label_i0)//
-													.setLabel(TestAttributeId.INT_1, label_i1)//
-													.setLabel(TestAttributeId.DOUBLE_0, label_d0)//
-													.setLabel(TestAttributeId.DOUBLE_1, label_d1)//
-													.build();//
+				final LabelSet labelSet = LabelSet.builder()//
+						.setLabel(TestAttributeId.INT_0, label_i0)//
+						.setLabel(TestAttributeId.INT_1, label_i1)//
+						.setLabel(TestAttributeId.DOUBLE_0, label_d0)//
+						.setLabel(TestAttributeId.DOUBLE_1, label_d1)//
+						.build();//
 
 				Set<PersonId> people = expectedPeople.get(labelSet);
 				if (people == null) {
@@ -180,7 +183,8 @@ public final class AT_PartitionsDataManager {
 	 * Compares the expected alignment of people to label sets to the population
 	 * partition's content via assertions.
 	 */
-	private static void showPartitionIsCorrect(final ActorContext c, final Map<LabelSet, Set<PersonId>> expectedPartitionStructure, final Object key) {
+	private static void showPartitionIsCorrect(final ActorContext c,
+			final Map<LabelSet, Set<PersonId>> expectedPartitionStructure, final Object key) {
 
 		final PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
@@ -197,14 +201,13 @@ public final class AT_PartitionsDataManager {
 		assertEquals(expectedPersonCount, actualPersonCount);
 
 		/*
-		 * Show that each label set in the expected structure is associated with
-		 * the same people in the population partition.
+		 * Show that each label set in the expected structure is associated with the
+		 * same people in the population partition.
 		 * 
-		 * Since we know that the expected partition structure and the
-		 * population partition have the same number of people and that no
-		 * person can be associated with two label sets, we know there are no
-		 * uncounted people in the population partition and thus the two data
-		 * structures match.
+		 * Since we know that the expected partition structure and the population
+		 * partition have the same number of people and that no person can be associated
+		 * with two label sets, we know there are no uncounted people in the population
+		 * partition and thus the two data structures match.
 		 */
 		for (final LabelSet labelSet : expectedPartitionStructure.keySet()) {
 			final Set<PersonId> expectedPeople = expectedPartitionStructure.get(labelSet);
@@ -242,7 +245,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "addPartition", args = { Partition.class, Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "addPartition", args = { Partition.class,
+			Object.class })
 	public void testAddPartition() {
 
 		// Have the simulation initialized with 1000 people. Have an agent
@@ -264,21 +268,21 @@ public final class AT_PartitionsDataManager {
 			assertFalse(partitionsDataManager.partitionExists(key));
 
 			/*
-			 * Add the partition. We will filter to select people who have
-			 * BOOLEAN_0 as true and BOOLEAN_1 as false. The remaining
-			 * attributes will be used to define the cells of the partition via
-			 * the four static labeling functions defined in this class.
+			 * Add the partition. We will filter to select people who have BOOLEAN_0 as true
+			 * and BOOLEAN_1 as false. The remaining attributes will be used to define the
+			 * cells of the partition via the four static labeling functions defined in this
+			 * class.
 			 */
 			final Filter filter0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
 			final Filter filter1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
 			final Filter filter = filter0.and(filter1);
-			final Partition partition = Partition	.builder()//
-													.setFilter(filter)//
-													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
-													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
-													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
-													.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
-													.build();//
+			final Partition partition = Partition.builder()//
+					.setFilter(filter)//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))//
+					.build();//
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -286,14 +290,14 @@ public final class AT_PartitionsDataManager {
 			assertTrue(partitionsDataManager.partitionExists(key));
 
 			/*
-			 * Get the expected structure by examining each person and grouping
-			 * them by the label sets that we expect to find in the partition
+			 * Get the expected structure by examining each person and grouping them by the
+			 * label sets that we expect to find in the partition
 			 */
 			Map<LabelSet, Set<PersonId>> expectedPartitionStructure = getExpectedStructure(c);
 
 			/*
-			 * Show that the expected structure matches the actual structure of
-			 * the partition
+			 * Show that the expected structure matches the actual structure of the
+			 * partition
 			 */
 			showPartitionIsCorrect(c, expectedPartitionStructure, key);
 
@@ -305,15 +309,15 @@ public final class AT_PartitionsDataManager {
 			assignRandomAttributes(c);
 
 			/*
-			 * Get the expected structure again now that there have been changes
-			 * to people's attributes
+			 * Get the expected structure again now that there have been changes to people's
+			 * attributes
 			 */
 			expectedPartitionStructure = getExpectedStructure(c);
 
 			/*
-			 * Show that the expected structure matches the actual structure of
-			 * the partition and thus the partition resolver must be maintaining
-			 * the partition as stated in the contract.
+			 * Show that the expected structure matches the actual structure of the
+			 * partition and thus the partition resolver must be maintaining the partition
+			 * as stated in the contract.
 			 */
 			showPartitionIsCorrect(c, expectedPartitionStructure, key);
 
@@ -438,9 +442,9 @@ public final class AT_PartitionsDataManager {
 
 			// create a partition where half the population is in the partition
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (v) -> 3)).build();//
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (v) -> 3)).build();//
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -460,7 +464,8 @@ public final class AT_PartitionsDataManager {
 			// show that a person is in the partition if and only if their
 			// BOOLEAN_0 attribute is true
 			for (PersonId personId : peopleDataManager.getPeople()) {
-				boolean expectPersonInPartition = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+				boolean expectPersonInPartition = attributesDataManager.getAttributeValue(personId,
+						TestAttributeId.BOOLEAN_0);
 				boolean actualPersonInPartition = partitionsDataManager.contains(personId, key);
 				assertEquals(expectPersonInPartition, actualPersonInPartition);
 			}
@@ -470,7 +475,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, LabelSet.class, Object.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "contains", args = { PersonId.class, LabelSet.class,
+			Object.class })
 	public void testContains_LabelSet() {
 
 		Factory factory = PartitionsTestPluginFactory.factory(100, 7338572401998066291L, (c) -> {
@@ -480,9 +486,9 @@ public final class AT_PartitionsDataManager {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
-			 * Define functions that will convert attribute values into labels
-			 * for attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use
-			 * these in the partition's labeling
+			 * Define functions that will convert attribute values into labels for
+			 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in the
+			 * partition's labeling
 			 */
 			Function<Object, Object> int_0_labelFunction = (value) -> {
 				int v = (Integer) value;
@@ -516,12 +522,13 @@ public final class AT_PartitionsDataManager {
 			// create a partition where half the population is in the partition
 			// with labeling
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction)).build();//
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))
+					.build();//
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -549,15 +556,15 @@ public final class AT_PartitionsDataManager {
 			}
 
 			// Create a label set to use in the contains query
-			LabelSet queryLabelSet = LabelSet	.builder()//
-												.setLabel(TestAttributeId.INT_0, 0)//
-												.setLabel(TestAttributeId.DOUBLE_0, "A")//
-												.build();//
+			LabelSet queryLabelSet = LabelSet.builder()//
+					.setLabel(TestAttributeId.INT_0, 0)//
+					.setLabel(TestAttributeId.DOUBLE_0, "A")//
+					.build();//
 
 			/*
-			 * Show that a person is in the partition under the query label if
-			 * and only if their BOOLEAN_0 attribute is true and their INT_0,
-			 * and DOUBLE_0 labels are 0 and A
+			 * Show that a person is in the partition under the query label if and only if
+			 * their BOOLEAN_0 attribute is true and their INT_0, and DOUBLE_0 labels are 0
+			 * and A
 			 */
 			for (PersonId personId : peopleDataManager.getPeople()) {
 				boolean contained = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
@@ -568,9 +575,11 @@ public final class AT_PartitionsDataManager {
 				Double double0Value = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_0);
 				String double0Label = (String) double_0_labelFunction.apply(double0Value);
 
-				boolean expectPersonInPartitionUnderLabel = contained && int0Label.equals(0) && double0Label.equals("A");
+				boolean expectPersonInPartitionUnderLabel = contained && int0Label.equals(0)
+						&& double0Label.equals("A");
 
-				boolean actualPersonInPartitionUnderLabel = partitionsDataManager.contains(personId, queryLabelSet, key);
+				boolean actualPersonInPartitionUnderLabel = partitionsDataManager.contains(personId, queryLabelSet,
+						key);
 				assertEquals(expectPersonInPartitionUnderLabel, actualPersonInPartitionUnderLabel);
 			}
 
@@ -586,27 +595,33 @@ public final class AT_PartitionsDataManager {
 			LabelSet badLabelSet = LabelSet.builder().setLabel(TestAttributeId.BOOLEAN_1, 0).build();
 
 			// if the person id is null
-			ContractException contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(null, queryLabelSet, key));
+			ContractException contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(null, queryLabelSet, key));
 			assertEquals(PersonError.NULL_PERSON_ID, contractException.getErrorType());
 
 			// if the person id is unknown
-			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(unknownPersonId, queryLabelSet, key));
+			contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(unknownPersonId, queryLabelSet, key));
 			assertEquals(PersonError.UNKNOWN_PERSON_ID, contractException.getErrorType());
 
 			// if the key is null
-			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, queryLabelSet, null));
+			contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(personId, queryLabelSet, null));
 			assertEquals(PartitionError.NULL_PARTITION_KEY, contractException.getErrorType());
 
 			// if the key is unknown
-			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, queryLabelSet, unknownKey));
+			contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(personId, queryLabelSet, unknownKey));
 			assertEquals(PartitionError.UNKNOWN_POPULATION_PARTITION_KEY, contractException.getErrorType());
 
 			// if the label set is null
-			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, null, key));
+			contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(personId, null, key));
 			assertEquals(PartitionError.NULL_LABEL_SET, contractException.getErrorType());
 
 			// if the label contains a dimension not present in the partition
-			contractException = assertThrows(ContractException.class, () -> partitionsDataManager.contains(personId, badLabelSet, key));
+			contractException = assertThrows(ContractException.class,
+					() -> partitionsDataManager.contains(personId, badLabelSet, key));
 			assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
 
 		});
@@ -646,13 +661,13 @@ public final class AT_PartitionsDataManager {
 
 			// create a partition that will contain about half of the population
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
-												int v = (Integer) value;
-												return v / 10;
-											}))//
-											.build();
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
+						int v = (Integer) value;
+						return v / 10;
+					}))//
+					.build();
 			partitionsDataManager.addPartition(partition, key);
 
 			// get the people in the partition
@@ -701,10 +716,10 @@ public final class AT_PartitionsDataManager {
 
 			// create a partition that will contain about half of the population
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
-											.build();
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
+					.build();
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -746,8 +761,8 @@ public final class AT_PartitionsDataManager {
 				Set<PersonId> actualPeople = new LinkedHashSet<>(peopleInPartition);
 
 				/*
-				 * Show that the list of people returned from the population
-				 * partition contains no duplicates
+				 * Show that the list of people returned from the population partition contains
+				 * no duplicates
 				 */
 				assertEquals(peopleInPartition.size(), actualPeople.size());
 
@@ -760,7 +775,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeopleCountMap", args = { Object.class, LabelSet.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPeopleCountMap", args = { Object.class,
+			LabelSet.class })
 	public void testGetPeopleCountMap() {
 		// initialized with 1000 people
 		Factory factory = PartitionsTestPluginFactory.factory(1000, 3993911184725585603L, (c) -> {
@@ -772,9 +788,9 @@ public final class AT_PartitionsDataManager {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
-			 * Define functions that will convert attribute values into labels
-			 * for attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use
-			 * these in the partition's labeling
+			 * Define functions that will convert attribute values into labels for
+			 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in the
+			 * partition's labeling
 			 */
 			Function<Object, Object> int_0_labelFunction = (value) -> {
 				int v = (Integer) value;
@@ -829,26 +845,24 @@ public final class AT_PartitionsDataManager {
 			}
 
 			/*
-			 * Create a partition that will contain about half of the population
-			 * by filtering on BOOLEAN_0. We will partition on INT_0, INT_1,
-			 * DOUBLE_0 and DOUBLE_1. Note that we do not use BOOLEAN_1 as part
-			 * of the partition.
+			 * Create a partition that will contain about half of the population by
+			 * filtering on BOOLEAN_0. We will partition on INT_0, INT_1, DOUBLE_0 and
+			 * DOUBLE_1. Note that we do not use BOOLEAN_1 as part of the partition.
 			 */
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))//
-											.build();
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction))//
+					.build();
 
 			partitionsDataManager.addPartition(partition, key);
 
 			/*
-			 * Create a container to hold the number of people we expect to find
-			 * in the partition for every label set that is associated with at
-			 * least one person.
+			 * Create a container to hold the number of people we expect to find in the
+			 * partition for every label set that is associated with at least one person.
 			 */
 			Map<LabelSet, MutableInteger> expectedPartitionContentMap = new LinkedHashMap<>();
 
@@ -891,13 +905,12 @@ public final class AT_PartitionsDataManager {
 			}
 
 			/*
-			 * We will form our query using two of the four partition dimensions
-			 * so that the maps returned by the queries will contain multiple
-			 * members.
+			 * We will form our query using two of the four partition dimensions so that the
+			 * maps returned by the queries will contain multiple members.
 			 * 
-			 * We want to test create queries using INT_0 and DOUBLE_0 across
-			 * all their known label values, but also want include some label
-			 * values we known will not be present in the partition.
+			 * We want to test create queries using INT_0 and DOUBLE_0 across all their
+			 * known label values, but also want include some label values we known will not
+			 * be present in the partition.
 			 */
 
 			Set<Integer> int_0_label_values = new LinkedHashSet<>();
@@ -916,9 +929,8 @@ public final class AT_PartitionsDataManager {
 				for (String double_0_label_value : double_0_label_values) {
 
 					/*
-					 * Create a label set for the query that does not contain
-					 * all the attribute labels and has legitimate values for
-					 * each dimension.
+					 * Create a label set for the query that does not contain all the attribute
+					 * labels and has legitimate values for each dimension.
 					 */
 					LabelSet.Builder labelSetBuilder = LabelSet.builder();
 					labelSetBuilder.setLabel(TestAttributeId.INT_0, int_0_label_value);
@@ -926,9 +938,8 @@ public final class AT_PartitionsDataManager {
 					LabelSet queryLabelSet = labelSetBuilder.build();
 
 					/*
-					 * We are only interested in those parts of the
-					 * expectedPartitionContentMap that match the query's label
-					 * set.
+					 * We are only interested in those parts of the expectedPartitionContentMap that
+					 * match the query's label set.
 					 */
 					Map<LabelSet, Integer> expectedCountMap = new LinkedHashMap<>();
 					for (LabelSet labelSet : expectedPartitionContentMap.keySet()) {
@@ -948,8 +959,7 @@ public final class AT_PartitionsDataManager {
 					}
 
 					/*
-					 * Show that the count map we receive from the partition
-					 * matches our expectation
+					 * Show that the count map we receive from the partition matches our expectation
 					 */
 					Map<LabelSet, Integer> actualCountMap = partitionsDataManager.getPeopleCountMap(key, queryLabelSet);
 					assertEquals(expectedCountMap, actualCountMap);
@@ -993,13 +1003,13 @@ public final class AT_PartitionsDataManager {
 
 			// create a partition that will contain about half of the population
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
-												int v = (Integer) value;
-												return v / 10;
-											}))//
-											.build();
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, (value) -> {
+						int v = (Integer) value;
+						return v / 10;
+					}))//
+					.build();
 			partitionsDataManager.addPartition(partition, key);
 
 			// get the people in the partition
@@ -1014,7 +1024,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonCount", args = { Object.class, LabelSet.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonCount", args = { Object.class,
+			LabelSet.class })
 	public void testGetPersonCount_LabelSet() {
 		// initialized with 100 people
 		Factory factory = PartitionsTestPluginFactory.factory(100, 3217787540697556531L, (c) -> {
@@ -1046,10 +1057,10 @@ public final class AT_PartitionsDataManager {
 
 			// create a partition that will contain about half of the population
 			Object key = new Object();
-			Partition partition = Partition	.builder()//
-											.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
-											.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
-											.build();
+			Partition partition = Partition.builder()//
+					.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, attributeValueLabelingFunction))//
+					.build();
 
 			partitionsDataManager.addPartition(partition, key);
 
@@ -1102,7 +1113,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class, PartitionSampler.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class,
+			PartitionSampler.class })
 	public void testSamplePartition_General() {
 
 		/*
@@ -1118,27 +1130,26 @@ public final class AT_PartitionsDataManager {
 		 * 
 		 * DOUBLE_1 -> TRUE, FALSE
 		 * 
-		 * Filtering for the partition is either on or off. The filter passes
-		 * when the attribute BOOLEAN_0 is true.
+		 * Filtering for the partition is either on or off. The filter passes when the
+		 * attribute BOOLEAN_0 is true.
 		 * 
-		 * The partition sampler will optionally set its excluded person to
-		 * null, a person not in the partition, a person in the partition who is
-		 * not expected to match the sampler's label set and a person who does
-		 * match the sampler's label set.
+		 * The partition sampler will optionally set its excluded person to null, a
+		 * person not in the partition, a person in the partition who is not expected to
+		 * match the sampler's label set and a person who does match the sampler's label
+		 * set.
 		 * 
-		 * The partition sampler will optionally use a label set. The label set
-		 * will be composed of combinations of labels over INT_0 and DOUBLE_0,
-		 * using label values that are associated with people and some that are
-		 * not.
+		 * The partition sampler will optionally use a label set. The label set will be
+		 * composed of combinations of labels over INT_0 and DOUBLE_0, using label
+		 * values that are associated with people and some that are not.
 		 * 
-		 * The partition sampler will optionally use a weighting function. The
-		 * weighting function will return 1 for any person having a label of
-		 * TRUE for INT_1 and 0 otherwise.
+		 * The partition sampler will optionally use a weighting function. The weighting
+		 * function will return 1 for any person having a label of TRUE for INT_1 and 0
+		 * otherwise.
 		 * 
-		 * This test does not demonstrate precondition checks, proper use of
-		 * random number generator ids, or the proper distribution of results
-		 * aligned to the weighting function other that the simple binary
-		 * alignment for the weighting function described above.
+		 * This test does not demonstrate precondition checks, proper use of random
+		 * number generator ids, or the proper distribution of results aligned to the
+		 * weighting function other that the simple binary alignment for the weighting
+		 * function described above.
 		 * 
 		 * Each combination is run with a randomly generated seed value.
 		 * 
@@ -1174,7 +1185,8 @@ public final class AT_PartitionsDataManager {
 					for (Integer int_0_label_value : int_0_label_values) {
 						for (String double_0_label_value : double_0_label_values) {
 							seed = randomGenerator.nextLong();
-							executeSamplingTest(seed, useFilter, excludedPersonType, useWeightingFunction, int_0_label_value, double_0_label_value);
+							executeSamplingTest(seed, useFilter, excludedPersonType, useWeightingFunction,
+									int_0_label_value, double_0_label_value);
 						}
 					}
 				}
@@ -1183,7 +1195,8 @@ public final class AT_PartitionsDataManager {
 
 	}
 
-	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType, Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
+	private void executeSamplingTest(long seed, Boolean useFilter, ExcludedPersonType excludedPersonType,
+			Boolean useWeightingFunction, Integer int_0_label_value, String double_0_label_value) {
 
 		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, (c) -> {
 
@@ -1197,9 +1210,9 @@ public final class AT_PartitionsDataManager {
 			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
 
 			/*
-			 * Define functions that will convert attribute values into labels
-			 * for attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use
-			 * these in the partition's labeling
+			 * Define functions that will convert attribute values into labels for
+			 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in the
+			 * partition's labeling
 			 */
 			Function<Object, Object> int_0_labelFunction = (value) -> {
 				int v = (Integer) value;
@@ -1257,30 +1270,29 @@ public final class AT_PartitionsDataManager {
 			}
 
 			/*
-			 * Create a partition that may filter about half of the population
-			 * on BOOLEAN_0. We will partition on INT_0, INT_1, DOUBLE_0 and
-			 * DOUBLE_1. Note that we do not use BOOLEAN_1 as part of the
-			 * partition.
+			 * Create a partition that may filter about half of the population on BOOLEAN_0.
+			 * We will partition on INT_0, INT_1, DOUBLE_0 and DOUBLE_1. Note that we do not
+			 * use BOOLEAN_1 as part of the partition.
 			 */
 			Object key = new Object();
 			Partition.Builder partitionBuilder = Partition.builder();
 			if (useFilter) {
 				partitionBuilder//
-								.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
+						.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
 			}
 			partitionBuilder//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
 
 			Partition partition = partitionBuilder.build();
 
 			partitionsDataManager.addPartition(partition, key);
 
 			/*
-			 * Create a label set for the query that does not contain all the
-			 * attribute labels and has legitimate values for each dimension.
+			 * Create a label set for the query that does not contain all the attribute
+			 * labels and has legitimate values for each dimension.
 			 */
 			LabelSet queryLabelSet = null;
 			if (int_0_label_value != null && double_0_label_value != null) {
@@ -1296,7 +1308,8 @@ public final class AT_PartitionsDataManager {
 			for (PersonId personId : peopleInTheWorld) {
 
 				if (useFilter) {
-					Boolean personInPartition = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+					Boolean personInPartition = attributesDataManager.getAttributeValue(personId,
+							TestAttributeId.BOOLEAN_0);
 					if (personInPartition) {
 						expectedPeopleInPartition.add(personId);
 					}
@@ -1315,7 +1328,8 @@ public final class AT_PartitionsDataManager {
 					Integer intValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_0);
 					Object labelValue = int_0_labelFunction.apply(intValue);
 					if (labelValue.equals(int_0_label_value)) {
-						Double doubleValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_0);
+						Double doubleValue = attributesDataManager.getAttributeValue(personId,
+								TestAttributeId.DOUBLE_0);
 						labelValue = double_0_labelFunction.apply(doubleValue);
 						if (labelValue.equals(double_0_label_value)) {
 							expectedPeopleMatchingQueryLabelSet.add(personId);
@@ -1369,14 +1383,16 @@ public final class AT_PartitionsDataManager {
 			}
 			partitionSamplerBuilder.setExcludedPerson(excludedPersonId);
 
-			Set<PersonId> expectedPeopleMatchingPartitionSampler = new LinkedHashSet<>(expectedPeopleMatchingQueryLabelSet);
+			Set<PersonId> expectedPeopleMatchingPartitionSampler = new LinkedHashSet<>(
+					expectedPeopleMatchingQueryLabelSet);
 			expectedPeopleMatchingPartitionSampler.remove(excludedPersonId);
 
 			if (useWeightingFunction) {
 				Iterator<PersonId> iterator = expectedPeopleMatchingPartitionSampler.iterator();
 				while (iterator.hasNext()) {
 					PersonId personId = iterator.next();
-					Integer int_1_attributeValue = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_1);
+					Integer int_1_attributeValue = attributesDataManager.getAttributeValue(personId,
+							TestAttributeId.INT_1);
 					Boolean passed = (Boolean) int_1_labelFunction.apply(int_1_attributeValue);
 					if (!passed) {
 						iterator.remove();
@@ -1414,7 +1430,8 @@ public final class AT_PartitionsDataManager {
 	}
 
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class, PartitionSampler.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "samplePartition", args = { Object.class,
+			PartitionSampler.class })
 	public void testSamplePartition_PreconditionChecks() {
 		// precondition: if the key is null
 		ContractException contractException = assertThrows(ContractException.class, () -> {
@@ -1466,8 +1483,8 @@ public final class AT_PartitionsDataManager {
 		assertEquals(PartitionError.NULL_PARTITION_SAMPLER, contractException.getErrorType());
 
 		/*
-		 * precondition: if the partition sampler has a label set containing
-		 * dimensions not present in the population partition
+		 * precondition: if the partition sampler has a label set containing dimensions
+		 * not present in the population partition
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 1697817005173536231L, (c) -> {
@@ -1477,7 +1494,8 @@ public final class AT_PartitionsDataManager {
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
 				LabelSet labelSet = LabelSet.builder().setLabel(TestAttributeId.INT_0, 15).build();
-				PartitionSampler partitionSamplerWithBadDimension = PartitionSampler.builder().setLabelSet(labelSet).build();
+				PartitionSampler partitionSamplerWithBadDimension = PartitionSampler.builder().setLabelSet(labelSet)
+						.build();
 				// first we show that the values we will be using are valid
 				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 				partitionsDataManager.samplePartition(key, partitionSamplerWithBadDimension);
@@ -1487,8 +1505,8 @@ public final class AT_PartitionsDataManager {
 		assertEquals(PartitionError.INCOMPATIBLE_LABEL_SET, contractException.getErrorType());
 
 		/*
-		 * precondition: if the partition sampler has an excluded person that
-		 * does not exist
+		 * precondition: if the partition sampler has an excluded person that does not
+		 * exist
 		 */
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory = PartitionsTestPluginFactory.factory(10, 624346712512051803L, (c) -> {
@@ -1497,7 +1515,8 @@ public final class AT_PartitionsDataManager {
 				Partition partition = Partition.builder().setFilter(new TrueFilter()).build();
 				partitionsDataManager.addPartition(partition, key);
 				PartitionSampler partitionSampler = PartitionSampler.builder().build();
-				PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder().setExcludedPerson(new PersonId(10000)).build();
+				PartitionSampler partitionSamplerWithUnknownExcludedPerson = PartitionSampler.builder()
+						.setExcludedPerson(new PersonId(10000)).build();
 				// first we show that the values we will be using are valid
 				assertNotNull(partitionsDataManager.samplePartition(key, partitionSampler));
 				partitionsDataManager.samplePartition(key, partitionSamplerWithUnknownExcludedPerson);
@@ -1525,9 +1544,8 @@ public final class AT_PartitionsDataManager {
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			/*
-			 * Create keys for the two population partitions. One that accepts
-			 * people with attribute BOOLEAN_0 = true and the other with
-			 * BOOLEAN_0 = false.
+			 * Create keys for the two population partitions. One that accepts people with
+			 * attribute BOOLEAN_0 = true and the other with BOOLEAN_0 = false.
 			 */
 			Object key1 = new Object();
 			Object key2 = new Object();
@@ -1562,14 +1580,14 @@ public final class AT_PartitionsDataManager {
 		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
 
 		/*
-		 * Create a key for a partition of interest that will contain a person
-		 * we are about to delete
+		 * Create a key for a partition of interest that will contain a person we are
+		 * about to delete
 		 */
 		Object key = new Object();
 
 		/*
-		 * Add an agent that will create a partition that will contain 10 people
-		 * of interest who will be removed later.
+		 * Add an agent that will create a partition that will contain 10 people of
+		 * interest who will be removed later.
 		 */
 
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
@@ -1585,8 +1603,8 @@ public final class AT_PartitionsDataManager {
 			}
 
 			/*
-			 * Give these people an attribute BOOLEAN_0 a value of true so they
-			 * will be included in the partition
+			 * Give these people an attribute BOOLEAN_0 a value of true so they will be
+			 * included in the partition
 			 */
 			for (PersonId personId : peopleOfInterest) {
 				attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
@@ -1607,13 +1625,12 @@ public final class AT_PartitionsDataManager {
 		}));
 
 		/*
-		 * Create an observer that subscribes to the PersonImminentRemovalEvent.
-		 * This will be used to show that a report or any other observer can
-		 * still see a person and their membership in a partition even though
-		 * the removal of the person is already underway.
+		 * Create an observer that subscribes to the PersonImminentRemovalEvent. This
+		 * will be used to show that a report or any other observer can still see a
+		 * person and their membership in a partition even though the removal of the
+		 * person is already underway.
 		 * 
-		 * The report will record the ids of the people who were in the removal
-		 * process
+		 * The report will record the ids of the people who were in the removal process
 		 */
 		List<PersonId> peopleVerifiedByReport = new ArrayList<>();
 
@@ -1634,8 +1651,8 @@ public final class AT_PartitionsDataManager {
 
 		/*
 		 * Have the agent remove the people who are in the partition from the
-		 * simulation. The people will temporarily remain in the simulation and
-		 * will only leave when the planning system moves to the next plan.
+		 * simulation. The people will temporarily remain in the simulation and will
+		 * only leave when the planning system moves to the next plan.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 
@@ -1658,15 +1675,15 @@ public final class AT_PartitionsDataManager {
 		}));
 
 		/*
-		 * Have the agent verify that the people are gone and that the partition
-		 * no longer contains them. Note that this plan is for the same time as
-		 * the plan above but is guaranteed to execute after that plan.
+		 * Have the agent verify that the people are gone and that the partition no
+		 * longer contains them. Note that this plan is for the same time as the plan
+		 * above but is guaranteed to execute after that plan.
 		 */
 		pluginBuilder.addTestActorPlan("actor", new TestActorPlan(1, (c) -> {
 			/*
-			 * Show that the report, as an observer of the removals, was able to
-			 * observe each removal and still perceived each person as being a
-			 * member of the partition.
+			 * Show that the report, as an observer of the removals, was able to observe
+			 * each removal and still perceived each person as being a member of the
+			 * partition.
 			 */
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
 			assertEquals(10, peopleVerifiedByReport.size());
@@ -1689,15 +1706,14 @@ public final class AT_PartitionsDataManager {
 	}
 
 	/**
-	 * Demonstrates that the data manager's initial state reflects its plugin
-	 * data
+	 * Demonstrates that the data manager's initial state reflects its plugin data
 	 */
 	@Test
 	@UnitTestMethod(target = PartitionsDataManager.class, name = "init", args = { DataManagerContext.class })
 	public void testStateInitialization() {
 		/*
-		 * Nothing can be demonstrated since the state of the plugin data does
-		 * not have an observable influence on the data manager
+		 * Nothing can be demonstrated since the state of the plugin data does not have
+		 * an observable influence on the data manager
 		 */
 	}
 
@@ -1715,21 +1731,21 @@ public final class AT_PartitionsDataManager {
 			// that has run continuity set to the expected state
 			Factory factory = PartitionsTestPluginFactory.factory(100, 607630153604184177L, (c) -> {
 			});
-			PartitionsPluginData inputPartitionsPluginData = PartitionsPluginData	.builder()//
-																					.setRunContinuitySupport(supportRunContinuity)//
-																					.build();
-			Plugin partitionsPlugin = PartitionsPlugin	.builder()//
-														.setPartitionsPluginData(inputPartitionsPluginData)//
-														.getPartitionsPlugin();
+			PartitionsPluginData inputPartitionsPluginData = PartitionsPluginData.builder()//
+					.setRunContinuitySupport(supportRunContinuity)//
+					.build();
+			Plugin partitionsPlugin = PartitionsPlugin.builder()//
+					.setPartitionsPluginData(inputPartitionsPluginData)//
+					.getPartitionsPlugin();
 			factory.setPartitionsPlugin(partitionsPlugin);
 
 			// run the simulation and tell it to produce plugin data on halt
-			TestOutputConsumer testOutputConsumer = TestSimulation	.builder()//
-																	.addPlugins(factory.getPlugins())//
-																	.setSimulationHaltTime(100)//
-																	.setProduceSimulationStateOnHalt(true)//
-																	.build()//
-																	.execute();
+			TestOutputConsumer testOutputConsumer = TestSimulation.builder()//
+					.addPlugins(factory.getPlugins())//
+					.setSimulationHaltTime(100)//
+					.setProduceSimulationStateOnHalt(true)//
+					.build()//
+					.execute();
 
 			// retrieve the PartitionsPluginData released by the
 			// PartitionsDataManager
@@ -1742,9 +1758,10 @@ public final class AT_PartitionsDataManager {
 			assertEquals(inputPartitionsPluginData, outputPartitionsPluginData);
 		}
 	}
-	
+
 	@Test
-	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonValue", args = {Object.class, LabelSetFunction.class, PersonId.class })
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getPersonValue", args = { Object.class,
+			LabelSetFunction.class, PersonId.class })
 	public void testGetPersonValue() {
 		RandomGenerator rng = RandomGeneratorProvider.getRandomGenerator(1889608169419896318L);
 		long seed = rng.nextLong();
@@ -1753,8 +1770,8 @@ public final class AT_PartitionsDataManager {
 
 		/*
 		 * Define functions that will convert attribute values into labels for
-		 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in
-		 * the partition's labeling
+		 * attributes INT_0, INT_1, DOUBLE_0, and DOUBLE_1. We will use these in the
+		 * partition's labeling
 		 */
 		Function<Object, Object> int_0_labelFunction = (value) -> {
 			int v = (Integer) value;
@@ -1788,8 +1805,7 @@ public final class AT_PartitionsDataManager {
 		TestPluginData.Builder testPluginDataBuilder = TestPluginData.builder();
 
 		/*
-		 * Have the actor set the attribute values for each person to random
-		 * values
+		 * Have the actor set the attribute values for each person to random values
 		 */
 		testPluginDataBuilder.addTestActorPlan("actor", new TestActorPlan(0, (c) -> {
 			PeopleDataManager peopleDataManager = c.getDataManager(PeopleDataManager.class);
@@ -1830,20 +1846,19 @@ public final class AT_PartitionsDataManager {
 			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 
 			/*
-			 * Create a partition that may filter about half of the population
-			 * on BOOLEAN_0. We will partition on INT_0, INT_1, DOUBLE_0 and
-			 * DOUBLE_1. Note that we do not use BOOLEAN_1 as part of the
-			 * partition.
+			 * Create a partition that may filter about half of the population on BOOLEAN_0.
+			 * We will partition on INT_0, INT_1, DOUBLE_0 and DOUBLE_1. Note that we do not
+			 * use BOOLEAN_1 as part of the partition.
 			 */
 			Partition.Builder partitionBuilder = Partition.builder();
 
 			partitionBuilder.setFilter(new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true));//
 
 			partitionBuilder//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
-							.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, int_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, int_1_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, double_0_labelFunction))//
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, double_1_labelFunction));
 
 			Partition partition = partitionBuilder.build();
 			partitionsDataManager.addPartition(partition, key);
@@ -1860,8 +1875,6 @@ public final class AT_PartitionsDataManager {
 
 			for (PersonId personId : peopleDataManager.getPeople()) {
 
-				
-				
 				LabelSetFunction<Integer> f = (pc, labelset) -> {
 					Integer i = (Integer) labelset.getLabel(TestAttributeId.INT_0).get();
 					Boolean b1 = (Boolean) labelset.getLabel(TestAttributeId.INT_1).get();
@@ -1884,34 +1897,34 @@ public final class AT_PartitionsDataManager {
 					}
 					if (b2) {
 						result += 17;
-					}										
+					}
 					return result;
 				};
-				
 
 				Optional<Integer> optional = partitionsDataManager.getPersonValue(key, f, personId);
 
 				// the person should be in the partition if and only if the
 				// optional is present
-				Boolean expectedInclusion = attributesDataManager.getAttributeValue(personId, TestAttributeId.BOOLEAN_0);
+				Boolean expectedInclusion = attributesDataManager.getAttributeValue(personId,
+						TestAttributeId.BOOLEAN_0);
 				assertEquals(expectedInclusion, optional.isPresent());
 
 				if (optional.isPresent()) {
 					// determine the expected value of the function
-					
-					//first, get the attribute values of the person
+
+					// first, get the attribute values of the person
 					int i0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_0);
 					int i1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_1);
 					double d0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_0);
 					double d1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_1);
-					
-					//now determine what the labelers will do with those values
-					int i = (Integer)int_0_labelFunction.apply(i0);
-					boolean b1 = (Boolean)int_1_labelFunction.apply(i1);
-					String s = (String)double_0_labelFunction.apply(d0);
-					boolean b2 = (Boolean)double_1_labelFunction.apply(d1);
-					
-					//finally calculate what the label function will do with the label values
+
+					// now determine what the labelers will do with those values
+					int i = (Integer) int_0_labelFunction.apply(i0);
+					boolean b1 = (Boolean) int_1_labelFunction.apply(i1);
+					String s = (String) double_0_labelFunction.apply(d0);
+					boolean b2 = (Boolean) double_1_labelFunction.apply(d1);
+
+					// finally calculate what the label function will do with the label values
 					int expectedValue = i;
 					if (b1) {
 						expectedValue += 20;
@@ -1943,6 +1956,130 @@ public final class AT_PartitionsDataManager {
 		Factory factory = PartitionsTestPluginFactory.factory(1000, seed, testPluginData);
 
 		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	}
+	
+	private LabelSet getLabelSetForPerson(ActorContext actorContext, PersonId personId) {
+		Builder builder = LabelSet.builder();
+		
+		AttributesDataManager attributesDataManager = actorContext.getDataManager(AttributesDataManager.class);
+		int int_0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_0);
+		int int_1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.INT_1);
+		double double_0 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_0);
+		double double_1 = attributesDataManager.getAttributeValue(personId, TestAttributeId.DOUBLE_1);
+		
+		builder.setLabel(TestAttributeId.INT_0,	INT_0_LABELFUNCTION.apply(int_0));
+		builder.setLabel(TestAttributeId.INT_1,	INT_1_LABELFUNCTION.apply(int_1));
+		builder.setLabel(TestAttributeId.DOUBLE_0,	DOUBLE_0_LABELFUNCTION.apply(double_0));
+		builder.setLabel(TestAttributeId.DOUBLE_1,	DOUBLE_1_LABELFUNCTION.apply(double_1));
+		
+		return builder.build();		
+	}
+
+	@Test
+	@UnitTestMethod(target = PartitionsDataManager.class, name = "getEventFilterForCellOccupancyEvent", args = {})
+	public void testGetEventFilterForCellOccupancyEvent() {
+		/*
+		 * Our intent here is to not only show that the method returns a event filter,
+		 * but also to show that the resulting event filter will allow an actor to
+		 * recieve the expected CellOccupancyEvents.
+		 */
+
+		Object key_1 = "key_1";
+
+		int numberOfPeople = 30;
+
+		TestPluginData.Builder pluginBuilder = TestPluginData.builder();
+
+//		// create some containers for CellOccupancy events
+		List<MultiKey> actualObservations = new ArrayList<>();
+		List<MultiKey> expectedObservations = new ArrayList<>();
+
+		/*
+		 * Have the actor 1 add a partition and subscribe to CellOccupancyEvent for that
+		 * partion
+		 */
+		pluginBuilder.addTestActorPlan("actor_1", new TestActorPlan(0, (c) -> {
+			PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
+
+			/*
+			 * Create the population partition filtering on attribute BOOLEAN_0 = true and
+			 * BOOLEAN_1 = false
+			 */
+			Filter filter_0 = new AttributeFilter(TestAttributeId.BOOLEAN_0, Equality.EQUAL, true);
+			Filter filter_1 = new AttributeFilter(TestAttributeId.BOOLEAN_1, Equality.EQUAL, false);
+			Filter filter = filter_0.and(filter_1);
+			Partition partition = Partition.builder()
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_0, INT_0_LABELFUNCTION))
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.INT_1, INT_1_LABELFUNCTION))
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_0, DOUBLE_0_LABELFUNCTION))
+					.addLabeler(new FunctionalAttributeLabeler(TestAttributeId.DOUBLE_1, DOUBLE_1_LABELFUNCTION))
+					.setFilter(filter)//
+					.setProduceCellOccupancyEvents(true)//
+					.build();//
+
+			partitionsDataManager.addPartition(partition, key_1);
+
+			EventFilter<CellOccupancyEvent> eventFilter = partitionsDataManager
+					.getEventFilterForCellOccupancyEvent(key_1);
+			c.subscribe(eventFilter, (c2, e) -> {
+				actualObservations.add(new MultiKey("actor_1", c2.getTime(), e));
+			});
+		}));
+
+		/*
+		 * Have the actor_2 force person 0 and person 1 into the partition
+		 */
+		pluginBuilder.addTestActorPlan("actor_2", new TestActorPlan(1, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			// force person 0 into the partition
+			PersonId personId = new PersonId(0);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, 12);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_1, 99);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_0, 28.9);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_1, 155.1);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, false);
+			expectedObservations.add(new MultiKey("actor_1", 1.0, new CellOccupancyEvent(key_1, getLabelSetForPerson(c,personId))));
+			
+			personId = new PersonId(1);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_0, 5423);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.INT_1, 0);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_0, 50.0);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.DOUBLE_1, 105.6);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_0, true);
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, false);
+			expectedObservations.add(new MultiKey("actor_1", 1.0, new CellOccupancyEvent(key_1, getLabelSetForPerson(c,personId))));
+		}));
+		
+		/*
+		 * Have the actor_2 remove person 0 and person 1 from the partition and then add person 1 back
+		 */
+		pluginBuilder.addTestActorPlan("actor_2", new TestActorPlan(2, (c) -> {
+			AttributesDataManager attributesDataManager = c.getDataManager(AttributesDataManager.class);
+			// remove person 0
+			PersonId personId = new PersonId(0);			
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, true);
+	
+			//remove person 1
+			personId = new PersonId(1);			
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, true);
+			
+			//add person 1 back
+			attributesDataManager.setAttributeValue(personId, TestAttributeId.BOOLEAN_1, false);
+			expectedObservations.add(new MultiKey("actor_1", 2.0, new CellOccupancyEvent(key_1, getLabelSetForPerson(c,personId))));
+			
+		}));
+
+		// build the plugin
+		TestPluginData testPluginData = pluginBuilder.build();
+		Factory factory = PartitionsTestPluginFactory.factory(numberOfPeople, 8773677547139261431L, testPluginData);
+		TestSimulation.builder().addPlugins(factory.getPlugins()).build().execute();
+	
+
+		// show that the observations were correct
+		assertEquals(expectedObservations.size(), actualObservations.size());
+		assertEquals(new LinkedHashSet<>(expectedObservations), new LinkedHashSet<>(actualObservations));
+
 	}
 
 }

@@ -9,5 +9,5 @@ import net.jcip.annotations.Immutable;
  * give label set has transitioned from zero to a positive number of people.
  */
 @Immutable
-public record PartitionCellOccupancyEvent(Object id, LabelSet labelSet) implements Event {
+public record CellOccupancyEvent(Object id, LabelSet labelSet) implements Event {
 }

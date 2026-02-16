@@ -11,6 +11,9 @@ import java.util.Set;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManager;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.DataManagerContext;
 import gov.hhs.aspr.ms.gcm.simulation.nucleus.Event;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.EventFilter;
+import gov.hhs.aspr.ms.gcm.simulation.nucleus.IdentifiableFunctionMap;
+import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.events.CellOccupancyEvent;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.DegeneratePopulationPartitionImpl;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.FilterSensitivity;
 import gov.hhs.aspr.ms.gcm.simulation.plugins.partitions.support.LabelSet;
@@ -53,6 +56,11 @@ import gov.hhs.aspr.ms.util.errors.ContractException;
  * <p>
  * Subscribes to other events as needed to support the population partition
  * maintenance
+ * </p>
+ * <p>
+ * Produces {@linkplain CellOccupancyEvent} whenever a person is added to an
+ * empty partition cell if the partition has its produceCellOccupancyEvents
+ * policy set to true.
  * </p>
  */
 public final class PartitionsDataManager extends DataManager {
@@ -528,10 +536,10 @@ public final class PartitionsDataManager extends DataManager {
 
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(key,dataManagerContext, partition,
+			populationPartition = new DegeneratePopulationPartitionImpl(key, dataManagerContext, partition,
 					supportRunContinuity);
 		} else {
-			populationPartition = new PopulationPartitionImpl(key,dataManagerContext, partition, supportRunContinuity);
+			populationPartition = new PopulationPartitionImpl(key, dataManagerContext, partition, supportRunContinuity);
 		}
 		keyToPopulationPartitionMap.put(key, populationPartition);
 
@@ -577,16 +585,30 @@ public final class PartitionsDataManager extends DataManager {
 			}
 		}
 	}
-	
-	
-//	public void subscribeForCellOccupancyEvents(final Object key, final LabelSet labelSet) {
-//		
-//	}
-	
-//	public void unsubscribeForCellOccupancyEvents(final Object key, final LabelSet labelSet) {
-//	
-//}
 
+	/*
+	 * Enum supporting event filters for McmPersonDistributionEvents
+	 */
+	private static enum CellOccupancyEventFunctionId {
+		ID;
+	}
 
+	/*
+	 * Map supporting event filters for ActiveHubAssignmentEvent
+	 */
+	private IdentifiableFunctionMap<CellOccupancyEvent> cellOccupancyEventFunctionMap = //
+			IdentifiableFunctionMap.builder(CellOccupancyEvent.class)//
+					.put(CellOccupancyEventFunctionId.ID, e -> e.id())//
+					.build();//
 
+	/**
+	 * Returns an event filter used to subscribe to {@link CellOccupancyEvent}
+	 * events. Matches on key id.
+	 *
+	 */
+	public EventFilter<CellOccupancyEvent> getEventFilterForCellOccupancyEvent(Object key) {
+		return EventFilter.builder(CellOccupancyEvent.class)//
+				.addFunctionValuePair(cellOccupancyEventFunctionMap.get(CellOccupancyEventFunctionId.ID), key)//
+				.build();
+	}
 }
