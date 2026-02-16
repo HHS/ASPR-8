@@ -399,9 +399,13 @@ public final class PartitionsDataManager extends DataManager {
 		dataManagerContext.subscribe(PersonAdditionEvent.class, this::handlePersonAdditionEvent);
 
 		dataManagerContext.subscribe(PersonRemovalEvent.class, this::handlePersonRemovalEvent);
+		
+		dataManagerContext.subscribe(PartitionAdditionMutationEvent.class, this::handlePartitionAdditionMutationEvent);
+		
 
 		reservedEventClasses.add(PersonAdditionEvent.class);
 		reservedEventClasses.add(PersonRemovalEvent.class);
+		
 
 		if (dataManagerContext.stateRecordingIsScheduled()) {
 			dataManagerContext.subscribeToSimulationClose(this::recordSimulationState);
@@ -468,6 +472,8 @@ public final class PartitionsDataManager extends DataManager {
 		}
 
 	}
+	private static record PartitionAdditionMutationEvent(Partition partition,Object key) implements Event {
+	}
 
 	/**
 	 * Adds a population partition for the given key and component id. The key must
@@ -485,6 +491,13 @@ public final class PartitionsDataManager extends DataManager {
 	 *                           </ul>
 	 */
 	public void addPartition(final Partition partition, final Object key) {
+		dataManagerContext.releaseMutationEvent(
+				new PartitionAdditionMutationEvent(partition, key));
+	}
+	private void handlePartitionAdditionMutationEvent(DataManagerContext dataManagerContext, PartitionAdditionMutationEvent partitionAdditionMutationEvent) {
+		
+		Partition partition = partitionAdditionMutationEvent.partition;
+		Object key =  partitionAdditionMutationEvent.key;
 
 		validatePopulationPartitionNotNull(partition);
 		validatePopulationPartitionKeyNotNull(key);

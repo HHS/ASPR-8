@@ -42,4 +42,25 @@ public abstract class ActorPlan extends Plan {
 	 * Executes the actor logic associated with the plan.
 	 */
 	protected abstract void execute(ActorContext context);
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ActorPlan [actorId=");
+		builder.append(actorId);
+		builder.append(", time=");
+		builder.append(time);
+		builder.append(", planner=");
+		builder.append(planner);
+		builder.append(", isActive=");
+		builder.append(isActive);
+		builder.append(", canceled=");
+		builder.append(canceled);
+		builder.append(", arrivalId=");
+		builder.append(arrivalId);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 }

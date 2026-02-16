@@ -339,8 +339,7 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the partition is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 7407325994321033161L, (c) -> {
-				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				Object key = new Object();
 				partitionsDataManager.addPartition(null, key);
 			});
@@ -351,8 +350,7 @@ public final class AT_PartitionsDataManager {
 		// precondition: if the key is null
 		contractException = assertThrows(ContractException.class, () -> {
 			Factory factory2 = PartitionsTestPluginFactory.factory(0, 530075900162852558L, (c) -> {
-				PartitionsPluginData partitionsPluginData = PartitionsPluginData.builder().build();
-				PartitionsDataManager partitionsDataManager = new PartitionsDataManager(partitionsPluginData);
+				PartitionsDataManager partitionsDataManager = c.getDataManager(PartitionsDataManager.class);
 				partitionsDataManager.addPartition(Partition.builder().build(), null);
 			});
 			TestSimulation.builder().addPlugins(factory2.getPlugins()).build().execute();

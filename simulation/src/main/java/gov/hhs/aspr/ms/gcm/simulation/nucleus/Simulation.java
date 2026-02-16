@@ -797,7 +797,7 @@ public class Simulation {
 			}
 
 			final Plan plan = planningQueue.poll();
-			// System.out.println(plan);
+//			System.out.println(plan+" at time "+time);
 
 			if (plan.isActive) {
 				activePlanCount--;
